@@ -422,7 +422,10 @@ window.addEventListener('load',function(){
 
     const name = form.querySelector('[name="user_name"]')?.value || '';
     const email = form.querySelector('[name="user_email"]')?.value || '';
+    const reason = form.querySelector('[name="contact_reason"]')?.value || 'General Inquiry';
+    const company = form.querySelector('[name="company"]')?.value || 'N/A';
     const subject = form.querySelector('[name="subject"]')?.value || 'Portfolio Contact';
+    const socialLink = form.querySelector('[name="social_link"]')?.value || 'N/A';
     const message = form.querySelector('[name="message"]')?.value || '';
 
     try {
@@ -435,9 +438,12 @@ window.addEventListener('load',function(){
         body: JSON.stringify({
           name: name,
           email: email,
+          reason: reason,
+          company: company,
+          social_link: socialLink,
           subject: subject,
           message: message,
-          _subject: `New Portfolio Message: ${subject} from ${name}`,
+          _subject: `[${reason}] ${subject} from ${name}`,
           _template: "table",
           _captcha: "false"
         })
@@ -456,15 +462,22 @@ window.addEventListener('load',function(){
       }
     } catch(err) {
       console.error('Contact Form Error:', err);
-      const uSub = encodeURIComponent(subject);
-      const uMsg = encodeURIComponent(`Name: ${name}\nEmail: ${email}\n\nMessage:\n${message}`);
+      const uSub = encodeURIComponent(`[${reason}] ${subject}`);
+      const uMsg = encodeURIComponent(
+        `Name: ${name}\n` +
+        `Email: ${email}\n` +
+        `Reason: ${reason}\n` +
+        `Company: ${company}\n` +
+        `Link: ${socialLink}\n\n` +
+        `Message:\n${message}`
+      );
       status.innerHTML = `✗ Send failed. <a href="mailto:pratyushnandi100@gmail.com?subject=${uSub}&body=${uMsg}" style="color:var(--c);text-decoration:underline;font-weight:600;">Click to send via Email app</a>`;
       status.className = 'cf-status err';
     } finally {
       done();
     }
   });
-  form.querySelectorAll('input,textarea').forEach(inp=>{
+  form.querySelectorAll('input,textarea,select').forEach(inp=>{
     inp.addEventListener('focus',()=>{const l=inp.previousElementSibling;if(l)l.style.color='var(--c)';});
     inp.addEventListener('blur', ()=>{const l=inp.previousElementSibling;if(l)l.style.color='';});
   });

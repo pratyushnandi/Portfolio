@@ -963,8 +963,33 @@
                 <div class="cf-grp"><label><span class="ck">const</span> email <span class="co">=</span></label><input
                     type="email" name="user_email" placeholder='"your@email.com"' required /></div>
               </div>
-              <div class="cf-grp"><label><span class="ck">const</span> subject <span class="co">=</span></label><input
-                  type="text" name="subject" placeholder='"What is this about?"' required /></div>
+              <div class="cf-row2">
+                <div class="cf-grp">
+                  <label><span class="ck">const</span> reason <span class="co">=</span></label>
+                  <select name="contact_reason" required>
+                    <option value="" disabled selected>"Select reason..."</option>
+                    <option value="💼 Freelance / Project">💼 Freelance / Project</option>
+                    <option value="🤝 Collaboration">🤝 Collaboration</option>
+                    <option value="💻 Job Opportunity">💻 Job Opportunity</option>
+                    <option value="🧠 Technical Discussion">🧠 Technical Discussion</option>
+                    <option value="📩 General Inquiry">📩 General Inquiry</option>
+                  </select>
+                </div>
+                <div class="cf-grp">
+                  <label><span class="ck">const</span> company <span class="co">=</span></label>
+                  <input type="text" name="company" placeholder='"Company / Organization (optional)"' />
+                </div>
+              </div>
+              <div class="cf-row2">
+                <div class="cf-grp">
+                  <label><span class="ck">const</span> subject <span class="co">=</span></label>
+                  <input type="text" name="subject" placeholder='"What is this about?"' required />
+                </div>
+                <div class="cf-grp">
+                  <label><span class="ck">const</span> profileLink <span class="co">=</span></label>
+                  <input type="url" name="social_link" placeholder='"LinkedIn / GitHub / Portfolio (optional)"' />
+                </div>
+              </div>
               <div class="cf-grp"><label><span class="ck">const</span> message <span
                     class="co">=</span></label><textarea name="message" rows="5" placeholder='"Your message..."'
                   required></textarea></div>
