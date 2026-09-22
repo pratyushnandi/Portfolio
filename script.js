@@ -422,7 +422,15 @@ window.addEventListener('load',function(){
     if(typeof emailjs!=='undefined'){
       emailjs.sendForm('service_xzyzs0a','template_jkzoc1q',form)
         .then(()=>{status.textContent='✓ Message sent! I\'ll get back to you soon.';status.className='cf-status ok';form.reset();})
-        .catch(()=>{status.textContent='✗ Failed. Please email: pratyushnandi100@gmail.com';status.className='cf-status err';})
+        .catch(err=>{
+          console.error('EmailJS Error:', err);
+          const uName = form.querySelector('[name="user_name"]')?.value || '';
+          const uEmail = form.querySelector('[name="user_email"]')?.value || '';
+          const uSub = encodeURIComponent(form.querySelector('[name="subject"]')?.value || 'Portfolio Contact');
+          const uMsg = encodeURIComponent(`Name: ${uName}\nEmail: ${uEmail}\n\nMessage:\n` + (form.querySelector('[name="message"]')?.value || ''));
+          status.innerHTML = `✗ EmailJS: ${err?.text || 'Service unavailable'}. <a href="mailto:pratyushnandi100@gmail.com?subject=${uSub}&body=${uMsg}" style="color:var(--c);text-decoration:underline;font-weight:600;">Click to send directly via Email</a>`;
+          status.className='cf-status err';
+        })
         .finally(done);
     } else {
       setTimeout(()=>{status.textContent='✓ Message sent!';status.className='cf-status ok';form.reset();done();},1500);
