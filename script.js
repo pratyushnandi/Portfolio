@@ -414,26 +414,54 @@ window.addEventListener('load',function(){
   const btn=document.getElementById('cfBtn');
   const txt=document.getElementById('cfTxt'), load=document.getElementById('cfLoad');
   const status=document.getElementById('cfStatus');
-  form.addEventListener('submit',e=>{
+  form.addEventListener('submit',async e=>{
     e.preventDefault();
     txt.hidden=true; load.hidden=false; btn.disabled=true;
     status.textContent=''; status.className='cf-status';
     const done=()=>{txt.hidden=false;load.hidden=true;btn.disabled=false;};
-    if(typeof emailjs!=='undefined'){
-      emailjs.sendForm('service_xzyzs0a','template_jkzoc1q',form)
-        .then(()=>{status.textContent='✓ Message sent! I\'ll get back to you soon.';status.className='cf-status ok';form.reset();})
-        .catch(err=>{
-          console.error('EmailJS Error:', err);
-          const uName = form.querySelector('[name="user_name"]')?.value || '';
-          const uEmail = form.querySelector('[name="user_email"]')?.value || '';
-          const uSub = encodeURIComponent(form.querySelector('[name="subject"]')?.value || 'Portfolio Contact');
-          const uMsg = encodeURIComponent(`Name: ${uName}\nEmail: ${uEmail}\n\nMessage:\n` + (form.querySelector('[name="message"]')?.value || ''));
-          status.innerHTML = `✗ EmailJS: ${err?.text || 'Service unavailable'}. <a href="mailto:pratyushnandi100@gmail.com?subject=${uSub}&body=${uMsg}" style="color:var(--c);text-decoration:underline;font-weight:600;">Click to send directly via Email</a>`;
-          status.className='cf-status err';
+
+    const name = form.querySelector('[name="user_name"]')?.value || '';
+    const email = form.querySelector('[name="user_email"]')?.value || '';
+    const subject = form.querySelector('[name="subject"]')?.value || 'Portfolio Contact';
+    const message = form.querySelector('[name="message"]')?.value || '';
+
+    try {
+      const res = await fetch("https://formsubmit.co/ajax/pratyushnandi100@gmail.com", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json"
+        },
+        body: JSON.stringify({
+          name: name,
+          email: email,
+          subject: subject,
+          message: message,
+          _subject: `New Portfolio Message: ${subject} from ${name}`,
+          _template: "table",
+          _captcha: "false"
         })
-        .finally(done);
-    } else {
-      setTimeout(()=>{status.textContent='✓ Message sent!';status.className='cf-status ok';form.reset();done();},1500);
+      });
+      const data = await res.json();
+      if(data.success === "true" || data.success === true) {
+        status.textContent = "✓ Message sent successfully! I'll get back to you soon.";
+        status.className = 'cf-status ok';
+        form.reset();
+      } else if (data.message && data.message.includes('Activation')) {
+        status.innerHTML = "✓ Please check your email (<b>pratyushnandi100@gmail.com</b>) and click <b>'Activate Form'</b> (one-time setup).";
+        status.className = 'cf-status ok';
+        form.reset();
+      } else {
+        throw new Error(data.message || 'Submission failed');
+      }
+    } catch(err) {
+      console.error('Contact Form Error:', err);
+      const uSub = encodeURIComponent(subject);
+      const uMsg = encodeURIComponent(`Name: ${name}\nEmail: ${email}\n\nMessage:\n${message}`);
+      status.innerHTML = `✗ Send failed. <a href="mailto:pratyushnandi100@gmail.com?subject=${uSub}&body=${uMsg}" style="color:var(--c);text-decoration:underline;font-weight:600;">Click to send via Email app</a>`;
+      status.className = 'cf-status err';
+    } finally {
+      done();
     }
   });
   form.querySelectorAll('input,textarea').forEach(inp=>{
