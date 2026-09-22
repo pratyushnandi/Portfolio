@@ -1,0 +1,17 @@
+{
+  "name": "pratyush-nandi-portfolio",
+  "version": "2.0.0",
+  "description": "Premium Portfolio Website — Pratyush Nandi, Software Developer",
+  "main": "index.html",
+  "scripts": {
+    "start": "npx live-server --port=3000 --open=index.html --no-browser=false",
+    "dev": "npx live-server --port=3000 --open=index.html",
+    "serve": "npx serve . -p 3000"
+  },
+  "keywords": ["portfolio", "pratyush-nandi", "software-developer", "web-developer"],
+  "author": "Pratyush Nandi",
+  "license": "MIT",
+  "devDependencies": {
+    "live-server": "^1.2.2"
+  }
+}
