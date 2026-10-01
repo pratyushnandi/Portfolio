@@ -90,17 +90,20 @@ const REDUCE_MOTION = window.matchMedia('(prefers-reduced-motion: reduce)').matc
   const prog=document.getElementById('navProg');
   const navAs=document.querySelectorAll('.n-links a');
   let ticking=false;
+  function updateProg(){
+    const sy=scrollY;
+    nav.classList.toggle('scrolled',sy>60);
+    topBtn.classList.toggle('show',sy>500);
+    const max=document.documentElement.scrollHeight-innerHeight;
+    prog.style.width=(max>0?(sy/max)*100:0)+'%';
+    ticking=false;
+  }
   window.addEventListener('scroll',()=>{
     if(ticking)return;
     ticking=true;
-    requestAnimationFrame(()=>{
-      const sy=scrollY;
-      nav.classList.toggle('scrolled',sy>60);
-      topBtn.classList.toggle('show',sy>500);
-      prog.style.width=((sy/(document.body.scrollHeight-innerHeight))*100)+'%';
-      ticking=false;
-    });
+    requestAnimationFrame(updateProg);
   },{passive:true});
+  window.addEventListener('scrollend',updateProg,{passive:true});
   burger.addEventListener('click',()=>{
     links.classList.toggle('open');
     const o=links.classList.contains('open');
@@ -112,8 +115,14 @@ const REDUCE_MOTION = window.matchMedia('(prefers-reduced-motion: reduce)').matc
   navAs.forEach(a=>a.addEventListener('click',()=>links.classList.remove('open')));
   topBtn.addEventListener('click',()=>window.scrollTo({top:0,behavior:'smooth'}));
   document.querySelectorAll('a[href^="#"]').forEach(a=>a.addEventListener('click',e=>{
-    const t=document.querySelector(a.getAttribute('href'));
-    if(t){e.preventDefault();t.scrollIntoView({behavior:'smooth'});}
+    const href=a.getAttribute('href');
+    const t=document.querySelector(href);
+    if(t){
+      e.preventDefault();
+      t.scrollIntoView({behavior:'smooth'});
+      t.querySelectorAll('.reveal,.reveal-l,.reveal-r,.reveal-u').forEach(el=>el.classList.add('vis'));
+      navAs.forEach(n=>n.classList.toggle('act',n.getAttribute('href')===href));
+    }
   }));
 })();
 
@@ -175,45 +184,40 @@ const REDUCE_MOTION = window.matchMedia('(prefers-reduced-motion: reduce)').matc
 /* ══ 8. SCROLL REVEAL ══ */
 (function(){
   const els=document.querySelectorAll('.reveal,.reveal-l,.reveal-r,.reveal-u');
+  const reveal=e=>{
+    const d=parseFloat(getComputedStyle(e).getPropertyValue('--d')||0);
+    setTimeout(()=>{
+      e.classList.add('vis');
+    },d*1000);
+  };
   const obs=new IntersectionObserver(en=>{
     en.forEach(e=>{
       if(!e.isIntersecting)return;
-      const d=parseFloat(getComputedStyle(e.target).getPropertyValue('--d')||0);
-      setTimeout(()=>{
-        e.target.classList.add('vis');
-        e.target.querySelectorAll('.sk-fill').forEach(b=>b.classList.add('go'));
-      },d*1000);
+      reveal(e.target);
       obs.unobserve(e.target);
     });
-  },{threshold:.1,rootMargin:'0px 0px -30px 0px'});
-  els.forEach(el=>obs.observe(el));
+  },{threshold:0,rootMargin:'200px 0px -10% 0px'});
+  els.forEach(el=>{
+    // Anchor-jump / fast-scroll safety net: reveal instantly if already on-screen
+    // (or just below it) instead of waiting on the observer, so no blank gap flashes.
+    if(el.getBoundingClientRect().top<innerHeight+200){reveal(el);}
+    else obs.observe(el);
+  });
 })();
 
 /* ══ 9. SKILL TABS ══ */
 (function(){
   const tabs=document.querySelectorAll('.sk-tab');
   const panels=document.querySelectorAll('.sk-panel');
-  function animBars(panel){
-    panel.querySelectorAll('.sk-fill').forEach((b,i)=>{
-      b.classList.remove('go');
-      setTimeout(()=>b.classList.add('go'),i*90+80);
-    });
-  }
   tabs.forEach(tab=>{
     tab.addEventListener('click',()=>{
       tabs.forEach(t=>t.classList.remove('active'));
       panels.forEach(p=>p.classList.remove('active'));
       tab.classList.add('active');
       const panel=document.getElementById('p-'+tab.dataset.p);
-      if(panel){panel.classList.add('active');animBars(panel);}
+      if(panel)panel.classList.add('active');
     });
   });
-  // Auto-animate active on scroll
-  let done=false;
-  const obs=new IntersectionObserver(en=>{
-    if(en[0].isIntersecting&&!done){done=true;const a=document.querySelector('.sk-panel.active');if(a)animBars(a);}
-  },{threshold:.2});
-  const sk=document.getElementById('skills');if(sk)obs.observe(sk);
 })();
 
 /* ══ 10. PROJECT FILTERS ══ */
@@ -342,6 +346,25 @@ const REDUCE_MOTION = window.matchMedia('(prefers-reduced-motion: reduce)').matc
   });
 })();
 
+/* ══ 17b. LETTER-SPLIT HERO NAME ══ */
+(function(){
+  if(REDUCE_MOTION)return;
+  function splitChars(el,extraClass){
+    if(!el||!el.firstChild||el.firstChild.nodeType!==3)return;
+    const text=el.firstChild.textContent;
+    const frag=document.createDocumentFragment();
+    [...text].forEach(ch=>{
+      const s=document.createElement('span');
+      s.className='char '+extraClass;
+      s.textContent=ch===' '?' ':ch;
+      frag.appendChild(s);
+    });
+    el.replaceChild(frag,el.firstChild);
+  }
+  splitChars(document.querySelector('.h1-main'),'char-first');
+  splitChars(document.querySelector('.h1-last'),'char-last');
+})();
+
 /* ══ 18. GSAP ANIMATIONS ══ */
 window.addEventListener('load',function(){
   if(typeof gsap==='undefined')return;
@@ -351,8 +374,11 @@ window.addEventListener('load',function(){
   const htl=gsap.timeline({delay:2.6});
   htl
     .from('.hero-chip',     {opacity:0,y:-14,duration:.5,ease:'power2.out'})
-    .from('.hero-h1',       {opacity:0,y:32,duration:.75,ease:'power3.out'},'-=.2')
-    .from('.hero-tagline',  {opacity:0,y:18,duration:.5,ease:'power2.out'},'-=.4')
+    .from('.h1-sub',        {opacity:0,y:14,duration:.4,ease:'power2.out'},'-=.2')
+    .from('.char-first', {opacity:0,y:40,rotateX:-80,transformOrigin:'50% 100%',duration:.6,stagger:.035,ease:'back.out(1.8)'},'-=.15')
+    .from('.char-last',  {opacity:0,y:40,rotateX:-80,transformOrigin:'50% 100%',duration:.6,stagger:.035,ease:'back.out(1.8)'},'-=.5')
+    .from('.h1-dot',        {opacity:0,scale:0,duration:.4,ease:'back.out(3)'},'-=.2')
+    .from('.hero-tagline',  {opacity:0,y:18,duration:.5,ease:'power2.out'},'-=.3')
     .from('.hero-typed-row',{opacity:0,y:18,duration:.5,ease:'power2.out'},'-=.35')
     .from('.hero-bio',      {opacity:0,y:16,duration:.5,ease:'power2.out'},'-=.35')
     .from('.hero-actions',  {opacity:0,y:14,duration:.45,ease:'power2.out'},'-=.3')
@@ -367,9 +393,6 @@ window.addEventListener('load',function(){
   });
 
   // Sections
-  gsap.utils.toArray('.sec-h2').forEach(el=>{
-    gsap.from(el,{scrollTrigger:{trigger:el,start:'top 88%'},opacity:0,y:30,duration:.7,ease:'power3.out'});
-  });
   gsap.utils.toArray('.tl-card').forEach((el,i)=>{
     gsap.from(el,{scrollTrigger:{trigger:el,start:'top 92%'},opacity:0,y:24,duration:.55,delay:i*.07,ease:'power2.out'});
   });
@@ -396,16 +419,27 @@ window.addEventListener('load',function(){
 /* ══ 20. SECTION ACTIVE LINK ══ */
 (function(){
   const navAs=document.querySelectorAll('.n-links a');
-  const secs=document.querySelectorAll('section[id]');
-  const obs=new IntersectionObserver(en=>{
-    en.forEach(e=>{
-      if(e.isIntersecting){
-        const id=e.target.getAttribute('id');
-        navAs.forEach(a=>a.classList.toggle('act',a.getAttribute('href')==='#'+id));
-      }
-    });
-  },{threshold:.35});
-  secs.forEach(s=>obs.observe(s));
+  const secs=Array.from(document.querySelectorAll('section[id]'));
+  if(!secs.length||!navAs.length)return;
+  const nav=document.getElementById('nav');
+  let ticking=false;
+  function setActive(){
+    ticking=false;
+    const offset=(nav?nav.offsetHeight:0)+10;
+    let current=secs[0];
+    for(const s of secs){
+      if(s.getBoundingClientRect().top-offset<=0)current=s;
+    }
+    const id=current.getAttribute('id');
+    navAs.forEach(a=>a.classList.toggle('act',a.getAttribute('href')==='#'+id));
+  }
+  window.addEventListener('scroll',()=>{
+    if(ticking)return;
+    ticking=true;
+    requestAnimationFrame(setActive);
+  },{passive:true});
+  window.addEventListener('scrollend',setActive,{passive:true});
+  setActive();
 })();
 
 /* ══ 21. CONTACT FORM ══ */
@@ -428,33 +462,38 @@ window.addEventListener('load',function(){
     const socialLink = form.querySelector('[name="social_link"]')?.value || 'N/A';
     const message = form.querySelector('[name="message"]')?.value || '';
 
+    const uSub = encodeURIComponent(`[${reason}] ${subject}`);
+    const uMsg = encodeURIComponent(
+      `Name: ${name}\n` +
+      `Email: ${email}\n` +
+      `Reason: ${reason}\n` +
+      `Company: ${company}\n` +
+      `Link: ${socialLink}\n\n` +
+      `Message:\n${message}`
+    );
+    const mailtoUrl = `mailto:pratyushnandi100@gmail.com?subject=${uSub}&body=${uMsg}`;
+
     try {
-      const res = await fetch("https://formsubmit.co/ajax/pratyushnandi100@gmail.com", {
+      const res = await fetch("https://api.web3forms.com/submit", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           "Accept": "application/json"
         },
         body: JSON.stringify({
+          access_key: "dd789f34-7888-4300-a4ac-7842d5524490",
           name: name,
           email: email,
           reason: reason,
           company: company,
           social_link: socialLink,
-          subject: subject,
-          message: message,
-          _subject: `[${reason}] ${subject} from ${name}`,
-          _template: "table",
-          _captcha: "false"
+          subject: `[${reason}] ${subject} from ${name}`,
+          message: message
         })
       });
       const data = await res.json();
-      if(data.success === "true" || data.success === true) {
+      if(data.success) {
         status.textContent = "✓ Message sent successfully! I'll get back to you soon.";
-        status.className = 'cf-status ok';
-        form.reset();
-      } else if (data.message && data.message.includes('Activation')) {
-        status.innerHTML = "✓ Please check your email (<b>pratyushnandi100@gmail.com</b>) and click <b>'Activate Form'</b> (one-time setup).";
         status.className = 'cf-status ok';
         form.reset();
       } else {
@@ -462,16 +501,7 @@ window.addEventListener('load',function(){
       }
     } catch(err) {
       console.error('Contact Form Error:', err);
-      const uSub = encodeURIComponent(`[${reason}] ${subject}`);
-      const uMsg = encodeURIComponent(
-        `Name: ${name}\n` +
-        `Email: ${email}\n` +
-        `Reason: ${reason}\n` +
-        `Company: ${company}\n` +
-        `Link: ${socialLink}\n\n` +
-        `Message:\n${message}`
-      );
-      status.innerHTML = `✗ Send failed. <a href="mailto:pratyushnandi100@gmail.com?subject=${uSub}&body=${uMsg}" style="color:var(--c);text-decoration:underline;font-weight:600;">Click to send via Email app</a>`;
+      status.innerHTML = `✗ Send failed. <a href="${mailtoUrl}" style="color:var(--c);text-decoration:underline;font-weight:600;">Click to send via Email app</a>`;
       status.className = 'cf-status err';
     } finally {
       done();
@@ -501,6 +531,37 @@ window.addEventListener('load',function(){
     });
   },{threshold:.15});
   items.forEach(i=>{i.style.opacity='0';i.style.transform='translateY(20px)';i.style.transition='opacity .55s ease,transform .55s ease';obs.observe(i);});
+})();
+
+/* ══ 24. RIPPLE EFFECT ══ */
+(function(){
+  document.querySelectorAll('.btn-primary,.btn-outline,.btn-res,.cf-btn,.pf,.sk-tab').forEach(btn=>{
+    btn.style.position=btn.style.position||'relative';
+    btn.style.overflow='hidden';
+    btn.addEventListener('click',e=>{
+      const r=btn.getBoundingClientRect();
+      const d=Math.max(r.width,r.height);
+      const ink=document.createElement('span');
+      ink.className='ripple-ink';
+      ink.style.width=ink.style.height=d+'px';
+      ink.style.left=(e.clientX-r.left-d/2)+'px';
+      ink.style.top=(e.clientY-r.top-d/2)+'px';
+      btn.appendChild(ink);
+      setTimeout(()=>ink.remove(),650);
+    });
+  });
+})();
+
+/* ══ 25. SPOTLIGHT CARDS ══ */
+(function(){
+  if(matchMedia('(pointer: coarse)').matches)return;
+  document.querySelectorAll('.sk-card,.pj-card,.tl-card').forEach(card=>{
+    card.addEventListener('mousemove',e=>{
+      const r=card.getBoundingClientRect();
+      card.style.setProperty('--mx',(e.clientX-r.left)+'px');
+      card.style.setProperty('--my',(e.clientY-r.top)+'px');
+    });
+  });
 })();
 
 /* ══ CONSOLE BRANDING ══ */
