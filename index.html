@@ -96,27 +96,37 @@
 
   <!-- ═══ PRELOADER ═══ -->
   <div id="preloader">
+    <div class="pre-grid"></div>
+    <div class="pre-particles" id="preParticles"></div>
+    <div class="pre-flash" id="preFlash"></div>
     <div class="pre-box">
-      <svg class="pre-hex-svg" viewBox="0 0 100 100" fill="none">
-        <polygon points="50,3 97,27 97,73 50,97 3,73 3,27" stroke="url(#pg)" stroke-width="2" fill="none"
-          class="hex-path" />
-        <text x="50" y="63" text-anchor="middle" fill="url(#pg)" font-size="30" font-weight="900"
-          font-family="Plus Jakarta Sans">PN</text>
-        <defs>
-          <linearGradient id="pg" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stop-color="#7c3aed" />
-            <stop offset="100%" stop-color="#06b6d4" />
-          </linearGradient>
-        </defs>
-      </svg>
+      <div class="pre-logo-wrap">
+        <div class="pre-glow"></div>
+        <div class="pre-ring"></div>
+        <div class="pre-ring pre-ring2"></div>
+        <span class="pre-orbit-dot od1"></span>
+        <span class="pre-orbit-dot od2"></span>
+        <svg class="pre-hex-svg" viewBox="0 0 100 100" fill="none">
+          <polygon points="50,3 97,27 97,73 50,97 3,73 3,27" stroke="url(#pg)" stroke-width="2" fill="none"
+            class="hex-path" />
+          <text x="50" y="63" text-anchor="middle" fill="url(#pg)" font-size="30" font-weight="900"
+            font-family="Plus Jakarta Sans">PN</text>
+          <defs>
+            <linearGradient id="pg" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#7c3aed" />
+              <stop offset="100%" stop-color="#06b6d4" />
+            </linearGradient>
+          </defs>
+        </svg>
+      </div>
       <div class="pre-terminal">
         <div class="pre-tbar"><span class="ptd r"></span><span class="ptd y"></span><span class="ptd g"></span><span
             class="pre-tf">boot.sh</span></div>
         <div class="pre-tbody">
           <p><span class="pre-prompt">$</span> <span id="preCmd"></span><span class="pre-blink">█</span></p>
-          <p class="pre-out" id="pout1"></p>
-          <p class="pre-out" id="pout2"></p>
-          <p class="pre-ok" id="pout3"></p>
+          <p><span class="pre-ico" id="pico1"></span><span class="pre-out" id="pout1"></span></p>
+          <p><span class="pre-ico" id="pico2"></span><span class="pre-out" id="pout2"></span></p>
+          <p><span class="pre-ico" id="pico3"></span><span class="pre-ok" id="pout3"></span></p>
         </div>
       </div>
       <div class="pre-prog-wrap">
@@ -223,6 +233,7 @@
       <!-- RIGHT — Photo -->
       <div class="hero-right" id="hRight">
         <div class="photo-scene">
+          <div class="ph-glow"></div>
           <!-- Spinning rings -->
           <div class="ph-ring ph-r1"></div>
           <div class="ph-ring ph-r2"></div>
@@ -254,6 +265,13 @@
           <div class="orbit-ring or3">
             <div class="od"><i class="fab fa-git-alt" style="color:#f05032"></i></div>
           </div>
+        </div>
+        <div class="tb-mobile-row reveal-u">
+          <span><i class="devicon-react-original colored"></i> React</span>
+          <span><i class="devicon-python-plain colored"></i> Python</span>
+          <span><i class="devicon-nodejs-plain colored"></i> Node.js</span>
+          <span><i class="fab fa-js-square" style="color:#f7df1e"></i> JavaScript</span>
+          <span><i class="devicon-mongodb-plain colored"></i> MongoDB</span>
         </div>
       </div>
     </div>
@@ -631,7 +649,7 @@
       <div class="proj-grid" id="projGrid">
 
         <!-- DETECTIFY — Featured -->
-        <article class="pj-card pj-big" data-cat="ai">
+        <article class="pj-card pj-big" data-cat="ai" data-tilt>
           <div class="pj-img-wrap">
             <img src="projects/detectify.jpg" alt="Detectify" class="pj-img" loading="lazy" decoding="async" />
             <div class="pj-overlay">
@@ -651,7 +669,7 @@
         </article>
 
         <!-- CAMPUS RECRUITMENT — Featured -->
-        <article class="pj-card pj-big" data-cat="web">
+        <article class="pj-card pj-big" data-cat="web" data-tilt>
           <div class="pj-img-wrap">
             <img src="projects/recruitment.jpg" alt="Campus Recruitment" class="pj-img" loading="lazy" decoding="async" />
             <div class="pj-overlay">
@@ -670,7 +688,7 @@
         </article>
 
         <!-- Portfolio Website -->
-        <article class="pj-card" data-cat="web">
+        <article class="pj-card" data-cat="web" data-tilt>
           <div class="pj-mini-icon" style="background:linear-gradient(135deg,#4a00e0,#8e2de2)"><i
               class="fas fa-user-tie"></i></div>
           <div class="pj-body">
@@ -686,7 +704,7 @@
         </article>
 
         <!-- Code Editor -->
-        <article class="pj-card" data-cat="fullstack">
+        <article class="pj-card" data-cat="fullstack" data-tilt>
           <div class="pj-mini-icon" style="background:linear-gradient(135deg,#1a1a2e,#16213e)"><i
               class="fas fa-code"></i></div>
           <div class="pj-body">
@@ -702,7 +720,7 @@
         </article>
 
         <!-- Web Calculator -->
-        <article class="pj-card" data-cat="fullstack">
+        <article class="pj-card" data-cat="fullstack" data-tilt>
           <div class="pj-mini-icon" style="background:linear-gradient(135deg,#0f3460,#533483)"><i
               class="fas fa-calculator"></i></div>
           <div class="pj-body">
@@ -718,7 +736,7 @@
         </article>
 
         <!-- Rock Paper Scissors -->
-        <article class="pj-card" data-cat="fullstack">
+        <article class="pj-card" data-cat="fullstack" data-tilt>
           <div class="pj-mini-icon" style="background:linear-gradient(135deg,#3a1c71,#d76d77)"><i
               class="fas fa-gamepad"></i></div>
           <div class="pj-body">
@@ -734,7 +752,7 @@
         </article>
 
         <!-- Cyber Calendar -->
-        <article class="pj-card" data-cat="fullstack">
+        <article class="pj-card" data-cat="fullstack" data-tilt>
           <div class="pj-mini-icon" style="background:linear-gradient(135deg,#134e5e,#71b280)"><i
               class="fas fa-calendar-alt"></i></div>
           <div class="pj-body">
@@ -750,7 +768,7 @@
         </article>
 
         <!-- Background Changer -->
-        <article class="pj-card" data-cat="fullstack">
+        <article class="pj-card" data-cat="fullstack" data-tilt>
           <div class="pj-mini-icon" style="background:linear-gradient(135deg,#1e3c72,#2a5298)"><i
               class="fas fa-palette"></i></div>
           <div class="pj-body">
@@ -986,17 +1004,18 @@
         <path d="M0,30 C360,60 1080,0 1440,30 L1440,60 L0,60 Z" fill="#060812" />
       </svg>
     </div>
+    <div class="foot-glow"></div>
+    <div class="foot-particles" id="footParticles"></div>
     <div class="foot-inner">
-      <a href="#hero" class="n-logo"><span class="nl-b">&lt;</span>pratyush<span class="nl-d">.</span>dev<span
+      <a href="#hero" class="n-logo reveal-u" style="--d:0s"><span class="nl-b">&lt;</span>pratyush<span class="nl-d">.</span>dev<span
           class="nl-b">/&gt;</span></a>
-      <p>Software Developer · Full-Stack · MCA Student · Data Scientist Enthusiast</p>
-      <p class="foot-co">@ Eltern Segen Technologie Pvt. Ltd. · Kolkata, India</p>
-      <div class="foot-soc">
+      <p class="reveal-u" style="--d:.08s">Software Developer · Full-Stack · AI · IoT · Computer Vision.</p>
+      <div class="foot-soc reveal-u" style="--d:.16s">
         <a href="https://github.com/pratyushnandi" target="_blank" rel="noopener noreferrer"><i class="fab fa-github"></i></a>
         <a href="https://www.linkedin.com/in/pratyushnandi/" target="_blank" rel="noopener noreferrer"><i class="fab fa-linkedin-in"></i></a>
         <a href="mailto:pratyushnandi100@gmail.com"><i class="fas fa-envelope"></i></a>
       </div>
-      <p class="foot-copy">&copy; 2026 <span class="grad-t">Pratyush Nandi</span>. Crafted with ❤️ in Kolkata.</p>
+      <p class="foot-copy reveal-u" style="--d:.24s">&copy; 2026 <span class="grad-t">Pratyush Nandi</span> &middot; Turning ideas into scalable software.</p>
     </div>
   </footer>
 
