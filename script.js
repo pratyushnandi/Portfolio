@@ -132,6 +132,30 @@ const REDUCE_MOTION = window.matchMedia('(prefers-reduced-motion: reduce)').matc
   });
 })();
 
+/* ══ 3b. THEME TOGGLE ══ */
+(function(){
+  const btn=document.getElementById('themeToggle');
+  if(!btn)return;
+  const root=document.documentElement;
+  function apply(theme){
+    if(theme==='light') root.setAttribute('data-theme','light');
+    else root.removeAttribute('data-theme');
+  }
+  btn.addEventListener('click',()=>{
+    const isLight=root.getAttribute('data-theme')==='light';
+    const next=isLight?'dark':'light';
+    try{ localStorage.setItem('pn-theme',next); }catch(err){}
+    const rect=btn.getBoundingClientRect();
+    root.style.setProperty('--tx',(rect.left+rect.width/2)+'px');
+    root.style.setProperty('--ty',(rect.top+rect.height/2)+'px');
+    if(!REDUCE_MOTION && document.startViewTransition){
+      document.startViewTransition(()=>apply(next));
+    } else {
+      apply(next);
+    }
+  });
+})();
+
 /* ══ 4. NAVBAR ══ */
 (function(){
   const nav=document.getElementById('nav');
@@ -144,22 +168,65 @@ const REDUCE_MOTION = window.matchMedia('(prefers-reduced-motion: reduce)').matc
   function syncNavHeight(){
     document.documentElement.style.setProperty('--nav-h',(nav.offsetHeight+10)+'px');
   }
+  // Progress bar tracks the nav-links row itself: it fills from the left edge
+  // of "home" to the right edge of whichever link is currently active, so it
+  // always lines up with the highlighted section pill above it.
+  function syncProgBar(){
+    if(!navAs.length)return;
+    const active=links.querySelector('a.act')||navAs[0];
+    const navRect=links.getBoundingClientRect();
+    const activeRect=active.getBoundingClientRect();
+    prog.style.left=navRect.left+'px';
+    prog.style.width=Math.max(0,activeRect.right-navRect.left)+'px';
+  }
+  // Scroll-spy: the active section is the last one (in document order)
+  // whose top has crossed a trigger line near the top of the viewport.
+  // Computed directly off live layout on every scroll frame, so there's no
+  // batching ambiguity from overlapping IntersectionObserver entries.
+  const sections=[...navAs].map(a=>document.querySelector(a.getAttribute('href'))).filter(Boolean);
+  function syncActiveSection(){
+    if(!sections.length)return;
+    const triggerY=innerHeight*.35;
+    let active=sections[0];
+    for(const s of sections){
+      if(s.getBoundingClientRect().top<=triggerY)active=s; else break;
+    }
+    const href='#'+active.id;
+    navAs.forEach(n=>n.classList.toggle('act',n.getAttribute('href')===href));
+  }
   function updateProg(){
     const sy=scrollY;
     const wasScrolled=nav.classList.contains('scrolled');
     nav.classList.toggle('scrolled',sy>60);
     if(wasScrolled!==nav.classList.contains('scrolled'))syncNavHeight();
     topBtn.classList.toggle('show',sy>500);
-    const max=document.documentElement.scrollHeight-innerHeight;
-    prog.style.width=(max>0?(sy/max)*100:0)+'%';
+    syncActiveSection();
+    syncProgBar();
     ticking=false;
   }
   syncNavHeight();
-  window.addEventListener('resize',syncNavHeight);
+  window.addEventListener('resize',()=>{syncNavHeight();syncActiveSection();syncProgBar();});
+  // Safety net: a smooth/animated scroll (nav click, scrollIntoView) can end
+  // its event stream slightly before the scroll position is truly at rest, so
+  // a single fixed-delay "settle" timer can under- or over-shoot depending on
+  // how long the browser's scroll-animation tail runs. Instead, poll until
+  // scrollY is observed unchanged for two ticks in a row, then do one final
+  // authoritative re-sync — this is correct regardless of the tail's length.
+  let settlePoll=null,lastSettleSy=null,stableTicks=0;
+  function scheduleSettle(){
+    clearInterval(settlePoll);
+    stableTicks=0;lastSettleSy=scrollY;
+    settlePoll=setInterval(()=>{
+      if(scrollY===lastSettleSy){
+        if(++stableTicks>=2){clearInterval(settlePoll);settlePoll=null;updateProg();}
+      }else{
+        stableTicks=0;lastSettleSy=scrollY;
+      }
+    },60);
+  }
   window.addEventListener('scroll',()=>{
-    if(ticking)return;
-    ticking=true;
-    requestAnimationFrame(updateProg);
+    if(!ticking){ticking=true;requestAnimationFrame(updateProg);}
+    scheduleSettle();
   },{passive:true});
   window.addEventListener('scrollend',updateProg,{passive:true});
   burger.addEventListener('click',()=>{
@@ -180,8 +247,13 @@ const REDUCE_MOTION = window.matchMedia('(prefers-reduced-motion: reduce)').matc
       t.scrollIntoView({behavior:'smooth',block:'start'});
       t.querySelectorAll('.reveal,.reveal-l,.reveal-r,.reveal-u').forEach(el=>el.classList.add('vis'));
       navAs.forEach(n=>n.classList.toggle('act',n.getAttribute('href')===href));
+      syncProgBar();
     }
   }));
+  // Initial paint: figure out the right section (handles a page load that
+  // already has scroll restored or an #anchor in the URL) and lay out the bar.
+  syncActiveSection();
+  syncProgBar();
 })();
 
 /* ══ 5. TYPED TEXT ══ */

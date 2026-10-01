@@ -4,6 +4,14 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem('pn-theme');
+        if (t === 'light') document.documentElement.setAttribute('data-theme', 'light');
+      } catch (e) {}
+    })();
+  </script>
   <meta name="description"
     content="Pratyush Nandi — Software Developer & passionate Programmer at Eltern Segen Technologie Pvt. Ltd. MCA @ Adamas University. Full-Stack, Python, React, Node.js — Kolkata." />
   <meta name="keywords"
@@ -154,6 +162,10 @@
         <li><a href="#contact" data-t="contact">contact</a></li>
       </ul>
       <div class="n-end">
+        <button class="theme-toggle" id="themeToggle" aria-label="Toggle light / dark theme" title="Toggle theme">
+          <i class="fas fa-sun tt-sun"></i>
+          <i class="fas fa-moon tt-moon"></i>
+        </button>
         <a href="files/PRATYUSH%20NANDI_CV%20(NEW).pdf" download class="btn-res">
           <i class="fas fa-file-code"></i> Resume
         </a>
