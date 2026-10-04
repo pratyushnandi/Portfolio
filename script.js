@@ -17,13 +17,27 @@ const REDUCE_MOTION = window.matchMedia('(prefers-reduced-motion: reduce)').matc
     cols=Math.floor(innerWidth/fs);drops=Array.from({length:cols},()=>Math.random()*-100);
   }
   resize(); window.addEventListener('resize',resize,{passive:true});
+
+  /* The per-frame wash that fades old glyphs has to be the CURRENT theme's
+     background. Hardcoding the dark value meant light mode accumulated a grey
+     smudge instead of fading to white. Cached because getComputedStyle in the
+     draw loop is a forced style read. */
+  let trail='rgba(6,8,18,0.055)';
+  function readTrail(){
+    const v=getComputedStyle(document.documentElement)
+      .getPropertyValue('--canvas-trail').trim();
+    if(v) trail=v;
+  }
+  readTrail();
+  window.addEventListener('pn:themechange',readTrail);
+
   let last=0,running=true;
   document.addEventListener('visibilitychange',()=>{running=!document.hidden;});
   function frame(t){
     requestAnimationFrame(frame);
     if(!running||t-last<55)return;
     last=t;
-    ctx.fillStyle='rgba(6,8,18,0.055)';ctx.fillRect(0,0,innerWidth,innerHeight);
+    ctx.fillStyle=trail;ctx.fillRect(0,0,innerWidth,innerHeight);
     ctx.font=`${fs}px "Fira Code",monospace`;
     for(let i=0;i<drops.length;i++){
       const ch2=ch[Math.floor(Math.random()*ch.length)];
@@ -47,6 +61,21 @@ const REDUCE_MOTION = window.matchMedia('(prefers-reduced-motion: reduce)').matc
   const particleWrap=document.getElementById('preParticles'), flash=document.getElementById('preFlash');
   const hexSvg=document.querySelector('.pre-hex-svg'), terminal=document.querySelector('.pre-terminal');
   if(!loader)return;
+
+  /* Skip the whole show when it would only be in the way: a repeat visit in this
+     tab, or a visitor who asked for reduced motion. Previously the 5s wait was
+     unconditional, so every cached reload paid it again.
+     .skipped rather than .gone, because .gone animates opacity/blur/scale over
+     .8s — on this path there is nothing to animate away from, and fading a
+     full-strength preloader out would just be a flash. */
+  let seen=false;
+  try{ seen=sessionStorage.getItem('pn-seen')==='1'; }catch(e){}
+  if(seen||REDUCE_MOTION){
+    loader.classList.add('skipped');
+    return;
+  }
+  try{ sessionStorage.setItem('pn-seen','1'); }catch(e){}
+
   if(particleWrap){
     for(let i=0;i<22;i++){
       const p=document.createElement('span');
@@ -92,19 +121,38 @@ const REDUCE_MOTION = window.matchMedia('(prefers-reduced-motion: reduce)').matc
     bar.style.setProperty('--bar-mid','#10b981');
     num.style.color='var(--g)';
   },4200);
-  if(terminal){
-    document.addEventListener('mousemove',(e)=>{
-      const r=terminal.getBoundingClientRect();
-      const px=(e.clientX-r.left)/r.width-.5, py=(e.clientY-r.top)/r.height-.5;
-      terminal.style.setProperty('--tilt-x',(px*6)+'deg');
-      terminal.style.setProperty('--tilt-y',(-py*6)+'deg');
-    });
+  /* Named so it can be detached on finish. As an anonymous listener this stayed
+     bound for the whole session, running getBoundingClientRect() — a forced
+     layout read — on every mousemove long after the preloader was hidden. */
+  function tiltTerminal(e){
+    const r=terminal.getBoundingClientRect();
+    const px=(e.clientX-r.left)/r.width-.5, py=(e.clientY-r.top)/r.height-.5;
+    terminal.style.setProperty('--tilt-x',(px*6)+'deg');
+    terminal.style.setProperty('--tilt-y',(-py*6)+'deg');
   }
-  const hide=()=>setTimeout(()=>{
-    if(flash)flash.classList.add('burst');
+  if(terminal) document.addEventListener('mousemove',tiltTerminal,{passive:true});
+
+  /* The old gate was `load` + 5000ms with no ceiling, so a single hanging CDN
+     request held the page behind an opaque overlay indefinitely. Now the scripted
+     sequence runs on its own clock and the overlay lifts at the later of
+     (sequence complete, load) — but never past HARD_CAP, whatever the network does. */
+  const SEQUENCE_MS=4600, HARD_CAP_MS=6500;
+  let sequenceDone=false, loaded=false, finished=false;
+  function finish(){
+    if(finished)return;
+    finished=true;
+    clearInterval(ti); clearInterval(pb);
+    if(terminal) document.removeEventListener('mousemove',tiltTerminal);
+    if(bar) bar.style.width='100%';
+    if(num) num.textContent='100';
+    if(flash) flash.classList.add('burst');
     setTimeout(()=>loader.classList.add('gone'),150);
-  },5000);
-  if(document.readyState==='complete')hide();else window.addEventListener('load',hide);
+  }
+  const maybeFinish=()=>{ if(sequenceDone&&loaded) finish(); };
+  setTimeout(()=>{ sequenceDone=true; maybeFinish(); },SEQUENCE_MS);
+  setTimeout(finish,HARD_CAP_MS);
+  if(document.readyState==='complete'){ loaded=true; }
+  else window.addEventListener('load',()=>{ loaded=true; maybeFinish(); });
 })();
 
 /* ══ 3. CURSOR ══ */
@@ -112,7 +160,10 @@ const REDUCE_MOTION = window.matchMedia('(prefers-reduced-motion: reduce)').matc
   const dot=document.getElementById('cur-dot');
   const ring=document.getElementById('cur-ring');
   const glow=document.getElementById('cur-glow');
-  if(!dot||matchMedia('(pointer: coarse)').matches)return;
+  if(!dot||!ring||!glow||matchMedia('(pointer: coarse)').matches)return;
+  /* Signals to CSS that it is now safe to hide the native cursor. Gating it here
+     means any failure above this line leaves the normal pointer intact. */
+  document.documentElement.classList.add('has-cursor');
   let mx=innerWidth/2,my=innerHeight/2,dx=mx,dy=my,rx=mx,ry=my,gx=mx,gy=my;
   document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;},{passive:true});
   function follow(){
@@ -137,23 +188,30 @@ const REDUCE_MOTION = window.matchMedia('(prefers-reduced-motion: reduce)').matc
   const btn=document.getElementById('themeToggle');
   if(!btn)return;
   const root=document.documentElement;
+  const meta=document.getElementById('themeColor');
   function apply(theme){
     if(theme==='light') root.setAttribute('data-theme','light');
     else root.removeAttribute('data-theme');
+    // Keep the mobile browser chrome in step with the theme on screen.
+    if(meta) meta.setAttribute('content', theme==='light' ? '#faf8ff' : '#060812');
+    // Lets theme-dependent canvas/JS colour re-read its tokens.
+    window.dispatchEvent(new CustomEvent('pn:themechange',{detail:{theme}}));
   }
   btn.addEventListener('click',()=>{
     const isLight=root.getAttribute('data-theme')==='light';
     const next=isLight?'dark':'light';
     try{ localStorage.setItem('pn-theme',next); }catch(err){}
-    const rect=btn.getBoundingClientRect();
-    root.style.setProperty('--tx',(rect.left+rect.width/2)+'px');
-    root.style.setProperty('--ty',(rect.top+rect.height/2)+'px');
-    if(!REDUCE_MOTION && document.startViewTransition){
-      document.startViewTransition(()=>apply(next));
-    } else {
-      apply(next);
-    }
+    apply(next);
   });
+
+  // Follow the OS while the visitor hasn't made an explicit choice.
+  const mq=window.matchMedia('(prefers-color-scheme: light)');
+  const onOS=e=>{
+    let stored=null;
+    try{ stored=localStorage.getItem('pn-theme'); }catch(err){}
+    if(!stored) apply(e.matches?'light':'dark');
+  };
+  if(mq.addEventListener) mq.addEventListener('change',onOS);
 })();
 
 /* ══ 4. NAVBAR ══ */
@@ -188,8 +246,14 @@ const REDUCE_MOTION = window.matchMedia('(prefers-reduced-motion: reduce)').matc
     if(!sections.length)return;
     const triggerY=innerHeight*.35;
     let active=sections[0];
-    for(const s of sections){
-      if(s.getBoundingClientRect().top<=triggerY)active=s; else break;
+    // At the very bottom, force the last section: a short final section's top
+    // may never cross the trigger line, which would leave the wrong link lit.
+    if(innerHeight+scrollY>=document.documentElement.scrollHeight-2){
+      active=sections[sections.length-1];
+    }else{
+      for(const s of sections){
+        if(s.getBoundingClientRect().top<=triggerY)active=s; else break;
+      }
     }
     const href='#'+active.id;
     navAs.forEach(n=>n.classList.toggle('act',n.getAttribute('href')===href));
@@ -205,7 +269,12 @@ const REDUCE_MOTION = window.matchMedia('(prefers-reduced-motion: reduce)').matc
     ticking=false;
   }
   syncNavHeight();
-  window.addEventListener('resize',()=>{syncNavHeight();syncActiveSection();syncProgBar();});
+  window.addEventListener('resize',()=>{
+    // The mobile panel is hidden by a min-width media query on desktop, so its
+    // state has to be reset on the way across or the burger stays an X.
+    if(innerWidth>768&&links.classList.contains('open'))setMenu(false);
+    syncNavHeight();syncActiveSection();syncProgBar();
+  });
   // Safety net: a smooth/animated scroll (nav click, scrollIntoView) can end
   // its event stream slightly before the scroll position is truly at rest, so
   // a single fixed-delay "settle" timer can under- or over-shoot depending on
@@ -229,15 +298,27 @@ const REDUCE_MOTION = window.matchMedia('(prefers-reduced-motion: reduce)').matc
     scheduleSettle();
   },{passive:true});
   window.addEventListener('scrollend',updateProg,{passive:true});
-  burger.addEventListener('click',()=>{
-    links.classList.toggle('open');
-    const o=links.classList.contains('open');
+  /* Single place that owns the menu's open state. The burger's bars are driven by
+     inline styles, so every path that closes the menu has to clear them too —
+     previously only the burger click wrote them, while the nav-link click and
+     (nothing at all) on resize just dropped the .open class, leaving the burger
+     stuck as an X. */
+  function setMenu(open){
+    links.classList.toggle('open',open);
+    burger.setAttribute('aria-expanded',open?'true':'false');
     const sp=burger.querySelectorAll('span');
-    sp[0].style.transform=o?'rotate(45deg) translate(5px,5px)':'';
-    sp[1].style.opacity=o?'0':'1';
-    sp[2].style.transform=o?'rotate(-45deg) translate(5px,-5px)':'';
+    if(sp.length<3)return;
+    sp[0].style.transform=open?'rotate(45deg) translate(5px,5px)':'';
+    sp[1].style.opacity=open?'0':'1';
+    sp[2].style.transform=open?'rotate(-45deg) translate(5px,-5px)':'';
+  }
+  setMenu(false);
+  burger.addEventListener('click',()=>setMenu(!links.classList.contains('open')));
+  navAs.forEach(a=>a.addEventListener('click',()=>setMenu(false)));
+  // Close on Escape, and whenever the layout crosses back to the desktop nav.
+  document.addEventListener('keydown',e=>{
+    if(e.key==='Escape'&&links.classList.contains('open'))setMenu(false);
   });
-  navAs.forEach(a=>a.addEventListener('click',()=>links.classList.remove('open')));
   topBtn.addEventListener('click',()=>window.scrollTo({top:0,behavior:'smooth'}));
   document.querySelectorAll('a[href^="#"]').forEach(a=>a.addEventListener('click',e=>{
     const href=a.getAttribute('href');
@@ -358,10 +439,20 @@ const REDUCE_MOTION = window.matchMedia('(prefers-reduced-motion: reduce)').matc
     btns.forEach(b=>b.classList.remove('active'));
     btn.classList.add('active');
     const f=btn.dataset.f;
-    cards.forEach((card,i)=>{
+    // Stagger counts only the cards actually being shown. Using the index into the
+    // full card list meant a filter that matched, say, cards 3 and 6 produced a
+    // .12s/.24s stagger with a visible gap where the hidden cards' slots were.
+    let shown=0;
+    cards.forEach(card=>{
       const show=f==='all'||card.dataset.cat===f;
-      if(show){card.classList.remove('out');card.style.transitionDelay=(i*.04)+'s';setTimeout(()=>card.classList.add('vis'),50);}
-      else{card.classList.add('out');card.classList.remove('vis');}
+      if(show){
+        card.classList.remove('out');
+        card.style.transitionDelay=(shown++*.04)+'s';
+        setTimeout(()=>card.classList.add('vis'),50);
+      }else{
+        card.classList.add('out');card.classList.remove('vis');
+        card.style.transitionDelay='';
+      }
     });
   }));
   // Init reveal
@@ -380,13 +471,13 @@ const REDUCE_MOTION = window.matchMedia('(prefers-reduced-motion: reduce)').matc
     if(ticking)return;
     ticking=true;
     requestAnimationFrame(()=>{
-      const x=((lx/innerWidth)*100).toFixed(1);
-      const y=((ly/innerHeight)*100).toFixed(1);
-      hero.style.background=`radial-gradient(ellipse at ${x}% ${y}%, rgba(124,58,237,.14) 0%, var(--bg) 55%)`;
+      // Feed .hero::before instead of replacing .hero's own background, so the
+      // glow layer stays transparent and #bgCanvas keeps showing through.
+      hero.style.setProperty('--glow-x',((lx/innerWidth)*100).toFixed(1)+'%');
+      hero.style.setProperty('--glow-y',((ly/innerHeight)*100).toFixed(1)+'%');
       ticking=false;
     });
   },{passive:true});
-  hero.addEventListener('mouseleave',()=>hero.style.background='');
 })();
 
 /* ══ 12. MAGNETIC BUTTONS ══ */
@@ -501,10 +592,13 @@ window.addEventListener('load',function(){
   if(typeof gsap==='undefined')return;
   gsap.registerPlugin(ScrollTrigger);
 
-  // Nav entrance
+  // Nav entrance — if the tab was backgrounded while this ran, rAF-driven tweens can
+  // stall for a long time (browsers throttle rAF heavily on hidden tabs), leaving nav
+  // links/Resume stuck at low opacity. Force full visibility after 2s no matter what.
   if(!REDUCE_MOTION){
     gsap.from('.nav-inner a',{opacity:0,y:-12,duration:.4,stagger:.05,ease:'power2.out'});
   }
+  setTimeout(()=>gsap.set('.nav-inner a',{clearProps:'opacity,transform'}),2000);
 
   // Hero entrance
   const htl=gsap.timeline({delay:2.6});
@@ -568,36 +662,15 @@ window.addEventListener('load',function(){
   });
 });
 
-/* ══ 20. SECTION ACTIVE LINK ══ */
-(function(){
-  const navAs=document.querySelectorAll('.n-links a');
-  const secs=Array.from(document.querySelectorAll('section[id]'));
-  if(!secs.length||!navAs.length)return;
-  const nav=document.getElementById('nav');
-  let ticking=false;
-  function setActive(){
-    ticking=false;
-    const offset=(nav?nav.offsetHeight:0)+10;
-    let current=secs[0];
-    const atBottom=innerHeight+scrollY>=document.documentElement.scrollHeight-2;
-    if(atBottom){
-      current=secs[secs.length-1];
-    }else{
-      for(const s of secs){
-        if(s.getBoundingClientRect().top-offset<=0)current=s;
-      }
-    }
-    const id=current.getAttribute('id');
-    navAs.forEach(a=>a.classList.toggle('act',a.getAttribute('href')==='#'+id));
-  }
-  window.addEventListener('scroll',()=>{
-    if(ticking)return;
-    ticking=true;
-    requestAnimationFrame(setActive);
-  },{passive:true});
-  window.addEventListener('scrollend',setActive,{passive:true});
-  setActive();
-})();
+/* ══ 20. (removed) SECTION ACTIVE LINK ══
+   This was a second, independent scroll-spy writing the same .act class as the
+   navbar module above, but using a different trigger line (nav height + 10px vs
+   35% of viewport height). Both ran on every scroll; this one was queued second
+   so it won the class, while the navbar module had already sized #navProg from
+   its own answer. Between the two trigger lines the lit pill and the progress
+   bar therefore pointed at different sections — permanently, not as a flicker.
+   Its only unique behaviour (force the last section at page bottom) now lives in
+   syncActiveSection(), so deleting it loses nothing. */
 
 /* ══ 21. CONTACT FORM ══ */
 (function(){
@@ -605,8 +678,41 @@ window.addEventListener('load',function(){
   const btn=document.getElementById('cfBtn');
   const txt=document.getElementById('cfTxt'), load=document.getElementById('cfLoad');
   const status=document.getElementById('cfStatus');
+  /* The form carries `novalidate` so the browser's default bubbles don't break the
+     terminal styling — but nothing replaced the validation it switched off, so an
+     entirely empty form would POST and come back as "Send failed". These checks use
+     the constraint-validation API, so `required`, type=email and type=url are all
+     honoured without duplicating their rules. */
+  const FIELD_LABELS={
+    user_name:'name', user_email:'email', contact_reason:'reason',
+    subject:'subject', social_link:'profileLink', message:'message'
+  };
+  function firstInvalid(){
+    for(const el of form.querySelectorAll('input,textarea,select')){
+      if(!el.checkValidity())return el;
+    }
+    return null;
+  }
+  function showInvalid(el){
+    const label=FIELD_LABELS[el.name]||el.name||'field';
+    const empty=!el.value.trim();
+    status.textContent = empty
+      ? `✗ ${label} is required.`
+      : `✗ ${label} is not valid.`;
+    status.className='cf-status err';
+    el.classList.add('cf-invalid');
+    el.focus();
+  }
+  form.querySelectorAll('input,textarea,select').forEach(el=>{
+    el.addEventListener('input',()=>el.classList.remove('cf-invalid'));
+    el.addEventListener('change',()=>el.classList.remove('cf-invalid'));
+  });
+
   form.addEventListener('submit',async e=>{
     e.preventDefault();
+    const bad=firstInvalid();
+    if(bad){ showInvalid(bad); return; }
+    form.querySelectorAll('.cf-invalid').forEach(el=>el.classList.remove('cf-invalid'));
     txt.hidden=true; load.hidden=false; btn.disabled=true;
     status.textContent=''; status.className='cf-status';
     const done=()=>{txt.hidden=false;load.hidden=true;btn.disabled=false;};
@@ -670,11 +776,17 @@ window.addEventListener('load',function(){
   });
 })();
 
-/* ══ 22. PAGE FADE-IN ══ */
-(function(){
-  document.body.style.opacity='0';document.body.style.transition='opacity .5s ease';
-  window.addEventListener('load',()=>setTimeout(()=>document.body.style.opacity='1',2300));
-})();
+/* ══ 22. PAGE FADE-IN ══
+   Was: body opacity 0 until `load` + 2300ms. Two problems with that. #preloader is
+   itself a body child, so opacity on body hid the preloader as well — its first
+   ~2.3s played completely invisibly, against a bare html background. And because
+   only JS ever restored the opacity, a visitor with JS disabled got a blank page.
+   Removed rather than rewritten: #preloader already covers the viewport at
+   z-index 99999 and fades, blurs and scales away over .8s via its .gone
+   transition, which is the reveal this was duplicating. Reintroducing it would
+   need a content wrapper, and wrapping the page in an opacity/transform layer
+   risks re-parenting every position:fixed layer here (cursor, orbs, canvas,
+   nav) — not worth it for a redundant fade. */
 
 /* ══ 23. TIMELINE ENTRANCE ══ */
 (function(){
@@ -745,8 +857,10 @@ window.addEventListener('load',function(){
   obs.observe(wrap);
 })();
 
-/* ══ CONSOLE BRANDING ══ */
-console.clear();
+/* ══ CONSOLE BRANDING ══
+   No console.clear() here: it ran after every other module and wiped anything
+   already logged, including real errors and warnings from this page's own scripts,
+   which made anything failing during init effectively invisible. */
 console.log('%c██████╗ ███╗   ██╗\n██╔══██╗████╗  ██║\n██████╔╝██╔██╗ ██║\n██╔═══╝ ██║╚██╗██║\n██║     ██║ ╚████║\n╚═╝     ╚═╝  ╚═══╝','font-size:11px;color:#7c3aed;font-family:monospace;line-height:1.4;');
 console.log('%c⚡ Pratyush Nandi | Software Developer','font-size:14px;font-weight:900;color:#a78bfa;');
 console.log('%c🏢 Eltern Segen Technologie Pvt. Ltd.','font-size:11px;color:#06b6d4;');
