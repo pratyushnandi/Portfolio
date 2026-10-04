@@ -426,7 +426,15 @@ const REDUCE_MOTION = window.matchMedia('(prefers-reduced-motion: reduce)').matc
       panels.forEach(p=>p.classList.remove('active'));
       tab.classList.add('active');
       const panel=document.getElementById('p-'+tab.dataset.p);
-      if(panel)panel.classList.add('active');
+      if(panel){
+        panel.classList.add('active');
+        if(!REDUCE_MOTION) panel.querySelectorAll('.sk-card').forEach((c,i)=>{
+          c.classList.remove('pop'); void c.offsetWidth;
+          c.style.setProperty('--pd',(i*.07)+'s');
+          c.classList.add('pop');
+          c.onanimationend=e=>{ if(e.animationName==='sk-pop') c.classList.remove('pop'); };
+        });
+      }
     });
   });
 })();
@@ -856,6 +864,64 @@ window.addEventListener('load',function(){
   },{threshold:.1});
   obs.observe(wrap);
 })();
+
+/* ══ 27. SECTION LABEL DECODE ══
+   "// 01. about_me" resolves out of random glyphs, left to right, the first time
+   it scrolls into view. Mono font, so the width never jitters. */
+(function(){
+  if(REDUCE_MOTION)return;
+  const glyphs='!<>-_\\/[]{}=+*^?#01';
+  function scramble(el){
+    const final=el.textContent, len=final.length, total=26;
+    let frame=0;
+    const iv=setInterval(()=>{
+      let out='';
+      for(let i=0;i<len;i++){
+        const settleAt=Math.floor(i/len*total*.8)+4;
+        out+=(frame>=settleAt||final[i]===' ')?final[i]:glyphs[Math.random()*glyphs.length|0];
+      }
+      el.textContent=out;
+      if(++frame>total){clearInterval(iv);el.textContent=final;}
+    },38);
+  }
+  const obs=new IntersectionObserver(en=>en.forEach(e=>{
+    if(!e.isIntersecting)return;
+    scramble(e.target); obs.unobserve(e.target);
+  }),{threshold:.6});
+  document.querySelectorAll('.sec-lbl').forEach(l=>obs.observe(l));
+})();
+
+/* ══ 28. TIMELINE PROGRESS LINE ══ */
+(function(){
+  const t=document.getElementById('timelineTrack');if(!t)return;
+  const obs=new IntersectionObserver(en=>{
+    if(en[0].isIntersecting){t.classList.add('lit');obs.disconnect();}
+  },{threshold:.2});
+  obs.observe(t);
+})();
+
+/* ══ 29. BACK-TO-TOP PROGRESS RING ══ */
+(function(){
+  const b=document.getElementById('topBtn');if(!b)return;
+  let ticking=false;
+  function upd(){
+    const max=document.documentElement.scrollHeight-innerHeight;
+    b.style.setProperty('--sp',max>0?(scrollY/max).toFixed(4):'0');
+    ticking=false;
+  }
+  window.addEventListener('scroll',()=>{if(!ticking){ticking=true;requestAnimationFrame(upd);}},{passive:true});
+  upd();
+})();
+
+/* ══ 30. SECTION NUMBER PARALLAX ══
+   Drives --ny on each heading; the outlined "01" behind it reads it in CSS. */
+window.addEventListener('load',function(){
+  if(typeof gsap==='undefined'||typeof ScrollTrigger==='undefined'||REDUCE_MOTION)return;
+  gsap.utils.toArray('.sec-h2[data-num]').forEach(h=>{
+    gsap.fromTo(h,{'--ny':'40px'},{'--ny':'-40px',ease:'none',
+      scrollTrigger:{trigger:h,start:'top bottom',end:'bottom top',scrub:true}});
+  });
+});
 
 /* ══ CONSOLE BRANDING ══
    No console.clear() here: it ran after every other module and wiped anything
