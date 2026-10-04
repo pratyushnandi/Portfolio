@@ -60,23 +60,33 @@ const REDUCE_MOTION = window.matchMedia('(prefers-reduced-motion: reduce)').matc
   const bar=document.getElementById('preBar'), num=document.getElementById('preNum');
   const particleWrap=document.getElementById('preParticles'), flash=document.getElementById('preFlash');
   const hexSvg=document.querySelector('.pre-hex-svg'), terminal=document.querySelector('.pre-terminal');
-  if(!loader)return;
+  const skipBtn=document.getElementById('preSkip');
+  const root=document.documentElement;
 
-  /* Skip the whole show when it would only be in the way: a repeat visit in this
-     tab, or a visitor who asked for reduced motion. Previously the 5s wait was
-     unconditional, so every cached reload paid it again.
-     .skipped rather than .gone, because .gone animates opacity/blur/scale over
-     .8s — on this path there is nothing to animate away from, and fading a
-     full-strength preloader out would just be a flash. */
+  /* Everything that waits on the intro (hero entrance) listens for this rather
+     than guessing a fixed delay. The flag covers listeners attached late. */
+  function introDone(){
+    if(window.__pnIntroDone)return;
+    window.__pnIntroDone=true;
+    root.classList.remove('is-loading');
+    window.dispatchEvent(new Event('pn:introdone'));
+  }
+  if(!loader){ introDone(); return; }
+
+  /* The intro always plays, but it adapts instead of being skipped outright:
+     - full : first visit in this tab, the whole boot sequence (~3.4s)
+     - quick: a reload in the same tab, same sequence at ~40% length
+     - calm : prefers-reduced-motion, quick timing with no motion effects
+     Any key, click or tap ends it early. */
   let seen=false;
   try{ seen=sessionStorage.getItem('pn-seen')==='1'; }catch(e){}
-  if(seen||REDUCE_MOTION){
-    loader.classList.add('skipped');
-    return;
-  }
   try{ sessionStorage.setItem('pn-seen','1'); }catch(e){}
+  const mode=REDUCE_MOTION?'calm':(seen?'quick':'full');
+  const S=mode==='full'?1:.45;
+  loader.classList.add('mode-'+mode);
+  root.classList.add('is-loading');
 
-  if(particleWrap){
+  if(particleWrap&&mode==='full'){
     for(let i=0;i<22;i++){
       const p=document.createElement('span');
       p.className='pre-particle';
@@ -89,38 +99,97 @@ const REDUCE_MOTION = window.matchMedia('(prefers-reduced-motion: reduce)').matc
       particleWrap.appendChild(p);
     }
   }
-  const cmd='node server --env=production --port=3000';
+  /* Every scheduled step goes through here so finish() can cancel the lot —
+     otherwise a skipped intro kept typing and revealing lines behind the fade. */
+  const timers=[];
+  const later=(fn,ms)=>timers.push(setTimeout(fn,ms*S));
+
+  const cmd=mode==='full'?'node server --env=production --port=3000':'node server --resume';
   let ci=0;
-  const ti=setInterval(()=>{if(ci<cmd.length){cmdEl.textContent+=cmd[ci++];}else clearInterval(ti);},65);
-  let pct=0;
-  const pb=setInterval(()=>{
-    pct=Math.min(pct+Math.random()*1.5,92);
-    bar.style.width=pct+'%';num.textContent=Math.floor(pct);
-    bar.style.setProperty('--bar-mid', pct<50?'#06b6d4':'#10b981');
-  },90);
-  const glitchFlashes=[300,650,950];
-  glitchFlashes.forEach(t=>setTimeout(()=>{
-    if(!hexSvg)return;
+  let ti=0;
+  later(()=>{
+    ti=setInterval(()=>{if(ci<cmd.length){cmdEl.textContent+=cmd[ci++];}else clearInterval(ti);},mode==='full'?55:28);
+  },700);
+
+  // Name decodes out of random glyphs, letter by letter, under the logo.
+  const title=document.getElementById('preTitle');
+  if(title){
+    const final=title.dataset.text||'', glyphs='!<>-_\\/[]{}=+*^?#01';
+    title.textContent='';
+    const spans=[...final].map(ch=>{
+      const s=document.createElement('span');
+      s.textContent=ch===' '?' ':glyphs[Math.random()*glyphs.length|0];
+      title.appendChild(s); return {s,ch};
+    });
+    const step=mode==='full'?110:45;
+    let frame=0;
+    const iv=setInterval(()=>{
+      let settled=0;
+      spans.forEach(({s,ch},i)=>{
+        if(ch===' '){settled++;return;}
+        if(frame>=i*2+6){ if(!s.classList.contains('in')){s.textContent=ch;s.classList.add('in');} settled++; }
+        else s.textContent=glyphs[Math.random()*glyphs.length|0];
+      });
+      frame++;
+      if(settled===spans.length){clearInterval(iv);title.classList.add('done');}
+    },step/2);
+    title.settle=()=>{clearInterval(iv);spans.forEach(({s,ch})=>{s.textContent=ch===' '?' ':ch;s.classList.add('in');});title.classList.add('done');};
+    if(mode==='calm') title.settle();
+  }
+
+  if(hexSvg&&mode!=='calm') [400,1100,2600,4200].forEach(t=>later(()=>{
     hexSvg.classList.add('glitch');
     setTimeout(()=>hexSvg.classList.remove('glitch'),260);
   },t));
   const reveal=(el,text,icon)=>{
+    if(!el)return;
     if(icon){icon.classList.add('spin');}
     el.textContent=text;
     requestAnimationFrame(()=>el.classList.add('show'));
     setTimeout(()=>{
       if(icon){icon.classList.remove('spin');icon.classList.add('done');icon.textContent='✓';}
-    },420);
+    },420*S);
   };
-  setTimeout(()=>{reveal(o1,'Loading assets...',i1);},1200);
-  setTimeout(()=>{reveal(o2,'Initialising animations...',i2);},2600);
-  setTimeout(()=>{
+  const ready=()=>{
     if(i3){i3.classList.add('done');i3.textContent='✓';}
     reveal(o3,'Portfolio ready!');
-    bar.style.width='100%';num.textContent='100';clearInterval(pb);
-    bar.style.setProperty('--bar-mid','#10b981');
-    num.style.color='var(--g)';
-  },4200);
+    if(num) num.style.color='var(--g)';
+  };
+  later(()=>reveal(o1,mode==='full'?'Loading assets...':'Restoring session...',i1),3300);
+  later(()=>reveal(o2,'Initialising animations...',i2),4300);
+  later(ready,5300);
+
+  /* Progress is no longer pure Math.random(): it follows the sequence clock but is
+     held back by what has actually loaded (above-the-fold images + web fonts), so
+     a slow connection shows a slow bar instead of a fake one parked at 92%. */
+  const imgs=Array.from(document.images).filter(i=>i.loading!=='lazy');
+  const totalRes=imgs.length+1;
+  let doneRes=0;
+  const tick=()=>{ doneRes=Math.min(doneRes+1,totalRes); };
+  imgs.forEach(i=>{
+    if(i.complete) tick();
+    else{ i.addEventListener('load',tick,{once:true}); i.addEventListener('error',tick,{once:true}); }
+  });
+  if(document.fonts&&document.fonts.ready) document.fonts.ready.then(tick,tick); else tick();
+
+  const SEQUENCE_MS=6000*S, HARD_CAP_MS=mode==='full'?9000:4500;
+  const t0=performance.now();
+  let pct=0, loaded=false, finished=false, rafId=0;
+  function drawBar(){
+    const timePct=Math.min((performance.now()-t0)/SEQUENCE_MS,1)*100;
+    const resPct=loaded?100:60+40*(doneRes/totalRes);
+    const target=finished?100:Math.min(timePct,resPct,99);
+    pct+=(target-pct)*(finished?.35:.12);
+    if(bar){
+      bar.style.width=pct.toFixed(1)+'%';
+      bar.style.setProperty('--bar-mid',pct<50?'#06b6d4':'#10b981');
+    }
+    if(num) num.textContent=Math.round(pct);
+    if(pct<99.5) rafId=requestAnimationFrame(drawBar);
+    else{ if(bar) bar.style.width='100%'; if(num) num.textContent='100'; }
+  }
+  rafId=requestAnimationFrame(drawBar);
+
   /* Named so it can be detached on finish. As an anonymous listener this stayed
      bound for the whole session, running getBoundingClientRect() — a forced
      layout read — on every mousemove long after the preloader was hidden. */
@@ -130,29 +199,52 @@ const REDUCE_MOTION = window.matchMedia('(prefers-reduced-motion: reduce)').matc
     terminal.style.setProperty('--tilt-x',(px*6)+'deg');
     terminal.style.setProperty('--tilt-y',(-py*6)+'deg');
   }
-  if(terminal) document.addEventListener('mousemove',tiltTerminal,{passive:true});
+  const tilt=terminal&&mode==='full'&&!matchMedia('(pointer: coarse)').matches;
+  if(tilt) document.addEventListener('mousemove',tiltTerminal,{passive:true});
 
-  /* The old gate was `load` + 5000ms with no ceiling, so a single hanging CDN
-     request held the page behind an opaque overlay indefinitely. Now the scripted
-     sequence runs on its own clock and the overlay lifts at the later of
-     (sequence complete, load) — but never past HARD_CAP, whatever the network does. */
-  const SEQUENCE_MS=4600, HARD_CAP_MS=6500;
-  let sequenceDone=false, loaded=false, finished=false;
+  // Skip hint shows up only once the intro has run long enough to be "waiting".
+  const hintT=setTimeout(()=>loader.classList.add('can-skip'),mode==='full'?1500:500);
+  function onKey(e){ if(e.key!=='Tab') finish(); }
+  loader.addEventListener('click',finish);
+  document.addEventListener('keydown',onKey);
+
+  /* The overlay lifts at the later of (sequence complete, load), never past
+     HARD_CAP whatever the network does — or immediately when the visitor skips. */
+  let sequenceDone=false;
   function finish(){
     if(finished)return;
     finished=true;
-    clearInterval(ti); clearInterval(pb);
-    if(terminal) document.removeEventListener('mousemove',tiltTerminal);
-    if(bar) bar.style.width='100%';
-    if(num) num.textContent='100';
-    if(flash) flash.classList.add('burst');
-    setTimeout(()=>loader.classList.add('gone'),150);
+    timers.forEach(clearTimeout); clearInterval(ti); clearTimeout(hintT);
+    if(cmdEl) cmdEl.textContent=cmd;
+    if(title&&title.settle) title.settle();
+    // Fill in any lines a skip jumped past so the terminal never shows a gap.
+    if(o1&&!o1.textContent) reveal(o1,mode==='full'?'Loading assets...':'Restoring session...',i1);
+    if(o2&&!o2.textContent) reveal(o2,'Initialising animations...',i2);
+    ready();
+    cancelAnimationFrame(rafId); rafId=requestAnimationFrame(drawBar);
+    if(tilt) document.removeEventListener('mousemove',tiltTerminal);
+    document.removeEventListener('keydown',onKey);
+    loader.removeEventListener('click',finish);
+    // Beat 1: logo charges up and a shockwave rings out. Beat 2: flash, then the
+    // overlay collapses to a line like a CRT switching off.
+    loader.classList.add('complete');
+    setTimeout(()=>{
+      if(flash&&mode==='full') flash.classList.add('burst');
+      loader.classList.add('gone');
+      loader.setAttribute('aria-hidden','true');
+      loader.setAttribute('aria-busy','false');
+      introDone();
+      // Drop the subtree once the exit is over so its infinite CSS animations
+      // stop costing frames for the rest of the session.
+      setTimeout(()=>loader.remove(),1400);
+    },mode==='full'?700:120);
   }
   const maybeFinish=()=>{ if(sequenceDone&&loaded) finish(); };
-  setTimeout(()=>{ sequenceDone=true; maybeFinish(); },SEQUENCE_MS);
+  timers.push(setTimeout(()=>{ sequenceDone=true; maybeFinish(); },SEQUENCE_MS));
   setTimeout(finish,HARD_CAP_MS);
   if(document.readyState==='complete'){ loaded=true; }
   else window.addEventListener('load',()=>{ loaded=true; maybeFinish(); });
+  if(skipBtn) skipBtn.addEventListener('click',e=>{ e.stopPropagation(); finish(); });
 })();
 
 /* ══ 3. CURSOR ══ */
@@ -608,8 +700,13 @@ window.addEventListener('load',function(){
   }
   setTimeout(()=>gsap.set('.nav-inner a',{clearProps:'opacity,transform'}),2000);
 
-  // Hero entrance
-  const htl=gsap.timeline({delay:2.6});
+  // Hero entrance — starts as the preloader fades rather than after a fixed guess,
+  // which ran either behind the overlay (slow load) or late (quick/skipped intro).
+  const htl=gsap.timeline({paused:true});
+  const playHero=()=>{ if(!htl.isActive()&&htl.progress()===0) htl.play(); };
+  if(window.__pnIntroDone) gsap.delayedCall(.05,playHero);
+  else window.addEventListener('pn:introdone',playHero,{once:true});
+  setTimeout(playHero,11000);
   htl
     .from('.hero-chip',     {opacity:0,y:-14,duration:.5,ease:'power2.out'})
     .from('.h1-sub',        {opacity:0,y:14,duration:.4,ease:'power2.out'},'-=.2')

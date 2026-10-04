@@ -127,13 +127,17 @@
   <div id="cur-glow"></div>
 
   <!-- ═══ PRELOADER ═══ -->
-  <div id="preloader">
+  <div id="preloader" aria-busy="true">
+    <p class="pre-sr" role="status">Loading portfolio…</p>
+    <div class="pre-aurora"><span></span><span></span><span></span></div>
     <div class="pre-grid"></div>
+    <div class="pre-scan"></div>
     <div class="pre-particles" id="preParticles"></div>
     <div class="pre-flash" id="preFlash"></div>
-    <div class="pre-box">
+    <div class="pre-box" aria-hidden="true">
       <div class="pre-logo-wrap">
         <div class="pre-glow"></div>
+        <span class="pre-ripple"></span><span class="pre-ripple r2"></span><span class="pre-ripple r3"></span>
         <div class="pre-ring"></div>
         <div class="pre-ring pre-ring2"></div>
         <span class="pre-orbit-dot od1"></span>
@@ -150,6 +154,10 @@
             </linearGradient>
           </defs>
         </svg>
+      </div>
+      <div class="pre-id">
+        <div class="pre-title" id="preTitle" data-text="PRATYUSH NANDI">PRATYUSH NANDI</div>
+        <div class="pre-role"><span>Software Developer</span></div>
       </div>
       <div class="pre-terminal">
         <div class="pre-tbar"><span class="ptd r"></span><span class="ptd y"></span><span class="ptd g"></span><span
@@ -168,6 +176,7 @@
         <span id="preNum">0</span>%
       </div>
     </div>
+    <button type="button" class="pre-skip" id="preSkip">Skip intro <kbd>Esc</kbd></button>
   </div>
 
   <!-- ═══ NAVBAR ═══ -->
