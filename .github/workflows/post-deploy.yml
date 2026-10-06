@@ -1,0 +1,64 @@
+name: Post-deploy smoke test
+
+# Runs the browser suite against the real URL each time Vercel (or Pages)
+# reports a successful deployment — previews and production alike. Catches what
+# a local server can't: hosting config, cleanUrls, missing files in the deploy.
+# Note: GitHub reads this trigger from the default branch, so it activates once
+# this file is on `main`.
+on:
+  deployment_status:
+
+permissions:
+  contents: read
+
+jobs:
+  smoke:
+    if: github.event.deployment_status.state == 'success' && github.event.deployment_status.environment_url != ''
+    name: Smoke test ${{ github.event.deployment_status.environment }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.deployment.sha }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      # Vercel's default Deployment Protection puts a login wall in front of
+      # preview and per-deployment URLs. Production is tested on the public
+      # domain; previews only when an automation bypass secret is configured.
+      - name: Resolve target URL
+        id: target
+        env:
+          ENVIRONMENT: ${{ github.event.deployment_status.environment }}
+          ENV_URL: ${{ github.event.deployment_status.environment_url }}
+          PROD_URL: ${{ vars.PRODUCTION_URL || 'https://pratyushnandi.vercel.app' }}
+          HAS_BYPASS: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET != '' }}
+        run: |
+          case "$ENVIRONMENT" in
+            Production*) url="$PROD_URL" ;;
+            Preview*)    if [ "$HAS_BYPASS" = "true" ]; then url="$ENV_URL"; else url=""; fi ;;
+            *)           url="$ENV_URL" ;;
+          esac
+          if [ -z "$url" ]; then
+            echo "::notice::Skipping $ENVIRONMENT — protected preview and no VERCEL_AUTOMATION_BYPASS_SECRET set."
+          fi
+          echo "url=$url" >> "$GITHUB_OUTPUT"
+      - if: steps.target.outputs.url != ''
+        run: npm ci
+      - if: steps.target.outputs.url != ''
+        run: npx playwright install --with-deps chromium
+      - name: Test deployed site
+        if: steps.target.outputs.url != ''
+        run: npm run test:e2e
+        env:
+          BASE_URL: ${{ steps.target.outputs.url }}
+          VERCEL_BYPASS: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
+      - name: Upload report
+        if: ${{ !cancelled() && steps.target.outputs.url != '' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: smoke-report-${{ github.run_id }}
+          path: playwright-report/
+          retention-days: 14

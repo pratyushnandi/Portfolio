@@ -57,6 +57,21 @@
 
   <link rel="stylesheet" href="style.css" />
 
+  <!-- Only JS ever removes the preloader, so without it the overlay would cover
+       the page forever. Also restore the native cursor, which JS replaces. -->
+  <noscript>
+    <style>
+      #preloader { display:none !important; }
+      body, button, a, input, textarea, select { cursor:auto !important; }
+      #cur-dot, #cur-ring, #cur-glow { display:none !important; }
+      /* Scroll-reveal never runs without JS — show everything up front. */
+      .reveal, .reveal-l, .reveal-r, .reveal-u,
+      .pj-card, .tl-item { opacity:1 !important; transform:none !important; }
+      .pj-img-wrap, .cw-line { clip-path:none !important; }
+      .cmdk-btn, .ide-bar { display:none !important; }
+    </style>
+  </noscript>
+
   <!-- Structured Data -->
   <script type="application/ld+json">
   {
@@ -91,21 +106,6 @@
 </head>
 
 <body>
-
-  <!-- Only JS ever removes the preloader, so without it the overlay would cover
-       the page forever. Also restore the native cursor, which JS replaces. -->
-  <noscript>
-    <style>
-      #preloader { display:none !important; }
-      body, button, a, input, textarea, select { cursor:auto !important; }
-      #cur-dot, #cur-ring, #cur-glow { display:none !important; }
-      /* Scroll-reveal never runs without JS — show everything up front. */
-      .reveal, .reveal-l, .reveal-r, .reveal-u,
-      .pj-card, .tl-item { opacity:1 !important; transform:none !important; }
-      .pj-img-wrap, .cw-line { clip-path:none !important; }
-      .cmdk-btn, .ide-bar { display:none !important; }
-    </style>
-  </noscript>
 
   <!-- ═══ BG LAYERS ═══ -->
   <canvas id="bgCanvas"></canvas>
@@ -210,14 +210,14 @@
         <button type="button" class="cmdk-btn" id="cmdkBtn" aria-label="Open command palette (Ctrl+K)" title="Command palette">
           <i class="fas fa-magnifying-glass"></i><span class="cmdk-k"><kbd id="cmdkMod">Ctrl</kbd><kbd>K</kbd></span>
         </button>
-        <button class="theme-toggle" id="themeToggle" aria-label="Toggle light / dark theme" title="Toggle theme">
+        <button type="button" class="theme-toggle" id="themeToggle" aria-label="Toggle light / dark theme" title="Toggle theme">
           <i class="fas fa-sun tt-sun"></i>
           <i class="fas fa-moon tt-moon"></i>
         </button>
         <a href="files/PRATYUSH%20NANDI_CV%20(NEW).pdf" download class="btn-res">
           <i class="fas fa-file-code"></i> <span>Resume</span>
         </a>
-        <button class="n-burger" id="burger" aria-label="Open navigation menu" aria-controls="nLinks"
+        <button type="button" class="n-burger" id="burger" aria-label="Open navigation menu" aria-controls="nLinks"
           aria-expanded="false"><span></span><span></span><span></span></button>
       </div>
     </nav>
@@ -364,7 +364,7 @@
             <div class="abt-chip ac1"><i class="fas fa-briefcase"></i> Software Developer</div>
             <div class="abt-chip ac2"><i class="fas fa-graduation-cap"></i> MCA @ Adamas</div>
           </div>
-          <div class="code-win reveal-u" style="--d:.15s" aria-label="Developer profile as a code object">
+          <figure class="code-win reveal-u" style="--d:.15s" aria-label="Developer profile as a code object">
             <div class="cw-bar"><span class="ptd r"></span><span class="ptd y"></span><span class="ptd g"></span><span class="cw-tab"><i class="fab fa-js"></i> developer.js</span></div>
             <pre class="cw-body"><code><span class="cw-line" style="--l:0"><span class="tk-k">const</span> <span class="tk-v">developer</span> <span class="tk-o">=</span> {</span>
 <span class="cw-line" style="--l:1">  <span class="tk-p">name</span>: <span class="tk-s">"Pratyush Nandi"</span>,</span>
@@ -374,7 +374,7 @@
 <span class="cw-line" style="--l:5">  <span class="tk-p">learning</span>: <span class="tk-b">true</span>,</span>
 <span class="cw-line" style="--l:6">};</span>
 <span class="cw-line" style="--l:7"><span class="tk-c">// always learning</span><span class="cw-caret"></span></span></code></pre>
-          </div>
+          </figure>
         </div>
 
         <!-- Text -->
@@ -572,10 +572,10 @@
 
       <!-- Category tabs -->
       <div class="sk-tabs reveal">
-        <button class="sk-tab active" data-p="languages"><i class="fas fa-code"></i> Languages</button>
-        <button class="sk-tab" data-p="frontend"><i class="fas fa-desktop"></i> Frontend</button>
-        <button class="sk-tab" data-p="backend"><i class="fas fa-server"></i> Backend</button>
-        <button class="sk-tab" data-p="tools"><i class="fas fa-tools"></i> Tools</button>
+        <button type="button" class="sk-tab active" data-p="languages"><i class="fas fa-code"></i> Languages</button>
+        <button type="button" class="sk-tab" data-p="frontend"><i class="fas fa-desktop"></i> Frontend</button>
+        <button type="button" class="sk-tab" data-p="backend"><i class="fas fa-server"></i> Backend</button>
+        <button type="button" class="sk-tab" data-p="tools"><i class="fas fa-tools"></i> Tools</button>
       </div>
 
       <div class="sk-panels">
@@ -734,10 +734,10 @@
       <h2 class="sec-h2 reveal" data-num="04">My <em>Projects</em></h2>
 
       <div class="pf-row reveal">
-        <button class="pf active" data-f="all">All</button>
-        <button class="pf" data-f="ai">AI/ML</button>
-        <button class="pf" data-f="web">Web App</button>
-        <button class="pf" data-f="fullstack">Full-Stack</button>
+        <button type="button" class="pf active" data-f="all">All</button>
+        <button type="button" class="pf" data-f="ai">AI/ML</button>
+        <button type="button" class="pf" data-f="web">Web App</button>
+        <button type="button" class="pf" data-f="fullstack">Full-Stack</button>
       </div>
 
       <div class="proj-grid" id="projGrid">
@@ -747,7 +747,7 @@
           <div class="pj-img-wrap">
             <img src="projects/detectify.jpg" alt="Detectify" class="pj-img" loading="lazy" decoding="async" />
             <div class="pj-overlay">
-              <a href="https://github.com/pratyushnandi" target="_blank" rel="noopener noreferrer" class="pj-ol-btn" title="GitHub"><i class="fab fa-github"></i></a>
+              <a href="https://github.com/pratyushnandi" target="_blank" rel="noopener noreferrer" class="pj-ol-btn" title="GitHub" aria-label="View source on GitHub"><i class="fab fa-github"></i></a>
             </div>
             <span class="pj-ribbon">⭐ Featured</span>
             <span class="pj-cat">AI / ML</span>
@@ -767,7 +767,7 @@
           <div class="pj-img-wrap">
             <img src="projects/recruitment.jpg" alt="Campus Recruitment" class="pj-img" loading="lazy" decoding="async" />
             <div class="pj-overlay">
-              <a href="https://github.com/pratyushnandi" target="_blank" rel="noopener noreferrer" class="pj-ol-btn" title="GitHub"><i class="fab fa-github"></i></a>
+              <a href="https://github.com/pratyushnandi" target="_blank" rel="noopener noreferrer" class="pj-ol-btn" title="GitHub" aria-label="View source on GitHub"><i class="fab fa-github"></i></a>
             </div>
             <span class="pj-ribbon">⭐ Featured</span>
             <span class="pj-cat">Web App</span>
@@ -1018,7 +1018,7 @@
                 <div><span class="ci-k">Email</span><span class="ci-v">pratyushnandi100@gmail.com</span></div>
               </a>
               <a href="tel:+917890706472" class="ci-row"><i class="fas fa-phone"></i>
-                <div><span class="ci-k">Phone</span><span class="ci-v">+91-7890706472</span></div>
+                <div><span class="ci-k">Phone</span><span class="ci-v">+91&#8209;7890706472</span></div>
               </a>
               <div class="ci-row"><i class="fas fa-map-marker-alt"></i>
                 <div><span class="ci-k">Location</span><span class="ci-v">Kolkata, West Bengal, India</span></div>
@@ -1105,15 +1105,15 @@
           class="nl-b">/&gt;</span></a>
       <p class="reveal-u" style="--d:.08s">Software Developer · Full-Stack · AI · IoT · Computer Vision.</p>
       <div class="foot-soc reveal-u" style="--d:.16s">
-        <a href="https://github.com/pratyushnandi" target="_blank" rel="noopener noreferrer"><i class="fab fa-github"></i></a>
-        <a href="https://www.linkedin.com/in/pratyushnandi/" target="_blank" rel="noopener noreferrer"><i class="fab fa-linkedin-in"></i></a>
-        <a href="mailto:pratyushnandi100@gmail.com"><i class="fas fa-envelope"></i></a>
+        <a href="https://github.com/pratyushnandi" target="_blank" rel="noopener noreferrer" aria-label="GitHub"><i class="fab fa-github"></i></a>
+        <a href="https://www.linkedin.com/in/pratyushnandi/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+        <a href="mailto:pratyushnandi100@gmail.com" aria-label="Email"><i class="fas fa-envelope"></i></a>
       </div>
       <p class="foot-copy reveal-u" style="--d:.24s">&copy; 2026 <span class="grad-t">Pratyush Nandi</span> &middot; Turning ideas into scalable software.</p>
     </div>
   </footer>
 
-  <button id="topBtn" aria-label="Back to top"><i class="fas fa-chevron-up"></i></button>
+  <button type="button" id="topBtn" aria-label="Back to top"><i class="fas fa-chevron-up"></i></button>
 
   <!-- ═══ IDE STATUS BAR (desktop) ═══ -->
   <div class="ide-bar" id="ideBar">
@@ -1137,7 +1137,7 @@
   </div>
 
   <!-- ═══ COMMAND PALETTE ═══ -->
-  <div class="cmdk" id="cmdk" aria-hidden="true">
+  <div class="cmdk" id="cmdk" inert>
     <div class="cmdk-backdrop" data-close></div>
     <div class="cmdk-box" role="dialog" aria-modal="true" aria-label="Command palette">
       <div class="cmdk-search">
@@ -1146,6 +1146,7 @@
           role="combobox" aria-expanded="true" aria-controls="cmdkList" aria-autocomplete="list" />
         <kbd>Esc</kbd>
       </div>
+      <!-- [html-validate-disable-next prefer-native-element -- rich, filterable option list; a native select cannot render it] -->
       <ul class="cmdk-list" id="cmdkList" role="listbox" aria-label="Commands"></ul>
       <div class="cmdk-foot">
         <span><kbd>↑</kbd><kbd>↓</kbd> navigate</span><span><kbd>↵</kbd> run</span><span><kbd>`</kbd> terminal</span>
@@ -1154,7 +1155,7 @@
   </div>
 
   <!-- ═══ INTERACTIVE TERMINAL ═══ -->
-  <div class="term" id="term" role="dialog" aria-label="Interactive terminal" aria-hidden="true">
+  <div class="term" id="term" role="dialog" aria-label="Interactive terminal" inert>
     <div class="term-head">
       <span class="ptd r"></span><span class="ptd y"></span><span class="ptd g"></span>
       <span class="term-title"><i class="fas fa-terminal"></i> pratyush@portfolio: ~</span>
@@ -1162,7 +1163,7 @@
     </div>
     <div class="term-body" id="termBody">
       <div id="termOut" aria-live="polite"></div>
-      <label class="term-line" for="termIn">
+      <label class="term-line">
         <span class="term-ps"><b>pratyush</b>@dev<i>:~$</i></span>
         <input id="termIn" type="text" autocomplete="off" spellcheck="false" autocapitalize="off" aria-label="Terminal command" />
       </label>
@@ -1178,7 +1179,7 @@
       <div class="pc-modal-head">
         <span id="pcModalTitle">MCA PROVISIONAL GRADE CARD</span>
         <div class="pc-modal-actions">
-          <a id="pcModalOpen" href="documents/mca-semester-1.pdf" target="_blank" rel="noopener noreferrer" title="Open in new tab"><i class="fas fa-up-right-from-square"></i></a>
+          <a id="pcModalOpen" href="documents/mca-semester-1.pdf" target="_blank" rel="noopener noreferrer" title="Open in new tab" aria-label="Open document in new tab"><i class="fas fa-up-right-from-square"></i></a>
           <button type="button" onclick="document.getElementById('pcModal').classList.remove('open')" aria-label="Close"><i class="fas fa-times"></i></button>
         </div>
       </div>
@@ -1199,9 +1200,10 @@
         <button type="button" onclick="pcImgOpenNew()" aria-label="More"><i class="fas fa-ellipsis-vertical"></i></button>
       </div>
       <div id="pcModalImgWrap" class="pc-img-wrap">
+        <!-- [html-validate-disable-next attribute-allowed-values -- src is set by openPcModal()] -->
         <img id="pcModalImg" src="" alt="" />
       </div>
-      <iframe id="pcModalFrame" src="" title="Document viewer"></iframe>
+      <iframe id="pcModalFrame" src="about:blank" title="Document viewer"></iframe>
     </div>
   </div>
 

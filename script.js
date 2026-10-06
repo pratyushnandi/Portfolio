@@ -659,7 +659,7 @@ const REDUCE_MOTION = window.matchMedia('(prefers-reduced-motion: reduce)').matc
 /* ══ 16. SKILL CARD PARTICLE BURST ══ */
 (function(){
   document.querySelectorAll('.sk-card').forEach(card=>{
-    card.addEventListener('click',e=>{
+    card.addEventListener('click',()=>{
       const r=card.getBoundingClientRect();
       for(let i=0;i<10;i++){
         const p=document.createElement('div');
@@ -1245,12 +1245,12 @@ window.addEventListener('load',function(){
     closeTerm(false);
     palFocus=document.activeElement;
     input.value=''; render();
-    pal.classList.add('open'); pal.setAttribute('aria-hidden','false');
+    pal.classList.add('open'); pal.removeAttribute('inert');
     setTimeout(()=>input.focus(),30);
   }
   function closePal(restore){
     if(!pal.classList.contains('open'))return;
-    pal.classList.remove('open'); pal.setAttribute('aria-hidden','true');
+    pal.classList.remove('open'); pal.setAttribute('inert','');
     input.blur();
     if(restore!==false&&palFocus&&palFocus.focus&&palFocus!==document.body) palFocus.focus({preventScroll:true});
   }
@@ -1282,13 +1282,13 @@ window.addEventListener('load',function(){
   function openTerm(){
     closePal(false);
     if(!term.classList.contains('open')) termFocus=document.activeElement;
-    term.classList.add('open'); term.setAttribute('aria-hidden','false');
+    term.classList.add('open'); term.removeAttribute('inert');
     if(!booted){ booted=true; boot(); }
     setTimeout(()=>tIn.focus({preventScroll:true}),60);
   }
   function closeTerm(restore){
     if(!term.classList.contains('open'))return;
-    term.classList.remove('open'); term.setAttribute('aria-hidden','true');
+    term.classList.remove('open'); term.setAttribute('inert','');
     tIn.blur();
     if(restore!==false&&termFocus&&termFocus.focus&&termFocus!==document.body) termFocus.focus({preventScroll:true});
   }

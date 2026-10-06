@@ -26,3 +26,11 @@ yarn-error.log*
 # OS Files
 .DS_Store
 Thumbs.db
+
+# CI artifacts
+playwright-report/
+test-results/
+blob-report/
+.lhci-site/
+.lhci-report/
+.lighthouseci/

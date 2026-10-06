@@ -1,0 +1,85 @@
+name: CI
+
+# Quality gate for every change. Deployment itself is done by Vercel's Git
+# integration (preview per push, production on `main`), so this workflow only
+# decides whether a change is safe to merge — it never deploys.
+on:
+  push:
+    branches: [main, deployment]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint:
+    name: Lint & validate
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: HTML (html-validate)
+        run: npm run lint:html
+      - name: CSS (stylelint)
+        run: npm run lint:css
+      - name: JavaScript (eslint)
+        run: npm run lint:js
+      - name: Local asset references
+        run: npm run check:assets
+
+  e2e:
+    name: Browser tests (Playwright)
+    needs: lint
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Run tests (desktop + mobile)
+        run: npm run test:e2e
+      - name: Upload report
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 14
+
+  lighthouse:
+    name: Lighthouse audit
+    needs: lint
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Stage deployable files
+        run: node scripts/stage-site.mjs
+      - name: Run Lighthouse CI
+        run: npx -y @lhci/cli@0.15.x autorun
+      - name: Upload reports
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: lighthouse-report
+          path: .lhci-report/
+          retention-days: 14

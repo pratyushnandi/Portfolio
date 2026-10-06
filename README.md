@@ -15,6 +15,34 @@ A high-performance, developer-centric personal portfolio built with a futuristic
 
 ---
 
+## 🔁 CI/CD
+
+[![CI](https://github.com/pratyushnandi/Portfolio/actions/workflows/ci.yml/badge.svg)](https://github.com/pratyushnandi/Portfolio/actions/workflows/ci.yml)
+
+| Stage | Where | What it does |
+| :--- | :--- | :--- |
+| **CI** | `.github/workflows/ci.yml` — every PR to `main` and push to `main` / `deployment` | HTML validation, CSS + JS linting, local asset check, Playwright browser tests (desktop + mobile), Lighthouse audit |
+| **CD** | Vercel Git integration | Preview deployment per push, production deployment on merge to `main` |
+| **Post-deploy** | `.github/workflows/post-deploy.yml` — on every successful deployment | Re-runs the browser tests against the live URL |
+| **Maintenance** | `.github/dependabot.yml` | Weekly grouped updates for npm tooling and GitHub Actions |
+
+Lighthouse fails the build if Accessibility, SEO or Best Practices drop below 90 (Performance below 60 only warns). The browser tests mock the contact-form API, so CI never sends real email.
+
+Run the same checks locally:
+
+```bash
+npm ci
+npx playwright install chromium   # first time only
+npm run ci                        # lint + asset check + browser tests
+npm run lighthouse                # optional: Lighthouse audit
+```
+
+Optional repository settings:
+- **`PRODUCTION_URL`** (Actions variable) — domain the post-deploy test hits for production (defaults to `https://pratyushnandi.vercel.app`).
+- **`VERCEL_AUTOMATION_BYPASS_SECRET`** (Actions secret) — from Vercel → Settings → Deployment Protection; lets the post-deploy test reach protected preview URLs. Without it, previews are skipped.
+
+---
+
 ## ✨ Features & Highlights
 
 - **⚡ Interactive Terminal Preloader:** Simulated system boot sequence (`boot.sh`) displaying progress diagnostics before loading the site.
