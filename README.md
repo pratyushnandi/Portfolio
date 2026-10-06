@@ -1,11 +1,11 @@
-# ⚡ Pratyush Nandi — Developer Portfolio (v2.0)
+# ⚡ Pratyush Nandi — Developer Portfolio (v5.0)
 
 [![Website Vercel](https://img.shields.io/badge/Vercel-Live_Demo-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://pratyushnandi.vercel.app)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](LICENSE)
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-Pratyush_Nandi-0A66C2?style=for-the-badge&logo=linkedin)](https://www.linkedin.com/in/pratyushnandi/)
 [![GitHub](https://img.shields.io/badge/GitHub-pratyushnandi-181717?style=for-the-badge&logo=github)](https://github.com/pratyushnandi)
 
-A high-performance, developer-centric personal portfolio built with a futuristic dark terminal aesthetic, neon gradients, glassmorphism, and responsive design. Features custom canvas particle physics, GSAP scroll animations, 3D tilt effects, and an integrated direct-dispatch contact system.
+A high-performance, developer-centric personal portfolio built with a futuristic terminal aesthetic, neon gradients, glassmorphism, and responsive design. Features a cinematic boot intro, a `Ctrl+K` command palette, an interactive in-browser terminal, light/dark themes, custom canvas particle physics, GSAP scroll animations, 3D tilt effects, and an integrated direct-dispatch contact system — all in plain HTML, CSS and JavaScript with no build step.
 
 ---
 
@@ -45,7 +45,10 @@ Optional repository settings:
 
 ## ✨ Features & Highlights
 
-- **⚡ Interactive Terminal Preloader:** Simulated system boot sequence (`boot.sh`) displaying progress diagnostics before loading the site.
+- **⚡ Cinematic Boot Intro:** Simulated system boot sequence (`boot.sh`) with a glyph-decoding name, logo charge-up and shockwave, and a CRT-style switch-off exit. It adapts rather than repeating itself: the full sequence on a first visit, a ~40% faster version on reload in the same tab, and a calm, motion-free version under `prefers-reduced-motion`. Any key, click or tap skips it.
+- **⌨️ Command Palette (`Ctrl+K` / `⌘K`):** Fuzzy-search launcher to jump to any section, toggle the theme, open the terminal, download the résumé, copy the email address, or open GitHub / LinkedIn. Fully keyboard-driven (`↑` `↓` `Enter` `Esc`).
+- **🖥️ Interactive Terminal (`` ` ``):** A working shell overlay with command history (`↑` / `↓`), `Tab` completion and `Ctrl+L` to clear. Try `help`, `whoami`, `neofetch`, `ls`, `cat about.md`, `experience`, `skills`, `projects`, `education`, `contact`, `socials`, `resume`, `hire` — and `sudo`, if you're feeling lucky.
+- **🌗 Light / Dark Theme:** Theme toggle that persists between visits, plus toast notifications for quick actions like copying the email address.
 - **🌌 Dynamic Particle Canvas & Ambient Lighting:** Custom HTML5 canvas particle background with interactive mouse glow, moving ambient orbs, and floating code snippet badges.
 - **🎯 Custom Tri-Layer Cursor:** Precision interactive custom cursor composed of a focal dot, trailing fluid ring, and ambient cursor glow.
 - **📜 Horizontal Experience Timeline:** Interactive horizontal scrolling timeline tracing developer milestones, full-stack roles, and campus tech leadership.
@@ -63,7 +66,13 @@ Optional repository settings:
 ### Core Architecture
 - **HTML5:** Semantic, accessible page architecture with OpenGraph metadata and SEO optimization.
 - **CSS3:** Custom design system built with CSS variables, backdrop filters, responsive flexbox/grid layouts, and glassmorphism.
-- **JavaScript (ES6+):** Modular clientside scripting for state management, interactive UI, and event delegation.
+- **JavaScript (ES6+):** Modular client-side scripting for state management, interactive UI, and event delegation.
+
+### Tooling & Quality
+- **[Playwright](https://playwright.dev/):** End-to-end browser tests on desktop and mobile (Pixel 7) viewports.
+- **[html-validate](https://html-validate.org/), [Stylelint](https://stylelint.io/) & [ESLint](https://eslint.org/):** HTML, CSS and JavaScript linting.
+- **[Lighthouse CI](https://github.com/GoogleChrome/lighthouse-ci):** Performance, accessibility, SEO and best-practice budgets.
+- **GitHub Actions + Vercel:** CI quality gate, preview/production deploys, and post-deploy smoke tests.
 
 ### Libraries & Frameworks
 - **[GSAP 3.12.5](https://greensock.com/gsap/):** High-performance UI motion and entry sequences.
@@ -107,6 +116,11 @@ Optional repository settings:
 
 ```text
 PORTFOLIO/
+├── .github/
+│   ├── workflows/
+│   │   ├── ci.yml           # Lint, asset check, Playwright & Lighthouse on PR/push
+│   │   └── post-deploy.yml  # Smoke tests against each live Vercel deployment
+│   └── dependabot.yml       # Weekly npm + Actions dependency updates
 ├── documents/           # Education grade cards & certificates (PDF/JPG)
 ├── files/               # Resume/CV PDF
 │   └── PRATYUSH NANDI_CV (NEW).pdf
@@ -115,14 +129,23 @@ PORTFOLIO/
 ├── projects/            # Project showcase preview images
 │   ├── detectify.jpg
 │   └── recruitment.jpg
-├── .gitignore           # Git ignore rules
+├── scripts/
+│   ├── check-assets.mjs # Fails if index.html references a missing local file
+│   └── stage-site.mjs   # Copies deployable files for the Lighthouse run
+├── tests/
+│   └── site.spec.js     # Playwright end-to-end tests
+├── .htmlvalidate.json   # html-validate rules
+├── .stylelintrc.json    # Stylelint rules
+├── .vercelignore        # Keeps tooling and tests out of the deployment
+├── eslint.config.mjs    # ESLint flat config
 ├── index.html           # Main semantic HTML structure & markup
+├── lighthouserc.json    # Lighthouse CI budgets
 ├── LICENSE              # MIT License
-├── package.json         # Project metadata and local scripts
-├── package-lock.json    # Dependency lockfile
-├── README.md            # Comprehensive project documentation
+├── package.json         # Project metadata and npm scripts
+├── playwright.config.js # Playwright projects (desktop + mobile) & local server
+├── README.md            # Project documentation
 ├── robots.txt           # Search engine crawl rules
-├── script.js            # Main script (GSAP, Canvas, Cursor, Form logic)
+├── script.js            # Main script (preloader, GSAP, canvas, cursor, command palette, terminal, form)
 ├── sitemap.xml          # Sitemap for search engine indexing
 ├── style.css            # Complete design system, variables & styling
 └── vercel.json          # Vercel deployment configuration
@@ -166,6 +189,18 @@ Open your browser and navigate to:
 ```text
 http://localhost:3000
 ```
+
+### 4. Available npm scripts
+
+| Script | What it does |
+| :--- | :--- |
+| `npm start` / `npm run dev` | Live-reloading dev server on port 3000 |
+| `npm run serve` | Static server on port 3000 (no live reload) |
+| `npm run lint` | Runs `lint:html`, `lint:css` and `lint:js` |
+| `npm run check:assets` | Verifies every local file referenced in `index.html` exists |
+| `npm run test:e2e` | Playwright tests (starts its own server on port 4173; set `BASE_URL` to test a deployed site) |
+| `npm run lighthouse` | Stages the site and runs a Lighthouse CI audit |
+| `npm run ci` | Lint + asset check + browser tests — the same gate as CI |
 
 ---
 
