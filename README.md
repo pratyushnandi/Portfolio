@@ -1,4 +1,4 @@
-# ⚡ Pratyush Nandi — Developer Portfolio (v6.0)
+# ⚡ Pratyush Nandi — Developer Portfolio (v7.0)
 
 [![Website Vercel](https://img.shields.io/badge/Vercel-Live_Demo-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://pratyushnandi.vercel.app)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](LICENSE)
@@ -207,7 +207,8 @@ http://localhost:3000
 
 | Version | Highlights |
 | :--- | :--- |
-| **[v6.0.0](https://github.com/pratyushnandi/Portfolio/releases/tag/v6.0.0)** | Full redesign: new design system, dedicated light and dark themes with a circular theme transition, an IDE-style hero, a commit-graph timeline, a live architecture diagram, redesigned projects, contact and footer. GSAP and Vanilla Tilt removed. Lighthouse 91 / 100 / 100 / 100. |
+| **v7.0.0** | Version bump to 7.0.0 across the site, package metadata and README. |
+| [v6.0.0](https://github.com/pratyushnandi/Portfolio/releases/tag/v6.0.0) | Full redesign: new design system, dedicated light and dark themes with a circular theme transition, an IDE-style hero, a commit-graph timeline, a live architecture diagram, redesigned projects, contact and footer. GSAP and Vanilla Tilt removed. Lighthouse 91 / 100 / 100 / 100. |
 | v4.1.0 | Reworked preloader intro, CI pipeline, post-deploy smoke tests and accessibility fixes. |
 
 Each release is tagged (`vX.Y.Z`) and published on the [Releases page](https://github.com/pratyushnandi/Portfolio/releases).
