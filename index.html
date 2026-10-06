@@ -67,8 +67,6 @@
       /* Scroll-reveal never runs without JS — show everything up front. */
       .reveal, .reveal-l, .reveal-r, .reveal-u,
       .pj-card, .tl-item { opacity:1 !important; transform:none !important; }
-      .pj-img-wrap, .cw-line { clip-path:none !important; }
-      .cmdk-btn, .ide-bar { display:none !important; }
     </style>
   </noscript>
 
@@ -113,16 +111,6 @@
   <div class="bg-orb orb-1"></div>
   <div class="bg-orb orb-2"></div>
   <div class="bg-orb orb-3"></div>
-  <!-- Light beams travelling along the grid lines -->
-  <div class="bg-beams" aria-hidden="true">
-    <i class="bm-v" style="--i:3;--t:7s;--dl:-1s"></i>
-    <i class="bm-v" style="--i:9;--t:9s;--dl:-5s"></i>
-    <i class="bm-v" style="--i:16;--t:8s;--dl:-3s"></i>
-    <i class="bm-v" style="--i:22;--t:11s;--dl:-7s"></i>
-    <i class="bm-h" style="--i:2;--t:10s;--dl:-2s"></i>
-    <i class="bm-h" style="--i:7;--t:8s;--dl:-6s"></i>
-    <i class="bm-h" style="--i:12;--t:12s;--dl:-9s"></i>
-  </div>
   <!-- Floating code snippets -->
   <div class="float-code fc1"><span class="fc-k">const</span> <span class="fc-v">dev</span> = <span
       class="fc-s">"Pratyush"</span>;</div>
@@ -135,7 +123,7 @@
 
   <!-- ═══ CURSOR ═══ -->
   <div id="cur-dot"></div>
-  <div id="cur-ring"><span id="cur-txt"></span></div>
+  <div id="cur-ring"></div>
   <div id="cur-glow"></div>
 
   <!-- ═══ PRELOADER ═══ -->
@@ -207,15 +195,12 @@
         <li><a href="#contact" data-t="contact">contact</a></li>
       </ul>
       <div class="n-end">
-        <button type="button" class="cmdk-btn" id="cmdkBtn" aria-label="Open command palette (Ctrl+K)" title="Command palette">
-          <i class="fas fa-magnifying-glass"></i><span class="cmdk-k"><kbd id="cmdkMod">Ctrl</kbd><kbd>K</kbd></span>
-        </button>
         <button type="button" class="theme-toggle" id="themeToggle" aria-label="Toggle light / dark theme" title="Toggle theme">
           <i class="fas fa-sun tt-sun"></i>
           <i class="fas fa-moon tt-moon"></i>
         </button>
         <a href="files/PRATYUSH%20NANDI_CV%20(NEW).pdf" download class="btn-res">
-          <i class="fas fa-file-code"></i> <span>Resume</span>
+          <i class="fas fa-file-code"></i> Resume
         </a>
         <button type="button" class="n-burger" id="burger" aria-label="Open navigation menu" aria-controls="nLinks"
           aria-expanded="false"><span></span><span></span><span></span></button>
@@ -228,7 +213,6 @@
      HERO
 ════════════════════════════════════ -->
   <section id="hero" class="hero">
-    <canvas id="heroNet" class="hero-net" aria-hidden="true"></canvas>
     <div class="hero-wrap">
       <!-- LEFT -->
       <div class="hero-left" id="hLeft">
@@ -361,20 +345,10 @@
             <img src="images/profile.jpg" alt="Pratyush Nandi" class="abt-photo" loading="lazy" decoding="async" />
             <div class="abt-photo-glow"></div>
             <div class="abt-photo-border"></div>
-            <div class="abt-chip ac1"><i class="fas fa-briefcase"></i> Software Developer</div>
-            <div class="abt-chip ac2"><i class="fas fa-graduation-cap"></i> MCA @ Adamas</div>
           </div>
-          <figure class="code-win reveal-u" style="--d:.15s" aria-label="Developer profile as a code object">
-            <div class="cw-bar"><span class="ptd r"></span><span class="ptd y"></span><span class="ptd g"></span><span class="cw-tab"><i class="fab fa-js"></i> developer.js</span></div>
-            <pre class="cw-body"><code><span class="cw-line" style="--l:0"><span class="tk-k">const</span> <span class="tk-v">developer</span> <span class="tk-o">=</span> {</span>
-<span class="cw-line" style="--l:1">  <span class="tk-p">name</span>: <span class="tk-s">"Pratyush Nandi"</span>,</span>
-<span class="cw-line" style="--l:2">  <span class="tk-p">role</span>: <span class="tk-s">"Software Developer"</span>,</span>
-<span class="cw-line" style="--l:3">  <span class="tk-p">stack</span>: [<span class="tk-s">"React"</span>, <span class="tk-s">"Node"</span>, <span class="tk-s">"Python"</span>],</span>
-<span class="cw-line" style="--l:4">  <span class="tk-p">based</span>: <span class="tk-s">"Kolkata, IN"</span>,</span>
-<span class="cw-line" style="--l:5">  <span class="tk-p">learning</span>: <span class="tk-b">true</span>,</span>
-<span class="cw-line" style="--l:6">};</span>
-<span class="cw-line" style="--l:7"><span class="tk-c">// always learning</span><span class="cw-caret"></span></span></code></pre>
-          </figure>
+          <div class="abt-chip ac1"><i class="fas fa-briefcase"></i> Software Developer</div>
+          <div class="abt-chip ac2"><i class="fas fa-graduation-cap"></i> MCA @ Adamas</div>
+          <div class="abt-code"><span class="mono">// always learning</span></div>
         </div>
 
         <!-- Text -->
@@ -697,28 +671,6 @@
             <span><i class="devicon-express-original" style="color:#fff"></i> Express.js</span>
             <span><i class="devicon-mongodb-plain colored"></i> MongoDB</span>
             <span><i class="fab fa-git-alt" style="color:#f05032"></i> Git</span>
-          </div>
-        </div>
-        <div class="mq-inner mq-rev" aria-hidden="true">
-          <div class="mq-track">
-            <span><i class="fab fa-github"></i> GitHub</span>
-            <span><i class="devicon-mysql-plain colored"></i> MySQL</span>
-            <span><i class="devicon-laravel-plain colored"></i> Laravel</span>
-            <span><i class="devicon-php-plain colored"></i> PHP</span>
-            <span><i class="devicon-flask-original"></i> Flask</span>
-            <span><i class="devicon-opencv-plain colored"></i> OpenCV</span>
-            <span><i class="devicon-redux-original colored"></i> Redux</span>
-            <span><i class="fas fa-brain" style="color:#a78bfa"></i> AI / ML</span>
-            <span><i class="fas fa-plug" style="color:#22d3ee"></i> REST APIs</span>
-            <span><i class="fab fa-github"></i> GitHub</span>
-            <span><i class="devicon-mysql-plain colored"></i> MySQL</span>
-            <span><i class="devicon-laravel-plain colored"></i> Laravel</span>
-            <span><i class="devicon-php-plain colored"></i> PHP</span>
-            <span><i class="devicon-flask-original"></i> Flask</span>
-            <span><i class="devicon-opencv-plain colored"></i> OpenCV</span>
-            <span><i class="devicon-redux-original colored"></i> Redux</span>
-            <span><i class="fas fa-brain" style="color:#a78bfa"></i> AI / ML</span>
-            <span><i class="fas fa-plug" style="color:#22d3ee"></i> REST APIs</span>
           </div>
         </div>
       </div>
@@ -1114,63 +1066,6 @@
   </footer>
 
   <button type="button" id="topBtn" aria-label="Back to top"><i class="fas fa-chevron-up"></i></button>
-
-  <!-- ═══ IDE STATUS BAR (desktop) ═══ -->
-  <div class="ide-bar" id="ideBar">
-    <div class="ib-l">
-      <span class="ib-item ib-remote" aria-hidden="true"><i class="fas fa-code"></i></span>
-      <span class="ib-item" aria-hidden="true"><i class="fas fa-code-branch"></i> main</span>
-      <span class="ib-item" aria-hidden="true"><i class="fas fa-rotate ib-sync"></i></span>
-      <span class="ib-item" aria-hidden="true"><i class="far fa-circle-xmark"></i> 0 &nbsp;<i class="fas fa-triangle-exclamation"></i> 0</span>
-      <span class="ib-item ib-file" aria-hidden="true"><i class="far fa-file-code"></i> <span id="ibFile">home.tsx</span></span>
-    </div>
-    <div class="ib-r">
-      <span class="ib-item" id="ibPos" aria-hidden="true">Ln 1, Col 1</span>
-      <span class="ib-item ib-hide-md" aria-hidden="true">Spaces: 2</span>
-      <span class="ib-item ib-hide-md" aria-hidden="true">UTF-8</span>
-      <span class="ib-item" id="ibLang" aria-hidden="true">{ } TypeScript React</span>
-      <button type="button" class="ib-item ib-btn" id="ibCmd" title="Command palette (Ctrl+K)"><i class="fas fa-bolt"></i> Commands</button>
-      <button type="button" class="ib-item ib-btn" id="ibTerm" title="Open terminal (`)"><i class="fas fa-terminal"></i> Terminal</button>
-      <span class="ib-item" id="ibClock" aria-hidden="true">--:--</span>
-      <span class="ib-item" aria-hidden="true"><i class="far fa-bell"></i></span>
-    </div>
-  </div>
-
-  <!-- ═══ COMMAND PALETTE ═══ -->
-  <div class="cmdk" id="cmdk" inert>
-    <div class="cmdk-backdrop" data-close></div>
-    <div class="cmdk-box" role="dialog" aria-modal="true" aria-label="Command palette">
-      <div class="cmdk-search">
-        <i class="fas fa-terminal"></i>
-        <input id="cmdkInput" type="text" placeholder="Type a command or search…" autocomplete="off" spellcheck="false"
-          role="combobox" aria-expanded="true" aria-controls="cmdkList" aria-autocomplete="list" />
-        <kbd>Esc</kbd>
-      </div>
-      <!-- [html-validate-disable-next prefer-native-element -- rich, filterable option list; a native select cannot render it] -->
-      <ul class="cmdk-list" id="cmdkList" role="listbox" aria-label="Commands"></ul>
-      <div class="cmdk-foot">
-        <span><kbd>↑</kbd><kbd>↓</kbd> navigate</span><span><kbd>↵</kbd> run</span><span><kbd>`</kbd> terminal</span>
-      </div>
-    </div>
-  </div>
-
-  <!-- ═══ INTERACTIVE TERMINAL ═══ -->
-  <div class="term" id="term" role="dialog" aria-label="Interactive terminal" inert>
-    <div class="term-head">
-      <span class="ptd r"></span><span class="ptd y"></span><span class="ptd g"></span>
-      <span class="term-title"><i class="fas fa-terminal"></i> pratyush@portfolio: ~</span>
-      <button type="button" class="term-x" id="termClose" aria-label="Close terminal"><i class="fas fa-xmark"></i></button>
-    </div>
-    <div class="term-body" id="termBody">
-      <div id="termOut" aria-live="polite"></div>
-      <label class="term-line">
-        <span class="term-ps"><b>pratyush</b>@dev<i>:~$</i></span>
-        <input id="termIn" type="text" autocomplete="off" spellcheck="false" autocapitalize="off" aria-label="Terminal command" />
-      </label>
-    </div>
-  </div>
-
-  <div class="toasts" id="toasts" aria-live="polite"></div>
 
   <!-- Grade Card / Certificate Modal -->
   <div id="pcModal" class="pc-modal">

@@ -1,11 +1,11 @@
-# ⚡ Pratyush Nandi — Developer Portfolio (v5.0)
+# ⚡ Pratyush Nandi — Developer Portfolio (v4.1)
 
 [![Website Vercel](https://img.shields.io/badge/Vercel-Live_Demo-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://pratyushnandi.vercel.app)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](LICENSE)
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-Pratyush_Nandi-0A66C2?style=for-the-badge&logo=linkedin)](https://www.linkedin.com/in/pratyushnandi/)
 [![GitHub](https://img.shields.io/badge/GitHub-pratyushnandi-181717?style=for-the-badge&logo=github)](https://github.com/pratyushnandi)
 
-A high-performance, developer-centric personal portfolio built with a futuristic terminal aesthetic, neon gradients, glassmorphism, and responsive design. Features a cinematic boot intro, a `Ctrl+K` command palette, an interactive in-browser terminal, light/dark themes, custom canvas particle physics, GSAP scroll animations, 3D tilt effects, and an integrated direct-dispatch contact system — all in plain HTML, CSS and JavaScript with no build step.
+A high-performance, developer-centric personal portfolio built with a futuristic terminal aesthetic, neon gradients, glassmorphism, and responsive design. Features a cinematic boot intro, light/dark themes, custom canvas particle physics, GSAP scroll animations, 3D tilt effects, and an integrated direct-dispatch contact system — all in plain HTML, CSS and JavaScript with no build step.
 
 ---
 
@@ -46,9 +46,7 @@ Optional repository settings:
 ## ✨ Features & Highlights
 
 - **⚡ Cinematic Boot Intro:** Simulated system boot sequence (`boot.sh`) with a glyph-decoding name, logo charge-up and shockwave, and a CRT-style switch-off exit. It adapts rather than repeating itself: the full sequence on a first visit, a ~40% faster version on reload in the same tab, and a calm, motion-free version under `prefers-reduced-motion`. Any key, click or tap skips it.
-- **⌨️ Command Palette (`Ctrl+K` / `⌘K`):** Fuzzy-search launcher to jump to any section, toggle the theme, open the terminal, download the résumé, copy the email address, or open GitHub / LinkedIn. Fully keyboard-driven (`↑` `↓` `Enter` `Esc`).
-- **🖥️ Interactive Terminal (`` ` ``):** A working shell overlay with command history (`↑` / `↓`), `Tab` completion and `Ctrl+L` to clear. Try `help`, `whoami`, `neofetch`, `ls`, `cat about.md`, `experience`, `skills`, `projects`, `education`, `contact`, `socials`, `resume`, `hire` — and `sudo`, if you're feeling lucky.
-- **🌗 Light / Dark Theme:** Theme toggle that persists between visits, plus toast notifications for quick actions like copying the email address.
+- **🌗 Light / Dark Theme:** Theme toggle that persists between visits.
 - **🌌 Dynamic Particle Canvas & Ambient Lighting:** Custom HTML5 canvas particle background with interactive mouse glow, moving ambient orbs, and floating code snippet badges.
 - **🎯 Custom Tri-Layer Cursor:** Precision interactive custom cursor composed of a focal dot, trailing fluid ring, and ambient cursor glow.
 - **📜 Horizontal Experience Timeline:** Interactive horizontal scrolling timeline tracing developer milestones, full-stack roles, and campus tech leadership.
@@ -145,7 +143,7 @@ PORTFOLIO/
 ├── playwright.config.js # Playwright projects (desktop + mobile) & local server
 ├── README.md            # Project documentation
 ├── robots.txt           # Search engine crawl rules
-├── script.js            # Main script (preloader, GSAP, canvas, cursor, command palette, terminal, form)
+├── script.js            # Main script (preloader, GSAP, canvas, cursor, form)
 ├── sitemap.xml          # Sitemap for search engine indexing
 ├── style.css            # Complete design system, variables & styling
 └── vercel.json          # Vercel deployment configuration

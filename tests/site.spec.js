@@ -1,7 +1,6 @@
 // @ts-check
 const { test, expect } = require('@playwright/test');
 
-const isOpen = loc => loc.evaluate(el => el.classList.contains('open'));
 
 /** Load the page, skip the intro, and collect any JS errors along the way. */
 async function open(page) {
@@ -66,42 +65,6 @@ test('mobile layout has no horizontal overflow and the menu opens', async ({ pag
   await burger.click();
   await expect(burger).toHaveAttribute('aria-expanded', 'true');
   await expect(page.locator('#nLinks')).toBeVisible();
-});
-
-test.describe('desktop features', () => {
-  test.skip(({ isMobile }) => isMobile, 'keyboard features are desktop only');
-
-  test('command palette filters and navigates', async ({ page }) => {
-    await open(page);
-    const pal = page.locator('#cmdk');
-    await expect(pal).toHaveAttribute('inert', '');
-    await page.keyboard.press('Control+k');
-    await expect.poll(() => isOpen(pal)).toBe(true);
-    await expect(page.locator('#cmdkInput')).toBeFocused();
-    await page.keyboard.type('contact');
-    await expect(page.locator('.cmdk-item').first()).toContainText('Go to Contact');
-    await page.keyboard.press('Enter');
-    await expect.poll(() => isOpen(pal)).toBe(false);
-    await expect(page.locator('#contact')).toBeInViewport({ ratio: 0.3 });
-  });
-
-  test('terminal runs commands', async ({ page }) => {
-    await open(page);
-    const term = page.locator('#term');
-    await page.keyboard.press('Backquote');
-    await expect.poll(() => isOpen(term)).toBe(true);
-    const input = page.locator('#termIn');
-    await expect(input).toBeFocused();
-    await input.fill('whoami');
-    await input.press('Enter');
-    await expect(page.locator('#termOut')).toContainText('Software Developer');
-    await input.fill('definitely-not-a-command');
-    await input.press('Enter');
-    await expect(page.locator('#termOut')).toContainText('command not found');
-    await input.press('Escape');
-    await expect.poll(() => isOpen(term)).toBe(false);
-    await expect(term).toHaveAttribute('inert', '');
-  });
 });
 
 test('contact form validates, then submits (API mocked)', async ({ page }) => {
