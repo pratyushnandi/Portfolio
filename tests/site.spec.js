@@ -48,7 +48,7 @@ test('theme toggle switches and persists', async ({ page }) => {
   const isLight = async () => (await html.getAttribute('data-theme')) === 'light';
   const startedLight = await isLight();
   await page.locator('#themeToggle').click();
-  // The swap happens mid-wipe, ~600ms after the click.
+  // The swap runs inside a view transition, so poll rather than assert at once.
   await expect.poll(isLight, { timeout: 10_000 }).toBe(!startedLight);
   expect(await page.evaluate(() => localStorage.getItem('pn-theme'))).toBe(startedLight ? 'dark' : 'light');
   await page.reload();
@@ -65,6 +65,29 @@ test('mobile layout has no horizontal overflow and the menu opens', async ({ pag
   await burger.click();
   await expect(burger).toHaveAttribute('aria-expanded', 'true');
   await expect(page.locator('#nLinks')).toBeVisible();
+});
+
+test('project filter shows only the matching category', async ({ page }) => {
+  await open(page);
+  const visible = () => page.locator('#projGrid .pj:not(.is-hidden)').count();
+  const total = await page.locator('#projGrid .pj').count();
+  await page.locator('#projects').scrollIntoViewIfNeeded();
+  await page.locator('.pf[data-f="ai"]').click();
+  await expect(page.locator('.pf[data-f="ai"]')).toHaveAttribute('aria-pressed', 'true');
+  expect(await visible()).toBe(await page.locator('#projGrid .pj[data-cat="ai"]').count());
+  await page.locator('.pf[data-f="all"]').click();
+  expect(await visible()).toBe(total);
+});
+
+test('certificate viewer opens and closes with Escape', async ({ page, isMobile }) => {
+  test.skip(isMobile, 'phones open documents in a new tab instead');
+  await open(page);
+  const modal = page.locator('#pcModal');
+  await page.locator('a[data-doc-title][href$=".jpg"]').click();
+  await expect(modal).toBeVisible();
+  await expect(page.locator('#pcModalImg')).toHaveAttribute('src', /sec-pass-certificate\.jpg$/);
+  await page.keyboard.press('Escape');
+  await expect(modal).toBeHidden();
 });
 
 test('contact form validates, then submits (API mocked)', async ({ page }) => {

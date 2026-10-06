@@ -13,12 +13,12 @@ export default [
     }
   },
   {
-    // Site script: a classic <script>, not a module, talking to CDN globals.
+    // Site script: a classic <script>, not a module, with no library globals.
     files: ['script.js'],
     languageOptions: {
       ecmaVersion: 2022,
       sourceType: 'script',
-      globals: { ...globals.browser, gsap: 'readonly', ScrollTrigger: 'readonly', VanillaTilt: 'readonly' }
+      globals: { ...globals.browser }
     }
   },
   {

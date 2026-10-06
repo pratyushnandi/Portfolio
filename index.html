@@ -7,7 +7,7 @@
   <!-- Kept as a single JS-driven meta rather than two prefers-color-scheme ones:
        the toggle can override the OS, so media-matched metas would disagree with
        the theme actually on screen. -->
-  <meta name="theme-color" id="themeColor" content="#060812" />
+  <meta name="theme-color" id="themeColor" content="#07080c" />
   <script>
     (function () {
       var stored = null;
@@ -19,20 +19,21 @@
       if (light) {
         document.documentElement.setAttribute('data-theme', 'light');
         var m = document.getElementById('themeColor');
-        if (m) m.setAttribute('content', '#faf8ff');
+        if (m) m.setAttribute('content', '#f6f6f3');
       }
+      document.documentElement.classList.add('js');
     })();
   </script>
   <meta name="description"
-    content="Pratyush Nandi — Software Developer & passionate Programmer at Eltern Segen Technologie Pvt. Ltd. MCA @ Adamas University. Full-Stack, Python, React, Node.js — Kolkata." />
+    content="Pratyush Nandi — Software Developer at Eltern Segen Technologie Pvt. Ltd. Full-stack web platforms, APIs and edge-deployed computer vision. React, Next.js, Node.js, Python. MCA @ Adamas University · Kolkata." />
   <meta name="keywords"
-    content="Pratyush Nandi, Software Developer, Web Developer, Python, Java, React, Node.js, MCA, Portfolio, Kolkata, Eltern Segen Technologie, Data Scientist" />
-  <meta property="og:title" content="Pratyush Nandi | Software Developer & Programmer" />
-  <meta property="og:description" content="Passionate Programmer · Full-Stack Developer · Data Scientist Enthusiast" />
+    content="Pratyush Nandi, Software Developer, Full-Stack Developer, Python, TypeScript, React, Next.js, Node.js, Fastify, PostgreSQL, Prisma, YOLO, IoT, Edge Computing, Portfolio, Kolkata" />
+  <meta property="og:title" content="Pratyush Nandi | Software Developer" />
+  <meta property="og:description" content="Full-stack developer building fast web platforms, APIs and edge-deployed vision systems." />
   <meta property="og:image" content="https://pratyushnandi.vercel.app/images/profile.jpg" />
   <title>Pratyush Nandi | Software Developer</title>
   <link rel="icon"
-    href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0%25' stop-color='%237c3aed'/%3E%3Cstop offset='100%25' stop-color='%2306b6d4'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpolygon points='50,3 97,27 97,73 50,97 3,73 3,27' fill='%23060812' stroke='url(%23g)' stroke-width='5'/%3E%3Ctext x='50' y='63' text-anchor='middle' fill='url(%23g)' font-size='34' font-weight='900' font-family='Arial'%3EPN%3C/text%3E%3C/svg%3E" />
+    href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0%25' stop-color='%238b7bff'/%3E%3Cstop offset='100%25' stop-color='%2322d3ee'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect x='4' y='4' width='92' height='92' rx='22' fill='%2307080c'/%3E%3Ctext x='50' y='64' text-anchor='middle' fill='url(%23g)' font-size='40' font-weight='800' font-family='Arial'%3EPN%3C/text%3E%3C/svg%3E" />
 
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -40,33 +41,21 @@
   <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin />
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
   <link
-    href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&family=Fira+Code:wght@300;400;500;600;700&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Geist:wght@300..800&family=JetBrains+Mono:wght@400;500;600&family=Instrument+Serif:ital@1&display=swap"
     rel="stylesheet" />
 
   <!-- Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/devicons/devicon@v2.15.1/devicon.min.css" />
 
-  <!-- GSAP -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" defer></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" defer></script>
-
-  <!-- Vanilla Tilt -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.8.1/vanilla-tilt.min.js" defer></script>
-
-
   <link rel="stylesheet" href="style.css" />
 
   <!-- Only JS ever removes the preloader, so without it the overlay would cover
-       the page forever. Also restore the native cursor, which JS replaces. -->
+       the page forever. Reveal-on-scroll never runs either, so show everything. -->
   <noscript>
     <style>
       #preloader { display:none !important; }
-      body, button, a, input, textarea, select { cursor:auto !important; }
-      #cur-dot, #cur-ring, #cur-glow { display:none !important; }
-      /* Scroll-reveal never runs without JS — show everything up front. */
-      .reveal, .reveal-l, .reveal-r, .reveal-u,
-      .pj-card, .tl-item { opacity:1 !important; transform:none !important; }
+      [data-reveal] { opacity:1 !important; transform:none !important; filter:none !important; }
     </style>
   </noscript>
 
@@ -104,1065 +93,1011 @@
 </head>
 
 <body>
+  <a class="skip-link" href="#main">Skip to content</a>
 
-  <!-- ═══ BG LAYERS ═══ -->
-  <canvas id="bgCanvas"></canvas>
-  <div class="bg-grid"></div>
-  <div class="bg-orb orb-1"></div>
-  <div class="bg-orb orb-2"></div>
-  <div class="bg-orb orb-3"></div>
-  <!-- Floating code snippets -->
-  <div class="float-code fc1"><span class="fc-k">const</span> <span class="fc-v">dev</span> = <span
-      class="fc-s">"Pratyush"</span>;</div>
-  <div class="float-code fc2"><span class="fc-k">function</span> <span class="fc-v">build</span>() {}</div>
-  <div class="float-code fc3"><span class="fc-k">import</span> React <span class="fc-k">from</span> <span
-      class="fc-s">'react'</span>;</div>
-  <div class="float-code fc4">git commit -m <span class="fc-s">"feat: amazing"</span></div>
-  <div class="float-code fc5"><span class="fc-k">async</span> <span class="fc-v">getData</span>() {}</div>
-  <div class="float-code fc6">npm run <span class="fc-s">start</span></div>
-
-  <!-- ═══ CURSOR ═══ -->
-  <div id="cur-dot"></div>
-  <div id="cur-ring"></div>
-  <div id="cur-glow"></div>
+  <!-- Ambient page backdrop: static grid + two soft light sources. No animation
+       runs here; the only moving background is the hero canvas. -->
+  <div class="backdrop" aria-hidden="true">
+    <div class="bd-grid"></div>
+    <div class="bd-light bd-l1"></div>
+    <div class="bd-light bd-l2"></div>
+    <div class="bd-noise"></div>
+  </div>
 
   <!-- ═══ PRELOADER ═══ -->
   <div id="preloader" aria-busy="true">
-    <p class="pre-sr" role="status">Loading portfolio…</p>
-    <div class="pre-aurora"><span></span><span></span><span></span></div>
-    <div class="pre-grid"></div>
-    <div class="pre-scan"></div>
-    <div class="pre-particles" id="preParticles"></div>
-    <div class="pre-flash" id="preFlash"></div>
-    <div class="pre-box" aria-hidden="true">
-      <div class="pre-logo-wrap">
-        <div class="pre-glow"></div>
-        <span class="pre-ripple"></span><span class="pre-ripple r2"></span><span class="pre-ripple r3"></span>
-        <div class="pre-ring"></div>
-        <div class="pre-ring pre-ring2"></div>
-        <span class="pre-orbit-dot od1"></span>
-        <span class="pre-orbit-dot od2"></span>
-        <svg class="pre-hex-svg" viewBox="0 0 100 100" fill="none">
-          <polygon points="50,3 97,27 97,73 50,97 3,73 3,27" stroke="url(#pg)" stroke-width="2" fill="none"
-            class="hex-path" />
-          <text x="50" y="63" text-anchor="middle" fill="url(#pg)" font-size="30" font-weight="900"
-            font-family="Plus Jakarta Sans">PN</text>
-          <defs>
-            <linearGradient id="pg" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stop-color="#7c3aed" />
-              <stop offset="100%" stop-color="#06b6d4" />
-            </linearGradient>
-          </defs>
-        </svg>
+    <p class="sr-only" role="status">Loading portfolio…</p>
+    <div class="pl-box" aria-hidden="true">
+      <svg class="pl-mark" viewBox="0 0 64 64" fill="none">
+        <defs>
+          <linearGradient id="plg" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#8b7bff" />
+            <stop offset="1" stop-color="#22d3ee" />
+          </linearGradient>
+        </defs>
+        <rect class="pl-frame" x="2" y="2" width="60" height="60" rx="16" stroke="url(#plg)" stroke-width="2" />
+        <path class="pl-glyph" d="M22 24 14 32l8 8M42 24l8 8-8 8M35 20l-6 24" stroke="url(#plg)" stroke-width="3"
+          stroke-linecap="round" stroke-linejoin="round" />
+      </svg>
+      <div class="pl-text">
+        <span class="pl-name">Pratyush Nandi</span>
+        <span class="pl-cmd"><span class="pl-prompt">$</span> <span id="plCmd">npm run build</span></span>
       </div>
-      <div class="pre-id">
-        <div class="pre-title" id="preTitle" data-text="PRATYUSH NANDI">PRATYUSH NANDI</div>
-        <div class="pre-role"><span>Software Developer</span></div>
-      </div>
-      <div class="pre-terminal">
-        <div class="pre-tbar"><span class="ptd r"></span><span class="ptd y"></span><span class="ptd g"></span><span
-            class="pre-tf">boot.sh</span></div>
-        <div class="pre-tbody">
-          <p><span class="pre-prompt">$</span> <span id="preCmd"></span><span class="pre-blink">█</span></p>
-          <p><span class="pre-ico" id="pico1"></span><span class="pre-out" id="pout1"></span></p>
-          <p><span class="pre-ico" id="pico2"></span><span class="pre-out" id="pout2"></span></p>
-          <p><span class="pre-ico" id="pico3"></span><span class="pre-ok" id="pout3"></span></p>
-        </div>
-      </div>
-      <div class="pre-prog-wrap">
-        <div class="pre-prog">
-          <div id="preBar"></div>
-        </div>
-        <span id="preNum">0</span>%
-      </div>
+      <div class="pl-bar"><span id="plBar"></span></div>
     </div>
-    <button type="button" class="pre-skip" id="preSkip">Skip intro <kbd>Esc</kbd></button>
   </div>
 
   <!-- ═══ NAVBAR ═══ -->
-  <header id="nav">
-    <nav class="nav-inner">
-      <a href="#hero" class="n-logo">
-        <span class="nl-b">&lt;</span>pratyush<span class="nl-d">.</span>dev<span class="nl-b">/&gt;</span>
+  <header id="nav" class="nav">
+    <nav class="nav-inner" aria-label="Primary">
+      <a href="#hero" class="logo" aria-label="Pratyush Nandi — back to top">
+        <span class="logo-mark" aria-hidden="true">PN</span>
+        <span class="logo-text">pratyush<span class="logo-dot">.</span>dev</span>
       </a>
       <ul class="n-links" id="nLinks">
-        <li><a href="#hero" data-t="home">home</a></li>
-        <li><a href="#about" data-t="about">about</a></li>
-        <li><a href="#experience" data-t="exp">experience</a></li>
-        <li><a href="#skills" data-t="skills">skills</a></li>
-        <li><a href="#projects" data-t="projects">projects</a></li>
-        <li><a href="#education" data-t="edu">education</a></li>
-        <li><a href="#contact" data-t="contact">contact</a></li>
+        <li><a href="#hero">Home</a></li>
+        <li><a href="#about">About</a></li>
+        <li><a href="#experience">Experience</a></li>
+        <li><a href="#skills">Stack</a></li>
+        <li><a href="#projects">Projects</a></li>
+        <li><a href="#education">Education</a></li>
+        <li><a href="#contact">Contact</a></li>
+        <li class="n-indicator" aria-hidden="true"></li>
       </ul>
       <div class="n-end">
-        <button type="button" class="theme-toggle" id="themeToggle" aria-label="Toggle light / dark theme" title="Toggle theme">
-          <i class="fas fa-sun tt-sun"></i>
-          <i class="fas fa-moon tt-moon"></i>
+        <button type="button" class="theme-toggle" id="themeToggle" aria-label="Switch to light theme">
+          <span class="tt-track" aria-hidden="true">
+            <i class="fas fa-moon tt-moon"></i>
+            <i class="fas fa-sun tt-sun"></i>
+            <span class="tt-thumb"></span>
+          </span>
         </button>
-        <a href="files/PRATYUSH%20NANDI_CV%20(NEW).pdf" download class="btn-res">
-          <i class="fas fa-file-code"></i> Resume
+        <a href="files/PRATYUSH%20NANDI_CV%20(NEW).pdf" download class="btn btn-sm btn-ghost n-resume">
+          <i class="fas fa-arrow-down" aria-hidden="true"></i> Resume
         </a>
         <button type="button" class="n-burger" id="burger" aria-label="Open navigation menu" aria-controls="nLinks"
-          aria-expanded="false"><span></span><span></span><span></span></button>
+          aria-expanded="false"><span></span><span></span></button>
       </div>
     </nav>
-    <div class="nav-prog" id="navProg"></div>
+    <div class="nav-prog" id="navProg" aria-hidden="true"></div>
   </header>
 
-  <!-- ════════════════════════════════════
-     HERO
-════════════════════════════════════ -->
-  <section id="hero" class="hero">
-    <div class="hero-wrap">
-      <!-- LEFT -->
-      <div class="hero-left" id="hLeft">
-        <div class="hero-chip">
-          <span class="hc-dot"></span>
-          <span>Available for opportunities</span>
-        </div>
+  <main id="main">
 
-        <h1 class="hero-h1">
-          <span class="h1-sub">Hi! My name is</span>
-          <span class="h1-main">Pratyush<br /><span class="h1-last">Nandi<span class="h1-dot">.</span></span></span>
-        </h1>
+    <!-- ════════════════════════════════════
+       HERO
+    ════════════════════════════════════ -->
+    <section id="hero" class="hero" aria-labelledby="heroTitle">
+      <canvas id="heroCanvas" class="hero-canvas" aria-hidden="true"></canvas>
+      <div class="hero-spot" aria-hidden="true"></div>
 
-        <p class="hero-tagline">
-          I am a <span class="ht-b">passionate Programmer</span>
-        </p>
-
-        <div class="hero-typed-row">
-          <span class="htr-b">&lt;</span>
-          <span id="heroTyped"></span><span class="htr-cur">_</span>
-          <span class="htr-b">/&gt;</span>
-        </div>
-
-        <p class="hero-bio">
-          Software Developer at <span class="hb-co">Eltern Segen Technologie Pvt. Ltd.</span><br />
-          Building scalable full-stack solutions with <span class="hb-h">React, Node.js, Python</span> &amp; more.<br />
-          MCA @ Adamas University · Kolkata 🇮🇳
-        </p>
-
-        <div class="hero-actions">
-          <a href="#projects" class="btn-primary">
-            <i class="fas fa-code-branch"></i> View Projects
-            <span class="btn-shine"></span>
-          </a>
-          <a href="#contact" class="btn-outline">
-            <i class="fas fa-paper-plane"></i> Let's Collaborate
-          </a>
-        </div>
-
-        <div class="hero-socials">
-          <a href="https://github.com/pratyushnandi" target="_blank" rel="noopener noreferrer" class="hs-link" aria-label="GitHub"><i
-              class="fab fa-github"></i></a>
-          <a href="https://www.linkedin.com/in/pratyushnandi/" target="_blank" rel="noopener noreferrer" class="hs-link" aria-label="LinkedIn"><i
-              class="fab fa-linkedin-in"></i></a>
-          <a href="mailto:pratyushnandi100@gmail.com" class="hs-link" aria-label="Email"><i
-              class="fas fa-envelope"></i></a>
-          <a href="tel:+917890706472" class="hs-link" aria-label="Phone"><i class="fas fa-phone"></i></a>
-        </div>
-
-        <div class="hero-stats">
-          <div class="hst"><span class="hst-n" data-c="10">0</span><span class="hst-s">+</span><span
-              class="hst-l">Projects</span></div>
-          <div class="hst-d"></div>
-          <div class="hst"><span class="hst-n" data-c="5">0</span><span class="hst-s">+</span><span
-              class="hst-l">Certs</span></div>
-          <div class="hst-d"></div>
-          <div class="hst"><span class="hst-n" data-c="6">0</span><span class="hst-s">+</span><span
-              class="hst-l">Roles</span></div>
-          <div class="hst-d"></div>
-          <div class="hst"><span class="hst-n">8.06</span><span class="hst-l">BCA CGPA</span></div>
-        </div>
-      </div>
-
-      <!-- RIGHT — Photo -->
-      <div class="hero-right" id="hRight">
-        <div class="photo-scene">
-          <div class="ph-glow"></div>
-          <!-- Spinning rings -->
-          <div class="ph-ring ph-r1"></div>
-          <div class="ph-ring ph-r2"></div>
-          <div class="ph-ring ph-r3"></div>
-          <!-- Frame -->
-          <div class="ph-frame" id="phFrame">
-            <div class="ph-inner">
-              <img src="images/profile.jpg" alt="Pratyush Nandi" id="heroImg" fetchpriority="high" decoding="async" />
-              <div class="ph-glare"></div>
-            </div>
-            <!-- Status bubble -->
-            <div class="ph-bubble">
-              <span class="pb-dot"></span> Software Dev
-            </div>
-          </div>
-          <!-- Floating tech badges -->
-          <div class="tb tb1"><i class="devicon-react-original colored"></i> React</div>
-          <div class="tb tb2"><i class="devicon-python-plain colored"></i> Python</div>
-          <div class="tb tb3"><i class="devicon-nodejs-plain colored"></i> Node.js</div>
-          <div class="tb tb4"><i class="fab fa-js-square" style="color:#f7df1e"></i> JavaScript</div>
-          <div class="tb tb5"><i class="devicon-mongodb-plain colored"></i> MongoDB</div>
-          <!-- Orbit dots -->
-          <div class="orbit-ring or1">
-            <div class="od"><i class="devicon-java-plain colored"></i></div>
-          </div>
-          <div class="orbit-ring or2">
-            <div class="od"><i class="fab fa-html5" style="color:#e34f26"></i></div>
-          </div>
-          <div class="orbit-ring or3">
-            <div class="od"><i class="fab fa-git-alt" style="color:#f05032"></i></div>
-          </div>
-        </div>
-        <div class="tb-mobile-row reveal-u">
-          <span><i class="devicon-react-original colored"></i> React</span>
-          <span><i class="devicon-python-plain colored"></i> Python</span>
-          <span><i class="devicon-nodejs-plain colored"></i> Node.js</span>
-          <span><i class="fab fa-js-square" style="color:#f7df1e"></i> JavaScript</span>
-          <span><i class="devicon-mongodb-plain colored"></i> MongoDB</span>
-        </div>
-      </div>
-    </div>
-
-    <a href="#about" class="hero-scroll">
-      <div class="hs-mouse">
-        <div class="hs-wheel"></div>
-      </div>
-      <span>scroll down</span>
-    </a>
-  </section>
-
-  <!-- ════════════════════════════════════
-     ABOUT
-════════════════════════════════════ -->
-  <section id="about" class="sec about-s">
-    <div class="container">
-      <div class="sec-lbl reveal">// 01. about_me</div>
-      <h2 class="sec-h2 reveal" data-num="01">Who <em>I Am</em></h2>
-
-      <div class="about-grid">
-        <!-- Photo -->
-        <div class="abt-photo-col reveal-l">
-          <div class="abt-photo-wrap" data-tilt data-tilt-max="8" data-tilt-glare data-tilt-max-glare="0.15">
-            <img src="images/profile.jpg" alt="Pratyush Nandi" class="abt-photo" loading="lazy" decoding="async" />
-            <div class="abt-photo-glow"></div>
-            <div class="abt-photo-border"></div>
-          </div>
-          <div class="abt-chip ac1"><i class="fas fa-briefcase"></i> Software Developer</div>
-          <div class="abt-chip ac2"><i class="fas fa-graduation-cap"></i> MCA @ Adamas</div>
-          <div class="abt-code"><span class="mono">// always learning</span></div>
-        </div>
-
-        <!-- Text -->
-        <div class="abt-text-col">
-          <div class="abt-bio-box reveal-u">
-            <div class="abb-bar"><span class="ptd r"></span><span class="ptd y"></span><span class="ptd g"></span><span
-                class="abb-t">about.md</span></div>
-            <div class="abb-body">
-              <p>I'm a <strong>passionate web developer and tech enthusiast</strong> who loves creating engaging and
-                responsive web experiences. With skills in <strong>front-end and back-end development</strong>, I enjoy
-                building everything from elegant portfolios to complex web applications.</p>
-              <br />
-              <p>Currently a <strong>Software Developer at Eltern Segen Technologie Pvt. Ltd.</strong> and pursuing
-                <strong>MCA at Adamas University</strong>. I'm always learning, always experimenting, and always up for
-                a challenge.
-              </p>
-            </div>
+      <div class="container hero-wrap">
+        <div class="hero-copy">
+          <div class="hero-meta" data-hero>
+            <span class="status-pill"><span class="pulse-dot" aria-hidden="true"></span> Available for opportunities</span>
+            <span class="hero-loc mono"><i class="fas fa-location-dot" aria-hidden="true"></i> Kolkata, IN</span>
           </div>
 
-          <div class="abt-info-grid reveal-u" style="--d:.1s">
-            <div class="ai-box"><span class="ai-k">📍 Location</span><span class="ai-v">Kolkata, West Bengal</span>
-            </div>
-            <div class="ai-box"><span class="ai-k">📧 Email</span><span class="ai-v">pratyushnandi100@gmail.com</span>
-            </div>
-            <div class="ai-box"><span class="ai-k">📞 Phone</span><span class="ai-v">+91-7890706472</span></div>
-            <div class="ai-box"><span class="ai-k">🏢 Company</span><span class="ai-v">Eltern Segen Technologie</span>
-            </div>
-            <div class="ai-box"><span class="ai-k">🎓 Degree</span><span class="ai-v">MCA — Adamas University</span>
-            </div>
-            <div class="ai-box"><span class="ai-k">🔗 GitHub</span><span class="ai-v">github.com/pratyushnandi</span>
-            </div>
-          </div>
+          <h1 class="hero-title" id="heroTitle">
+            <span class="ht-hi mono" data-hero>Hi! My name is</span>
+            <span class="ht-name"><span class="ht-line"><span class="ht-word">Pratyush</span></span>
+              <span class="ht-line"><span class="ht-word">Nandi<span class="ht-dot">.</span></span></span></span>
+          </h1>
 
-          <div class="abt-counts reveal-u" style="--d:.2s">
-            <div class="ac-item">
-              <div class="ac-n" data-c="2">0</div>
-              <div class="ac-l">Yrs Coding</div>
-            </div>
-            <div class="ac-item">
-              <div class="ac-n" data-c="10">0</div>
-              <div class="ac-l">Projects</div>
-            </div>
-            <div class="ac-item">
-              <div class="ac-n" data-c="6">0</div>
-              <div class="ac-l">Roles</div>
-            </div>
-            <div class="ac-item">
-              <div class="ac-n" data-c="5">0</div>
-              <div class="ac-l">Certs</div>
-            </div>
-          </div>
-
-          <a href="files/PRATYUSH%20NANDI_CV%20(NEW).pdf" download class="btn-primary reveal-u" style="--d:.3s">
-            <i class="fas fa-download"></i> Download CV
-            <span class="btn-shine"></span>
-          </a>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ════════════════════════════════════
-     EXPERIENCE (Horizontal Timeline)
-════════════════════════════════════ -->
-  <section id="experience" class="sec exp-s">
-    <div class="container">
-      <div class="sec-lbl reveal">// 02. work_experience</div>
-      <h2 class="sec-h2 reveal" data-num="02">My <em>Journey</em></h2>
-
-      <!-- Current / Featured -->
-      <div class="exp-featured reveal-u">
-        <div class="ef-icon"><i class="fas fa-laptop-code"></i></div>
-        <div class="ef-body">
-          <div class="ef-top">
-            <h3>Software Developer</h3>
-            <span class="ef-live"><span class="live-dot"></span> Current</span>
-          </div>
-          <p class="ef-co"><i class="fas fa-building"></i> Eltern Segen Technologie Pvt. Ltd.</p>
-          <p class="ef-desc">Developing and maintaining robust web applications. Collaborating with cross-functional
-            teams to deliver scalable software solutions using modern development practices and full-stack technologies.
+          <p class="hero-lead" data-hero>
+            A <em class="serif">passionate programmer</em> building fast full&#8209;stack products, clean APIs and
+            edge&#8209;deployed computer vision.
           </p>
-          <div class="ef-tags"><span>Web
-              Dev</span><span>Python</span><span>JavaScript</span><span>HTML/CSS</span><span>Full-Stack</span></div>
-        </div>
-      </div>
 
-      <!-- Horizontal Timeline -->
-      <div class="timeline-scroll-wrap">
-        <div class="timeline-track" id="timelineTrack">
+          <p class="hero-typed mono" data-hero aria-hidden="true">
+            <span class="hty-k">role</span><span class="hty-p">:</span> <span id="heroTyped">Software Developer</span><span class="hty-cur">▍</span>
+          </p>
 
-          <div class="tl-item reveal-u" style="--d:.05s">
-            <div class="tl-icon tl-i1"><i class="fab fa-html5"></i></div>
-            <div class="tl-year">2021 – 2024</div>
-            <div class="tl-line"></div>
-            <div class="tl-card">
-              <h4>HTML Developer</h4>
-              <p class="tl-sub"><i class="fas fa-code"></i> Front-End</p>
-              <p>Developed efficient and focussed applications using HTML. Focussed on front-end development, data bases
-                and API testing. Proficient in APIs and databases while writing clean and maintainable code. Focussed on
-                performance optimisation, debugging, and continuously improving to deliver better user experience and
-                maintainability of the codebase.</p>
-              <div class="tl-tags"><span>HTML5</span><span>CSS3</span><span>APIs</span></div>
-            </div>
+          <p class="hero-bio" data-hero>
+            Software Developer at <strong>Eltern Segen Technologie Pvt. Ltd.</strong> Working across
+            <strong>React, Node.js &amp; Python</strong>, from interfaces people enjoy using to the services and
+            devices behind them. MCA @ Adamas University.
+          </p>
+
+          <div class="hero-actions" data-hero>
+            <a href="#projects" class="btn btn-primary magnetic">
+              <span>View projects</span> <i class="fas fa-arrow-right" aria-hidden="true"></i>
+            </a>
+            <a href="#contact" class="btn btn-ghost magnetic">
+              <i class="fas fa-paper-plane" aria-hidden="true"></i> <span>Let's collaborate</span>
+            </a>
           </div>
 
-          <div class="tl-item reveal-u" style="--d:.1s">
-            <div class="tl-icon tl-i2"><i class="fab fa-python"></i></div>
-            <div class="tl-year">2023 – 2026</div>
-            <div class="tl-line"></div>
-            <div class="tl-card">
-              <h4>Python Developer</h4>
-              <p class="tl-sub"><i class="fas fa-brain"></i> Backend / ML</p>
-              <p>As a Python Developer, developed efficient and focussed applications using Python. Focussed on back-end
-                development, machine learning, proficiency in frameworks, APIs and databases while writing clean and
-                maintainable code. Focussed on performance optimisation, debugging, and continuously improving.
-                Collaborated with developers to create reliable and user-friendly applications.</p>
-              <div class="tl-tags"><span>Python</span><span>ML</span><span>Flask</span><span>APIs</span></div>
+          <div class="hero-foot" data-hero>
+            <div class="hero-socials">
+              <a href="https://github.com/pratyushnandi" target="_blank" rel="noopener noreferrer" class="icon-btn" aria-label="GitHub"><i class="fab fa-github"></i></a>
+              <a href="https://www.linkedin.com/in/pratyushnandi/" target="_blank" rel="noopener noreferrer" class="icon-btn" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+              <a href="mailto:pratyushnandi100@gmail.com" class="icon-btn" aria-label="Email"><i class="fas fa-envelope"></i></a>
+              <a href="tel:+917890706472" class="icon-btn" aria-label="Phone"><i class="fas fa-phone"></i></a>
             </div>
-          </div>
-
-          <div class="tl-item reveal-u" style="--d:.15s">
-            <div class="tl-icon tl-i3"><i class="fas fa-layer-group"></i></div>
-            <div class="tl-year">2021 – 2026</div>
-            <div class="tl-line"></div>
-            <div class="tl-card">
-              <h4>Frontend Developer</h4>
-              <p class="tl-sub"><i class="fas fa-desktop"></i> Frontend</p>
-              <p>As a Frontend Developer, I developed interactive and responsive web interfaces using HTML, CSS and
-                JavaScript. I built UX-driven components and customised browser features. I worked with backend services
-                to build scalable front-end applications, contributing to building scalable front-end features in
-                collaboration with the design team.</p>
-              <div class="tl-tags"><span>HTML5</span><span>CSS3</span><span>JS</span><span>React</span></div>
-            </div>
-          </div>
-
-          <div class="tl-item reveal-u" style="--d:.2s">
-            <div class="tl-icon tl-i4"><i class="fas fa-server"></i></div>
-            <div class="tl-year">2024 – 2025</div>
-            <div class="tl-line"></div>
-            <div class="tl-card">
-              <h4>Backend Developer</h4>
-              <p class="tl-sub"><i class="fas fa-database"></i> Backend</p>
-              <p>As a Backend Developer, I designed and implemented robust server-side logic using Python/Node.js 2.1,
-                working with relational and non-relational databases, and developed performance-data performance,
-                scalability and reliability. I collaborated with frontend developers to integrate APIs and implement
-                real-time data flow. I contributed to the optimization, performance and contribution to making smooth
-                data flow and a seamless user experience across all devices.</p>
-              <div class="tl-tags"><span>Node.js</span><span>Express</span><span>MongoDB</span><span>APIs</span></div>
-            </div>
-          </div>
-
-          <div class="tl-item reveal-u" style="--d:.25s">
-            <div class="tl-icon tl-i5"><i class="devicon-react-original colored" style="font-size:1.1rem"></i></div>
-            <div class="tl-year">2024 – 2025</div>
-            <div class="tl-line"></div>
-            <div class="tl-card">
-              <h4>React Development</h4>
-              <p class="tl-sub"><i class="fas fa-atom"></i> React / Frontend</p>
-              <p>As a React Developer, I built dynamic, responsive, user interfaces using ReactJS. I implemented
-                reusable components, managed state with hooks and context API, and optimised app performance. I
-                collaborated with backend teams to integrate APIs and implement real-time data flow. I contributed to
-                the optimization, performance and contribution to making smooth data flow and a seamless user experience
-                across all devices.</p>
-              <div class="tl-tags"><span>React</span><span>Hooks</span><span>Context API</span><span>Redux</span></div>
-            </div>
-          </div>
-
-          <div class="tl-item reveal-u" style="--d:.3s">
-            <div class="tl-icon tl-i6"><i class="fas fa-users-cog"></i></div>
-            <div class="tl-year">2025 – 2025</div>
-            <div class="tl-line"></div>
-            <div class="tl-card">
-              <h4>Student Developer Club</h4>
-              <p class="tl-sub"><i class="fas fa-university"></i> Adamas University</p>
-              <p>As Tech Lead, organized bootcamps, coding sessions, and gave workshops on web development, Git, and
-                open-source contributions. Hosted coding contests, and actively helped build a strong campus tech
-                community and encouraged active participation in real-world software development practices.</p>
-              <div class="tl-tags"><span>Leadership</span><span>Mentoring</span><span>Git</span><span>Open Source</span>
-              </div>
-            </div>
-          </div>
-
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ════════════════════════════════════
-     TECH STACK / SKILLS
-════════════════════════════════════ -->
-  <section id="skills" class="sec skills-s">
-    <div class="container">
-      <div class="sec-lbl reveal">// 03. tech_stack</div>
-      <h2 class="sec-h2 reveal" data-num="03">Tech <em>Stack</em></h2>
-
-      <!-- Category tabs -->
-      <div class="sk-tabs reveal">
-        <button type="button" class="sk-tab active" data-p="languages"><i class="fas fa-code"></i> Languages</button>
-        <button type="button" class="sk-tab" data-p="frontend"><i class="fas fa-desktop"></i> Frontend</button>
-        <button type="button" class="sk-tab" data-p="backend"><i class="fas fa-server"></i> Backend</button>
-        <button type="button" class="sk-tab" data-p="tools"><i class="fas fa-tools"></i> Tools</button>
-      </div>
-
-      <div class="sk-panels">
-        <!-- LANGUAGES: C, C++, Python, Java -->
-        <div class="sk-panel active" id="p-languages">
-          <div class="sk-grid">
-            <div class="sk-card" data-tilt data-tilt-max="12">
-              <div class="sk-icon"><i class="devicon-c-plain colored"></i></div>
-              <span class="sk-name">C</span>
-            </div>
-            <div class="sk-card" data-tilt data-tilt-max="12">
-              <div class="sk-icon"><i class="devicon-cplusplus-plain colored"></i></div>
-              <span class="sk-name">C++</span>
-            </div>
-            <div class="sk-card" data-tilt data-tilt-max="12">
-              <div class="sk-icon"><i class="devicon-python-plain colored"></i></div>
-              <span class="sk-name">Python</span>
-            </div>
-            <div class="sk-card" data-tilt data-tilt-max="12">
-              <div class="sk-icon"><i class="devicon-java-plain colored"></i></div>
-              <span class="sk-name">Java</span>
-            </div>
+            <dl class="hero-stats">
+              <div><dt>Projects</dt><dd><span class="count" data-count="10">10</span>+</dd></div>
+              <div><dt>Certifications</dt><dd><span class="count" data-count="5">5</span>+</dd></div>
+              <div><dt>Roles</dt><dd><span class="count" data-count="6">6</span>+</dd></div>
+              <div><dt>BCA CGPA</dt><dd>8.06</dd></div>
+            </dl>
           </div>
         </div>
 
-        <!-- FRONTEND: HTML5, CSS3, JS, React -->
-        <div class="sk-panel" id="p-frontend">
-          <div class="sk-grid">
-            <div class="sk-card" data-tilt data-tilt-max="12">
-              <div class="sk-icon"><i class="fab fa-html5" style="color:#e34f26"></i></div>
-              <span class="sk-name">HTML5</span>
-            </div>
-            <div class="sk-card" data-tilt data-tilt-max="12">
-              <div class="sk-icon"><i class="fab fa-css3-alt" style="color:#264de4"></i></div>
-              <span class="sk-name">CSS3</span>
-            </div>
-            <div class="sk-card" data-tilt data-tilt-max="12">
-              <div class="sk-icon"><i class="fab fa-js-square" style="color:#f7df1e"></i></div>
-              <span class="sk-name">JavaScript</span>
-            </div>
-            <div class="sk-card" data-tilt data-tilt-max="12">
-              <div class="sk-icon"><i class="devicon-react-original colored"></i></div>
-              <span class="sk-name">React</span>
-            </div>
-          </div>
-        </div>
+        <!-- Visual: IDE window + profile card + deploy terminal -->
+        <div class="hero-visual" id="heroVisual" aria-hidden="true">
+          <div class="hv-layer hv-ide" data-depth="10">
+            <div class="ide">
+              <div class="win-bar">
+                <span class="dots"><i></i><i></i><i></i></span>
+                <span class="ide-tab active"><i class="devicon-typescript-plain"></i> developer.ts</span>
+                <span class="ide-tab"><span class="ide-tab-ico">{}</span> stack.json</span>
+              </div>
+              <div class="ide-body">
+                <ol class="ide-gutter"><li>1</li><li>2</li><li>3</li><li>4</li><li>5</li><li>6</li><li>7</li><li>8</li><li>9</li><li>10</li></ol>
+                <pre class="ide-code" id="ideCode"><code><span class="tk-k">const</span> <span class="tk-v">developer</span> <span class="tk-p">=</span> {
+  <span class="tk-a">name</span>: <span class="tk-s">"Pratyush Nandi"</span>,
+  <span class="tk-a">role</span>: <span class="tk-s">"Software Developer"</span>,
+  <span class="tk-a">company</span>: <span class="tk-s">"Eltern Segen Technologie"</span>,
+  <span class="tk-a">stack</span>: [<span class="tk-s">"TypeScript"</span>, <span class="tk-s">"React"</span>, <span class="tk-s">"Node.js"</span>, <span class="tk-s">"Python"</span>],
+  <span class="tk-a">focus</span>: [<span class="tk-s">"Full-Stack"</span>, <span class="tk-s">"Edge AI"</span>, <span class="tk-s">"IoT"</span>],
+  <span class="tk-a">available</span>: <span class="tk-b">true</span>,
+};
 
-        <!-- BACKEND: Node.js, Express.js, MongoDB, PHP/Laravel -->
-        <div class="sk-panel" id="p-backend">
-          <div class="sk-grid">
-            <div class="sk-card" data-tilt data-tilt-max="12">
-              <div class="sk-icon"><i class="devicon-nodejs-plain colored"></i></div>
-              <span class="sk-name">Node.js</span>
-            </div>
-            <div class="sk-card" data-tilt data-tilt-max="12">
-              <div class="sk-icon"><i class="devicon-express-original" style="color:#fff"></i></div>
-              <span class="sk-name">Express.js</span>
-            </div>
-            <div class="sk-card" data-tilt data-tilt-max="12">
-              <div class="sk-icon"><i class="devicon-mongodb-plain colored"></i></div>
-              <span class="sk-name">MongoDB</span>
-            </div>
-            <div class="sk-card" data-tilt data-tilt-max="12">
-              <div class="sk-icon"><i class="devicon-laravel-plain colored"></i></div>
-              <span class="sk-name">Laravel/PHP</span>
+<span class="tk-k">export default</span> <span class="tk-v">developer</span>;</code></pre>
+              </div>
+              <div class="ide-status">
+                <span><i class="fas fa-code-branch"></i> main</span>
+                <span class="ok"><i class="fas fa-check"></i> build passing</span>
+                <span class="ide-status-end">TypeScript · UTF-8</span>
+              </div>
             </div>
           </div>
-        </div>
 
-        <!-- TOOLS -->
-        <div class="sk-panel" id="p-tools">
-          <div class="sk-grid">
-            <div class="sk-card" data-tilt data-tilt-max="12">
-              <div class="sk-icon"><i class="fab fa-git-alt" style="color:#f05032"></i></div>
-              <span class="sk-name">Git</span>
-            </div>
-            <div class="sk-card" data-tilt data-tilt-max="12">
-              <div class="sk-icon"><i class="fab fa-github"></i></div>
-              <span class="sk-name">GitHub</span>
-            </div>
-            <div class="sk-card" data-tilt data-tilt-max="12">
-              <div class="sk-icon"><i class="devicon-mysql-plain colored"></i></div>
-              <span class="sk-name">MySQL</span>
-            </div>
-            <div class="sk-card" data-tilt data-tilt-max="12">
-              <div class="sk-icon"><i class="fas fa-brain" style="color:#a78bfa"></i></div>
-              <span class="sk-name">AI / ML</span>
+          <div class="hv-layer hv-profile" data-depth="22">
+            <div class="profile-card">
+              <img src="images/profile.jpg" alt="" width="56" height="56" fetchpriority="high" decoding="async" />
+              <div>
+                <strong>Pratyush Nandi</strong>
+                <span><span class="pulse-dot"></span> Software Developer</span>
+              </div>
             </div>
           </div>
+
+          <div class="hv-layer hv-term" data-depth="16">
+            <div class="mini-term">
+              <p><span class="mt-p">~/portfolio</span> <span class="mt-c">$</span> npm run deploy</p>
+              <p class="mt-dim">▸ building 42 modules…</p>
+              <p class="mt-ok">✓ deployed to production <span class="mt-dim">in 1.2s</span></p>
+            </div>
+          </div>
+
+          <div class="hv-layer hv-chip hv-chip-1" data-depth="28"><span class="tech-chip"><i class="devicon-react-original colored"></i> React</span></div>
+          <div class="hv-layer hv-chip hv-chip-2" data-depth="34"><span class="tech-chip"><i class="devicon-python-plain colored"></i> Python</span></div>
+          <div class="hv-layer hv-chip hv-chip-3" data-depth="24"><span class="tech-chip"><i class="devicon-nodejs-plain colored"></i> Node.js</span></div>
         </div>
       </div>
 
-      <!-- Marquee -->
-      <div class="marquee-wrap reveal">
-        <div class="mq-inner">
-          <div class="mq-track">
-            <span><i class="devicon-c-plain colored"></i> C</span>
-            <span><i class="devicon-cplusplus-plain colored"></i> C++</span>
-            <span><i class="devicon-python-plain colored"></i> Python</span>
-            <span><i class="devicon-java-plain colored"></i> Java</span>
-            <span><i class="fab fa-html5" style="color:#e34f26"></i> HTML5</span>
-            <span><i class="fab fa-css3-alt" style="color:#264de4"></i> CSS3</span>
-            <span><i class="fab fa-js-square" style="color:#f7df1e"></i> JavaScript</span>
-            <span><i class="devicon-react-original colored"></i> React</span>
-            <span><i class="devicon-nodejs-plain colored"></i> Node.js</span>
-            <span><i class="devicon-express-original" style="color:#fff"></i> Express.js</span>
-            <span><i class="devicon-mongodb-plain colored"></i> MongoDB</span>
-            <span><i class="fab fa-git-alt" style="color:#f05032"></i> Git</span>
-            <!-- Duplicate for seamless loop -->
-            <span><i class="devicon-c-plain colored"></i> C</span>
-            <span><i class="devicon-cplusplus-plain colored"></i> C++</span>
-            <span><i class="devicon-python-plain colored"></i> Python</span>
-            <span><i class="devicon-java-plain colored"></i> Java</span>
-            <span><i class="fab fa-html5" style="color:#e34f26"></i> HTML5</span>
-            <span><i class="fab fa-css3-alt" style="color:#264de4"></i> CSS3</span>
-            <span><i class="fab fa-js-square" style="color:#f7df1e"></i> JavaScript</span>
-            <span><i class="devicon-react-original colored"></i> React</span>
-            <span><i class="devicon-nodejs-plain colored"></i> Node.js</span>
-            <span><i class="devicon-express-original" style="color:#fff"></i> Express.js</span>
-            <span><i class="devicon-mongodb-plain colored"></i> MongoDB</span>
-            <span><i class="fab fa-git-alt" style="color:#f05032"></i> Git</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
+      <a href="#about" class="hero-scroll" aria-label="Scroll to About section">
+        <span class="mono">scroll</span>
+        <span class="hs-line" aria-hidden="true"></span>
+      </a>
+    </section>
 
-  <!-- ════════════════════════════════════
-     PROJECTS
-════════════════════════════════════ -->
-  <section id="projects" class="sec proj-s">
-    <div class="container">
-      <div class="sec-lbl reveal">// 04. my_projects</div>
-      <h2 class="sec-h2 reveal" data-num="04">My <em>Projects</em></h2>
+    <!-- ════════════════════════════════════
+       ABOUT
+    ════════════════════════════════════ -->
+    <section id="about" class="sec" aria-labelledby="aboutTitle">
+      <div class="container">
+        <header class="sec-head" data-reveal>
+          <span class="sec-kicker mono"><span class="sk-num">01</span> about_me</span>
+          <h2 class="sec-title" id="aboutTitle">Who <em class="serif">I am</em></h2>
+          <p class="sec-sub">Developer by trade, builder by habit, always learning, always experimenting, always up for a challenge.</p>
+        </header>
 
-      <div class="pf-row reveal">
-        <button type="button" class="pf active" data-f="all">All</button>
-        <button type="button" class="pf" data-f="ai">AI/ML</button>
-        <button type="button" class="pf" data-f="web">Web App</button>
-        <button type="button" class="pf" data-f="fullstack">Full-Stack</button>
-      </div>
-
-      <div class="proj-grid" id="projGrid">
-
-        <!-- DETECTIFY — Featured -->
-        <article class="pj-card pj-big" data-cat="ai" data-tilt>
-          <div class="pj-img-wrap">
-            <img src="projects/detectify.jpg" alt="Detectify" class="pj-img" loading="lazy" decoding="async" />
-            <div class="pj-overlay">
-              <a href="https://github.com/pratyushnandi" target="_blank" rel="noopener noreferrer" class="pj-ol-btn" title="GitHub" aria-label="View source on GitHub"><i class="fab fa-github"></i></a>
-            </div>
-            <span class="pj-ribbon">⭐ Featured</span>
-            <span class="pj-cat">AI / ML</span>
-          </div>
-          <div class="pj-body">
-            <div class="pj-tech"><span>Python</span><span>ML</span><span>OpenCV</span><span>Computer Vision</span></div>
-            <h3>Detectify</h3>
-            <p class="pj-tagline">Intelligent Traffic Signal Detection &amp; Violation Alert System</p>
-            <p class="pj-desc">AI-powered real-time traffic monitoring system. Detects red-light jumping, speeding, and
-              no-helmet violations using ML models integrated with live camera feeds — reducing human error in law
-              enforcement.</p>
-          </div>
-        </article>
-
-        <!-- CAMPUS RECRUITMENT — Featured -->
-        <article class="pj-card pj-big" data-cat="web" data-tilt>
-          <div class="pj-img-wrap">
-            <img src="projects/recruitment.jpg" alt="Campus Recruitment" class="pj-img" loading="lazy" decoding="async" />
-            <div class="pj-overlay">
-              <a href="https://github.com/pratyushnandi" target="_blank" rel="noopener noreferrer" class="pj-ol-btn" title="GitHub" aria-label="View source on GitHub"><i class="fab fa-github"></i></a>
-            </div>
-            <span class="pj-ribbon">⭐ Featured</span>
-            <span class="pj-cat">Web App</span>
-          </div>
-          <div class="pj-body">
-            <div class="pj-tech"><span>PHP</span><span>Laravel</span><span>MySQL</span><span>HTML/CSS</span></div>
-            <h3>Campus Recruitment System</h3>
-            <p class="pj-tagline">Full-Stack Campus Recruitment Management Platform</p>
-            <p class="pj-desc">Dynamic web-based platform using PHP &amp; Laravel. Companies post jobs; students
-              register, apply, and track applications with real-time notifications and admin dashboards.</p>
-          </div>
-        </article>
-
-        <!-- Portfolio Website -->
-        <article class="pj-card" data-cat="web" data-tilt>
-          <div class="pj-mini-icon" style="background:linear-gradient(135deg,#4a00e0,#8e2de2)"><i
-              class="fas fa-user-tie"></i></div>
-          <div class="pj-body">
-            <div class="pj-tech"><span>HTML</span><span>CSS</span><span>JS</span></div>
-            <h3>Portfolio Website</h3>
-            <p class="pj-desc">Responsive portfolio site using HTML, CSS, JS with neon animations, AOS effects, EmailJS
-              contact form and dynamic sections.</p>
-            <div class="pj-links">
-              <a href="https://portfolio-website-ab1.netlify.app/" target="_blank" rel="noopener noreferrer" class="pj-link-btn"><i
-                  class="fas fa-external-link-alt"></i> Live</a>
-            </div>
-          </div>
-        </article>
-
-        <!-- Code Editor -->
-        <article class="pj-card" data-cat="fullstack" data-tilt>
-          <div class="pj-mini-icon" style="background:linear-gradient(135deg,#1a1a2e,#16213e)"><i
-              class="fas fa-code"></i></div>
-          <div class="pj-body">
-            <div class="pj-tech"><span>HTML</span><span>CSS</span><span>JS</span></div>
-            <h3>Code Editor</h3>
-            <p class="pj-desc">Real-time Code Editor where you can build websites using HTML, CSS and JS with instant
-              live preview in the browser.</p>
-            <div class="pj-links">
-              <a href="https://pratyushnandi.github.io/Code_EDITOR/" target="_blank" rel="noopener noreferrer" class="pj-link-btn"><i
-                  class="fas fa-external-link-alt"></i> Live</a>
-            </div>
-          </div>
-        </article>
-
-        <!-- Web Calculator -->
-        <article class="pj-card" data-cat="fullstack" data-tilt>
-          <div class="pj-mini-icon" style="background:linear-gradient(135deg,#0f3460,#533483)"><i
-              class="fas fa-calculator"></i></div>
-          <div class="pj-body">
-            <div class="pj-tech"><span>Node.js</span><span>Express</span><span>HTML</span><span>CSS</span></div>
-            <h3>Web Calculator</h3>
-            <p class="pj-desc">Full-stack Web Calculator using Node, Express, Html, Css. Clean responsive UI with a
-              robust backend.</p>
-            <div class="pj-links">
-              <a href="https://web-calculator-ad.netlify.app/" target="_blank" rel="noopener noreferrer" class="pj-link-btn"><i
-                  class="fas fa-external-link-alt"></i> Live</a>
-            </div>
-          </div>
-        </article>
-
-        <!-- Rock Paper Scissors -->
-        <article class="pj-card" data-cat="fullstack" data-tilt>
-          <div class="pj-mini-icon" style="background:linear-gradient(135deg,#3a1c71,#d76d77)"><i
-              class="fas fa-gamepad"></i></div>
-          <div class="pj-body">
-            <div class="pj-tech"><span>JavaScript</span><span>HTML</span><span>CSS</span></div>
-            <h3>Rock Paper Scissors</h3>
-            <p class="pj-desc">Full-stack Rock Paper Scissors Game using Js, Html, Css with smooth animations and
-              intelligent AI opponent logic.</p>
-            <div class="pj-links">
-              <a href="https://playfull-game.netlify.app/" target="_blank" rel="noopener noreferrer" class="pj-link-btn"><i
-                  class="fas fa-gamepad"></i> Play</a>
-            </div>
-          </div>
-        </article>
-
-        <!-- Cyber Calendar -->
-        <article class="pj-card" data-cat="fullstack" data-tilt>
-          <div class="pj-mini-icon" style="background:linear-gradient(135deg,#134e5e,#71b280)"><i
-              class="fas fa-calendar-alt"></i></div>
-          <div class="pj-body">
-            <div class="pj-tech"><span>JavaScript</span><span>HTML</span><span>CSS</span></div>
-            <h3>Cyber Calendar</h3>
-            <p class="pj-desc">Full-stack Calendar using Js, Html, Css with a futuristic cyber theme, smooth transitions
-              and event management.</p>
-            <div class="pj-links">
-              <a href="https://cyber-calender-ab.netlify.app/" target="_blank" rel="noopener noreferrer" class="pj-link-btn"><i
-                  class="fas fa-external-link-alt"></i> Live</a>
-            </div>
-          </div>
-        </article>
-
-        <!-- Background Changer -->
-        <article class="pj-card" data-cat="fullstack" data-tilt>
-          <div class="pj-mini-icon" style="background:linear-gradient(135deg,#1e3c72,#2a5298)"><i
-              class="fas fa-palette"></i></div>
-          <div class="pj-body">
-            <div class="pj-tech"><span>Node.js</span><span>Express</span><span>HTML</span><span>CSS</span></div>
-            <h3>Background Changer</h3>
-            <p class="pj-desc">Full-stack Background Changer using Node, Express, Html, Css. Dynamic color palette with
-              smooth transitions.</p>
-            <div class="pj-links">
-              <a href="https://background-change12.netlify.app/" target="_blank" rel="noopener noreferrer" class="pj-link-btn"><i
-                  class="fas fa-external-link-alt"></i> Live</a>
-            </div>
-          </div>
-        </article>
-
-      </div>
-
-      <div class="proj-cta reveal">
-        <a href="https://github.com/pratyushnandi" target="_blank" rel="noopener noreferrer" class="btn-outline">
-          <i class="fab fa-github"></i> View All on GitHub
-        </a>
-      </div>
-    </div>
-  </section>
-
-  <!-- ════════════════════════════════════
-     EDUCATION + CERTS
-════════════════════════════════════ -->
-  <section id="education" class="sec edu-s">
-    <div class="container">
-      <div class="sec-lbl reveal">// 05. education</div>
-      <h2 class="sec-h2 reveal" data-num="05">Academic <em>Background</em></h2>
-
-      <div class="edu-grid">
-        <div>
-          <h3 class="edu-col-h"><i class="fas fa-graduation-cap"></i> Education</h3>
-          <div class="edu-list">
-            <div class="edu-card reveal-l">
-              <button type="button" class="ec-strip ec-strip-view" style="background:linear-gradient(135deg,#7c3aed,#a78bfa)" onclick="openPcModal('documents/mca-provisional-certificate.pdf','MCA PROVISIONAL GRADE CARD')" aria-label="View MCA grade cards" title="View MCA grade cards">
-                <i class="fas fa-university"></i><span>MCA</span>
-                <span class="ec-strip-hover"><i class="fas fa-eye"></i></span>
-              </button>
-              <div class="ec-body">
-                <h4>Master of Computer Applications</h4>
-                <p class="ec-inst">Adamas University</p>
-                <div class="ec-row"><span>2024 – 2026</span><span class="ec-grade">CGPA: 7.80</span></div>
-              </div>
-            </div>
-            <div class="edu-card reveal-l" style="--d:.1s">
-              <button type="button" class="ec-strip ec-strip-view" style="background:linear-gradient(135deg,#06b6d4,#0891b2)" onclick="openPcModal('documents/bca-provisional-certificate.pdf','BCA PROVISIONAL GRADE CARD')" aria-label="View BCA provisional certificate" title="View BCA provisional certificate">
-                <i class="fas fa-laptop-code"></i><span>BCA</span>
-                <span class="ec-strip-hover"><i class="fas fa-eye"></i></span>
-              </button>
-              <div class="ec-body">
-                <h4>Bachelor of Computer Application</h4>
-                <p class="ec-inst">Techno India (Hooghly) – MAKAUT</p>
-                <div class="ec-row"><span>2021 – 2024</span><span class="ec-grade">CGPA: 8.06</span></div>
-              </div>
-            </div>
-            <div class="edu-card reveal-l" style="--d:.2s">
-              <button type="button" class="ec-strip ec-strip-view" style="background:linear-gradient(135deg,#f59e0b,#d97706)" onclick="openPcModal('documents/hs-pass-certificate.pdf','HIGHER SECONDARY PASS CERTIFICATE')" aria-label="View HS pass certificate" title="View HS pass certificate">
-                <i class="fas fa-school"></i><span>HS</span>
-                <span class="ec-strip-hover"><i class="fas fa-eye"></i></span>
-              </button>
-              <div class="ec-body">
-                <h4>Higher Secondary (WBCHSE)</h4>
-                <p class="ec-inst">Kalna Maharaja's High School</p>
-                <div class="ec-row"><span>2020 – 2021</span><span class="ec-grade">86%</span></div>
-              </div>
-            </div>
-            <div class="edu-card reveal-l" style="--d:.3s">
-              <button type="button" class="ec-strip ec-strip-view" style="background:linear-gradient(135deg,#10b981,#059669)" onclick="openPcModal('documents/sec-pass-certificate.jpg','SECONDARY PASS CERTIFICATE')" aria-label="View secondary pass certificate" title="View secondary pass certificate">
-                <i class="fas fa-book"></i><span>SEC</span>
-                <span class="ec-strip-hover"><i class="fas fa-eye"></i></span>
-              </button>
-              <div class="ec-body">
-                <h4>Secondary School (WBCHSE)</h4>
-                <p class="ec-inst">Kalna Maharaja's High School</p>
-                <div class="ec-row"><span>2018 – 2019</span><span class="ec-grade">60%</span></div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div>
-          <h3 class="edu-col-h"><i class="fas fa-certificate"></i> Certifications</h3>
-          <div class="cert-list">
-            <div class="cert-card reveal-r">
-              <div class="cc-icon" style="background:linear-gradient(135deg,#4285f4,#34a853)"><i
-                  class="fab fa-google"></i></div>
-              <div class="cc-body">
-                <h4>Google Data Analytics</h4>
-                <p>Coursera Professional Certificate</p><a
-                  href="https://www.coursera.org/account/accomplishments/professional-cert/DNU7LAGUDSYJ" target="_blank" rel="noopener noreferrer"
-                  class="cc-link"><i class="fas fa-external-link-alt"></i> Verify</a>
-              </div>
-            </div>
-            <div class="cert-card reveal-r" style="--d:.08s">
-              <div class="cc-icon" style="background:linear-gradient(135deg,#86BC25,#009A44)"><i
-                  class="fas fa-chart-bar"></i></div>
-              <div class="cc-body">
-                <h4>Data Analytics – Deloitte (Forage)</h4>
-                <p>Cert: bGsQf7XCPPRTue7Sb · Dec 2025</p>
-              </div>
-            </div>
-            <div class="cert-card reveal-r" style="--d:.16s">
-              <div class="cc-icon" style="background:linear-gradient(135deg,#ff6b35,#f7931e)"><i
-                  class="fas fa-award"></i></div>
-              <div class="cc-body">
-                <h4>IT/ITES Level 1 &amp; Level 2</h4>
-                <p>NSDC &amp; Skill India · ID: 17190938017048928</p>
-              </div>
-            </div>
-            <div class="cert-card reveal-r" style="--d:.24s">
-              <div class="cc-icon" style="background:linear-gradient(135deg,#667eea,#764ba2)"><i
-                  class="fas fa-headset"></i></div>
-              <div class="cc-body">
-                <h4>Domestic IT Helpdesk Attendant</h4>
-                <p>NSQF Level-4 · SSC/Q0110</p>
-              </div>
-            </div>
-            <div class="cert-card reveal-r" style="--d:.32s">
-              <div class="cc-icon" style="background:linear-gradient(135deg,#06b6d4,#7c3aed)"><i
-                  class="fas fa-globe"></i></div>
-              <div class="cc-body">
-                <h4>Fundamental Web Development</h4>
-                <p>Techno India (Hooghly Campus)</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ════════════════════════════════════
-     CONTACT ME
-════════════════════════════════════ -->
-  <section id="contact" class="sec contact-s">
-    <div class="container">
-      <div class="sec-lbl reveal">// 06. contact_me</div>
-      <h2 class="sec-h2 reveal" data-num="06">Let's <em>Connect</em></h2>
-
-      <div class="contact-grid">
-        <!-- Info -->
-        <div class="ci-col reveal-l">
-          <div class="ci-term">
-            <div class="ci-bar"><span class="ptd r"></span><span class="ptd y"></span><span
-                class="ptd g"></span><span>contact.sh</span></div>
-            <div class="ci-body">
-              <p><span class="ci-c"># Open to freelance, full-time &amp; collaborations</span></p>
-              <br />
-              <a href="mailto:pratyushnandi100@gmail.com" class="ci-row"><i class="fas fa-envelope"></i>
-                <div><span class="ci-k">Email</span><span class="ci-v">pratyushnandi100@gmail.com</span></div>
+        <div class="bento">
+          <article class="b-card b-intro" data-reveal>
+            <span class="card-label mono">about.md</span>
+            <p class="b-intro-lead">I'm a <strong>passionate web developer and tech enthusiast</strong> who loves creating engaging,
+              responsive experiences.</p>
+            <p>With skills across <strong>front-end and back-end development</strong>, I enjoy building everything from
+              elegant portfolios to complex web applications. Currently a <strong>Software Developer at Eltern Segen
+              Technologie Pvt. Ltd.</strong> and pursuing <strong>MCA at Adamas University</strong>.</p>
+            <div class="b-intro-actions">
+              <a href="files/PRATYUSH%20NANDI_CV%20(NEW).pdf" download class="btn btn-primary magnetic">
+                <i class="fas fa-download" aria-hidden="true"></i> <span>Download CV</span>
               </a>
-              <a href="tel:+917890706472" class="ci-row"><i class="fas fa-phone"></i>
-                <div><span class="ci-k">Phone</span><span class="ci-v">+91&#8209;7890706472</span></div>
-              </a>
-              <div class="ci-row"><i class="fas fa-map-marker-alt"></i>
-                <div><span class="ci-k">Location</span><span class="ci-v">Kolkata, West Bengal, India</span></div>
-              </div>
-              <div class="ci-row"><i class="fas fa-building"></i>
-                <div><span class="ci-k">Company</span><span class="ci-v">Eltern Segen Technologie Pvt. Ltd.</span></div>
-              </div>
+              <a href="https://github.com/pratyushnandi" target="_blank" rel="noopener noreferrer" class="link-arrow">github.com/pratyushnandi <i class="fas fa-arrow-up-right-from-square" aria-hidden="true"></i></a>
             </div>
-          </div>
-          <div class="ci-soc-row">
-            <a href="https://github.com/pratyushnandi" target="_blank" rel="noopener noreferrer" class="csr-btn gh"><i class="fab fa-github"></i>
-              GitHub</a>
-            <a href="https://www.linkedin.com/in/pratyushnandi/" target="_blank" rel="noopener noreferrer" class="csr-btn li"><i
-                class="fab fa-linkedin-in"></i> LinkedIn</a>
-            <a href="mailto:pratyushnandi100@gmail.com" class="csr-btn em"><i class="fas fa-envelope"></i> Email</a>
-          </div>
-        </div>
+          </article>
 
-        <!-- Form -->
-        <div class="cf-col reveal-r">
-          <form id="contactForm" novalidate>
-            <div class="cf-head"><span class="ptd r"></span><span class="ptd y"></span><span
-                class="ptd g"></span><span>new_message.js</span></div>
-            <div class="cf-inner">
-              <div class="cf-row2">
-                <div class="cf-grp"><label for="cfName"><span class="ck">const</span> name <span class="co">=</span></label><input
-                    id="cfName" type="text" name="user_name" placeholder='"Your name..."' required /></div>
-                <div class="cf-grp"><label for="cfEmail"><span class="ck">const</span> email <span class="co">=</span></label><input
-                    id="cfEmail" type="email" name="user_email" placeholder='"your@email.com"' required /></div>
+          <figure class="b-card b-photo tilt" data-reveal style="--i:1">
+            <img src="images/profile.jpg" alt="Pratyush Nandi" loading="lazy" decoding="async" width="480" height="560" />
+            <figcaption>
+              <span class="pulse-dot" aria-hidden="true"></span>
+              <span><strong>Pratyush Nandi</strong><br />Software Developer · Kolkata</span>
+            </figcaption>
+          </figure>
+
+          <article class="b-card b-now" data-reveal style="--i:2">
+            <span class="card-label mono">now</span>
+            <div class="now-row">
+              <span class="now-icon" aria-hidden="true"><i class="fas fa-laptop-code"></i></span>
+              <div>
+                <strong>Software Developer</strong>
+                <span>Eltern Segen Technologie Pvt. Ltd.</span>
               </div>
-              <div class="cf-row2">
-                <div class="cf-grp">
-                  <label for="cfReason"><span class="ck">const</span> reason <span class="co">=</span></label>
-                  <select id="cfReason" name="contact_reason" required>
-                    <option value="" disabled selected>"Select reason..."</option>
-                    <option value="💼 Freelance / Project">💼 Freelance / Project</option>
-                    <option value="🤝 Collaboration">🤝 Collaboration</option>
-                    <option value="💻 Job Opportunity">💻 Job Opportunity</option>
-                    <option value="🧠 Technical Discussion">🧠 Technical Discussion</option>
-                    <option value="📩 General Inquiry">📩 General Inquiry</option>
-                  </select>
-                </div>
-                <div class="cf-grp">
-                  <label for="cfCompany"><span class="ck">const</span> company <span class="co">=</span></label>
-                  <input id="cfCompany" type="text" name="company" placeholder='"Company / Organization (optional)"' />
-                </div>
-              </div>
-              <div class="cf-row2">
-                <div class="cf-grp">
-                  <label for="cfSubject"><span class="ck">const</span> subject <span class="co">=</span></label>
-                  <input id="cfSubject" type="text" name="subject" placeholder='"What is this about?"' required />
-                </div>
-                <div class="cf-grp">
-                  <label for="cfLink"><span class="ck">const</span> profileLink <span class="co">=</span></label>
-                  <input id="cfLink" type="url" name="social_link" placeholder='"LinkedIn / GitHub / Portfolio (optional)"' />
-                </div>
-              </div>
-              <div class="cf-grp"><label for="cfMessage"><span class="ck">const</span> message <span
-                    class="co">=</span></label><textarea id="cfMessage" name="message" rows="5" placeholder='"Your message..."'
-                  required></textarea></div>
-              <button type="submit" class="cf-btn" id="cfBtn">
-                <span id="cfTxt"><i class="fas fa-paper-plane"></i> sendMessage()</span>
-                <span id="cfLoad" hidden><i class="fas fa-spinner fa-spin"></i> Sending...</span>
-              </button>
-              <p id="cfStatus" class="cf-status" aria-live="polite"></p>
             </div>
-          </form>
+            <div class="now-row">
+              <span class="now-icon alt" aria-hidden="true"><i class="fas fa-graduation-cap"></i></span>
+              <div>
+                <strong>MCA, 2024 – 2026</strong>
+                <span>Adamas University</span>
+              </div>
+            </div>
+          </article>
+
+          <div class="b-card b-stats" data-reveal style="--i:3">
+            <div class="stat"><span class="stat-n"><span class="count" data-count="2">2</span>+</span><span class="stat-l">Years coding</span></div>
+            <div class="stat"><span class="stat-n"><span class="count" data-count="10">10</span>+</span><span class="stat-l">Projects shipped</span></div>
+            <div class="stat"><span class="stat-n"><span class="count" data-count="6">6</span></span><span class="stat-l">Roles &amp; positions</span></div>
+            <div class="stat"><span class="stat-n"><span class="count" data-count="5">5</span>+</span><span class="stat-l">Certifications</span></div>
+          </div>
+
+          <article class="b-card b-focus" data-reveal style="--i:4">
+            <span class="card-label mono">focus_areas</span>
+            <ul class="focus-list">
+              <li><i class="fas fa-layer-group" aria-hidden="true"></i><div><strong>Full-stack web</strong><span>React, Next.js, Node.js</span></div></li>
+              <li><i class="fas fa-plug" aria-hidden="true"></i><div><strong>Backend &amp; APIs</strong><span>REST, Fastify, PostgreSQL</span></div></li>
+              <li><i class="fas fa-eye" aria-hidden="true"></i><div><strong>Visual AI</strong><span>YOLO, OpenCV, Python</span></div></li>
+              <li><i class="fas fa-microchip" aria-hidden="true"></i><div><strong>Edge &amp; IoT</strong><span>Raspberry Pi, RTSP, MediaMTX</span></div></li>
+            </ul>
+          </article>
+
+          <article class="b-card b-json" data-reveal style="--i:5">
+            <span class="card-label mono">profile.json</span>
+            <dl class="kv mono">
+              <div><dt>"location"</dt><dd>"Kolkata, West Bengal"</dd></div>
+              <div><dt>"email"</dt><dd><a href="mailto:pratyushnandi100@gmail.com">"pratyushnandi100@gmail.com"</a></dd></div>
+              <div><dt>"phone"</dt><dd><a href="tel:+917890706472">"+91&#8209;7890706472"</a></dd></div>
+              <div><dt>"company"</dt><dd>"Eltern Segen Technologie"</dd></div>
+              <div><dt>"degree"</dt><dd>"MCA — Adamas University"</dd></div>
+              <div><dt>"github"</dt><dd><a href="https://github.com/pratyushnandi" target="_blank" rel="noopener noreferrer">"github.com/pratyushnandi"</a></dd></div>
+            </dl>
+          </article>
         </div>
       </div>
-    </div>
-  </section>
+    </section>
+
+    <!-- ════════════════════════════════════
+       EXPERIENCE
+    ════════════════════════════════════ -->
+    <section id="experience" class="sec sec-alt" aria-labelledby="expTitle">
+      <div class="container exp-wrap">
+        <div class="exp-aside">
+          <header class="sec-head" data-reveal>
+            <span class="sec-kicker mono"><span class="sk-num">02</span> work_experience</span>
+            <h2 class="sec-title" id="expTitle">My <em class="serif">journey</em></h2>
+            <p class="sec-sub">Roles, disciplines and leadership, read like a commit history, newest on top.</p>
+          </header>
+
+          <article class="exp-current" data-reveal style="--i:1">
+            <div class="ec-top">
+              <span class="ec-icon" aria-hidden="true"><i class="fas fa-laptop-code"></i></span>
+              <span class="status-pill sm"><span class="pulse-dot" aria-hidden="true"></span> Current</span>
+            </div>
+            <h3>Software Developer</h3>
+            <p class="ec-co"><i class="fas fa-building" aria-hidden="true"></i> Eltern Segen Technologie Pvt. Ltd.</p>
+            <p>Developing and maintaining robust web applications. Collaborating with cross-functional teams to deliver
+              scalable software solutions using modern development practices and full-stack technologies.</p>
+            <ul class="tags"><li>Web Dev</li><li>Python</li><li>JavaScript</li><li>HTML/CSS</li><li>Full-Stack</li></ul>
+          </article>
+        </div>
+
+        <div class="gitlog-wrap" id="gitlog">
+        <div class="gl-rail" aria-hidden="true"><span class="gl-fill"></span></div>
+        <ol class="gitlog">
+
+          <li class="gl-item" data-reveal>
+            <span class="gl-node" aria-hidden="true"></span>
+            <div class="gl-meta mono"><span class="gl-hash">a3f9c21</span><span class="gl-date">2025</span></div>
+            <article class="gl-card">
+              <div class="gl-head">
+                <span class="gl-icon" aria-hidden="true"><i class="fas fa-users-cog"></i></span>
+                <div>
+                  <h3>Student Developer Club, Tech Lead</h3>
+                  <p class="gl-sub">Adamas University</p>
+                </div>
+              </div>
+              <p>Organised bootcamps and coding sessions, and gave workshops on web development, Git and open-source
+                contribution. Hosted coding contests and helped build an active campus tech community grounded in
+                real-world development practice.</p>
+              <ul class="tags"><li>Leadership</li><li>Mentoring</li><li>Git</li><li>Open Source</li></ul>
+            </article>
+          </li>
+
+          <li class="gl-item" data-reveal>
+            <span class="gl-node" aria-hidden="true"></span>
+            <div class="gl-meta mono"><span class="gl-hash">7be41d0</span><span class="gl-date">2024 – 2025</span></div>
+            <article class="gl-card">
+              <div class="gl-head">
+                <span class="gl-icon" aria-hidden="true"><i class="devicon-react-original"></i></span>
+                <div>
+                  <h3>React Developer</h3>
+                  <p class="gl-sub">React / Frontend</p>
+                </div>
+              </div>
+              <p>Built dynamic, responsive user interfaces with React. Implemented reusable components, managed state
+                with hooks and the Context API, and optimised rendering performance. Worked with backend teams to
+                integrate APIs and real-time data flow for a seamless experience across devices.</p>
+              <ul class="tags"><li>React</li><li>Hooks</li><li>Context API</li><li>Redux</li></ul>
+            </article>
+          </li>
+
+          <li class="gl-item" data-reveal>
+            <span class="gl-node" aria-hidden="true"></span>
+            <div class="gl-meta mono"><span class="gl-hash">e02c7aa</span><span class="gl-date">2024 – 2025</span></div>
+            <article class="gl-card">
+              <div class="gl-head">
+                <span class="gl-icon" aria-hidden="true"><i class="fas fa-server"></i></span>
+                <div>
+                  <h3>Backend Developer</h3>
+                  <p class="gl-sub">Backend</p>
+                </div>
+              </div>
+              <p>Designed and implemented server-side logic with Python and Node.js, working with relational and
+                non-relational databases with a focus on performance, scalability and reliability. Partnered with
+                frontend developers to integrate APIs and keep data flowing smoothly end to end.</p>
+              <ul class="tags"><li>Node.js</li><li>Express</li><li>MongoDB</li><li>APIs</li></ul>
+            </article>
+          </li>
+
+          <li class="gl-item" data-reveal>
+            <span class="gl-node" aria-hidden="true"></span>
+            <div class="gl-meta mono"><span class="gl-hash">5d18b3e</span><span class="gl-date">2023 – 2026</span></div>
+            <article class="gl-card">
+              <div class="gl-head">
+                <span class="gl-icon" aria-hidden="true"><i class="fab fa-python"></i></span>
+                <div>
+                  <h3>Python Developer</h3>
+                  <p class="gl-sub">Backend / ML</p>
+                </div>
+              </div>
+              <p>Developed efficient, focused applications in Python across back-end development and machine learning,
+                with hands-on work in frameworks, APIs and databases. Prioritised clean, maintainable code, performance
+                and debugging, and collaborated with developers to ship reliable, user-friendly software.</p>
+              <ul class="tags"><li>Python</li><li>ML</li><li>Flask</li><li>APIs</li></ul>
+            </article>
+          </li>
+
+          <li class="gl-item" data-reveal>
+            <span class="gl-node" aria-hidden="true"></span>
+            <div class="gl-meta mono"><span class="gl-hash">c9a0f57</span><span class="gl-date">2021 – 2026</span></div>
+            <article class="gl-card">
+              <div class="gl-head">
+                <span class="gl-icon" aria-hidden="true"><i class="fas fa-layer-group"></i></span>
+                <div>
+                  <h3>Frontend Developer</h3>
+                  <p class="gl-sub">Frontend</p>
+                </div>
+              </div>
+              <p>Developed interactive, responsive web interfaces using HTML, CSS and JavaScript. Built UX-driven
+                components and worked with backend services and the design team to deliver scalable front-end
+                features.</p>
+              <ul class="tags"><li>HTML5</li><li>CSS3</li><li>JS</li><li>React</li></ul>
+            </article>
+          </li>
+
+          <li class="gl-item" data-reveal>
+            <span class="gl-node root" aria-hidden="true"></span>
+            <div class="gl-meta mono"><span class="gl-hash">1f0e2b4</span><span class="gl-date">2021 – 2024</span></div>
+            <article class="gl-card">
+              <div class="gl-head">
+                <span class="gl-icon" aria-hidden="true"><i class="fab fa-html5"></i></span>
+                <div>
+                  <h3>HTML Developer</h3>
+                  <p class="gl-sub">Front-End</p>
+                </div>
+              </div>
+              <p>Built efficient, focused applications with HTML, with exposure to databases and API testing. Wrote clean,
+                maintainable code and focused on performance, debugging and continuously improving the user experience.</p>
+              <ul class="tags"><li>HTML5</li><li>CSS3</li><li>APIs</li></ul>
+            </article>
+          </li>
+        </ol>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════
+       TECH STACK
+    ════════════════════════════════════ -->
+    <section id="skills" class="sec" aria-labelledby="skillsTitle">
+      <div class="container">
+        <header class="sec-head sec-head-split" data-reveal>
+          <div>
+            <span class="sec-kicker mono"><span class="sk-num">03</span> tech_stack</span>
+            <h2 class="sec-title" id="skillsTitle">The <em class="serif">stack</em> I build with</h2>
+          </div>
+          <p class="sec-sub">From the browser to the database to a camera on the edge, the tools I reach for to take a
+            product from idea to production.</p>
+        </header>
+
+        <!-- Architecture diagram -->
+        <figure class="arch" data-reveal aria-labelledby="archCap">
+          <div class="arch-bar">
+            <span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>
+            <span class="mono">system-architecture.svg</span>
+            <span class="arch-live mono"><span class="pulse-dot" aria-hidden="true"></span> live</span>
+          </div>
+          <div class="arch-canvas">
+            <svg class="arch-svg" viewBox="0 0 960 260" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+              <g class="arch-links">
+                <path d="M190 70 H 370" />
+                <path d="M590 70 H 770" />
+                <path d="M190 190 H 300" />
+                <path d="M470 190 H 560" />
+                <path d="M645 152 V 138 Q 645 130 637 130 H 488 Q 480 130 480 122 V 108" />
+              </g>
+              <g class="arch-flow">
+                <path d="M190 70 H 370" />
+                <path d="M590 70 H 770" />
+                <path d="M190 190 H 300" />
+                <path d="M470 190 H 560" />
+                <path d="M645 152 V 138 Q 645 130 637 130 H 488 Q 480 130 480 122 V 108" />
+              </g>
+            </svg>
+            <div class="arch-node an-client"><span class="an-k mono">client</span><strong>React · Next.js</strong><span class="an-icons"><i class="devicon-react-original colored"></i><i class="devicon-nextjs-plain"></i><i class="devicon-typescript-plain colored"></i></span></div>
+            <div class="arch-node an-api"><span class="an-k mono">api</span><strong>Node.js · Fastify</strong><span class="an-icons"><i class="devicon-nodejs-plain colored"></i><i class="fas fa-bolt"></i><i class="fas fa-plug"></i></span></div>
+            <div class="arch-node an-db"><span class="an-k mono">database</span><strong>PostgreSQL · Prisma</strong><span class="an-icons"><i class="devicon-postgresql-plain colored"></i><i class="devicon-mysql-plain colored"></i></span></div>
+            <div class="arch-node an-cam"><span class="an-k mono">source</span><strong>IP camera · RTSP</strong><span class="an-icons"><i class="fas fa-video"></i></span></div>
+            <div class="arch-node an-stream"><span class="an-k mono">stream</span><strong>MediaMTX</strong><span class="an-icons"><i class="fas fa-tower-broadcast"></i></span></div>
+            <div class="arch-node an-edge"><span class="an-k mono">edge</span><strong>YOLO · Raspberry Pi</strong><span class="an-icons"><i class="devicon-raspberrypi-line"></i><i class="fas fa-eye"></i></span></div>
+          </div>
+          <figcaption id="archCap" class="arch-cap mono">// web platform on top, edge vision pipeline below. Both report into the same API.</figcaption>
+        </figure>
+
+        <div class="stack-grid">
+          <div class="stack-group" data-reveal>
+            <h3 class="sg-title mono"><i class="fas fa-code" aria-hidden="true"></i> languages</h3>
+            <ul class="nodes">
+              <li class="node" style="--brand:#3776ab"><i class="devicon-python-plain colored"></i><span>Python</span></li>
+              <li class="node" style="--brand:#f7df1e"><i class="devicon-javascript-plain colored"></i><span>JavaScript</span></li>
+              <li class="node" style="--brand:#3178c6"><i class="devicon-typescript-plain colored"></i><span>TypeScript</span></li>
+              <li class="node" style="--brand:#e76f00"><i class="devicon-java-plain colored"></i><span>Java</span></li>
+              <li class="node" style="--brand:#659ad2"><i class="devicon-c-plain colored"></i><span>C</span></li>
+              <li class="node" style="--brand:#00599c"><i class="devicon-cplusplus-plain colored"></i><span>C++</span></li>
+            </ul>
+          </div>
+
+          <div class="stack-group" data-reveal style="--i:1">
+            <h3 class="sg-title mono"><i class="fas fa-desktop" aria-hidden="true"></i> frontend</h3>
+            <ul class="nodes">
+              <li class="node" style="--brand:#61dafb"><i class="devicon-react-original colored"></i><span>React.js</span></li>
+              <li class="node" style="--brand:#a1a1aa"><i class="devicon-nextjs-plain"></i><span>Next.js</span></li>
+              <li class="node" style="--brand:#e34f26"><i class="devicon-html5-plain colored"></i><span>HTML5</span></li>
+              <li class="node" style="--brand:#1572b6"><i class="devicon-css3-plain colored"></i><span>CSS3</span></li>
+            </ul>
+          </div>
+
+          <div class="stack-group" data-reveal style="--i:2">
+            <h3 class="sg-title mono"><i class="fas fa-server" aria-hidden="true"></i> backend &amp; apis</h3>
+            <ul class="nodes">
+              <li class="node" style="--brand:#5fa04e"><i class="devicon-nodejs-plain colored"></i><span>Node.js</span></li>
+              <li class="node" style="--brand:#a1a1aa"><i class="fas fa-bolt"></i><span>Fastify</span></li>
+              <li class="node" style="--brand:#a1a1aa"><i class="devicon-express-original"></i><span>Express.js</span></li>
+              <li class="node" style="--brand:#22d3ee"><i class="fas fa-plug"></i><span>REST APIs</span></li>
+              <li class="node" style="--brand:#ff2d20"><i class="devicon-laravel-plain colored"></i><span>Laravel / PHP</span></li>
+            </ul>
+          </div>
+
+          <div class="stack-group" data-reveal style="--i:3">
+            <h3 class="sg-title mono"><i class="fas fa-database" aria-hidden="true"></i> data</h3>
+            <ul class="nodes">
+              <li class="node" style="--brand:#4169e1"><i class="devicon-postgresql-plain colored"></i><span>PostgreSQL</span></li>
+              <li class="node" style="--brand:#00758f"><i class="devicon-mysql-plain colored"></i><span>MySQL</span></li>
+              <li class="node" style="--brand:#5a67d8"><i class="fas fa-diamond"></i><span>Prisma</span></li>
+              <li class="node" style="--brand:#47a248"><i class="devicon-mongodb-plain colored"></i><span>MongoDB</span></li>
+            </ul>
+          </div>
+
+          <div class="stack-group sg-wide" data-reveal style="--i:4">
+            <h3 class="sg-title mono"><i class="fas fa-microchip" aria-hidden="true"></i> edge, iot &amp; visual ai</h3>
+            <ul class="nodes">
+              <li class="node" style="--brand:#c51a4a"><i class="devicon-raspberrypi-line"></i><span>Raspberry Pi</span></li>
+              <li class="node" style="--brand:#22d3ee"><i class="fas fa-video"></i><span>RTSP</span></li>
+              <li class="node" style="--brand:#8b7bff"><i class="fas fa-tower-broadcast"></i><span>MediaMTX</span></li>
+              <li class="node" style="--brand:#00ffd1"><i class="fas fa-crosshairs"></i><span>YOLO</span></li>
+              <li class="node" style="--brand:#5c3ee8"><i class="devicon-opencv-plain colored"></i><span>OpenCV</span></li>
+              <li class="node" style="--brand:#10b981"><i class="fas fa-wifi"></i><span>IoT</span></li>
+              <li class="node" style="--brand:#f59e0b"><i class="fas fa-network-wired"></i><span>Edge Computing</span></li>
+              <li class="node" style="--brand:#a78bfa"><i class="fas fa-eye"></i><span>Visual AI</span></li>
+              <li class="node" style="--brand:#a78bfa"><i class="fas fa-brain"></i><span>AI / ML</span></li>
+            </ul>
+            <div class="edge-log mono" aria-hidden="true">
+              <p><span class="el-ok">●</span> rtsp://cam-01:8554/live <span class="el-dim">→ mediamtx · stream online</span></p>
+              <p><span class="el-acc">yolo</span> frame 1842 <span class="el-dim">·</span> 14 objects <span class="el-dim">·</span> <span class="el-ok">23 ms</span></p>
+              <p><span class="el-acc">edge</span> rpi-node-01 <span class="el-dim">·</span> POST /api/events <span class="el-ok">201</span></p>
+            </div>
+          </div>
+
+          <div class="stack-group" data-reveal style="--i:5">
+            <h3 class="sg-title mono"><i class="fas fa-toolbox" aria-hidden="true"></i> tools</h3>
+            <ul class="nodes">
+              <li class="node" style="--brand:#f05032"><i class="devicon-git-plain colored"></i><span>Git</span></li>
+              <li class="node" style="--brand:#a1a1aa"><i class="devicon-github-original"></i><span>GitHub</span></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════
+       PROJECTS
+    ════════════════════════════════════ -->
+    <section id="projects" class="sec sec-alt" aria-labelledby="projTitle">
+      <div class="container">
+        <header class="sec-head sec-head-split" data-reveal>
+          <div>
+            <span class="sec-kicker mono"><span class="sk-num">04</span> my_projects</span>
+            <h2 class="sec-title" id="projTitle">Selected <em class="serif">work</em></h2>
+          </div>
+          <div class="pf-row" role="group" aria-label="Filter projects">
+            <button type="button" class="pf active" data-f="all" aria-pressed="true">All</button>
+            <button type="button" class="pf" data-f="ai" aria-pressed="false">AI / ML</button>
+            <button type="button" class="pf" data-f="web" aria-pressed="false">Web App</button>
+            <button type="button" class="pf" data-f="fullstack" aria-pressed="false">Full-Stack</button>
+            <span class="pf-ind" aria-hidden="true"></span>
+          </div>
+        </header>
+
+        <div class="proj-grid" id="projGrid">
+
+          <!-- DETECTIFY — Featured -->
+          <article class="pj pj-feature" data-cat="ai" data-reveal>
+            <div class="pj-media">
+              <img src="projects/detectify.jpg" alt="Detectify traffic monitoring interface" loading="lazy" decoding="async" />
+              <div class="pj-hud" aria-hidden="true">
+                <span class="bbox b1"><em>vehicle 0.94</em></span>
+                <span class="bbox b2"><em>signal: red</em></span>
+                <span class="bbox b3"><em>no_helmet 0.88</em></span>
+                <span class="scanline"></span>
+              </div>
+              <span class="pj-badge mono"><i class="fas fa-star" aria-hidden="true"></i> Featured</span>
+            </div>
+            <div class="pj-body">
+              <span class="pj-cat mono">AI / ML · Computer Vision</span>
+              <h3>Detectify</h3>
+              <p class="pj-tagline">Intelligent Traffic Signal Detection &amp; Violation Alert System</p>
+              <p class="pj-desc">AI-powered real-time traffic monitoring. Detects red-light jumping, speeding and no-helmet
+                violations using ML models on live camera feeds, reducing human error in enforcement.</p>
+              <ul class="tags"><li>Python</li><li>ML</li><li>OpenCV</li><li>Computer Vision</li></ul>
+              <div class="pj-links">
+                <a href="https://github.com/pratyushnandi/DETECTIFY" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-ghost"><i class="fab fa-github" aria-hidden="true"></i> Source code</a>
+              </div>
+            </div>
+          </article>
+
+          <!-- CAMPUS RECRUITMENT — Featured -->
+          <article class="pj pj-feature pj-flip" data-cat="web" data-reveal>
+            <div class="pj-media">
+              <img src="projects/recruitment.jpg" alt="Campus Recruitment System dashboard" loading="lazy" decoding="async" />
+              <span class="pj-badge mono"><i class="fas fa-star" aria-hidden="true"></i> Featured</span>
+            </div>
+            <div class="pj-body">
+              <span class="pj-cat mono">Web App · Full-Stack</span>
+              <h3>Campus Recruitment System</h3>
+              <p class="pj-tagline">Full-Stack Campus Recruitment Management Platform</p>
+              <p class="pj-desc">A dynamic web platform built with PHP &amp; Laravel. Companies post jobs; students register,
+                apply and track applications, with real-time notifications and admin dashboards.</p>
+              <ul class="tags"><li>PHP</li><li>Laravel</li><li>MySQL</li><li>HTML/CSS</li></ul>
+              <div class="pj-links">
+                <a href="https://github.com/pratyushnandi" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-ghost"><i class="fab fa-github" aria-hidden="true"></i> GitHub</a>
+              </div>
+            </div>
+          </article>
+
+          <!-- Code Editor -->
+          <article class="pj pj-card" data-cat="fullstack" data-reveal style="--accent:#8b7bff">
+            <a class="pj-art art-editor" href="https://pratyushnandi.github.io/Code_EDITOR/" target="_blank" rel="noopener noreferrer" tabindex="-1" aria-hidden="true">
+              <span class="art-split"><span class="art-code"><i></i><i></i><i></i><i></i><i></i></span><span class="art-preview"><b></b><i></i><i></i></span></span>
+            </a>
+            <div class="pj-body">
+              <span class="pj-cat mono">Full-Stack · Tool</span>
+              <h3>Code Editor</h3>
+              <p class="pj-desc">A real-time code editor for building with HTML, CSS and JS, with an instant live preview in the browser.</p>
+              <ul class="tags"><li>HTML</li><li>CSS</li><li>JS</li></ul>
+              <div class="pj-links">
+                <a href="https://pratyushnandi.github.io/Code_EDITOR/" target="_blank" rel="noopener noreferrer" class="pj-link">Live <i class="fas fa-arrow-up-right-from-square" aria-hidden="true"></i></a>
+                <a href="https://github.com/pratyushnandi/Code_EDITOR" target="_blank" rel="noopener noreferrer" class="pj-link">Source <i class="fab fa-github" aria-hidden="true"></i></a>
+              </div>
+            </div>
+          </article>
+
+          <!-- Portfolio Website -->
+          <article class="pj pj-card" data-cat="web" data-reveal style="--i:1;--accent:#22d3ee">
+            <a class="pj-art art-portfolio" href="https://portfolio-website-ab1.netlify.app/" target="_blank" rel="noopener noreferrer" tabindex="-1" aria-hidden="true">
+              <span class="art-site"><b></b><i></i><i></i><span class="art-cards"><i></i><i></i><i></i></span></span>
+            </a>
+            <div class="pj-body">
+              <span class="pj-cat mono">Web App</span>
+              <h3>Portfolio Website</h3>
+              <p class="pj-desc">Responsive portfolio built with HTML, CSS and JS, featuring neon animations, AOS effects, an EmailJS contact form and dynamic sections.</p>
+              <ul class="tags"><li>HTML</li><li>CSS</li><li>JS</li></ul>
+              <div class="pj-links">
+                <a href="https://portfolio-website-ab1.netlify.app/" target="_blank" rel="noopener noreferrer" class="pj-link">Live <i class="fas fa-arrow-up-right-from-square" aria-hidden="true"></i></a>
+                <a href="https://github.com/pratyushnandi/Portfolio" target="_blank" rel="noopener noreferrer" class="pj-link">Source <i class="fab fa-github" aria-hidden="true"></i></a>
+              </div>
+            </div>
+          </article>
+
+          <!-- Web Calculator -->
+          <article class="pj pj-card" data-cat="fullstack" data-reveal style="--i:2;--accent:#f59e0b">
+            <a class="pj-art art-calc" href="https://web-calculator-ad.netlify.app/" target="_blank" rel="noopener noreferrer" tabindex="-1" aria-hidden="true">
+              <span class="art-calc-body"><b>1,024</b><span class="art-keys"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span></span>
+            </a>
+            <div class="pj-body">
+              <span class="pj-cat mono">Full-Stack</span>
+              <h3>Web Calculator</h3>
+              <p class="pj-desc">A full-stack calculator on Node and Express, pairing a clean, responsive UI with a robust backend.</p>
+              <ul class="tags"><li>Node.js</li><li>Express</li><li>HTML</li><li>CSS</li></ul>
+              <div class="pj-links">
+                <a href="https://web-calculator-ad.netlify.app/" target="_blank" rel="noopener noreferrer" class="pj-link">Live <i class="fas fa-arrow-up-right-from-square" aria-hidden="true"></i></a>
+              </div>
+            </div>
+          </article>
+
+          <!-- Cyber Calendar -->
+          <article class="pj pj-card" data-cat="fullstack" data-reveal style="--accent:#10b981">
+            <a class="pj-art art-cal" href="https://cyber-calender-ab.netlify.app/" target="_blank" rel="noopener noreferrer" tabindex="-1" aria-hidden="true">
+              <span class="art-cal-grid"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i class="on"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
+            </a>
+            <div class="pj-body">
+              <span class="pj-cat mono">Full-Stack · Utility</span>
+              <h3>Cyber Calendar</h3>
+              <p class="pj-desc">A calendar in JS, HTML and CSS with a futuristic cyber theme, smooth transitions and event management.</p>
+              <ul class="tags"><li>JavaScript</li><li>HTML</li><li>CSS</li></ul>
+              <div class="pj-links">
+                <a href="https://cyber-calender-ab.netlify.app/" target="_blank" rel="noopener noreferrer" class="pj-link">Live <i class="fas fa-arrow-up-right-from-square" aria-hidden="true"></i></a>
+              </div>
+            </div>
+          </article>
+
+          <!-- Rock Paper Scissors -->
+          <article class="pj pj-card" data-cat="fullstack" data-reveal style="--i:1;--accent:#f472b6">
+            <a class="pj-art art-rps" href="https://playfull-game.netlify.app/" target="_blank" rel="noopener noreferrer" tabindex="-1" aria-hidden="true">
+              <span class="art-rps-row"><i class="fas fa-hand-back-fist"></i><b>vs</b><i class="fas fa-hand"></i></span>
+            </a>
+            <div class="pj-body">
+              <span class="pj-cat mono">Full-Stack · Game</span>
+              <h3>Rock Paper Scissors</h3>
+              <p class="pj-desc">A Rock Paper Scissors game in JS, HTML and CSS with smooth animations and an AI opponent.</p>
+              <ul class="tags"><li>JavaScript</li><li>HTML</li><li>CSS</li></ul>
+              <div class="pj-links">
+                <a href="https://playfull-game.netlify.app/" target="_blank" rel="noopener noreferrer" class="pj-link">Play <i class="fas fa-arrow-up-right-from-square" aria-hidden="true"></i></a>
+              </div>
+            </div>
+          </article>
+
+          <!-- Background Changer -->
+          <article class="pj pj-card" data-cat="fullstack" data-reveal style="--i:2;--accent:#60a5fa">
+            <a class="pj-art art-bg" href="https://background-change12.netlify.app/" target="_blank" rel="noopener noreferrer" tabindex="-1" aria-hidden="true">
+              <span class="art-swatches"><i></i><i></i><i></i><i></i><i></i></span>
+            </a>
+            <div class="pj-body">
+              <span class="pj-cat mono">Full-Stack · Utility</span>
+              <h3>Background Changer</h3>
+              <p class="pj-desc">A background changer on Node and Express with a dynamic colour palette and smooth transitions.</p>
+              <ul class="tags"><li>Node.js</li><li>Express</li><li>HTML</li><li>CSS</li></ul>
+              <div class="pj-links">
+                <a href="https://background-change12.netlify.app/" target="_blank" rel="noopener noreferrer" class="pj-link">Live <i class="fas fa-arrow-up-right-from-square" aria-hidden="true"></i></a>
+              </div>
+            </div>
+          </article>
+
+        </div>
+
+        <div class="proj-cta" data-reveal>
+          <a href="https://github.com/pratyushnandi" target="_blank" rel="noopener noreferrer" class="btn btn-ghost magnetic">
+            <i class="fab fa-github" aria-hidden="true"></i> <span>More on GitHub</span> <i class="fas fa-arrow-right" aria-hidden="true"></i>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════
+       EDUCATION + CERTS
+    ════════════════════════════════════ -->
+    <section id="education" class="sec" aria-labelledby="eduTitle">
+      <div class="container">
+        <header class="sec-head" data-reveal>
+          <span class="sec-kicker mono"><span class="sk-num">05</span> education</span>
+          <h2 class="sec-title" id="eduTitle">Academic <em class="serif">background</em></h2>
+        </header>
+
+        <div class="edu-grid">
+          <div class="edu-col">
+            <h3 class="col-title mono"><i class="fas fa-graduation-cap" aria-hidden="true"></i> education</h3>
+            <ol class="edu-list">
+              <li class="edu-item" data-reveal>
+                <span class="edu-badge" style="--c1:#8b7bff;--c2:#6d5df6">MCA</span>
+                <div class="edu-body">
+                  <h4>Master of Computer Applications</h4>
+                  <p class="edu-inst">Adamas University</p>
+                  <div class="edu-meta mono"><span>2024 – 2026</span><span class="edu-grade">CGPA 7.80</span></div>
+                </div>
+                <a class="doc-btn" href="documents/mca-provisional-certificate.pdf" data-doc-title="MCA PROVISIONAL GRADE CARD" target="_blank" rel="noopener noreferrer" aria-label="View MCA grade cards"><i class="fas fa-eye" aria-hidden="true"></i><span>View</span></a>
+              </li>
+              <li class="edu-item" data-reveal style="--i:1">
+                <span class="edu-badge" style="--c1:#22d3ee;--c2:#0891b2">BCA</span>
+                <div class="edu-body">
+                  <h4>Bachelor of Computer Application</h4>
+                  <p class="edu-inst">Techno India (Hooghly) – MAKAUT</p>
+                  <div class="edu-meta mono"><span>2021 – 2024</span><span class="edu-grade">CGPA 8.06</span></div>
+                </div>
+                <a class="doc-btn" href="documents/bca-provisional-certificate.pdf" data-doc-title="BCA PROVISIONAL GRADE CARD" target="_blank" rel="noopener noreferrer" aria-label="View BCA provisional certificate"><i class="fas fa-eye" aria-hidden="true"></i><span>View</span></a>
+              </li>
+              <li class="edu-item" data-reveal style="--i:2">
+                <span class="edu-badge" style="--c1:#f59e0b;--c2:#d97706">HS</span>
+                <div class="edu-body">
+                  <h4>Higher Secondary (WBCHSE)</h4>
+                  <p class="edu-inst">Kalna Maharaja's High School</p>
+                  <div class="edu-meta mono"><span>2020 – 2021</span><span class="edu-grade">86%</span></div>
+                </div>
+                <a class="doc-btn" href="documents/hs-pass-certificate.pdf" data-doc-title="HIGHER SECONDARY PASS CERTIFICATE" target="_blank" rel="noopener noreferrer" aria-label="View HS pass certificate"><i class="fas fa-eye" aria-hidden="true"></i><span>View</span></a>
+              </li>
+              <li class="edu-item" data-reveal style="--i:3">
+                <span class="edu-badge" style="--c1:#10b981;--c2:#059669">SEC</span>
+                <div class="edu-body">
+                  <h4>Secondary School (WBCHSE)</h4>
+                  <p class="edu-inst">Kalna Maharaja's High School</p>
+                  <div class="edu-meta mono"><span>2018 – 2019</span><span class="edu-grade">60%</span></div>
+                </div>
+                <a class="doc-btn" href="documents/sec-pass-certificate.jpg" data-doc-title="SECONDARY PASS CERTIFICATE" target="_blank" rel="noopener noreferrer" aria-label="View secondary pass certificate"><i class="fas fa-eye" aria-hidden="true"></i><span>View</span></a>
+              </li>
+            </ol>
+          </div>
+
+          <div class="edu-col">
+            <h3 class="col-title mono"><i class="fas fa-certificate" aria-hidden="true"></i> certifications</h3>
+            <ul class="cert-list">
+              <li class="cert" data-reveal>
+                <span class="cert-ico" style="--c1:#4285f4;--c2:#34a853" aria-hidden="true"><i class="fab fa-google"></i></span>
+                <div class="cert-body">
+                  <h4>Google Data Analytics</h4>
+                  <p>Coursera Professional Certificate</p>
+                </div>
+                <a href="https://www.coursera.org/account/accomplishments/professional-cert/DNU7LAGUDSYJ" target="_blank" rel="noopener noreferrer" class="cert-verify" aria-label="Verify Google Data Analytics certificate"><i class="fas fa-circle-check" aria-hidden="true"></i> Verify</a>
+              </li>
+              <li class="cert" data-reveal style="--i:1">
+                <span class="cert-ico" style="--c1:#86bc25;--c2:#009a44" aria-hidden="true"><i class="fas fa-chart-bar"></i></span>
+                <div class="cert-body">
+                  <h4>Data Analytics – Deloitte (Forage)</h4>
+                  <p class="mono">Cert: bGsQf7XCPPRTue7Sb · Dec 2025</p>
+                </div>
+              </li>
+              <li class="cert" data-reveal style="--i:2">
+                <span class="cert-ico" style="--c1:#ff6b35;--c2:#f7931e" aria-hidden="true"><i class="fas fa-award"></i></span>
+                <div class="cert-body">
+                  <h4>IT/ITES Level 1 &amp; Level 2</h4>
+                  <p>NSDC &amp; Skill India · <span class="mono">ID: 17190938017048928</span></p>
+                </div>
+              </li>
+              <li class="cert" data-reveal style="--i:3">
+                <span class="cert-ico" style="--c1:#667eea;--c2:#764ba2" aria-hidden="true"><i class="fas fa-headset"></i></span>
+                <div class="cert-body">
+                  <h4>Domestic IT Helpdesk Attendant</h4>
+                  <p>NSQF Level-4 · <span class="mono">SSC/Q0110</span></p>
+                </div>
+              </li>
+              <li class="cert" data-reveal style="--i:4">
+                <span class="cert-ico" style="--c1:#06b6d4;--c2:#7c3aed" aria-hidden="true"><i class="fas fa-globe"></i></span>
+                <div class="cert-body">
+                  <h4>Fundamental Web Development</h4>
+                  <p>Techno India (Hooghly Campus)</p>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════
+       CONTACT
+    ════════════════════════════════════ -->
+    <section id="contact" class="sec sec-contact" aria-labelledby="contactTitle">
+      <div class="container">
+        <div class="contact-grid">
+          <div class="contact-intro">
+            <header class="sec-head" data-reveal>
+              <span class="sec-kicker mono"><span class="sk-num">06</span> contact_me</span>
+              <h2 class="sec-title contact-title" id="contactTitle">Let's build something <em class="serif">great</em> together.</h2>
+              <p class="sec-sub">Open to freelance, full-time roles and collaborations. Have an idea, a role or a
+                problem worth solving? My inbox is open.</p>
+            </header>
+
+            <div class="mail-card" data-reveal style="--i:1">
+              <span class="card-label mono">primary_channel</span>
+              <a href="mailto:pratyushnandi100@gmail.com" class="mail-link">pratyushnandi100@gmail.com</a>
+              <button type="button" class="copy-btn" id="copyEmail" data-copy="pratyushnandi100@gmail.com">
+                <i class="far fa-copy" aria-hidden="true"></i> <span>Copy email</span>
+              </button>
+            </div>
+
+            <ul class="contact-list" data-reveal style="--i:2">
+              <li><i class="fas fa-phone" aria-hidden="true"></i><span class="cl-k">Phone</span><a href="tel:+917890706472">+91&#8209;7890706472</a></li>
+              <li><i class="fas fa-location-dot" aria-hidden="true"></i><span class="cl-k">Location</span><span>Kolkata, West Bengal, India</span></li>
+              <li><i class="fas fa-building" aria-hidden="true"></i><span class="cl-k">Company</span><span>Eltern Segen Technologie Pvt. Ltd.</span></li>
+            </ul>
+
+            <div class="contact-socials" data-reveal style="--i:3">
+              <a href="https://github.com/pratyushnandi" target="_blank" rel="noopener noreferrer" class="soc-btn"><i class="fab fa-github" aria-hidden="true"></i> GitHub</a>
+              <a href="https://www.linkedin.com/in/pratyushnandi/" target="_blank" rel="noopener noreferrer" class="soc-btn"><i class="fab fa-linkedin-in" aria-hidden="true"></i> LinkedIn</a>
+              <a href="mailto:pratyushnandi100@gmail.com" class="soc-btn"><i class="fas fa-envelope" aria-hidden="true"></i> Email</a>
+            </div>
+          </div>
+
+          <div class="form-shell" data-reveal style="--i:1">
+            <form id="contactForm" novalidate>
+              <div class="form-bar">
+                <span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>
+                <span class="mono">new_message.ts</span>
+                <span class="form-bar-end mono" aria-hidden="true">POST /api/contact</span>
+              </div>
+              <div class="form-body">
+                <div class="f-row">
+                  <div class="f-grp">
+                    <label for="cfName">Name</label>
+                    <input id="cfName" type="text" name="user_name" placeholder="Your name" autocomplete="name" required />
+                  </div>
+                  <div class="f-grp">
+                    <label for="cfEmail">Email</label>
+                    <input id="cfEmail" type="email" name="user_email" placeholder="you@company.com" autocomplete="email" required />
+                  </div>
+                </div>
+                <div class="f-row">
+                  <div class="f-grp">
+                    <label for="cfReason">Reason</label>
+                    <div class="select-wrap">
+                      <select id="cfReason" name="contact_reason" required>
+                        <option value="" disabled selected>Select a reason…</option>
+                        <option value="💼 Freelance / Project">Freelance / Project</option>
+                        <option value="🤝 Collaboration">Collaboration</option>
+                        <option value="💻 Job Opportunity">Job Opportunity</option>
+                        <option value="🧠 Technical Discussion">Technical Discussion</option>
+                        <option value="📩 General Inquiry">General Inquiry</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="f-grp">
+                    <label for="cfCompany">Company <span class="opt">optional</span></label>
+                    <input id="cfCompany" type="text" name="company" placeholder="Company / organisation" autocomplete="organization" />
+                  </div>
+                </div>
+                <div class="f-row">
+                  <div class="f-grp">
+                    <label for="cfSubject">Subject</label>
+                    <input id="cfSubject" type="text" name="subject" placeholder="What is this about?" required />
+                  </div>
+                  <div class="f-grp">
+                    <label for="cfLink">Profile link <span class="opt">optional</span></label>
+                    <input id="cfLink" type="url" name="social_link" placeholder="LinkedIn / GitHub / portfolio" autocomplete="url" />
+                  </div>
+                </div>
+                <div class="f-grp">
+                  <label for="cfMessage">Message</label>
+                  <textarea id="cfMessage" name="message" rows="5" placeholder="Tell me a little about the project or role…" required></textarea>
+                </div>
+                <div class="f-foot">
+                  <button type="submit" class="btn btn-primary cf-btn" id="cfBtn">
+                    <span id="cfTxt"><span>Send message</span> <i class="fas fa-paper-plane" aria-hidden="true"></i></span>
+                    <span id="cfLoad" hidden><i class="fas fa-circle-notch fa-spin" aria-hidden="true"></i> Sending…</span>
+                  </button>
+                  <span class="f-hint mono">Usually replies within 24h</span>
+                </div>
+                <p id="cfStatus" class="cf-status" aria-live="polite"></p>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
 
   <!-- ═══ FOOTER ═══ -->
   <footer class="footer">
-    <div class="foot-wave">
-      <svg viewBox="0 0 1440 60" preserveAspectRatio="none" fill="none">
-        <path d="M0,30 C360,60 1080,0 1440,30 L1440,60 L0,60 Z" fill="#060812" />
-      </svg>
-    </div>
-    <div class="foot-glow"></div>
-    <div class="foot-particles" id="footParticles"></div>
-    <div class="foot-inner">
-      <a href="#hero" class="n-logo reveal-u" style="--d:0s"><span class="nl-b">&lt;</span>pratyush<span class="nl-d">.</span>dev<span
-          class="nl-b">/&gt;</span></a>
-      <p class="reveal-u" style="--d:.08s">Software Developer · Full-Stack · AI · IoT · Computer Vision.</p>
-      <div class="foot-soc reveal-u" style="--d:.16s">
-        <a href="https://github.com/pratyushnandi" target="_blank" rel="noopener noreferrer" aria-label="GitHub"><i class="fab fa-github"></i></a>
-        <a href="https://www.linkedin.com/in/pratyushnandi/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
-        <a href="mailto:pratyushnandi100@gmail.com" aria-label="Email"><i class="fas fa-envelope"></i></a>
+    <div class="container">
+      <div class="foot-top">
+        <div class="foot-brand">
+          <a href="#hero" class="logo" aria-label="Pratyush Nandi — back to top">
+            <span class="logo-mark" aria-hidden="true">PN</span>
+            <span class="logo-text">pratyush<span class="logo-dot">.</span>dev</span>
+          </a>
+          <p>Software Developer · Full-Stack · Visual AI · IoT. Turning ideas into scalable, well-crafted software.</p>
+          <div class="foot-soc">
+            <a href="https://github.com/pratyushnandi" target="_blank" rel="noopener noreferrer" class="icon-btn" aria-label="GitHub"><i class="fab fa-github"></i></a>
+            <a href="https://www.linkedin.com/in/pratyushnandi/" target="_blank" rel="noopener noreferrer" class="icon-btn" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+            <a href="mailto:pratyushnandi100@gmail.com" class="icon-btn" aria-label="Email"><i class="fas fa-envelope"></i></a>
+          </div>
+        </div>
+        <nav class="foot-nav" aria-label="Footer">
+          <div>
+            <h3 class="mono">navigate</h3>
+            <ul>
+              <li><a href="#about">About</a></li>
+              <li><a href="#experience">Experience</a></li>
+              <li><a href="#skills">Stack</a></li>
+            </ul>
+          </div>
+          <div>
+            <h3 class="mono">work</h3>
+            <ul>
+              <li><a href="#projects">Projects</a></li>
+              <li><a href="#education">Education</a></li>
+              <li><a href="#contact">Contact</a></li>
+            </ul>
+          </div>
+          <div>
+            <h3 class="mono">elsewhere</h3>
+            <ul>
+              <li><a href="https://github.com/pratyushnandi" target="_blank" rel="noopener noreferrer">GitHub</a></li>
+              <li><a href="https://www.linkedin.com/in/pratyushnandi/" target="_blank" rel="noopener noreferrer">LinkedIn</a></li>
+              <li><a href="files/PRATYUSH%20NANDI_CV%20(NEW).pdf" download>Resume</a></li>
+            </ul>
+          </div>
+        </nav>
       </div>
-      <p class="foot-copy reveal-u" style="--d:.24s">&copy; 2026 <span class="grad-t">Pratyush Nandi</span> &middot; Turning ideas into scalable software.</p>
+
+      <div class="foot-sig" aria-hidden="true">Pratyush Nandi</div>
+
+      <div class="foot-bottom mono">
+        <p>&copy; <span id="year">2026</span> Pratyush Nandi. Designed &amp; engineered in Kolkata.</p>
+        <p class="foot-sys">
+          <span><span class="pulse-dot" aria-hidden="true"></span> all systems operational</span>
+          <span class="foot-sep" aria-hidden="true">·</span>
+          <span>IST <time id="localTime">--:--</time></span>
+          <span class="foot-sep" aria-hidden="true">·</span>
+          <span>v6.0.0</span>
+        </p>
+      </div>
     </div>
   </footer>
 
-  <button type="button" id="topBtn" aria-label="Back to top"><i class="fas fa-chevron-up"></i></button>
+  <button type="button" id="topBtn" aria-label="Back to top">
+    <svg viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="18" /></svg>
+    <i class="fas fa-arrow-up" aria-hidden="true"></i>
+  </button>
 
   <!-- Grade Card / Certificate Modal -->
-  <div id="pcModal" class="pc-modal">
-    <div class="pc-modal-overlay" onclick="document.getElementById('pcModal').classList.remove('open')"></div>
+  <div id="pcModal" class="pc-modal" role="dialog" aria-modal="true" aria-labelledby="pcModalTitle" hidden>
+    <div class="pc-modal-overlay" data-close></div>
     <div class="pc-modal-box">
       <div class="pc-modal-head">
-        <span id="pcModalTitle">MCA PROVISIONAL GRADE CARD</span>
+        <span id="pcModalTitle" class="mono">DOCUMENT</span>
         <div class="pc-modal-actions">
           <a id="pcModalOpen" href="documents/mca-semester-1.pdf" target="_blank" rel="noopener noreferrer" title="Open in new tab" aria-label="Open document in new tab"><i class="fas fa-up-right-from-square"></i></a>
-          <button type="button" onclick="document.getElementById('pcModal').classList.remove('open')" aria-label="Close"><i class="fas fa-times"></i></button>
+          <button type="button" data-close aria-label="Close"><i class="fas fa-xmark"></i></button>
         </div>
       </div>
       <div id="pcImgToolbar" class="pc-img-toolbar">
-        <button type="button" onclick="pcImgToggleSidebar()" aria-label="Menu"><i class="fas fa-bars"></i></button>
-        <span class="pc-img-toolbar-sep"></span>
-        <span class="pc-img-page">1 / 1</span>
-        <span class="pc-img-toolbar-sep"></span>
-        <button type="button" onclick="pcImgZoom(-0.25)" aria-label="Zoom out"><i class="fas fa-minus"></i></button>
-        <span id="pcImgZoomLabel">100%</span>
-        <button type="button" onclick="pcImgZoom(0.25)" aria-label="Zoom in"><i class="fas fa-plus"></i></button>
-        <span class="pc-img-toolbar-sep"></span>
-        <button type="button" onclick="pcImgReset()" aria-label="Fit page"><i class="fas fa-expand"></i></button>
-        <button type="button" onclick="pcImgRotate()" aria-label="Rotate"><i class="fas fa-rotate-right"></i></button>
-        <span class="pc-img-toolbar-flex"></span>
-        <button type="button" onclick="pcImgDownload()" aria-label="Download"><i class="fas fa-download"></i></button>
-        <button type="button" onclick="pcImgPrint()" aria-label="Print"><i class="fas fa-print"></i></button>
-        <button type="button" onclick="pcImgOpenNew()" aria-label="More"><i class="fas fa-ellipsis-vertical"></i></button>
+        <button type="button" data-img="zoom-out" aria-label="Zoom out"><i class="fas fa-minus"></i></button>
+        <span id="pcImgZoomLabel" class="mono">100%</span>
+        <button type="button" data-img="zoom-in" aria-label="Zoom in"><i class="fas fa-plus"></i></button>
+        <span class="pc-sep"></span>
+        <button type="button" data-img="reset" aria-label="Fit page"><i class="fas fa-expand"></i></button>
+        <button type="button" data-img="rotate" aria-label="Rotate"><i class="fas fa-rotate-right"></i></button>
+        <span class="pc-flex"></span>
+        <button type="button" data-img="download" aria-label="Download"><i class="fas fa-download"></i></button>
+        <button type="button" data-img="print" aria-label="Print"><i class="fas fa-print"></i></button>
       </div>
       <div id="pcModalImgWrap" class="pc-img-wrap">
-        <!-- [html-validate-disable-next attribute-allowed-values -- src is set by openPcModal()] -->
+        <!-- [html-validate-disable-next attribute-allowed-values -- src is set by the document viewer] -->
         <img id="pcModalImg" src="" alt="" />
       </div>
       <iframe id="pcModalFrame" src="about:blank" title="Document viewer"></iframe>
     </div>
   </div>
-
-  <script>
-    let pcImgScale = 1;
-    let pcImgRotation = 0;
-    let pcImgFile = '';
-
-    function pcImgApplyTransform() {
-      document.getElementById('pcModalImg').style.transform = `scale(${pcImgScale}) rotate(${pcImgRotation}deg)`;
-      document.getElementById('pcImgZoomLabel').textContent = `${Math.round(pcImgScale * 100)}%`;
-    }
-    function pcImgZoom(delta) {
-      pcImgScale = Math.min(3, Math.max(0.5, pcImgScale + delta));
-      pcImgApplyTransform();
-    }
-    function pcImgReset() {
-      pcImgScale = 1;
-      pcImgApplyTransform();
-    }
-    function pcImgRotate() {
-      pcImgRotation = (pcImgRotation + 90) % 360;
-      pcImgApplyTransform();
-    }
-    function pcImgToggleSidebar() {
-      document.getElementById('pcModalImgWrap').classList.toggle('pc-img-dim');
-    }
-    function pcImgOpenNew() {
-      window.open(pcImgFile, '_blank');
-    }
-    function pcImgDownload() {
-      const a = document.createElement('a');
-      a.href = pcImgFile;
-      a.download = pcImgFile.split('/').pop();
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-    }
-    function pcImgPrint() {
-      const w = window.open(pcImgFile, '_blank');
-      if (w) w.onload = () => w.print();
-    }
-
-    function openPcModal(file, title) {
-      const isImage = /\.(jpe?g|png|webp|gif)$/i.test(file);
-      document.getElementById('pcModalTitle').textContent = title;
-      document.getElementById('pcModalOpen').href = file;
-      document.getElementById('pcModalFrame').style.display = isImage ? 'none' : 'block';
-      document.getElementById('pcModalImgWrap').style.display = isImage ? 'flex' : 'none';
-      document.getElementById('pcImgToolbar').style.display = isImage ? 'flex' : 'none';
-      if (isImage) {
-        pcImgFile = file;
-        pcImgRotation = 0;
-        pcImgReset();
-        document.getElementById('pcModalImg').src = file;
-        document.getElementById('pcModalImg').alt = title;
-        document.getElementById('pcModalFrame').src = '';
-      } else {
-        document.getElementById('pcModalFrame').src = `${file}#zoom=page-width&toolbar=1`;
-        document.getElementById('pcModalImg').src = '';
-      }
-      document.getElementById('pcModal').classList.add('open');
-    }
-  </script>
 
   <script src="script.js"></script>
 </body>

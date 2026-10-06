@@ -1,11 +1,11 @@
-# ⚡ Pratyush Nandi — Developer Portfolio (v4.1)
+# ⚡ Pratyush Nandi — Developer Portfolio (v6.0)
 
 [![Website Vercel](https://img.shields.io/badge/Vercel-Live_Demo-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://pratyushnandi.vercel.app)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](LICENSE)
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-Pratyush_Nandi-0A66C2?style=for-the-badge&logo=linkedin)](https://www.linkedin.com/in/pratyushnandi/)
 [![GitHub](https://img.shields.io/badge/GitHub-pratyushnandi-181717?style=for-the-badge&logo=github)](https://github.com/pratyushnandi)
 
-A high-performance, developer-centric personal portfolio built with a futuristic terminal aesthetic, neon gradients, glassmorphism, and responsive design. Features a cinematic boot intro, light/dark themes, custom canvas particle physics, GSAP scroll animations, 3D tilt effects, and an integrated direct-dispatch contact system — all in plain HTML, CSS and JavaScript with no build step.
+A premium, developer-focused personal portfolio with two intentionally designed themes, an IDE-inspired hero, a live system-architecture diagram, a commit-graph experience timeline and a motion system built on `transform`/`opacity` only — all in plain HTML, CSS and JavaScript with no build step and no animation library.
 
 ---
 
@@ -45,14 +45,15 @@ Optional repository settings:
 
 ## ✨ Features & Highlights
 
-- **⚡ Cinematic Boot Intro:** Simulated system boot sequence (`boot.sh`) with a glyph-decoding name, logo charge-up and shockwave, and a CRT-style switch-off exit. It adapts rather than repeating itself: the full sequence on a first visit, a ~40% faster version on reload in the same tab, and a calm, motion-free version under `prefers-reduced-motion`. Any key, click or tap skips it.
-- **🌗 Light / Dark Theme:** Theme toggle that persists between visits.
-- **🌌 Dynamic Particle Canvas & Ambient Lighting:** Custom HTML5 canvas particle background with interactive mouse glow, moving ambient orbs, and floating code snippet badges.
-- **🎯 Custom Tri-Layer Cursor:** Precision interactive custom cursor composed of a focal dot, trailing fluid ring, and ambient cursor glow.
-- **📜 Horizontal Experience Timeline:** Interactive horizontal scrolling timeline tracing developer milestones, full-stack roles, and campus tech leadership.
-- **📊 Filterable Skills Matrix & Infinite Marquee:** Interactive category tabs (Languages, Frontend, Backend, Tools) with animated proficiency indicators and a continuous tech logo marquee.
-- **💼 Interactive Project Showcase:** Project cards with category filtering (*All, AI/ML, Web App, Full-Stack*), 3D perspective tilt (`vanilla-tilt`), and live demo/source links.
-- **🎓 Academic & Verified Credentials:** Dedicated credentials section highlighting degrees, GPA, and external certificate verification (Google Data Analytics, Deloitte, NSDC).
+- **⚡ Short Intro:** A ~1.3s logo-draw preloader on first visit, ~0.45s on reload, near-instant under `prefers-reduced-motion`. Any key, click or tap skips it, and it waits for web fonts so the hero never reveals mid-swap.
+- **🌗 Two Designed Themes:** A deep, ambient dark theme and a dedicated off-white light theme (its own palette, shadows and light-mode IDE — not an inversion). Switching grows the new theme out of the toggle as a circle via the View Transitions API, with a colour cross-fade fallback. The choice persists; otherwise the OS preference is followed.
+- **🖥️ IDE Hero:** Kinetic name reveal, a `developer.ts` editor whose lines type in, a deploy terminal, profile card and tech chips with pointer parallax, over a lightweight node-network canvas that pauses whenever the hero or tab is hidden.
+- **🧭 Navigation:** Floating glass navbar that tightens on scroll, a sliding active-section indicator driven by scroll-spy, a scroll progress line, and a full-screen mobile menu.
+- **🧱 About Bento:** Intro, photo, current role, animated counters, focus areas and a `profile.json` card.
+- **🌿 Commit-Graph Experience:** Roles laid out like a `git log`, with a rail that fills as you read and nodes that light up.
+- **🗺️ Stack + Architecture:** A live diagram of the web platform and edge vision pipeline (React/Next.js → Fastify → PostgreSQL; RTSP → MediaMTX → YOLO on Raspberry Pi), plus grouped technology nodes that glow in each tool's brand colour.
+- **💼 Project Showcase:** Two featured case-study rows (Detectify shows detection boxes on hover), generated preview art for each smaller project, a sliding category filter (*All, AI/ML, Web App, Full-Stack*), and live/source links.
+- **🎓 Academic & Verified Credentials:** Degrees with grades, viewable grade cards and certificates in an accessible modal (focus-trapped, Esc to close; phones open PDFs in a new tab), and external certificate verification.
 - **📬 Reliable Contact System:** Integrated contact form powered by Web3Forms with structured reason dropdowns, company fields, real-time validation, an automatic `mailto:` fallback, and an `aria-live` status region for screen readers.
 - **📱 Fully Responsive:** Optimized across mobile, tablet, laptop, and ultra-wide displays with accessible navigation and a hamburger menu.
 - **🔍 SEO & Discoverability:** OpenGraph metadata with absolute image URLs, `Person` JSON-LD structured data, `robots.txt`, and `sitemap.xml` for search engine indexing.
@@ -73,11 +74,9 @@ Optional repository settings:
 - **GitHub Actions + Vercel:** CI quality gate, preview/production deploys, and post-deploy smoke tests.
 
 ### Libraries & Frameworks
-- **[GSAP 3.12.5](https://greensock.com/gsap/):** High-performance UI motion and entry sequences.
-- **[ScrollTrigger](https://greensock.com/scrolltrigger/):** Scroll-driven element reveals and viewport animations.
-- **[Vanilla Tilt 1.8.1](https://micku7zu.github.io/vanilla-tilt.js/):** Smooth 3D tilt interaction on project cards and skill badges.
+- **No animation library:** reveals, counters, parallax and scroll-linked effects use `IntersectionObserver`, one rAF-throttled scroll loop and CSS transitions.
 - **[Devicon](https://devicon.dev/) & [Font Awesome 6.5](https://fontawesome.com/):** Vector iconography for programming languages, tools, and social links.
-- **Google Fonts:** *Plus Jakarta Sans* (Primary UI typography) & *Fira Code* (Monospace code elements).
+- **Google Fonts:** *Geist* (UI typography), *JetBrains Mono* (code and technical labels) & *Instrument Serif* (italic accents).
 
 ---
 
@@ -143,7 +142,7 @@ PORTFOLIO/
 ├── playwright.config.js # Playwright projects (desktop + mobile) & local server
 ├── README.md            # Project documentation
 ├── robots.txt           # Search engine crawl rules
-├── script.js            # Main script (preloader, GSAP, canvas, cursor, form)
+├── script.js            # Main script (preloader, theme, nav, hero canvas, reveals, form, viewer)
 ├── sitemap.xml          # Sitemap for search engine indexing
 ├── style.css            # Complete design system, variables & styling
 └── vercel.json          # Vercel deployment configuration
