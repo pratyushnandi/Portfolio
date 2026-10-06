@@ -84,9 +84,10 @@ Optional repository settings:
 
 | Project | Category | Tech Stack | Highlights | Links |
 | :--- | :--- | :--- | :--- | :---: |
-| **Detectify** | AI / ML *(Featured)* | Python, OpenCV, Computer Vision, ML | Real-time traffic violation detection (red light jumping, speeding, helmet violations). | [GitHub](https://github.com/pratyushnandi) |
+| **Detectify** | AI / ML *(Featured)* | Python, OpenCV, Computer Vision, ML | Real-time traffic violation detection (red light jumping, speeding, helmet violations). | [Source](https://github.com/pratyushnandi/DETECTIFY) |
 | **Campus Recruitment System** | Web App *(Featured)* | PHP, Laravel, MySQL, HTML/CSS | Full-stack recruitment portal with student registration, job postings, and tracking. | [GitHub](https://github.com/pratyushnandi) |
-| **Code Editor** | Full-Stack | HTML5, CSS3, JavaScript | Browser-based real-time code editor with instant live render output. | [Live Demo](https://pratyushnandi.github.io/Code_EDITOR/) |
+| **Code Editor** | Full-Stack | HTML5, CSS3, JavaScript | Browser-based real-time code editor with instant live render output. | [Live Demo](https://pratyushnandi.github.io/Code_EDITOR/) · [Source](https://github.com/pratyushnandi/Code_EDITOR) |
+| **Portfolio Website** | Web App | HTML, CSS, JavaScript | Earlier responsive portfolio with neon animations, AOS effects and an EmailJS contact form. | [Live Demo](https://portfolio-website-ab1.netlify.app/) · [Source](https://github.com/pratyushnandi/Portfolio) |
 | **Web Calculator** | Full-Stack | Node.js, Express, HTML, CSS | Responsive web calculator with server-side logic and clean interface. | [Live Demo](https://web-calculator-ad.netlify.app/) |
 | **Rock Paper Scissors** | Game / JS | JavaScript, HTML5, CSS3 | Interactive game with intelligent AI opponent logic and smooth animations. | [Live Demo](https://playfull-game.netlify.app/) |
 | **Cyber Calendar** | Utility | JavaScript, HTML5, CSS3 | Futuristic cyberpunk-themed interactive calendar and event manager. | [Live Demo](https://cyber-calender-ab.netlify.app/) |
@@ -98,8 +99,9 @@ Optional repository settings:
 
 - **Current Role:** Software Developer at **Eltern Segen Technologie Pvt. Ltd.** (Kolkata, India)
 - **Leadership:** Tech Lead, Student Developer Club at Adamas University
+- **Stack:** Python, JavaScript, TypeScript, Java, C/C++ · React.js, Next.js · Node.js, Fastify, Express, REST APIs, Laravel/PHP · PostgreSQL, MySQL, Prisma, MongoDB · Raspberry Pi, RTSP, MediaMTX, YOLO, OpenCV, IoT, Edge Computing, Visual AI · Git, GitHub
 - **Education:**
-  - **Master of Computer Applications (MCA):** Adamas University *(2024 – 2026)*
+  - **Master of Computer Applications (MCA):** Adamas University *(2024 – 2026, CGPA: 7.80)*
   - **Bachelor of Computer Application (BCA):** Techno India (Hooghly) – MAKAUT *(2021 – 2024, CGPA: 8.06)*
 - **Certifications:**
   - Google Data Analytics Professional Certificate — [Verify Credential](https://www.coursera.org/account/accomplishments/professional-cert/DNU7LAGUDSYJ)
@@ -198,6 +200,17 @@ http://localhost:3000
 | `npm run test:e2e` | Playwright tests (starts its own server on port 4173; set `BASE_URL` to test a deployed site) |
 | `npm run lighthouse` | Stages the site and runs a Lighthouse CI audit |
 | `npm run ci` | Lint + asset check + browser tests — the same gate as CI |
+
+---
+
+## 🏷️ Releases
+
+| Version | Highlights |
+| :--- | :--- |
+| **[v6.0.0](https://github.com/pratyushnandi/Portfolio/releases/tag/v6.0.0)** | Full redesign: new design system, dedicated light and dark themes with a circular theme transition, an IDE-style hero, a commit-graph timeline, a live architecture diagram, redesigned projects, contact and footer. GSAP and Vanilla Tilt removed. Lighthouse 91 / 100 / 100 / 100. |
+| v4.1.0 | Reworked preloader intro, CI pipeline, post-deploy smoke tests and accessibility fixes. |
+
+Each release is tagged (`vX.Y.Z`) and published on the [Releases page](https://github.com/pratyushnandi/Portfolio/releases).
 
 ---
 
