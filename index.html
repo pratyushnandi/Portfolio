@@ -615,6 +615,7 @@
           </aside>
         </div>
 
+        <p class="tech-readout mono" id="techReadout" aria-live="polite"><i class="fas fa-hand-pointer" aria-hidden="true"></i> <span>Select a technology to see where it fits in the system and which projects use it.</span></p>
         <div class="stack-grid">
           <div class="stack-group" data-reveal>
             <h3 class="sg-title mono"><i class="fas fa-code" aria-hidden="true"></i> languages</h3>
@@ -793,19 +794,20 @@
                 <i class="fas fa-triangle-exclamation"></i>
                 <div><strong>Red-light violation</strong><span class="mono">alert sent for human review</span></div>
               </div>
+              <div class="cv-call mono" aria-hidden="true"><span class="cc-det">5 detections · 92.2%</span><span class="cc-verdict">red-light violation</span></div>
               <figcaption id="cvCap" class="sr-only">Illustration of a computer-vision pipeline analysing a road junction: detecting vehicles, flagging a red-light violation and raising an alert. Not live data.</figcaption>
             </figure>
 
             <div class="pipe-side">
               <div class="pipe-rail" aria-hidden="true"><span class="pipe-fill"></span><span class="pipe-dot"></span></div>
               <ol class="pipe" id="pipe">
-                <li class="pipe-step" data-status="receiving"><span class="ps-node" aria-hidden="true"></span><div class="ps-body"><p class="ps-head"><span class="ps-name mono">INPUT</span><span class="ps-label">Camera frame</span></p><div class="ps-more"><p>A frame arrives from a live camera feed, streamed over RTSP.</p></div></div></li>
-                <li class="pipe-step" data-status="decoding"><span class="ps-node" aria-hidden="true"></span><div class="ps-body"><p class="ps-head"><span class="ps-name mono">DATA</span><span class="ps-label">Decode &amp; prepare</span></p><div class="ps-more"><p>The frame is decoded and split into the grid of values a model can read.</p></div></div></li>
-                <li class="pipe-step" data-status="filtering"><span class="ps-node" aria-hidden="true"></span><div class="ps-body"><p class="ps-head"><span class="ps-name mono">PROCESSING</span><span class="ps-label">OpenCV</span></p><div class="ps-more"><p>OpenCV cleans the signal and brings out shapes and edges.</p></div></div></li>
-                <li class="pipe-step" data-status="model ready"><span class="ps-node" aria-hidden="true"></span><div class="ps-body"><p class="ps-head"><span class="ps-name mono">MODEL</span><span class="ps-label">Detector loaded</span></p><div class="ps-more"><p>A detection model, such as YOLO, reads the whole frame in a single pass.</p></div></div></li>
-                <li class="pipe-step" data-status="inferring" data-conf="92.2%"><span class="ps-node" aria-hidden="true"></span><div class="ps-body"><p class="ps-head"><span class="ps-name mono">INFERENCE</span><span class="ps-label">Objects found</span></p><div class="ps-more"><p>It returns every object it finds, each with a box and a confidence score.</p></div></div></li>
-                <li class="pipe-step" data-status="deciding" data-conf="92.2%"><span class="ps-node" aria-hidden="true"></span><div class="ps-body"><p class="ps-head"><span class="ps-name mono">DECISION</span><span class="ps-label">Rules applied</span></p><div class="ps-more"><p>Rules turn detections into meaning: this car crossed the stop line on red.</p></div></div></li>
-                <li class="pipe-step" data-status="alert sent" data-conf="92.2%"><span class="ps-node" aria-hidden="true"></span><div class="ps-body"><p class="ps-head"><span class="ps-name mono">ACTION</span><span class="ps-label">Alert raised</span></p><div class="ps-more"><p>An alert goes to a person to review. The same loop drives Detectify.</p><button type="button" class="ps-link" data-case="detectify" data-case-link>Open the Detectify case study <i class="fas fa-arrow-right" aria-hidden="true"></i></button></div></div></li>
+                <li class="pipe-step" data-status="receiving"><span class="ps-node" aria-hidden="true"></span><div class="ps-body"><button type="button" class="ps-head" aria-expanded="false"><span class="ps-name mono">INPUT</span><span class="ps-label">Camera frame</span></button><div class="ps-more"><p>A frame arrives from a live camera feed, streamed over RTSP.</p></div></div></li>
+                <li class="pipe-step" data-status="decoding"><span class="ps-node" aria-hidden="true"></span><div class="ps-body"><button type="button" class="ps-head" aria-expanded="false"><span class="ps-name mono">DATA</span><span class="ps-label">Decode &amp; prepare</span></button><div class="ps-more"><p>The frame is decoded and split into the grid of values a model can read.</p></div></div></li>
+                <li class="pipe-step" data-status="filtering"><span class="ps-node" aria-hidden="true"></span><div class="ps-body"><button type="button" class="ps-head" aria-expanded="false"><span class="ps-name mono">PROCESSING</span><span class="ps-label">OpenCV</span></button><div class="ps-more"><p>OpenCV cleans the signal and brings out shapes and edges.</p></div></div></li>
+                <li class="pipe-step" data-status="model ready"><span class="ps-node" aria-hidden="true"></span><div class="ps-body"><button type="button" class="ps-head" aria-expanded="false"><span class="ps-name mono">MODEL</span><span class="ps-label">Detector loaded</span></button><div class="ps-more"><p>A detection model, such as YOLO, reads the whole frame in a single pass.</p></div></div></li>
+                <li class="pipe-step" data-status="inferring" data-conf="92.2%"><span class="ps-node" aria-hidden="true"></span><div class="ps-body"><button type="button" class="ps-head" aria-expanded="false"><span class="ps-name mono">INFERENCE</span><span class="ps-label">Objects found</span></button><div class="ps-more"><p>It returns every object it finds, each with a box and a confidence score.</p></div></div></li>
+                <li class="pipe-step" data-status="deciding" data-conf="92.2%"><span class="ps-node" aria-hidden="true"></span><div class="ps-body"><button type="button" class="ps-head" aria-expanded="false"><span class="ps-name mono">DECISION</span><span class="ps-label">Rules applied</span></button><div class="ps-more"><p>Rules turn detections into meaning: this car crossed the stop line on red.</p></div></div></li>
+                <li class="pipe-step" data-status="alert sent" data-conf="92.2%"><span class="ps-node" aria-hidden="true"></span><div class="ps-body"><button type="button" class="ps-head" aria-expanded="false"><span class="ps-name mono">ACTION</span><span class="ps-label">Alert raised</span></button><div class="ps-more"><p>An alert goes to a person to review. The same loop drives Detectify.</p><button type="button" class="ps-link" data-case="detectify" data-case-link>Open the Detectify case study <i class="fas fa-arrow-right" aria-hidden="true"></i></button></div></div></li>
               </ol>
             </div>
           </div>
@@ -1241,7 +1243,7 @@
           <span class="foot-sep" aria-hidden="true">·</span>
           <span>IST <time id="localTime">--:--</time></span>
           <span class="foot-sep" aria-hidden="true">·</span>
-          <span>v7.1.1</span>
+          <span>v8.0.0</span>
         </p>
       </div>
     </div>
@@ -1273,20 +1275,25 @@
         <li><span class="ep-dot"></span>Edge / IoT<span class="ep-state" data-state="READY"></span></li>
         <li><span class="ep-dot"></span>Real-Time Systems<span class="ep-state" data-state="READY"></span></li>
       </ul>
-      <p class="ep-sec mono">SYSTEM STATUS</p>
-      <ul class="ep-list ep-status mono">
-        <li>Architecture<span class="ep-state" data-state="STABLE"></span></li>
-        <li>Interfaces<span class="ep-state" data-state="ACTIVE"></span></li>
-        <li>AI Pipeline<span class="ep-state" data-state="READY"></span></li>
-        <li>Deployment<span class="ep-state" data-state="READY"></span></li>
-      </ul>
-      <p class="ep-sec mono">RUNTIME <span class="ep-live">live</span></p>
-      <dl class="ep-runtime mono">
-        <div><dt>section</dt><dd id="rtSection">#hero</dd></div>
-        <div><dt>viewport</dt><dd id="rtViewport">–</dd></div>
-        <div><dt>theme</dt><dd id="rtTheme">–</dd></div>
-        <div><dt>motion</dt><dd id="rtMotion">–</dd></div>
-      </dl>
+      <details class="ep-group" open>
+        <summary class="ep-sec mono">SYSTEM STATUS</summary>
+        <ul class="ep-list ep-status mono">
+          <li>Architecture<span class="ep-state" data-state="STABLE"></span></li>
+          <li>Interfaces<span class="ep-state" data-state="ACTIVE"></span></li>
+          <li>AI Pipeline<span class="ep-state" data-state="READY"></span></li>
+          <li>Deployment<span class="ep-state" data-state="READY"></span></li>
+        </ul>
+      </details>
+      <details class="ep-group" open>
+        <summary class="ep-sec mono">RUNTIME <span class="ep-live">live</span></summary>
+        <dl class="ep-runtime mono">
+          <div><dt>section</dt><dd id="rtSection">#hero</dd></div>
+          <div><dt>viewport</dt><dd id="rtViewport">–</dd></div>
+          <div><dt>theme</dt><dd id="rtTheme">–</dd></div>
+          <div><dt>motion</dt><dd id="rtMotion">–</dd></div>
+        </dl>
+      </details>
+      <button type="button" class="ep-arch" id="epArch"><i class="fas fa-diagram-project" aria-hidden="true"></i> View architecture</button>
       <p class="ep-note mono">Status is a representation of the stack, not live telemetry.</p>
     </div>
   </aside>
@@ -1308,7 +1315,8 @@
         <input id="cmdkInput" type="text" role="combobox" aria-expanded="true" aria-controls="cmdkList"
           aria-autocomplete="list" aria-label="Search commands or ask about my work" autocomplete="off" spellcheck="false"
           placeholder="Search commands or ask about my work…" />
-        <kbd class="mono">esc</kbd>
+        <kbd class="mono cmdk-esc" aria-hidden="true">esc</kbd>
+        <button type="button" class="cmdk-close" id="cmdkClose" aria-label="Close command palette"><i class="fas fa-xmark" aria-hidden="true"></i></button>
       </div>
       <!-- [html-validate-disable-next prefer-native-element -- a filterable command list (ARIA combobox + listbox), not a form field] -->
       <ul class="cmdk-list" id="cmdkList" role="listbox" aria-label="Commands"></ul>
