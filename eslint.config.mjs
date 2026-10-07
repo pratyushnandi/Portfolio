@@ -2,7 +2,9 @@ import js from '@eslint/js';
 import globals from 'globals';
 
 export default [
-  { ignores: ['node_modules/**', 'playwright-report/**', 'test-results/**'] },
+  // .lhci-* / .lighthouseci are local Lighthouse outputs (a staged copy of the site
+  // and its reports); linting them would flag script.js twice under the wrong config.
+  { ignores: ['node_modules/**', 'playwright-report/**', 'test-results/**', '.lhci-site/**', '.lhci-report/**', '.lighthouseci/**'] },
   js.configs.recommended,
   {
     rules: {

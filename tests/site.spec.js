@@ -90,6 +90,70 @@ test('certificate viewer opens and closes with Escape', async ({ page, isMobile 
   await expect(modal).toBeHidden();
 });
 
+test('engineering mode switches on, boots its panel and persists', async ({ page }) => {
+  await open(page);
+  const html = page.locator('html');
+  await page.locator('#engToggle').click();
+  await expect(html).toHaveAttribute('data-mode', 'eng');
+  await expect(page.locator('#engToggle')).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.locator('.ep-list li.up')).toHaveCount(12, { timeout: 5000 });
+  // Section metadata is counted from the page, not hard-coded.
+  await expect(page.locator('#projects .eng-meta')).toContainText(`${await page.locator('#projGrid .pj').count()} projects`);
+  await page.reload();
+  await expect(html).toHaveAttribute('data-mode', 'eng');
+  await page.locator('#engToggle').click();
+  await expect(html).not.toHaveAttribute('data-mode', 'eng');
+});
+
+test('system map selection lights the route and fills the inspector', async ({ page }) => {
+  await open(page);
+  await page.locator('#sysmap').scrollIntoViewIfNeeded();
+  await page.locator('.sm-node[data-node="cv"]').click();
+  await expect(page.locator('.sm-node[data-node="cv"]')).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.locator('#smInspector h3')).toHaveText('Computer Vision');
+  await expect(page.locator('#smInspector .smi-chip')).toContainText(['YOLO']);
+  await expect(page.locator('.sm-node[data-node="api"]')).toHaveClass(/lit/);
+  await expect(page.locator('.sm-node[data-node="database"]')).not.toHaveClass(/lit/);
+});
+
+test('case study opens from its project and closes with Escape', async ({ page }) => {
+  await open(page);
+  const btn = page.locator('.pj [data-case="detectify"]');
+  await btn.scrollIntoViewIfNeeded();
+  await btn.click();
+  const dlg = page.locator('#caseDlg');
+  await expect(dlg).toBeVisible();
+  await expect(page.locator('#caseTitle')).toHaveText('Detectify');
+  await page.keyboard.press('Escape');
+  await expect(dlg).toBeHidden();
+  await expect(btn).toBeFocused();
+});
+
+test('command palette runs real commands from the keyboard', async ({ page, isMobile }) => {
+  test.skip(isMobile, 'keyboard shortcut is a desktop affordance');
+  await open(page);
+  const palette = page.locator('#cmdk');
+  await page.keyboard.press('Control+k');
+  await expect(palette).toBeVisible();
+  await page.keyboard.type('engineering');
+  await page.keyboard.press('Enter');
+  await expect(palette).toBeHidden();
+  await expect(page.locator('html')).toHaveAttribute('data-mode', 'eng');
+});
+
+test('assistant answers from page content and admits what it cannot answer', async ({ page }) => {
+  await open(page);
+  await page.locator('#cmdkBtn').click();
+  await page.locator('.cmdk-item.is-ask', { hasText: 'What AI/ML work do you do?' }).click();
+  const answer = page.locator('#cmdkAnswer');
+  await expect(answer.locator('h3')).toHaveText('AI / ML work');
+  await expect(answer).toContainText('YOLO');
+  await page.locator('#cmdkInput').fill('Have you used Docker?');
+  await page.keyboard.press('Enter');
+  await expect(answer.locator('h3')).toHaveText('I can only answer from this portfolio');
+  await expect(answer).toContainText('not an AI model');
+});
+
 test('contact form validates, then submits (API mocked)', async ({ page }) => {
   await open(page);
   let posts = 0;
