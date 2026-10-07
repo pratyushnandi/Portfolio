@@ -1,4 +1,4 @@
-# ⚡ Pratyush Nandi — Developer Portfolio (v7.1.1)
+# ⚡ Pratyush Nandi — Developer Portfolio (v8.0)
 
 [![Website Vercel](https://img.shields.io/badge/Vercel-Live_Demo-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://pratyushnandi.vercel.app)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](LICENSE)
@@ -54,6 +54,22 @@ Optional repository settings:
 - **⌨️ Command Palette:** `Ctrl K` / `⌘ K` (or the search button) to jump to any section, toggle the theme or Engineering Mode, copy the email, download the resume, or open a case study.
 - **💬 Portfolio Assistant:** Ask about the work from inside the palette, or with *Ask about my work* in the hero. It is **deterministic, not an AI model**, and says so. Questions are matched to intents, technologies or projects, and answers are assembled from the page's own content. Anything it can't ground in the page gets an honest "I can only answer from this portfolio".
 - **🖱️ Contextual Cursor:** On desktop, a small label joins the native pointer over projects (*Explore*), technologies (*Tech*) and contact links (*Let's talk*). Off on touch devices and under reduced motion.
+
+### Mobile, keyboard & screen readers
+
+Each signature feature has its own touch and keyboard interaction model, not a shrunken desktop:
+
+- **Engineering Mode:** a compact bottom sheet on phones (system list plus *View architecture*; secondary groups fold away).
+- **System map:** becomes a full-width linear flow with details opening inline under the tapped node. Arrow keys walk the nodes, and Esc clears.
+- **Technology chips:** toggle buttons; tap or Enter selects, and a text readout says where each fits.
+- **AI pipeline:** stages are buttons. In the pinned view they jump to their point in the story; in the in-flow view (reduced motion, or screens too short to pin) they expand.
+- **Case studies:** sections are disclosure buttons; phones open with Problem and Architecture expanded.
+- **Command palette:** reachable from a visible button on every device, with an explicit close button and a strict focus trap, and focus returns to the trigger.
+- **Mobile menu:** modal: the page behind is inert, focus moves into the menu, and Esc returns focus to the button.
+- **Touch targets:** 44 × 44 px or larger on touch devices.
+- **Contrast:** meets WCAG AA in dark, light and Engineering Mode. States are always shown as text too, never by colour alone.
+- **Motion:** touch and small screens drop continuous background motion. `prefers-reduced-motion` removes motion but keeps every function.
+- **Overflow:** none from 320 px to 1920 px.
 
 ### Everything else
 
@@ -219,7 +235,8 @@ http://localhost:3000
 
 | Version | Highlights |
 | :--- | :--- |
-| **[v7.1.1](https://github.com/pratyushnandi/Portfolio/releases/tag/v7.1.1)** | Navbar keeps its full width when scrolled so Resume stays inside it; Resume is now a gradient call-to-action; hero tech chips fly independent "bee" paths; full stop removed after the name. |
+| **[v8.0.0](https://github.com/pratyushnandi/Portfolio/releases/tag/v8.0.0)** | Mobile & accessibility: every signature feature gets its own touch and keyboard model (Engineering Mode bottom sheet, linear system map with inline details, toggle tech chips with a text readout, tappable pipeline stages, expandable case studies), 44px touch targets, strict focus traps, an inert page behind the mobile menu, WCAG AA contrast in every theme and mode, still hero background on touch, and no overflow from 320px to 1920px. |
+| [v7.1.1](https://github.com/pratyushnandi/Portfolio/releases/tag/v7.1.1) | Navbar keeps its full width when scrolled so Resume stays inside it; Resume is now a gradient call-to-action; hero tech chips fly independent "bee" paths; full stop removed after the name. |
 | [v7.1.0](https://github.com/pratyushnandi/Portfolio/releases/tag/v7.1.0) | Signature experiences: Engineering Mode, interactive System Map, scroll-driven AI pipeline with an illustrated computer-vision frame, project case studies, command palette with a deterministic portfolio assistant, and a contextual cursor. New e2e tests for each. Lighthouse 90 / 100 / 100 / 100. |
 | [v7.0.0](https://github.com/pratyushnandi/Portfolio/releases/tag/v7.0.0) | Version bump to 7.0.0 across the site, package metadata and README. |
 | [v6.0.0](https://github.com/pratyushnandi/Portfolio/releases/tag/v6.0.0) | Full redesign: new design system, dedicated light and dark themes with a circular theme transition, an IDE-style hero, a commit-graph timeline, a live architecture diagram, redesigned projects, contact and footer. GSAP and Vanilla Tilt removed. Lighthouse 91 / 100 / 100 / 100. |
