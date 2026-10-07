@@ -1,4 +1,4 @@
-# ⚡ Pratyush Nandi — Developer Portfolio (v8.0)
+# ⚡ Pratyush Nandi — Developer Portfolio (v9.0)
 
 [![Website Vercel](https://img.shields.io/badge/Vercel-Live_Demo-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://pratyushnandi.vercel.app)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](LICENSE)
@@ -46,6 +46,12 @@ Optional repository settings:
 ## ✨ Features & Highlights
 
 ### Signature experiences
+
+- **🧭 Engineering identity in the hero:** *Software Developer* as the primary identity, with *AI / ML · Full-Stack · Computer Vision · Real-Time Systems*. Below it, a **request path** band (User → Frontend → API → Database → AI / ML → Computer Vision → Edge) with a data packet travelling through the layers; each layer opens the System Map with that node selected.
+- **⚖️ Engineering decisions:** every System Map node explains why its tools are in the stack (Why Fastify? Why PostgreSQL? Why RTSP and MediaMTX? Why process at the edge?). This is reasoning about the tools, not claims about any one project, and the assistant answers "Why X?" from the same data.
+- **🔁 How I build:** an eight-stage, scroll-driven loop (Idea → Architecture → Development → Integration → Testing → Deployment → Monitoring → Optimisation). Every stage is evidenced by this portfolio's own, checkable engineering: CI, Playwright, Vercel and Pages deploys, post-deploy smoke tests and Lighthouse budgets.
+- **🎯 Current focus:** five focus areas drawn from the stack.
+- **🧠 Context-aware UI:** the page knows which section is being read (scroll position only). The command palette opens with commands suggested for that section, and the assistant leads with a matching question.
 
 - **🛠️ Engineering Mode:** One toggle (`ENG` in the navbar) re-reads the whole site as an engineering interface. A scan line sweeps the screen and each element switches as the line passes it. You get a blueprint grid with rulers, crop-mark frames with component tags, section metadata counted live from the page, a technical flow line on every project, circuit-style traces in the hero, and a system panel that boots row by row. The panel's statuses are labelled as a representation; its runtime block (current section, viewport, theme, motion) is real.
 - **🗺️ Interactive System Map:** The stack as one connected system, from User → Frontend → API → Database / AI·ML → Computer Vision (+ Stream) → Edge AI → IoT → Real World. Selecting a node lights the route a request takes to reach it, runs data along those edges only, mutes the rest, highlights its technologies in the stack grid, and fills an inspector with what it does and which projects use it.
@@ -235,7 +241,8 @@ http://localhost:3000
 
 | Version | Highlights |
 | :--- | :--- |
-| **[v8.0.1](https://github.com/pratyushnandi/Portfolio/releases/tag/v8.0.1)** | Post-deploy smoke test now runs against the GitHub Pages copy (served under `/Portfolio/`) instead of failing on the domain root; technology-chip selection no longer jumps to a neighbouring chip. |
+| **[v9.0.0](https://github.com/pratyushnandi/Portfolio/releases/tag/v9.0.0)** | Engineering identity: hero identity + request-path band into the System Map, engineering decisions per system layer, Challenge and Solution in case studies, a scroll-driven "How I build" section evidenced by this site, Current focus, context-aware palette and assistant suggestions, launcher-style palette ranking, decorative particle canvas removed. |
+| [v8.0.1](https://github.com/pratyushnandi/Portfolio/releases/tag/v8.0.1) | Post-deploy smoke test now runs against the GitHub Pages copy (served under `/Portfolio/`) instead of failing on the domain root; technology-chip selection no longer jumps to a neighbouring chip. |
 | [v8.0.0](https://github.com/pratyushnandi/Portfolio/releases/tag/v8.0.0) | Mobile & accessibility: every signature feature gets its own touch and keyboard model (Engineering Mode bottom sheet, linear system map with inline details, toggle tech chips with a text readout, tappable pipeline stages, expandable case studies), 44px touch targets, strict focus traps, an inert page behind the mobile menu, WCAG AA contrast in every theme and mode, still hero background on touch, and no overflow from 320px to 1920px. |
 | [v7.1.1](https://github.com/pratyushnandi/Portfolio/releases/tag/v7.1.1) | Navbar keeps its full width when scrolled so Resume stays inside it; Resume is now a gradient call-to-action; hero tech chips fly independent "bee" paths; full stop removed after the name. |
 | [v7.1.0](https://github.com/pratyushnandi/Portfolio/releases/tag/v7.1.0) | Signature experiences: Engineering Mode, interactive System Map, scroll-driven AI pipeline with an illustrated computer-vision frame, project case studies, command palette with a deterministic portfolio assistant, and a contextual cursor. New e2e tests for each. Lighthouse 90 / 100 / 100 / 100. |
