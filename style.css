@@ -2183,7 +2183,14 @@ html.modal-open { overflow: hidden; }
   box-shadow: 0 0 0 2px color-mix(in srgb, var(--brand, var(--accent)) 35%, transparent);
 }
 .stack-grid .node.tech-rel { border-color: color-mix(in srgb, var(--accent) 45%, transparent); }
-.node-btn[aria-pressed="true"]::after { content: '✓' / ''; font-size: .72rem; color: var(--accent); margin-left: 2px; }
+/* The pressed tick is a corner badge, so selecting a chip never changes its
+   width (a wider chip shoved its neighbour under the pointer mid-click). */
+.node-btn[aria-pressed="true"]::after {
+  content: '✓' / ''; position: absolute; top: -7px; right: -7px;
+  display: grid; place-items: center; width: 17px; height: 17px; border-radius: 50%;
+  font-size: .6rem; font-weight: 700; color: #fff; background: var(--accent);
+  box-shadow: 0 0 0 2px var(--surface);
+}
 .sm-node.tech-layer { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
 
 /* ─── Pipeline stages are buttons ─── */
@@ -2315,4 +2322,7 @@ html.modal-open { overflow: hidden; }
 @media (max-width: 380px) {
   .eng-panel.min .ep-sum { display: none; }
   .ep-title { letter-spacing: .08em; }
-}
+}/* The readout reserves its height: when its text wrapped to a new line the
+   grid below jumped, sliding a different chip under a resting pointer. */
+.tech-readout { min-height: calc(3em + 22px); }
+@media (max-width: 640px) { .tech-readout { min-height: calc(4.5em + 22px); } }
