@@ -403,7 +403,9 @@ html.theme-fade, html.theme-fade *, html.theme-fade *::before, html.theme-fade *
   opacity: 0; transition: opacity .4s, border-color .4s, box-shadow .4s;
 }
 .nav.scrolled { padding-top: 10px; }
-.nav.scrolled .nav-inner { max-width: 1040px; height: 54px; }
+/* Width stays put on scroll: the bar now carries search, ENG, theme and Resume,
+   and narrowing it pushed Resume outside the glass. Height + glass carry the change. */
+.nav.scrolled .nav-inner { height: 54px; }
 .nav.scrolled .nav-inner::before { opacity: 1; border-color: var(--line-2); box-shadow: var(--shadow-lg); }
 
 .logo { display: inline-flex; align-items: center; gap: 10px; font-weight: 650; letter-spacing: -.02em; flex: none; }
@@ -509,7 +511,6 @@ html.theme-fade, html.theme-fade *, html.theme-fade *::before, html.theme-fade *
   background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent;
   padding-right: .04em;
 }
-.ht-dot { color: var(--accent-2); -webkit-text-fill-color: var(--accent-2); }
 
 .hero-lead {
   font-size: clamp(1.15rem, 1.9vw, 1.5rem); line-height: 1.4; font-weight: 450; letter-spacing: -.015em;
@@ -572,10 +573,36 @@ html.theme-fade, html.theme-fade *, html.theme-fade *::before, html.theme-fade *
 .hv-chip-2 { top: 40%; left: -6%; }
 .hv-chip-3 { top: 1%; left: 14%; }
 
-.hv-chip .tech-chip { animation: float 7s var(--ease-io) infinite; }
-.hv-chip-2 .tech-chip { animation-duration: 8.5s; animation-delay: -2s; }
-.hv-chip-3 .tech-chip { animation-duration: 6.5s; animation-delay: -4s; }
-@keyframes float { 0%, 100% { translate: 0 0; } 50% { translate: 0 -10px; } }
+/* Bee paths: each chip wanders its own closed loop, banking into the turns.
+   Different shapes, lengths and phases keep the three from ever syncing up.
+   Uses the standalone translate/rotate properties so the parallax transform
+   on .hv-layer composes with it untouched. */
+.hv-chip .tech-chip { animation: bee-a 11s ease-in-out infinite; }
+.hv-chip-2 .tech-chip { animation: bee-b 13s ease-in-out -4s infinite; }
+.hv-chip-3 .tech-chip { animation: bee-c 9.5s ease-in-out -2s infinite; }
+@keyframes bee-a {
+  0%, 100% { translate: 0 0; rotate: 0deg; }
+  14% { translate: -16px -10px; rotate: -4deg; }
+  30% { translate: -6px -24px; rotate: 3deg; }
+  46% { translate: 14px -14px; rotate: 5deg; }
+  62% { translate: 20px 4px; rotate: -2deg; }
+  80% { translate: 4px 12px; rotate: -5deg; }
+}
+@keyframes bee-b {
+  0%, 100% { translate: 0 0; rotate: 0deg; }
+  18% { translate: 14px -16px; rotate: 5deg; }
+  36% { translate: -4px -28px; rotate: -3deg; }
+  52% { translate: -20px -12px; rotate: -6deg; }
+  70% { translate: -12px 10px; rotate: 2deg; }
+  86% { translate: 10px 14px; rotate: 4deg; }
+}
+@keyframes bee-c {
+  0%, 100% { translate: 0 0; rotate: 0deg; }
+  20% { translate: 12px 10px; rotate: 4deg; }
+  40% { translate: 22px -8px; rotate: -3deg; }
+  58% { translate: 6px -22px; rotate: -6deg; }
+  78% { translate: -14px -10px; rotate: 3deg; }
+}
 .paused .tech-chip, .paused .pulse-dot::after, .paused .hty-cur { animation-play-state: paused; }
 
 .ide {
@@ -2100,3 +2127,19 @@ html.modal-open { overflow: hidden; }
 }
 .ctx-cursor.on .cc-pill { opacity: 1; transform: none; }
 @media (hover: none), (prefers-reduced-motion: reduce) { .ctx-cursor { display: none; } }
+/* ─── Resume: the navbar's call to action ─── */
+.n-resume {
+  color: #fff; border: 0; background: var(--grad-btn);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, .28) inset, 0 8px 22px -8px rgba(110, 90, 255, .85);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+.n-resume::after {
+  content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background: linear-gradient(110deg, transparent 35%, rgba(255, 255, 255, .45) 50%, transparent 65%);
+  transform: translateX(-130%); animation: resume-sheen 6s var(--ease-io) 2.5s infinite;
+}
+@keyframes resume-sheen { 0%, 70% { transform: translateX(-130%); } 100% { transform: translateX(130%); } }
+.n-resume:hover { color: #fff; background: var(--grad-btn); box-shadow: 0 1px 0 rgba(255, 255, 255, .32) inset, 0 12px 28px -8px rgba(110, 90, 255, 1); transform: translateY(-1px); }
+.n-resume:hover i { animation: resume-drop .6s var(--ease-spring); }
+@keyframes resume-drop { 40% { transform: translateY(3px); } }
