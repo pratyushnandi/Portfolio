@@ -8,8 +8,24 @@
 const root = document.documentElement;
 const REDUCE_MOTION = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 const FINE_POINTER = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+// Touch and small screens keep the personality but drop continuous background
+// motion (the hero network becomes a still frame).
+const LITE_MOTION = window.matchMedia('(max-width: 768px), (pointer: coarse)').matches;
 const $ = (s, c = document) => c.querySelector(s);
 const $$ = (s, c = document) => Array.from(c.querySelectorAll(s));
+// Modal <dialog>s already make the page inert; this also stops Tab from
+// escaping to the browser chrome, so focus cycles inside the dialog.
+function trapTab(dialog) {
+  dialog.addEventListener('keydown', e => {
+    if (e.key !== 'Tab') return;
+    const f = $$('a[href], button:not([disabled]), input, select, textarea, [tabindex]:not([tabindex="-1"])', dialog)
+      .filter(el => el.offsetParent !== null && !el.closest('[hidden]'));
+    if (!f.length) return;
+    const first = f[0], last = f[f.length - 1];
+    if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+    else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+  });
+}
 
 /* ══ 1. PRELOADER ══
    Short by design: ~1.3s on a first visit, ~0.45s on a reload in the same
@@ -77,6 +93,7 @@ const $$ = (s, c = document) => Array.from(c.querySelectorAll(s));
   const isLight = () => root.getAttribute('data-theme') === 'light';
   function label() {
     btn.setAttribute('aria-label', isLight() ? 'Switch to dark theme' : 'Switch to light theme');
+    btn.title = isLight() ? 'Light theme · switch to dark' : 'Dark theme · switch to light';
   }
   function apply(theme) {
     if (theme === 'light') root.setAttribute('data-theme', 'light');
@@ -165,12 +182,24 @@ const Nav = (function () {
     spy();
   }
 
+  // The open menu is modal: everything behind it goes inert, so Tab stays in
+  // the menu and screen readers don't wander into the page underneath.
+  const behind = () => [$('#main'), $('.footer'), $('#topBtn'), $('#engPanel')].filter(Boolean);
   function setMenu(open) {
+    const was = links.classList.contains('open');
     links.classList.toggle('open', open);
     nav.classList.toggle('menu-open', open);
     root.classList.toggle('modal-open', open);
     burger.setAttribute('aria-expanded', open ? 'true' : 'false');
     burger.setAttribute('aria-label', open ? 'Close navigation menu' : 'Open navigation menu');
+    behind().forEach(el => { el.inert = open; });
+    if (open && !was) {
+      // Retry once after the open transition: an early focus() can lose the
+      // race with the panel becoming visible.
+      const first = $('a', links);
+      const tryFocus = () => { if (first && links.classList.contains('open') && document.activeElement !== first) first.focus(); };
+      setTimeout(tryFocus, 60); setTimeout(tryFocus, 450);
+    }
   }
   burger.addEventListener('click', () => setMenu(!links.classList.contains('open')));
   navAs.forEach(a => a.addEventListener('click', () => setMenu(false)));
@@ -178,7 +207,7 @@ const Nav = (function () {
     if (e.key === 'Escape' && links.classList.contains('open')) { setMenu(false); burger.focus(); }
   });
   window.addEventListener('resize', () => {
-    if (innerWidth > 960 && links.classList.contains('open')) setMenu(false);
+    if (innerWidth > 1100 && links.classList.contains('open')) setMenu(false);
     moveIndicator(current);
   }, { passive: true });
   // Web fonts change link widths after first layout.
@@ -347,13 +376,13 @@ const Net = (function () {
     raf = requestAnimationFrame(loop);
   }
   function start() {
-    if (REDUCE_MOTION || running || document.hidden) return;
+    if (REDUCE_MOTION || LITE_MOTION || running || document.hidden) return;
     running = true; raf = requestAnimationFrame(loop);
   }
   function stop() { running = false; cancelAnimationFrame(raf); }
 
   readColor(); size();
-  if (REDUCE_MOTION) draw(false);
+  if (REDUCE_MOTION || LITE_MOTION) draw(false);
   window.addEventListener('pn:themechange', () => { readColor(); if (!running) draw(false); });
   window.addEventListener('pn:modechange', () => {
     ortho = root.getAttribute('data-mode') === 'eng';
@@ -872,29 +901,133 @@ const projectEl = key => $$('#projGrid .pj').find(p => slug($('h3', p).textConte
     render(k);
   }
 
+  // Screen readers hear what a node is for, not only its name.
+  nodes.forEach(n => {
+    // A real space between the name and its subtitle ("Database PostgreSQL…").
+    const strong = $('strong', n);
+    if (strong) strong.after(document.createTextNode(' '));
+    const s = el('span', 'sr-only', `, ${SYSTEM[n.dataset.node].tagline}`);
+    n.appendChild(s);
+    n.setAttribute('aria-controls', 'smInspector');
+  });
+
+  // Phones get a linear list (CSS) and the inspector opens inline under the
+  // selected node, like an accordion. Wider screens keep it beside the graph.
+  const narrow = window.matchMedia('(max-width: 640px)');
+  const home = insp.parentNode;
+  function place() {
+    const n = pinned && nodes.find(x => x.dataset.node === pinned);
+    if (narrow.matches && n) { n.after(insp); insp.classList.add('inline'); }
+    else if (insp.parentNode !== home) { home.appendChild(insp); insp.classList.remove('inline'); }
+  }
+  narrow.addEventListener('change', place);
+
   function pin(k) {
     pinned = pinned === k ? null : k;
     nodes.forEach(n => n.setAttribute('aria-pressed', n.dataset.node === pinned ? 'true' : 'false'));
     show(pinned);
+    place();
   }
   nodes.forEach(n => {
     const k = n.dataset.node;
-    n.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') show(k); });
-    n.addEventListener('focus', () => show(k));
+    // Hover previews belong to the side-by-side graph; in the phone list the
+    // layout shifts under the pointer as details open, so selection is click-only.
+    n.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse' && !narrow.matches) show(k); });
+    n.addEventListener('focus', () => { if (!narrow.matches) show(k); });
     n.addEventListener('click', () => {
       pin(k);
-      if (pinned && innerWidth < 960) {
+      if (pinned && !narrow.matches && innerWidth < 960) {
         const r = insp.getBoundingClientRect();
         if (r.top > innerHeight - 120) insp.scrollIntoView({ behavior: REDUCE_MOTION ? 'auto' : 'smooth', block: 'nearest' });
       }
     });
   });
-  canvas.addEventListener('pointerleave', e => { if (e.pointerType === 'mouse') show(pinned); });
+  canvas.addEventListener('pointerleave', e => { if (e.pointerType === 'mouse' && !narrow.matches) show(pinned); });
   canvas.addEventListener('focusout', e => { if (!canvas.contains(e.relatedTarget)) show(pinned); });
-  map.addEventListener('keydown', e => { if (e.key === 'Escape' && (pinned || shown)) { pinned = null; pin(null); show(null); } });
+  // Arrow keys walk the nodes in flow order; Escape clears the selection.
+  canvas.addEventListener('keydown', e => {
+    const i = nodes.indexOf(document.activeElement);
+    if (i < 0 || !['ArrowDown', 'ArrowUp', 'ArrowRight', 'ArrowLeft'].includes(e.key)) return;
+    e.preventDefault();
+    const d = e.key === 'ArrowDown' || e.key === 'ArrowRight' ? 1 : -1;
+    nodes[(i + d + nodes.length) % nodes.length].focus();
+  });
+  map.addEventListener('keydown', e => {
+    if (e.key !== 'Escape' || !(pinned || shown)) return;
+    const was = pinned;
+    pinned = null;
+    nodes.forEach(n => n.setAttribute('aria-pressed', 'false'));
+    show(null); place();
+    if (was) { const n = nodes.find(x => x.dataset.node === was); if (n) n.focus(); }
+  });
 
   // Data only flows while the map is on screen.
   if (!REDUCE_MOTION) new IntersectionObserver(([e]) => map.classList.toggle('live', e.isIntersecting)).observe(map);
+})();
+
+/* ══ 18b. TECHNOLOGY NODES ══
+   Every chip is a toggle button. Hover previews (mouse only); tap, click,
+   Enter or Space pins; tap again or Escape clears. The selected technology
+   lights its system layers on the map, its neighbours in the grid, and a
+   plain-text readout says where it fits and which projects use it. */
+(function () {
+  const grid = $('.stack-grid');
+  const readout = $('#techReadout');
+  if (!grid || !readout) return;
+  const items = $$('.node', grid);
+  const label = $('span', readout);
+  const idle = label.textContent;
+  const name = li => $('span', li).textContent.trim();
+  items.forEach(li => {
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'node-btn'; b.setAttribute('aria-pressed', 'false');
+    while (li.firstChild) b.appendChild(li.firstChild);
+    li.appendChild(b);
+  });
+  const projectsUsing = n => $$('#projGrid .pj').filter(p => $$('.tags li', p).some(t => {
+    const tag = t.textContent.trim().toLowerCase();
+    return tag === n.toLowerCase() || n.toLowerCase().startsWith(tag);
+  })).map(p => $('h3', p).textContent.trim());
+
+  let pinned = null;
+  function show(li) {
+    if (!li) {
+      grid.classList.remove('tech-focus');
+      items.forEach(x => x.classList.remove('tech-on', 'tech-rel'));
+      $$('.sm-node.tech-layer').forEach(n => n.classList.remove('tech-layer'));
+      label.textContent = idle;
+      return;
+    }
+    const n = name(li);
+    const key = Object.keys(TECH).find(k => TECH[k] === n);
+    const layers = key ? Object.entries(SYSTEM).filter(([, s]) => s.tech.includes(key)) : [];
+    const near = new Set(layers.flatMap(([, s]) => s.tech).map(t => TECH[t]));
+    grid.classList.add('tech-focus');
+    items.forEach(x => {
+      x.classList.toggle('tech-on', x === li);
+      x.classList.toggle('tech-rel', x !== li && near.has(name(x)));
+    });
+    $$('.sm-node').forEach(sn => sn.classList.toggle('tech-layer', layers.some(([k]) => k === sn.dataset.node)));
+    const group = $('.sg-title', li.closest('.stack-group')).textContent.trim();
+    const used = projectsUsing(n);
+    label.textContent = `${n} · ` +
+      (layers.length ? `layer: ${layers.map(([, s]) => s.label).join(', ')}` : `group: ${group}`) +
+      (used.length ? ` · used in ${used.join(', ')}` : '');
+  }
+  function pin(li) {
+    pinned = pinned === li ? null : li;
+    items.forEach(x => $('.node-btn', x).setAttribute('aria-pressed', x === pinned ? 'true' : 'false'));
+    show(pinned);
+  }
+  items.forEach(li => {
+    const b = $('.node-btn', li);
+    b.addEventListener('click', () => pin(li));
+    li.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') show(li); });
+    li.addEventListener('pointerleave', e => { if (e.pointerType === 'mouse') show(pinned); });
+  });
+  grid.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && pinned) { const b = $('.node-btn', pinned); pin(pinned); b.focus(); }
+  });
 })();
 
 /* ══ 19. AI PIPELINE ══
@@ -919,6 +1052,26 @@ const projectEl = key => $$('#projGrid .pj').find(p => slug($('h3', p).textConte
   const clamp = (v, a, b) => Math.min(Math.max(v, a), b);
   let stage = -1, pinned = true;
 
+  // Stage state is spoken, not only coloured: each head carries a hidden
+  // "completed" / "current stage" suffix and aria-expanded for its detail.
+  const heads = steps.map((st, i) => {
+    const h = $('.ps-head', st);
+    const more = $('.ps-more', st);
+    $('.ps-name', h).after(document.createTextNode(' '));
+    more.id = 'psMore' + i;
+    h.setAttribute('aria-controls', more.id);
+    const sr = document.createElement('span');
+    sr.className = 'sr-only ps-state';
+    h.appendChild(sr);
+    return h;
+  });
+  function syncA11y() {
+    steps.forEach((st, i) => {
+      const open = pipe.classList.contains('all-on') || st.classList.contains('active') || st.classList.contains('open');
+      heads[i].setAttribute('aria-expanded', open ? 'true' : 'false');
+      $('.ps-state', heads[i]).textContent = st.classList.contains('active') ? ', current stage' : st.classList.contains('done') ? ', completed' : '';
+    });
+  }
   function setStage(s) {
     if (s === stage) return;
     stage = s;
@@ -926,6 +1079,7 @@ const projectEl = key => $$('#projGrid .pj').find(p => slug($('h3', p).textConte
       st.classList.toggle('done', i < s - 1);
       st.classList.toggle('active', i === s - 1);
     });
+    syncA11y();
     for (let i = 1; i <= N; i++) frame.classList.toggle('s' + i, s >= i);
     const cur = steps[s - 1];
     status.textContent = cur ? cur.dataset.status : 'idle';
@@ -962,11 +1116,26 @@ const projectEl = key => $$('#projGrid .pj').find(p => slug($('h3', p).textConte
     fill.style.setProperty('--f', (rr.height ? y / rr.height : 0).toFixed(4));
   }
 
+  // Tap / click / Enter on a stage. Pinned: travel to that point in the story.
+  // In-flow (reduced motion, or too short to pin): open or close its detail.
+  heads.forEach((h, i) => h.addEventListener('click', () => {
+    if (pinned && !REDUCE_MOTION) {
+      const top = parseFloat(getComputedStyle(sticky).top) || 0;
+      const p = ((Math.min(i + .35, N - 1) / (N - 1)) + .04) / 1.12;
+      const y = scroller.getBoundingClientRect().top + scrollY - top + p * (scroller.offsetHeight - sticky.offsetHeight);
+      window.scrollTo({ top: y, behavior: 'smooth' });
+    } else {
+      steps[i].classList.toggle('open');
+      syncA11y();
+    }
+  }));
+
   if (REDUCE_MOTION) {
-    // The finished state, with every stage readable.
-    pipe.classList.add('all-on');
+    // The finished state, every stage open and readable (each still toggles).
     scroller.classList.add('is-static', 'running');
     setStage(N);
+    steps.forEach(st => st.classList.add('open'));
+    syncA11y();
     fill.style.setProperty('--f', '1');
     return;
   }
@@ -991,11 +1160,32 @@ const Case = (function () {
     if (!tpl) return;
     clearTimeout(closing); dlg.classList.remove('closing');
     body.replaceChildren(tpl.content.cloneNode(true));
+    disclose();
     body.scrollTop = 0;
     last = from || document.activeElement;
     if (!dlg.open) dlg.showModal();
     root.classList.add('modal-open');
     $('.case-close', dlg).focus();
+  }
+  // Each section heading becomes a disclosure button. Phones open with only
+  // Problem and Architecture expanded; wider screens open everything.
+  function disclose() {
+    const compact = innerWidth < 760;
+    $$('.cs-sec', body).forEach((sec, i) => {
+      const h = $('h3', sec);
+      const btn = document.createElement('button');
+      btn.type = 'button'; btn.className = 'cs-toggle';
+      btn.textContent = h.textContent;
+      const panel = document.createElement('div');
+      panel.className = 'cs-panel'; panel.id = 'csPanel' + i;
+      while (h.nextSibling) panel.appendChild(h.nextSibling);
+      h.replaceChildren(btn);
+      sec.appendChild(panel);
+      const set = open => { btn.setAttribute('aria-expanded', open ? 'true' : 'false'); panel.hidden = !open; };
+      btn.setAttribute('aria-controls', panel.id);
+      set(!compact || i < 2);
+      btn.addEventListener('click', () => set(btn.getAttribute('aria-expanded') !== 'true'));
+    });
   }
   function finish() {
     dlg.classList.remove('closing');
@@ -1010,6 +1200,7 @@ const Case = (function () {
     closing = setTimeout(finish, 240);
   }
 
+  trapTab(dlg);
   dlg.addEventListener('cancel', e => { e.preventDefault(); close(); });
   dlg.addEventListener('click', e => {
     if (e.target === dlg) { close(); return; }
@@ -1143,6 +1334,14 @@ const Eng = (function () {
     $('i', min).className = m ? 'fas fa-plus' : 'fas fa-minus';
   }
   min.addEventListener('click', () => setMin(!panel.classList.contains('min')));
+  // Mobile gets the compact sheet: system list + "View architecture"; the
+  // secondary groups start folded.
+  if (innerWidth < 700) $$('.ep-group', panel).forEach(d => { d.open = false; });
+  $('#epArch').addEventListener('click', () => {
+    if (innerWidth < 700) setMin(true);
+    const m = $('#sysmap');
+    if (m) m.scrollIntoView({ behavior: REDUCE_MOTION ? 'auto' : 'smooth', block: 'start' });
+  });
   $('#epClose').addEventListener('click', () => { set(false); btn.focus(); });
 
   /* — switching — */
@@ -1387,7 +1586,8 @@ const Assistant = (function () {
   const isMac = /mac|iphone|ipad/i.test((navigator.userAgentData && navigator.userAgentData.platform) || navigator.platform || '');
   $$('.cmdk-kbd').forEach(k => { k.textContent = isMac ? '⌘ K' : 'Ctrl K'; });
   // The accessible name leads with the visible shortcut (voice-control users say what they see).
-  $('#cmdkBtn').setAttribute('aria-label', `${isMac ? '⌘ K' : 'Ctrl K'} — command palette`);
+  // Touch devices have no shortcut to advertise, so the name describes the action.
+  $('#cmdkBtn').setAttribute('aria-label', FINE_POINTER ? `${isMac ? '⌘ K' : 'Ctrl K'} — command palette` : 'Search and commands');
 
   const scrollTo = sel => () => { const t = $(sel); if (t) t.scrollIntoView({ behavior: REDUCE_MOTION ? 'auto' : 'smooth', block: 'start' }); };
   const NAV = [
@@ -1561,6 +1761,7 @@ const Assistant = (function () {
       else if (input.value.trim()) showAnswer(input.value.trim());
     } else if (e.key === 'Backspace' && mode === 'answer' && !input.value) showList();
   });
+  trapTab(dlg);
   dlg.addEventListener('cancel', e => { e.preventDefault(); close(); });
   dlg.addEventListener('click', e => { if (e.target === dlg) close(); });
   document.addEventListener('keydown', e => {
@@ -1570,6 +1771,7 @@ const Assistant = (function () {
     }
   });
   $('#cmdkBtn').addEventListener('click', () => open());
+  $('#cmdkClose').addEventListener('click', close);
   $$('[data-ask]').forEach(b => b.addEventListener('click', () => open({ ask: true })));
 })();
 

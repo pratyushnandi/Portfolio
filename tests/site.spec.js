@@ -154,6 +154,54 @@ test('assistant answers from page content and admits what it cannot answer', asy
   await expect(answer).toContainText('not an AI model');
 });
 
+test('command palette closes from its button and returns focus to the trigger', async ({ page }) => {
+  await open(page);
+  const trigger = page.locator('#cmdkBtn');
+  await trigger.click();
+  await expect(page.locator('#cmdk')).toBeVisible();
+  await page.locator('#cmdkClose').click();
+  await expect(page.locator('#cmdk')).toBeHidden();
+  await expect(trigger).toBeFocused();
+});
+
+test('technology chips are toggle buttons with a text readout', async ({ page }) => {
+  await open(page);
+  const chip = page.locator('.node-btn', { hasText: 'PostgreSQL' });
+  await chip.scrollIntoViewIfNeeded();
+  await chip.click();
+  await expect(chip).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.locator('#techReadout')).toContainText('PostgreSQL · layer: Database');
+  await chip.click();
+  await expect(chip).toHaveAttribute('aria-pressed', 'false');
+});
+
+test('pipeline stages are buttons that expose their state', async ({ page }) => {
+  await open(page);
+  const heads = page.locator('.ps-head');
+  await expect(heads).toHaveCount(7);
+  await expect(heads.first()).toHaveAttribute('aria-controls', 'psMore0');
+  await expect(heads.first()).toHaveAttribute('aria-expanded', /true|false/);
+});
+
+test('mobile: system map shows details inline and the menu makes the page inert', async ({ page, isMobile }) => {
+  test.skip(!isMobile, 'mobile only');
+  await open(page);
+  const node = page.locator('.sm-node[data-node="edge"]');
+  await node.scrollIntoViewIfNeeded();
+  await node.click();
+  await expect(page.locator('#smCanvas > #smInspector')).toBeVisible();
+  await expect(page.locator('#smInspector h3')).toHaveText('Edge AI');
+  await node.click();
+  await expect(page.locator('#smCanvas > #smInspector')).toHaveCount(0);
+
+  await page.evaluate(() => window.scrollTo(0, 0));
+  await page.locator('#burger').click();
+  await expect(page.locator('#main')).toHaveJSProperty('inert', true);
+  await page.keyboard.press('Escape');
+  await expect(page.locator('#main')).toHaveJSProperty('inert', false);
+  await expect(page.locator('#burger')).toBeFocused();
+});
+
 test('contact form validates, then submits (API mocked)', async ({ page }) => {
   await open(page);
   let posts = 0;
