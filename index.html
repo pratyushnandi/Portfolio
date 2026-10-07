@@ -181,7 +181,6 @@
        HERO
     ════════════════════════════════════ -->
     <section id="hero" class="hero" aria-labelledby="heroTitle">
-      <canvas id="heroCanvas" class="hero-canvas" aria-hidden="true"></canvas>
       <div class="hero-spot" aria-hidden="true"></div>
 
       <div class="container hero-wrap">
@@ -197,19 +196,23 @@
               <span class="ht-line"><span class="ht-word">Nandi</span></span></span>
           </h1>
 
-          <p class="hero-lead" data-hero>
-            A <em class="serif">passionate programmer</em> building fast full&#8209;stack products, clean APIs and
-            edge&#8209;deployed computer vision.
-          </p>
+          <div class="hero-identity" data-hero>
+            <p class="hi-role">Software Developer</p>
+            <ul class="hi-tags mono" aria-label="Specialisms">
+              <li>AI / ML</li><li>Full-Stack</li><li>Computer Vision</li><li>Real-Time Systems</li>
+            </ul>
+          </div>
 
-          <p class="hero-typed mono" data-hero aria-hidden="true">
-            <span class="hty-k">role</span><span class="hty-p">:</span> <span id="heroTyped">Software Developer</span><span class="hty-cur">▍</span>
+          <!-- No entrance fade: this paragraph is the page's LCP element, and fading it in
+               held Largest Contentful Paint back until the intro finished. -->
+          <p class="hero-lead">
+            A <em class="serif">passionate programmer</em> building intelligent software systems: fast
+            full&#8209;stack products, clean APIs and edge&#8209;deployed computer vision.
           </p>
 
           <p class="hero-bio" data-hero>
             Software Developer at <strong>Eltern Segen Technologie Pvt. Ltd.</strong> Working across
-            <strong>React, Node.js &amp; Python</strong>, from interfaces people enjoy using to the services and
-            devices behind them. MCA @ Adamas University.
+            <strong>React, Node.js &amp; Python</strong>. MCA @ Adamas University.
           </p>
 
           <div class="hero-actions" data-hero>
@@ -219,25 +222,19 @@
             <a href="#contact" class="btn btn-ghost magnetic">
               <i class="fas fa-paper-plane" aria-hidden="true"></i> <span>Let's collaborate</span>
             </a>
+          </div>
+
+          <div class="hero-foot" data-hero>
             <button type="button" class="ask-link" data-ask>
               <i class="fas fa-message" aria-hidden="true"></i> <span>Ask about my work</span>
               <kbd class="mono cmdk-kbd" aria-hidden="true">Ctrl K</kbd>
             </button>
-          </div>
-
-          <div class="hero-foot" data-hero>
             <div class="hero-socials">
               <a href="https://github.com/pratyushnandi" target="_blank" rel="noopener noreferrer" class="icon-btn" aria-label="GitHub"><i class="fab fa-github"></i></a>
               <a href="https://www.linkedin.com/in/pratyushnandi/" target="_blank" rel="noopener noreferrer" class="icon-btn" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
               <a href="mailto:pratyushnandi100@gmail.com" class="icon-btn" aria-label="Email"><i class="fas fa-envelope"></i></a>
               <a href="tel:+917890706472" class="icon-btn" aria-label="Phone"><i class="fas fa-phone"></i></a>
             </div>
-            <dl class="hero-stats">
-              <div><dt>Projects</dt><dd><span class="count" data-count="10">10</span>+</dd></div>
-              <div><dt>Certifications</dt><dd><span class="count" data-count="5">5</span>+</dd></div>
-              <div><dt>Roles</dt><dd><span class="count" data-count="6">6</span>+</dd></div>
-              <div><dt>BCA CGPA</dt><dd>8.06</dd></div>
-            </dl>
           </div>
         </div>
 
@@ -293,12 +290,25 @@
           <div class="hv-layer hv-chip hv-chip-2" data-depth="34"><span class="tech-chip"><i class="devicon-python-plain colored"></i> Python</span></div>
           <div class="hv-layer hv-chip hv-chip-3" data-depth="24"><span class="tech-chip"><i class="devicon-nodejs-plain colored"></i> Node.js</span></div>
         </div>
-      </div>
 
-      <a href="#about" class="hero-scroll" aria-label="Scroll to About section">
-        <span class="mono">scroll</span>
-        <span class="hs-line" aria-hidden="true"></span>
-      </a>
+        <!-- The request path through the systems I build. Each layer opens the
+             System Map with that node selected. -->
+        <nav class="hero-system" data-hero aria-label="Request path: jump to a layer of the system map">
+          <span class="hsys-label mono"><span class="pulse-dot" aria-hidden="true"></span> request path</span>
+          <div class="hsys-rail">
+            <ol class="hsys-path">
+              <li><button type="button" data-goto-node="user"><span class="hsys-full">User</span><span class="hsys-short" aria-hidden="true">User</span></button></li>
+              <li><button type="button" data-goto-node="frontend"><span class="hsys-full">Frontend</span><span class="hsys-short" aria-hidden="true">UI</span></button></li>
+              <li><button type="button" data-goto-node="api"><span class="hsys-full">API</span><span class="hsys-short" aria-hidden="true">API</span></button></li>
+              <li><button type="button" data-goto-node="database"><span class="hsys-full">Database</span><span class="hsys-short" aria-hidden="true">DB</span></button></li>
+              <li><button type="button" data-goto-node="aiml"><span class="hsys-full">AI / ML</span><span class="hsys-short" aria-hidden="true">AI</span></button></li>
+              <li><button type="button" data-goto-node="cv"><span class="hsys-full">Computer Vision</span><span class="hsys-short" aria-hidden="true">CV</span></button></li>
+              <li><button type="button" data-goto-node="edge"><span class="hsys-full">Edge</span><span class="hsys-short" aria-hidden="true">Edge</span></button></li>
+            </ol>
+            <div class="hsys-track" aria-hidden="true"><span class="hsys-packet"></span></div>
+          </div>
+        </nav>
+      </div>
     </section>
 
     <!-- ════════════════════════════════════
@@ -360,16 +370,6 @@
             <div class="stat"><span class="stat-n"><span class="count" data-count="6">6</span></span><span class="stat-l">Roles &amp; positions</span></div>
             <div class="stat"><span class="stat-n"><span class="count" data-count="5">5</span>+</span><span class="stat-l">Certifications</span></div>
           </div>
-
-          <article class="b-card b-focus" data-reveal style="--i:4">
-            <span class="card-label mono">focus_areas</span>
-            <ul class="focus-list">
-              <li><i class="fas fa-layer-group" aria-hidden="true"></i><div><strong>Full-stack web</strong><span>React, Next.js, Node.js</span></div></li>
-              <li><i class="fas fa-plug" aria-hidden="true"></i><div><strong>Backend &amp; APIs</strong><span>REST, Fastify, PostgreSQL</span></div></li>
-              <li><i class="fas fa-eye" aria-hidden="true"></i><div><strong>Visual AI</strong><span>YOLO, OpenCV, Python</span></div></li>
-              <li><i class="fas fa-microchip" aria-hidden="true"></i><div><strong>Edge &amp; IoT</strong><span>Raspberry Pi, RTSP, MediaMTX</span></div></li>
-            </ul>
-          </article>
 
           <article class="b-card b-json" data-reveal style="--i:5">
             <span class="card-label mono">profile.json</span>
@@ -991,12 +991,77 @@
     </section>
 
     <!-- ════════════════════════════════════
+       HOW I BUILD — every stage is evidenced by this
+       portfolio itself, so nothing here is a claim you can't check.
+    ════════════════════════════════════ -->
+    <section id="process" class="sec sec-alt" aria-labelledby="processTitle">
+      <div class="container proc-wrap">
+        <div class="proc-aside">
+          <header class="sec-head" data-reveal>
+            <span class="sec-kicker mono"><span class="sk-num">06</span> how_i_build</span>
+            <h2 class="sec-title" id="processTitle">Not just interfaces. <em class="serif">Systems.</em></h2>
+            <p class="sec-sub">The loop every project goes through, from idea to optimisation, shown on the one system you
+              can inspect right now: this portfolio.</p>
+          </header>
+          <p class="proc-now mono" aria-hidden="true"><span class="pn-num" id="procNum">01</span><span class="pn-of">/ 08</span><span class="pn-name" id="procName">Idea</span></p>
+        </div>
+
+        <div class="proc-list">
+          <div class="proc-rail" aria-hidden="true"><span class="proc-fill"></span></div>
+          <ol class="proc" id="proc">
+            <li class="proc-step">
+              <span class="pr-n mono" aria-hidden="true">01</span>
+              <div><h3>Idea</h3><p>Start from the problem and the people who have it, then decide what the system must do.</p>
+                <p class="proc-proof"><span class="mono">here</span> A portfolio that reads like an engineering product and is honest about every claim it makes.</p></div>
+            </li>
+            <li class="proc-step">
+              <span class="pr-n mono" aria-hidden="true">02</span>
+              <div><h3>Architecture</h3><p>Choose the simplest structure that holds, and draw the system before writing it.</p>
+                <p class="proc-proof"><span class="mono">here</span> Plain HTML, CSS and JavaScript: no framework, no build step, one design system.</p></div>
+            </li>
+            <li class="proc-step">
+              <span class="pr-n mono" aria-hidden="true">03</span>
+              <div><h3>Development</h3><p>Small, reviewable changes, with one source of truth for anything shared.</p>
+                <p class="proc-proof"><span class="mono">here</span> One knowledge model drives the system map, the command palette and the assistant.</p></div>
+            </li>
+            <li class="proc-step">
+              <span class="pr-n mono" aria-hidden="true">04</span>
+              <div><h3>Integration</h3><p>Connect external services behind clear contracts, and plan for them failing.</p>
+                <p class="proc-proof"><span class="mono">here</span> The contact form posts to Web3Forms; if that fails, a prefilled email link takes over.</p></div>
+            </li>
+            <li class="proc-step">
+              <span class="pr-n mono" aria-hidden="true">05</span>
+              <div><h3>Testing</h3><p>Automate whatever a person would otherwise have to check by hand.</p>
+                <p class="proc-proof"><span class="mono">here</span> Playwright end-to-end tests on desktop and mobile, plus HTML, CSS and JavaScript linting.</p></div>
+            </li>
+            <li class="proc-step">
+              <span class="pr-n mono" aria-hidden="true">06</span>
+              <div><h3>Deployment</h3><p>Every change passes review and an automated gate before it ships.</p>
+                <p class="proc-proof"><span class="mono">here</span> Pull requests run CI; Vercel deploys previews and production, and GitHub Pages mirrors it.</p></div>
+            </li>
+            <li class="proc-step">
+              <span class="pr-n mono" aria-hidden="true">07</span>
+              <div><h3>Monitoring</h3><p>Check what people actually receive, after it ships, not only before.</p>
+                <p class="proc-proof"><span class="mono">here</span> Every deployment triggers a smoke test against the live URL.</p></div>
+            </li>
+            <li class="proc-step">
+              <span class="pr-n mono" aria-hidden="true">08</span>
+              <div><h3>Optimisation</h3><p>Measure first, then improve what the numbers point at.</p>
+                <p class="proc-proof"><span class="mono">here</span> Lighthouse budgets in CI, with accessibility at 100 and zero main-thread blocking.</p></div>
+            </li>
+          </ol>
+          <p class="proc-loop mono"><span aria-hidden="true">Think → Build → Test → Deploy → Improve ↺</span><span class="sr-only">The loop: think, build, test, deploy, improve, then repeat.</span></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════
        EDUCATION + CERTS
     ════════════════════════════════════ -->
-    <section id="education" class="sec sec-alt" aria-labelledby="eduTitle">
+    <section id="education" class="sec" aria-labelledby="eduTitle">
       <div class="container">
         <header class="sec-head" data-reveal>
-          <span class="sec-kicker mono"><span class="sk-num">06</span> education</span>
+          <span class="sec-kicker mono"><span class="sk-num">07</span> education</span>
           <h2 class="sec-title" id="eduTitle">Academic <em class="serif">background</em></h2>
         </header>
 
@@ -1089,6 +1154,29 @@
     </section>
 
     <!-- ════════════════════════════════════
+       CURRENT FOCUS — drawn from the stack and focus areas on this page.
+    ════════════════════════════════════ -->
+    <section id="focus" class="sec sec-alt focus-sec" aria-labelledby="focusTitle">
+      <div class="container">
+        <header class="sec-head sec-head-split" data-reveal>
+          <div>
+            <span class="sec-kicker mono"><span class="sk-num">08</span> current_focus</span>
+            <h2 class="sec-title" id="focusTitle">Building intelligent <em class="serif">software systems</em>.</h2>
+          </div>
+          <p class="sec-sub">Currently a Software Developer at Eltern Segen Technologie Pvt. Ltd. These are the areas
+            getting most of my attention.</p>
+        </header>
+        <ol class="focus-grid">
+          <li data-reveal><span class="fg-n mono">01</span><strong>AI / Computer Vision</strong><span>YOLO, OpenCV and Python on live video.</span></li>
+          <li data-reveal style="--i:1"><span class="fg-n mono">02</span><strong>Full-Stack Architecture</strong><span>React, Next.js, Node.js and Fastify, end to end.</span></li>
+          <li data-reveal style="--i:2"><span class="fg-n mono">03</span><strong>Real-Time Systems</strong><span>Camera streams over RTSP, routed through MediaMTX.</span></li>
+          <li data-reveal style="--i:3"><span class="fg-n mono">04</span><strong>IoT &amp; Edge Computing</strong><span>Inference on Raspberry Pi, next to the camera.</span></li>
+          <li data-reveal style="--i:4"><span class="fg-n mono">05</span><strong>Backend &amp; Data</strong><span>REST APIs over PostgreSQL and Prisma.</span></li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════
        CONTACT
     ════════════════════════════════════ -->
     <section id="contact" class="sec sec-contact" aria-labelledby="contactTitle">
@@ -1096,7 +1184,7 @@
         <div class="contact-grid">
           <div class="contact-intro">
             <header class="sec-head" data-reveal>
-              <span class="sec-kicker mono"><span class="sk-num">07</span> contact_me</span>
+              <span class="sec-kicker mono"><span class="sk-num">09</span> contact_me</span>
               <h2 class="sec-title contact-title" id="contactTitle">Let's build something <em class="serif">great</em> together.</h2>
               <p class="sec-sub">Open to freelance, full-time roles and collaborations. Have an idea, a role or a
                 problem worth solving? My inbox is open.</p>
@@ -1200,6 +1288,7 @@
             <span class="logo-text">pratyush<span class="logo-dot">.</span>dev</span>
           </a>
           <p>Software Developer · Full-Stack · Visual AI · IoT. Turning ideas into scalable, well-crafted software.</p>
+          <p class="foot-motto mono">Built with curiosity. Designed with engineering discipline.</p>
           <div class="foot-soc">
             <a href="https://github.com/pratyushnandi" target="_blank" rel="noopener noreferrer" class="icon-btn" aria-label="GitHub"><i class="fab fa-github"></i></a>
             <a href="https://www.linkedin.com/in/pratyushnandi/" target="_blank" rel="noopener noreferrer" class="icon-btn" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
@@ -1243,7 +1332,7 @@
           <span class="foot-sep" aria-hidden="true">·</span>
           <span>IST <time id="localTime">--:--</time></span>
           <span class="foot-sep" aria-hidden="true">·</span>
-          <span>v8.0.1</span>
+          <span>v9.0.0</span>
         </p>
       </div>
     </div>
@@ -1379,6 +1468,17 @@
       </dl>
     </section>
     <section class="cs-sec">
+      <h3 class="mono">challenge</h3>
+      <div><p>Each violation needs a different kind of evidence from the same live footage: the state of the signal
+        for red-light jumping, how a vehicle moves over time for speeding, and detail about the rider for helmets,
+        all without a person watching.</p></div>
+    </section>
+    <section class="cs-sec">
+      <h3 class="mono">solution</h3>
+      <div><p>One pipeline instead of three tools. Frames from the camera feed are processed with OpenCV and passed to
+        ML models that check for each violation, and anything they find is raised as an alert.</p></div>
+    </section>
+    <section class="cs-sec">
       <h3 class="mono">engineering</h3>
       <ul class="cs-points">
         <li><strong>Live, not recorded.</strong> It works on camera feeds as they stream, so a violation is flagged while it happens instead of being found later in footage.</li>
@@ -1427,6 +1527,16 @@
         <div><dt>MySQL</dt><dd>Relational data for postings, students and applications.</dd></div>
         <div><dt>HTML · CSS</dt><dd>The interface for students, companies and admins.</dd></div>
       </dl>
+    </section>
+    <section class="cs-sec">
+      <h3 class="mono">challenge</h3>
+      <div><p>Three kinds of users want different things from the same data: companies manage postings and applicants,
+        students search, apply and follow their applications, and admins need oversight of both.</p></div>
+    </section>
+    <section class="cs-sec">
+      <h3 class="mono">solution</h3>
+      <div><p>A single Laravel application over one MySQL database, with separate views for companies, students and
+        admins, and notifications when an application changes.</p></div>
     </section>
     <section class="cs-sec">
       <h3 class="mono">engineering</h3>

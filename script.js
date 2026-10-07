@@ -8,9 +8,6 @@
 const root = document.documentElement;
 const REDUCE_MOTION = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 const FINE_POINTER = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
-// Touch and small screens keep the personality but drop continuous background
-// motion (the hero network becomes a still frame).
-const LITE_MOTION = window.matchMedia('(max-width: 768px), (pointer: coarse)').matches;
 const $ = (s, c = document) => c.querySelector(s);
 const $$ = (s, c = document) => Array.from(c.querySelectorAll(s));
 // Modal <dialog>s already make the page inert; this also stops Tab from
@@ -144,7 +141,10 @@ const Nav = (function () {
   const ind = $('.n-indicator');
   const prog = $('#navProg');
   const navAs = $$('.n-links a');
-  const sections = navAs.map(a => $(a.getAttribute('href'))).filter(Boolean);
+  // Spy on every section, not only linked ones, so reading a section without a
+  // nav link (How I build, Current focus) clears the highlight instead of
+  // leaving the previous link lit.
+  const sections = $$('main > section[id]');
   let current = null;
 
   function moveIndicator(a) {
@@ -228,6 +228,24 @@ const Scroll = (function () {
   return { add: f => { subs.push(f); f(); } };
 })();
 
+/* ══ 4b. CONTEXT ══
+   Which section is being read, published as html[data-context] and a
+   pn:context event. The palette and assistant adapt to it. It is scroll
+   position only; nothing about the visitor is inferred or stored. */
+(function () {
+  const secs = $$('main > section[id]');
+  let cur = null;
+  Scroll.add(() => {
+    let a = 'hero';
+    if (innerHeight + scrollY >= root.scrollHeight - 2) a = secs[secs.length - 1].id;
+    else for (const s of secs) { if (s.getBoundingClientRect().top <= innerHeight * .4) a = s.id; else break; }
+    if (a === cur) return;
+    cur = a;
+    root.dataset.context = a;
+    window.dispatchEvent(new CustomEvent('pn:context', { detail: { context: a } }));
+  });
+})();
+
 /* ══ 5. HERO ══ */
 (function () {
   const hero = $('#hero');
@@ -244,35 +262,13 @@ const Scroll = (function () {
       .map((l, i) => `<span class="ln${i === 6 ? ' cur' : ''}" style="--l:${i}">${l || ' '}</span>`).join('');
   }
 
-  // Loops only run while the hero is on screen.
-  let heroVisible = true;
-  new IntersectionObserver(([e]) => {
-    heroVisible = e.isIntersecting;
-    hero.classList.toggle('paused', !heroVisible);
-    if (heroVisible) Net.start(); else Net.stop();
-  }).observe(hero);
+  // Looping CSS (request-path packet, bee chips) pauses while the hero is off screen.
+  new IntersectionObserver(([e]) => hero.classList.toggle('paused', !e.isIntersecting)).observe(hero);
 
-  /* Typed role */
-  const typed = $('#heroTyped');
-  if (typed && !REDUCE_MOTION) {
-    const roles = [
-      'Software Developer', 'Full-Stack Developer', 'Python Developer', 'React Developer',
-      'Edge AI Engineer', 'passionate Programmer', 'Web Developer', 'AI/ML Enthusiast'
-    ];
-    let ri = 0, ci = roles[0].length, del = false;
-    const tick = () => {
-      if (!heroVisible || document.hidden) return setTimeout(tick, 600);
-      const r = roles[ri];
-      ci += del ? -1 : 1;
-      typed.textContent = r.slice(0, ci);
-      let wait = del ? 38 : 85;
-      if (!del && ci === r.length) { wait = 2200; del = true; }
-      else if (del && ci === 0) { del = false; ri = (ri + 1) % roles.length; wait = 320; }
-      setTimeout(tick, wait);
-    };
-    const start = () => setTimeout(() => { del = true; tick(); }, 2600);
-    if (window.__pnIntroDone) start(); else window.addEventListener('pn:introdone', start, { once: true });
-  }
+  // Request path: each layer opens the System Map with that node selected.
+  $$('[data-goto-node]', hero).forEach(b => b.addEventListener('click', () => {
+    window.dispatchEvent(new CustomEvent('pn:select-node', { detail: { node: b.dataset.gotoNode, from: b } }));
+  }));
 
   /* Pointer parallax + spotlight (desktop only) */
   if (FINE_POINTER && !REDUCE_MOTION) {
@@ -298,111 +294,7 @@ const Scroll = (function () {
   }
 })();
 
-/* ══ 6. HERO NETWORK CANVAS ══
-   Drifting nodes joined by faint edges, leaning toward the pointer. Capped
-   node count, DPR ≤ 1.5, stops whenever the hero or tab is hidden. */
-const Net = (function () {
-  const cv = $('#heroCanvas');
-  const hero = $('#hero');
-  const noop = { start() {}, stop() {} };
-  if (!cv || !hero) return noop;
-  const ctx = cv.getContext('2d');
-  if (!ctx) return noop;
-
-  let w = 0, h = 0, nodes = [], rgb = '150,140,255', raf = 0, running = false;
-  // Engineering Mode redraws the same nodes as circuit traces: right-angle
-  // edges and square pads instead of a free-form web.
-  let ortho = root.getAttribute('data-mode') === 'eng';
-  const mouse = { x: -9999, y: -9999 };
-  const LINK = 130, LINK2 = LINK * LINK, MLINK = 180;
-
-  function readColor() {
-    const v = getComputedStyle(root).getPropertyValue('--net-rgb').trim();
-    if (v) rgb = v.replace(/\s+/g, '');
-  }
-  function size() {
-    const r = hero.getBoundingClientRect();
-    w = r.width; h = r.height;
-    const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
-    cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr);
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    const n = Math.round(Math.min(70, (w * h) / 19000) * (FINE_POINTER ? 1 : .55));
-    nodes = Array.from({ length: n }, () => ({
-      x: Math.random() * w, y: Math.random() * h,
-      vx: (Math.random() - .5) * .28, vy: (Math.random() - .5) * .28,
-      r: Math.random() * 1.3 + .7
-    }));
-  }
-  function draw(move) {
-    ctx.clearRect(0, 0, w, h);
-    for (const p of nodes) {
-      if (move) {
-        p.x += p.vx; p.y += p.vy;
-        if (p.x < -10) p.x = w + 10; else if (p.x > w + 10) p.x = -10;
-        if (p.y < -10) p.y = h + 10; else if (p.y > h + 10) p.y = -10;
-      }
-    }
-    ctx.lineWidth = 1;
-    for (let i = 0; i < nodes.length; i++) {
-      const a = nodes[i];
-      for (let j = i + 1; j < nodes.length; j++) {
-        const b = nodes[j];
-        const dx = a.x - b.x, dy = a.y - b.y, d2 = dx * dx + dy * dy;
-        if (d2 < LINK2) {
-          ctx.strokeStyle = `rgba(${rgb},${((1 - Math.sqrt(d2) / LINK) * (ortho ? .3 : .22)).toFixed(3)})`;
-          edge(a.x, a.y, b.x, b.y);
-        }
-      }
-      const mx = a.x - mouse.x, my = a.y - mouse.y, md = Math.sqrt(mx * mx + my * my);
-      if (md < MLINK) {
-        ctx.strokeStyle = `rgba(${rgb},${((1 - md / MLINK) * .5).toFixed(3)})`;
-        edge(a.x, a.y, mouse.x, mouse.y);
-      }
-    }
-    ctx.fillStyle = `rgba(${rgb},.65)`;
-    for (const p of nodes) {
-      if (ortho) ctx.fillRect(p.x - p.r - .5, p.y - p.r - .5, p.r * 2 + 1, p.r * 2 + 1);
-      else { ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2); ctx.fill(); }
-    }
-  }
-  function edge(x1, y1, x2, y2) {
-    ctx.beginPath(); ctx.moveTo(x1, y1);
-    if (ortho) ctx.lineTo(x2, y1);
-    ctx.lineTo(x2, y2); ctx.stroke();
-  }
-  function loop() {
-    if (!running) return;
-    draw(true);
-    raf = requestAnimationFrame(loop);
-  }
-  function start() {
-    if (REDUCE_MOTION || LITE_MOTION || running || document.hidden) return;
-    running = true; raf = requestAnimationFrame(loop);
-  }
-  function stop() { running = false; cancelAnimationFrame(raf); }
-
-  readColor(); size();
-  if (REDUCE_MOTION || LITE_MOTION) draw(false);
-  window.addEventListener('pn:themechange', () => { readColor(); if (!running) draw(false); });
-  window.addEventListener('pn:modechange', () => {
-    ortho = root.getAttribute('data-mode') === 'eng';
-    readColor(); if (!running) draw(false);
-  });
-  let rt = 0;
-  window.addEventListener('resize', () => {
-    clearTimeout(rt);
-    rt = setTimeout(() => { size(); if (!running) draw(false); }, 150);
-  }, { passive: true });
-  document.addEventListener('visibilitychange', () => { if (document.hidden) stop(); else if (hero.getBoundingClientRect().bottom > 0) start(); });
-  if (FINE_POINTER) {
-    hero.addEventListener('pointermove', e => {
-      const r = hero.getBoundingClientRect();
-      mouse.x = e.clientX - r.left; mouse.y = e.clientY - r.top;
-    }, { passive: true });
-    hero.addEventListener('pointerleave', () => { mouse.x = mouse.y = -9999; });
-  }
-  return { start, stop };
-})();
+/* ══ 6. (removed) The decorative hero canvas gave way to the request-path band. ══ */
 
 /* ══ 7. SCROLL REVEAL ══ */
 (function () {
@@ -463,7 +355,30 @@ const Net = (function () {
   });
 })();
 
-/* ══ 10. (moved) The architecture diagram is now the System Map, module 18. ══ */
+/* ══ 10. HOW I BUILD ══
+   Stages light up as they cross the reading line, the rail fills with
+   progress, and the pinned counter beside the heading names the current one. */
+(function () {
+  const wrap = $('.proc-list');
+  if (!wrap) return;
+  const fill = $('.proc-fill', wrap);
+  const steps = $$('.proc-step', wrap);
+  const num = $('#procNum'), name = $('#procName');
+  Scroll.add(() => {
+    const r = wrap.getBoundingClientRect();
+    if (r.bottom < -100 || r.top > innerHeight + 100) return;
+    const line = innerHeight * .55;
+    fill.style.setProperty('--fill', Math.min(Math.max((line - r.top) / r.height, 0), 1).toFixed(4));
+    let last = 0;
+    steps.forEach((s, i) => {
+      const lit = s.getBoundingClientRect().top + 24 < line;
+      s.classList.toggle('lit', lit);
+      if (lit) last = i;
+    });
+    num.textContent = String(last + 1).padStart(2, '0');
+    name.textContent = $('h3', steps[last]).textContent;
+  });
+})();
 
 /* ══ 11. PROJECT FILTERS ══ */
 (function () {
@@ -790,6 +705,40 @@ const SYSTEM = {
     desc: 'Results leave the screen: a violation flagged, an alert raised, a person informed.',
     tech: [], projects: ['detectify'] }
 };
+// Engineering decisions: why each tool earns its place in the stack. This is
+// reasoning about the tools, not a claim about how a specific project was built.
+const WHY = {
+  frontend: [
+    ['Why React + Next.js?', 'Components keep large interfaces maintainable; Next.js adds routing and server rendering when a page has to be fast on first load.'],
+    ['Why TypeScript?', 'Types catch contract mismatches with the API at build time instead of in production.']
+  ],
+  api: [
+    ['Why Fastify?', 'Low per-request overhead and built-in schema validation, so every endpoint checks what comes in and goes out.'],
+    ['Why REST?', 'Plain HTTP resources that browsers, devices and scripts can all call without special clients.']
+  ],
+  database: [
+    ['Why PostgreSQL?', 'Relational integrity, joins and transactions for data that has to stay consistent.'],
+    ['Why Prisma?', 'A typed client and versioned migrations, so schema changes are reviewed like code.']
+  ],
+  aiml: [
+    ['Why Python?', 'The machine-learning ecosystem lives there, and a model can sit behind the same API as everything else.']
+  ],
+  stream: [
+    ['Why RTSP?', 'It is the protocol IP cameras already speak, so feeds arrive without custom firmware.'],
+    ['Why MediaMTX?', 'One camera connection, re-served to many readers: a model and a dashboard share a feed instead of each opening the camera.']
+  ],
+  cv: [
+    ['Why YOLO?', 'A single-pass detector, fast enough to keep up with live video.'],
+    ['Why OpenCV?', 'Proven frame decoding and preprocessing before anything reaches the model.']
+  ],
+  edge: [
+    ['Why process at the edge?', 'Frames are analysed next to the camera: lower latency, far less bandwidth, and raw video never has to leave the site.']
+  ],
+  iot: [
+    ['Why report through the API?', 'Devices post events to the same API as the web app, so everything lands in one place people can see.']
+  ]
+};
+Object.entries(WHY).forEach(([k, w]) => { SYSTEM[k].why = w; });
 const EDGES = [['user', 'frontend'], ['frontend', 'api'], ['api', 'database'], ['api', 'aiml'], ['aiml', 'cv'],
   ['stream', 'cv'], ['cv', 'edge'], ['edge', 'iot'], ['iot', 'world']];
 // Stack chips by technology key, so other modules can reuse their icons.
@@ -851,6 +800,12 @@ const projectEl = key => $$('#projGrid .pj').find(p => slug($('h3', p).textConte
       const ul = el('ul', 'smi-chips');
       d.tech.forEach(t => ul.appendChild(chip(t)));
       wrap.appendChild(ul);
+    }
+    if (d.why) {
+      wrap.appendChild(el('h4', 'mono', 'engineering decisions'));
+      const dl = el('dl', 'smi-why');
+      d.why.forEach(([q, a]) => { const row = el('div'); row.append(el('dt', null, q), el('dd', null, a)); dl.appendChild(row); });
+      wrap.appendChild(dl);
     }
     const projects = d.projects.map(projectEl).filter(Boolean);
     if (projects.length) {
@@ -963,6 +918,16 @@ const projectEl = key => $$('#projGrid .pj').find(p => slug($('h3', p).textConte
 
   // Data only flows while the map is on screen.
   if (!REDUCE_MOTION) new IntersectionObserver(([e]) => map.classList.toggle('live', e.isIntersecting)).observe(map);
+
+  // Deep links (hero request path, assistant, palette): select a node and go to it.
+  window.addEventListener('pn:select-node', e => {
+    const k = e.detail && e.detail.node;
+    const n = nodes.find(x => x.dataset.node === k);
+    if (!n) return;
+    if (pinned !== k) pin(k);
+    (narrow.matches ? n : map).scrollIntoView({ behavior: REDUCE_MOTION ? 'auto' : 'smooth', block: narrow.matches ? 'start' : 'center' });
+    setTimeout(() => n.focus({ preventScroll: true }), REDUCE_MOTION ? 0 : 650);
+  });
 })();
 
 /* ══ 18b. TECHNOLOGY NODES ══
@@ -1249,12 +1214,15 @@ const Eng = (function () {
     pipeline: () => `${count('.pipe-step')} stages · scroll-driven · illustrative data`,
     projects: () => `${count('#projGrid .pj')} projects · ${count('.pj [data-case]')} case studies · ${$$('#projGrid .pj-link').filter(a => /live|play/i.test(a.textContent)).length} live demos`,
     education: () => `${count('.edu-item')} qualifications · ${count('.cert')} certifications`,
+    process: () => `${count('.proc-step')} stages · each evidenced by this site`,
+    focus: () => `${count('.focus-grid li')} focus areas`,
     contact: () => 'POST api.web3forms.com · mailto: fallback'
   };
   const TAGS = [
     ['.hero-title', 'h1 · Geist 680 · −0.055em'],
     ['.b-intro', 'about/intro.md'], ['.b-photo', 'about/photo.jpg'], ['.b-now', 'about/now'],
-    ['.b-stats', 'about/stats'], ['.b-focus', 'about/focus'], ['.b-json', 'about/profile.json'],
+    ['.b-stats', 'about/stats'], ['.b-json', 'about/profile.json'],
+    ['.hero-system', 'request path · select a layer'],
     ['.exp-current', 'HEAD → current role'],
     ['.form-shell', 'POST api.web3forms.com'], ['.mail-card', 'mailto:']
   ];
@@ -1318,7 +1286,7 @@ const Eng = (function () {
   const rt = { section: $('#rtSection'), viewport: $('#rtViewport'), theme: $('#rtTheme'), motion: $('#rtMotion') };
   function runtime() {
     if (!isOn()) return;
-    rt.section.textContent = window.__pnSection || '#hero';
+    rt.section.textContent = '#' + (root.dataset.context || 'hero');
     rt.viewport.textContent = `${innerWidth}×${innerHeight}`;
     rt.theme.textContent = root.getAttribute('data-theme') === 'light' ? 'light' : 'dark';
     rt.motion.textContent = REDUCE_MOTION ? 'reduced' : 'full';
@@ -1444,7 +1412,11 @@ const Assistant = (function () {
     contact: ['contact', 'email', 'reach', 'hire', 'hiring', 'available', 'availability', 'freelance', 'phone', 'talk', 'collaborate', 'linkedin'],
     location: ['where', 'location', 'based', 'city', 'kolkata'],
     about: ['who', 'yourself', 'introduce', 'about'],
-    resume: ['resume', 'cv']
+    resume: ['resume', 'cv'],
+    backend: ['backend', 'back-end', 'server', 'servers', 'database', 'databases'],
+    frontend: ['frontend', 'front-end', 'ui', 'interface', 'interfaces'],
+    process: ['process', 'workflow', 'deploy', 'deployed', 'deployment', 'testing', 'tested', 'tests', 'ci', 'monitoring', 'optimisation', 'optimization', 'lighthouse'],
+    focus: ['focus', 'focused', 'focusing']
   };
 
   // "/" splits too, so "AI/ML" counts as both "ai" and "ml".
@@ -1532,14 +1504,44 @@ const Assistant = (function () {
       const layers = key ? Object.values(SYSTEM).filter(s => s.tech.includes(key)).map(s => s.label) : [];
       const names = (ALIAS[t.name] || []).concat(t.name.toLowerCase());
       const used = KB.projects.filter(p => p.tags.some(tag => names.some(n => tag.toLowerCase().includes(n.split(' ')[0]))));
+      const stem = t.name.toLowerCase().split(/[ .]/)[0];
+      const why = Object.values(SYSTEM).flatMap(s => s.why || []).filter(([wq]) => wq.toLowerCase().includes(stem));
       return {
         title: t.name,
         lead: `Yes. ${t.name} is in my stack, under ${t.group}.` + (list.length > 1 ? ` (Also matched: ${list.slice(1).map(x => x.name).join(', ')}.)` : ''),
         rows: [].concat(layers.length ? [['System layer', layers.join(', ')]] : [],
-          used.length ? [['Used in', used.map(p => p.title).join(', ')]] : [['Used in', 'No project on this page lists it yet.']]),
+          used.length ? [['Used in', used.map(p => p.title).join(', ')]] : [['Used in', 'No project on this page lists it yet.']],
+          why.map(([wq, wa]) => [wq, wa])),
         actions: [{ label: 'See the tech stack', run: go('#skills') }]
       };
     },
+    layers: (keys, title, lead) => ({
+      title, lead,
+      rows: keys.flatMap(k => [[SYSTEM[k].label, SYSTEM[k].tech.map(t => TECH[t]).join(', ')]].concat(SYSTEM[k].why || [])),
+      actions: [{ label: 'Open it on the system map', run: () => window.dispatchEvent(new CustomEvent('pn:select-node', { detail: { node: keys[0] } })) }]
+    }),
+    backend: () => A.layers(['api', 'database'], 'Backend & data', 'APIs on Node.js and Fastify over relational data, with the reasoning behind each choice.'),
+    frontend: () => A.layers(['frontend'], 'Frontend', 'Component-driven interfaces in React and Next.js.'),
+    projectsWith: (needles, title) => {
+      const hits = KB.projects.filter(p => p.tags.some(tag => needles.some(n => tag.toLowerCase().includes(n))));
+      return hits.length ? {
+        title, lead: `${hits.length === 1 ? 'One project' : hits.length + ' projects'} on this page.`,
+        rows: hits.map(p => [p.title, p.desc]),
+        actions: hits.filter(p => Case.keys.includes(p.key)).map(p => ({ label: `${p.title} case study`, run: () => Case.open(p.key) }))
+      } : { title, lead: 'No project on this page lists that yet.' };
+    },
+    process: () => ({
+      title: 'How I build',
+      lead: 'Every project goes through the same loop. Here it is, evidenced by this portfolio itself.',
+      rows: $$('.proc-step').map(s => [txt($('h3', s)), txt($('.proc-proof', s)).replace(/^here\s*/, '')]),
+      actions: [{ label: 'See the process', run: go('#process') }]
+    }),
+    focus: () => ({
+      title: 'Current focus',
+      lead: 'Building intelligent software systems.',
+      rows: $$('.focus-grid li').map(li => [txt($('strong', li)), txt($('strong + span', li))]),
+      actions: [{ label: 'See current focus', run: go('#focus') }]
+    }),
     project: p => ({
       title: p.title,
       lead: [p.tagline, p.desc].filter(Boolean).join(' '),
@@ -1562,7 +1564,13 @@ const Assistant = (function () {
     const score = Object.fromEntries(Object.entries(INTENTS).map(([k, words]) => [k, toks.filter(t => words.includes(t)).length]));
     if (has(q, 'computer vision') || has(q, 'machine learning')) score.ai += 2;
     if (has(q, 'kind of system') || has(q, 'kind of systems')) score.systems += 2;
+    if (has(q, 'this portfolio') || has(q, 'this site') || has(q, 'this website')) score.process += 3;
+    if (has(q, 'right now') || has(q, 'working on')) score.focus += 2;
+    // "Which projects use X?" — answered by project tags, not by the intent.
+    const wantsProjects = toks.some(t => t.startsWith('project'));
+    if (wantsProjects && (has(q, 'computer vision') || toks.includes('vision') || toks.includes('cv'))) return A.projectsWith(['computer vision', 'opencv'], 'Computer-vision projects');
     const tech = findTech(q).filter(t => !['AI / ML', 'Visual AI'].includes(t.name) || !score.ai);
+    if (wantsProjects && tech.length) return A.projectsWith([tech[0].name.toLowerCase().split(/[ .]/)[0]], `Projects using ${tech[0].name}`);
     const [best, n] = Object.entries(score).sort((a, b) => b[1] - a[1])[0];
     if (tech.length && !(best === 'ai' && n >= 2) && !(['stack', 'systems'].includes(best) && n >= 2)) return A.tech(tech);
     return n > 0 ? A[best]() : A.fallback();
@@ -1571,7 +1579,20 @@ const Assistant = (function () {
     'What technologies do you use?', 'What AI/ML work do you do?', 'Show me your projects.',
     'What is your development stack?', 'What kind of systems do you build?'
   ];
-  return { answer, SUGGESTED };
+  // Questions that fit the section the visitor is reading: plain scroll
+  // position, nothing inferred about the visitor.
+  const BY_CONTEXT = {
+    hero: 'What kind of systems do you build?', about: 'What technologies do you use?',
+    experience: 'What is your experience?', skills: 'What backend technologies are used?',
+    pipeline: 'What AI/ML work do you do?', projects: 'What projects involve computer vision?',
+    process: 'How is this portfolio built?', education: 'What certifications do you have?',
+    focus: 'What are you focused on right now?', contact: 'How can I contact you?'
+  };
+  const suggestedFor = ctx => {
+    const first = BY_CONTEXT[ctx];
+    return first ? [first].concat(SUGGESTED.filter(s => s !== first)).slice(0, 5) : SUGGESTED;
+  };
+  return { answer, SUGGESTED, suggestedFor };
 })();
 
 /* ══ 23. COMMAND PALETTE ══
@@ -1594,8 +1615,18 @@ const Assistant = (function () {
     ['About', '#about', 'fa-user', 'who bio'], ['Experience', '#experience', 'fa-code-branch', 'work roles journey timeline'],
     ['Tech stack', '#skills', 'fa-layer-group', 'skills technologies'], ['System architecture', '#sysmap', 'fa-diagram-project', 'map nodes system'],
     ['AI pipeline', '#pipeline', 'fa-eye', 'ai ml computer vision yolo'], ['Projects', '#projects', 'fa-folder-open', 'work portfolio'],
-    ['Education', '#education', 'fa-graduation-cap', 'degree certifications'], ['Contact', '#contact', 'fa-paper-plane', 'email hire message']
+    ['How I build', '#process', 'fa-gears', 'process engineering deploy testing systems'],
+    ['Education', '#education', 'fa-graduation-cap', 'degree certifications'],
+    ['Current focus', '#focus', 'fa-crosshairs', 'now focus areas'], ['Contact', '#contact', 'fa-paper-plane', 'email hire message']
   ];
+  // "Suggested here": the commands that fit the section being read.
+  const HERE = {
+    hero: ['System architecture', 'Turn on Engineering Mode'], about: ['Download resume', 'Experience'],
+    experience: ['Projects', 'Download resume'], skills: ['System architecture', 'AI pipeline'],
+    pipeline: ['Detectify case study', 'AI / ML projects'], projects: ['Detectify case study', 'Campus Recruitment System case study'],
+    process: ['Open GitHub', 'System architecture'], education: ['Download resume', 'Current focus'],
+    focus: ['Contact', 'Download resume'], contact: ['Copy email address', 'Send an email']
+  };
   function commands() {
     const light = root.getAttribute('data-theme') === 'light';
     const eng = Eng.isOn();
@@ -1621,9 +1652,29 @@ const Assistant = (function () {
 
   function filter(q) {
     q = q.trim().toLowerCase();
-    if (!q) return commands().concat(Assistant.SUGGESTED.map(ask));
+    if (!q) {
+      const ctx = root.dataset.context || 'hero';
+      const all = commands();
+      const picks = (HERE[ctx] || []).map(l => all.find(c => c.label === l || c.label === l.replace('Turn on', 'Turn off'))).filter(Boolean);
+      const here = picks.map(c => ({ ...c, group: 'Suggested here' }))
+        .concat(ask(Assistant.suggestedFor(ctx)[0])).map(c => ({ ...c, group: 'Suggested here' }));
+      const asked = here[here.length - 1].label;
+      return here.concat(all.filter(c => !picks.includes(c)), Assistant.suggestedFor(ctx).filter(s => s !== asked).map(ask));
+    }
     const words = q.split(/\s+/);
-    const hits = commands().filter(c => words.every(w => (c.label + ' ' + c.kw + ' ' + c.group).toLowerCase().includes(w)));
+    // Rank like a real launcher: label prefix, then a word in the label, then keywords only.
+    const rank = c => {
+      const label = c.label.toLowerCase();
+      if (label.startsWith(q)) return 0;
+      if (words.every(w => label.split(/[\s/]+/).some(t => t.startsWith(w)))) return 1;
+      if (words.every(w => label.includes(w))) return 2;
+      return 3;
+    };
+    const hits = commands()
+      .filter(c => words.every(w => (c.label + ' ' + c.kw + ' ' + c.group).toLowerCase().includes(w)))
+      .map((c, i) => ({ c, r: rank(c), i }))
+      .sort((a, b) => a.r - b.r || a.i - b.i)
+      .map(x => ({ ...x.c, group: x.r < 3 ? x.c.group : 'Related' }));
     const askItem = ask(input.value.trim());
     return looksLikeQuestion(q) ? [askItem].concat(hits) : hits.concat(askItem);
   }
@@ -1740,7 +1791,7 @@ const Assistant = (function () {
     input.value = '';
     dlg.showModal();
     root.classList.add('modal-open');
-    if (opts.ask) { items = Assistant.SUGGESTED.map(ask); mode = 'list'; ans.hidden = true; list.hidden = false; render(); }
+    if (opts.ask) { items = Assistant.suggestedFor(root.dataset.context).map(ask); mode = 'list'; ans.hidden = true; list.hidden = false; render(); }
     else showList();
     input.focus();
   }

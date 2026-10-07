@@ -207,6 +207,40 @@ test('mobile: system map shows details inline and the menu makes the page inert'
   await expect(page.locator('#burger')).toBeFocused();
 });
 
+test('hero request path opens the system map at that layer', async ({ page }) => {
+  await open(page);
+  await page.locator('.hsys-path [data-goto-node="database"]').click();
+  await expect(page.locator('.sm-node[data-node="database"]')).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.locator('#smInspector h3')).toHaveText('Database');
+  await expect(page.locator('#smInspector .smi-why')).toContainText('Why PostgreSQL?');
+});
+
+test('assistant explains engineering decisions from the page', async ({ page }) => {
+  await open(page);
+  await page.locator('#cmdkBtn').click();
+  await page.locator('#cmdkInput').fill('Why Fastify?');
+  await page.keyboard.press('Enter');
+  const answer = page.locator('#cmdkAnswer');
+  await expect(answer.locator('h3')).toHaveText('Fastify');
+  await expect(answer).toContainText('schema validation');
+});
+
+test('how-I-build stages light up as they are read', async ({ page }) => {
+  await open(page);
+  await page.locator('.proc-step').nth(3).scrollIntoViewIfNeeded();
+  await page.evaluate(() => window.scrollBy(0, 200));
+  await expect.poll(() => page.locator('.proc-step.lit').count()).toBeGreaterThan(2);
+});
+
+test('command palette suggests commands for the section being read', async ({ page }) => {
+  await open(page);
+  await page.locator('#contact').scrollIntoViewIfNeeded();
+  await expect(page.locator('html')).toHaveAttribute('data-context', 'contact');
+  await page.locator('#cmdkBtn').click();
+  await expect(page.locator('.cmdk-group').first()).toHaveText('Suggested here');
+  await expect(page.locator('.cmdk-item').first()).toContainText('Copy email address');
+});
+
 test('contact form validates, then submits (API mocked)', async ({ page }) => {
   await open(page);
   let posts = 0;
