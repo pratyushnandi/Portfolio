@@ -45,14 +45,26 @@ Optional repository settings:
 
 ## ✨ Features & Highlights
 
+### Signature experiences
+
+- **🛠️ Engineering Mode:** One toggle (`ENG` in the navbar) re-reads the whole site as an engineering interface. A scan line sweeps the screen and each element switches as the line passes it. You get a blueprint grid with rulers, crop-mark frames with component tags, section metadata counted live from the page, a technical flow line on every project, circuit-style traces in the hero, and a system panel that boots row by row. The panel's statuses are labelled as a representation; its runtime block (current section, viewport, theme, motion) is real.
+- **🗺️ Interactive System Map:** The stack as one connected system, from User → Frontend → API → Database / AI·ML → Computer Vision (+ Stream) → Edge AI → IoT → Real World. Selecting a node lights the route a request takes to reach it, runs data along those edges only, mutes the rest, highlights its technologies in the stack grid, and fills an inspector with what it does and which projects use it.
+- **👁️ AI Pipeline (scroll-driven):** Seven stages (Input → Data → Processing → Model → Inference → Decision → Action) come online as you scroll, with a signal travelling the rail. Each stage visibly changes an illustrated camera frame: raw feed, data patches, wireframe processing, detection boxes, a red-light verdict, and finally an alert. It rewinds when you scroll back and never loops. The frame is labelled an illustration, and no camera is used.
+- **📖 Project Case Studies:** Detectify and the Campus Recruitment System open as engineering write-ups covering problem, architecture (with an animated flow), technology and engineering decisions. Every statement comes from the project description or its repository. There is no invented "results" section.
+- **⌨️ Command Palette:** `Ctrl K` / `⌘ K` (or the search button) to jump to any section, toggle the theme or Engineering Mode, copy the email, download the resume, or open a case study.
+- **💬 Portfolio Assistant:** Ask about the work from inside the palette, or with *Ask about my work* in the hero. It is **deterministic, not an AI model**, and says so. Questions are matched to intents, technologies or projects, and answers are assembled from the page's own content. Anything it can't ground in the page gets an honest "I can only answer from this portfolio".
+- **🖱️ Contextual Cursor:** On desktop, a small label joins the native pointer over projects (*Explore*), technologies (*Tech*) and contact links (*Let's talk*). Off on touch devices and under reduced motion.
+
+### Everything else
+
 - **⚡ Short Intro:** A ~1.3s logo-draw preloader on first visit, ~0.45s on reload, near-instant under `prefers-reduced-motion`. Any key, click or tap skips it, and it waits for web fonts so the hero never reveals mid-swap.
 - **🌗 Two Designed Themes:** A deep, ambient dark theme and a dedicated off-white light theme (its own palette, shadows and light-mode IDE — not an inversion). Switching grows the new theme out of the toggle as a circle via the View Transitions API, with a colour cross-fade fallback. The choice persists; otherwise the OS preference is followed.
 - **🖥️ IDE Hero:** Kinetic name reveal, a `developer.ts` editor whose lines type in, a deploy terminal, profile card and tech chips with pointer parallax, over a lightweight node-network canvas that pauses whenever the hero or tab is hidden.
 - **🧭 Navigation:** Floating glass navbar that tightens on scroll, a sliding active-section indicator driven by scroll-spy, a scroll progress line, and a full-screen mobile menu.
 - **🧱 About Bento:** Intro, photo, current role, animated counters, focus areas and a `profile.json` card.
 - **🌿 Commit-Graph Experience:** Roles laid out like a `git log`, with a rail that fills as you read and nodes that light up.
-- **🗺️ Stack + Architecture:** A live diagram of the web platform and edge vision pipeline (React/Next.js → Fastify → PostgreSQL; RTSP → MediaMTX → YOLO on Raspberry Pi), plus grouped technology nodes that glow in each tool's brand colour.
-- **💼 Project Showcase:** Two featured case-study rows (Detectify shows detection boxes on hover), generated preview art for each smaller project, a sliding category filter (*All, AI/ML, Web App, Full-Stack*), and live/source links.
+- **🧩 Tech Stack:** Grouped technology nodes that glow in each tool's brand colour, plus an edge-pipeline log panel.
+- **💼 Project Showcase:** Two featured rows (Detectify shows detection boxes on hover) with case studies, generated preview art for each smaller project, a sliding category filter (*All, AI/ML, Web App, Full-Stack*), and live/source links.
 - **🎓 Academic & Verified Credentials:** Degrees with grades, viewable grade cards and certificates in an accessible modal (focus-trapped, Esc to close; phones open PDFs in a new tab), and external certificate verification.
 - **📬 Reliable Contact System:** Integrated contact form powered by Web3Forms with structured reason dropdowns, company fields, real-time validation, an automatic `mailto:` fallback, and an `aria-live` status region for screen readers.
 - **📱 Fully Responsive:** Optimized across mobile, tablet, laptop, and ultra-wide displays with accessible navigation and a hamburger menu.
@@ -207,7 +219,8 @@ http://localhost:3000
 
 | Version | Highlights |
 | :--- | :--- |
-| **v7.0.0** | Version bump to 7.0.0 across the site, package metadata and README. |
+| **Unreleased** | Signature experiences: Engineering Mode, interactive System Map, scroll-driven AI pipeline with an illustrated computer-vision frame, project case studies, command palette with a deterministic portfolio assistant, and a contextual cursor. New e2e tests for each. Lighthouse 90 / 100 / 100 / 100. |
+| [v7.0.0](https://github.com/pratyushnandi/Portfolio/releases/tag/v7.0.0) | Version bump to 7.0.0 across the site, package metadata and README. |
 | [v6.0.0](https://github.com/pratyushnandi/Portfolio/releases/tag/v6.0.0) | Full redesign: new design system, dedicated light and dark themes with a circular theme transition, an IDE-style hero, a commit-graph timeline, a live architecture diagram, redesigned projects, contact and footer. GSAP and Vanilla Tilt removed. Lighthouse 91 / 100 / 100 / 100. |
 | v4.1.0 | Reworked preloader intro, CI pipeline, post-deploy smoke tests and accessibility fixes. |
 

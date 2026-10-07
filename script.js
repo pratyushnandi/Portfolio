@@ -131,7 +131,8 @@ const Nav = (function () {
   let current = null;
 
   function moveIndicator(a) {
-    if (!ind || !a) return;
+    if (!ind) return;
+    if (!a) { ind.classList.remove('on'); return; }
     ind.style.setProperty('--ix', a.offsetLeft + 'px');
     ind.style.setProperty('--iw', a.offsetWidth + 'px');
     ind.classList.add('on');
@@ -146,14 +147,16 @@ const Nav = (function () {
     });
     moveIndicator(a);
   }
-  // Active section = the last one whose top has crossed 35% of the viewport.
-  // At the very bottom force the last one: a short final section may never cross.
+  // Active section = the last one whose top has crossed 35% of the viewport;
+  // none while still on the hero. At the very bottom force the last one: a
+  // short final section may never cross the line.
   function spy() {
     if (!sections.length) return;
-    let active = sections[0];
+    let active = null;
     if (innerHeight + scrollY >= root.scrollHeight - 2) active = sections[sections.length - 1];
     else for (const s of sections) { if (s.getBoundingClientRect().top <= innerHeight * .35) active = s; else break; }
-    setActive(navAs.find(a => a.getAttribute('href') === '#' + active.id));
+    window.__pnSection = active ? '#' + active.id : '#hero';
+    setActive(active ? navAs.find(a => a.getAttribute('href') === '#' + active.id) : null);
   }
   function onScroll() {
     nav.classList.toggle('scrolled', scrollY > 40);
@@ -278,6 +281,9 @@ const Net = (function () {
   if (!ctx) return noop;
 
   let w = 0, h = 0, nodes = [], rgb = '150,140,255', raf = 0, running = false;
+  // Engineering Mode redraws the same nodes as circuit traces: right-angle
+  // edges and square pads instead of a free-form web.
+  let ortho = root.getAttribute('data-mode') === 'eng';
   const mouse = { x: -9999, y: -9999 };
   const LINK = 130, LINK2 = LINK * LINK, MLINK = 180;
 
@@ -314,18 +320,26 @@ const Net = (function () {
         const b = nodes[j];
         const dx = a.x - b.x, dy = a.y - b.y, d2 = dx * dx + dy * dy;
         if (d2 < LINK2) {
-          ctx.strokeStyle = `rgba(${rgb},${((1 - Math.sqrt(d2) / LINK) * .22).toFixed(3)})`;
-          ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
+          ctx.strokeStyle = `rgba(${rgb},${((1 - Math.sqrt(d2) / LINK) * (ortho ? .3 : .22)).toFixed(3)})`;
+          edge(a.x, a.y, b.x, b.y);
         }
       }
       const mx = a.x - mouse.x, my = a.y - mouse.y, md = Math.sqrt(mx * mx + my * my);
       if (md < MLINK) {
         ctx.strokeStyle = `rgba(${rgb},${((1 - md / MLINK) * .5).toFixed(3)})`;
-        ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(mouse.x, mouse.y); ctx.stroke();
+        edge(a.x, a.y, mouse.x, mouse.y);
       }
     }
     ctx.fillStyle = `rgba(${rgb},.65)`;
-    for (const p of nodes) { ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2); ctx.fill(); }
+    for (const p of nodes) {
+      if (ortho) ctx.fillRect(p.x - p.r - .5, p.y - p.r - .5, p.r * 2 + 1, p.r * 2 + 1);
+      else { ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2); ctx.fill(); }
+    }
+  }
+  function edge(x1, y1, x2, y2) {
+    ctx.beginPath(); ctx.moveTo(x1, y1);
+    if (ortho) ctx.lineTo(x2, y1);
+    ctx.lineTo(x2, y2); ctx.stroke();
   }
   function loop() {
     if (!running) return;
@@ -341,6 +355,10 @@ const Net = (function () {
   readColor(); size();
   if (REDUCE_MOTION) draw(false);
   window.addEventListener('pn:themechange', () => { readColor(); if (!running) draw(false); });
+  window.addEventListener('pn:modechange', () => {
+    ortho = root.getAttribute('data-mode') === 'eng';
+    readColor(); if (!running) draw(false);
+  });
   let rt = 0;
   window.addEventListener('resize', () => {
     clearTimeout(rt);
@@ -416,12 +434,7 @@ const Net = (function () {
   });
 })();
 
-/* ══ 10. ARCHITECTURE DIAGRAM · data flow animates only while visible ══ */
-(function () {
-  const arch = $('.arch');
-  if (!arch || REDUCE_MOTION) return;
-  new IntersectionObserver(([e]) => arch.classList.toggle('live', e.isIntersecting)).observe(arch);
-})();
+/* ══ 10. (moved) The architecture diagram is now the System Map, module 18. ══ */
 
 /* ══ 11. PROJECT FILTERS ══ */
 (function () {
@@ -702,6 +715,897 @@ const Net = (function () {
   const tick = () => { t.textContent = fmt.format(new Date()); };
   tick();
   setInterval(tick, 30000);
+})();
+
+/* ══ SHARED KNOWLEDGE ══
+   One source for the system map, the case studies, the command palette and
+   the assistant. Technologies are only ones listed in the Stack section;
+   project keys are the slugs of the project titles on the page. */
+const slug = s => s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+const TECH = {
+  react: 'React.js', nextjs: 'Next.js', typescript: 'TypeScript', javascript: 'JavaScript', html5: 'HTML5', css3: 'CSS3',
+  nodejs: 'Node.js', fastify: 'Fastify', express: 'Express.js', rest: 'REST APIs', python: 'Python', laravel: 'Laravel / PHP',
+  postgresql: 'PostgreSQL', mysql: 'MySQL', prisma: 'Prisma', mongodb: 'MongoDB',
+  aiml: 'AI / ML', opencv: 'OpenCV', yolo: 'YOLO', visualai: 'Visual AI', rtsp: 'RTSP', mediamtx: 'MediaMTX',
+  raspberrypi: 'Raspberry Pi', edge: 'Edge Computing', iot: 'IoT'
+};
+const SYSTEM = {
+  user: { label: 'User', layer: 'client', tagline: 'Where every request begins',
+    desc: 'A person in a browser. Everything downstream exists to make that moment fast and reliable.',
+    tech: [], projects: [] },
+  frontend: { label: 'Frontend', layer: 'client', tagline: 'Interfaces people enjoy using',
+    desc: 'Component-driven interfaces in React and Next.js, typed with TypeScript and responsive from the start.',
+    tech: ['react', 'nextjs', 'typescript', 'javascript', 'html5', 'css3'], projects: ['code-editor', 'portfolio-website', 'cyber-calendar'] },
+  api: { label: 'API', layer: 'service', tagline: 'The contract between client and system',
+    desc: 'REST APIs on Node.js with Fastify or Express, plus Python where the work is data or ML.',
+    tech: ['nodejs', 'fastify', 'express', 'rest', 'python', 'laravel'], projects: ['campus-recruitment-system', 'web-calculator', 'background-changer'] },
+  database: { label: 'Database', layer: 'service', tagline: 'Durable, queryable state',
+    desc: 'Relational data in PostgreSQL or MySQL through Prisma, and MongoDB where documents fit better.',
+    tech: ['postgresql', 'mysql', 'prisma', 'mongodb'], projects: ['campus-recruitment-system'] },
+  aiml: { label: 'AI / ML', layer: 'intelligence', tagline: 'Learning from data',
+    desc: 'Python machine learning that turns raw input into predictions the rest of the system can act on.',
+    tech: ['python', 'aiml', 'opencv'], projects: ['detectify'] },
+  stream: { label: 'Stream', layer: 'intelligence', tagline: 'Live video, delivered',
+    desc: 'Camera feeds over RTSP, routed through MediaMTX so models and dashboards read the same stream.',
+    tech: ['rtsp', 'mediamtx'], projects: [] },
+  cv: { label: 'Computer Vision', layer: 'intelligence', tagline: 'Real-time visual intelligence',
+    desc: 'Detection with YOLO and image processing with OpenCV, working on live feeds rather than stored footage.',
+    tech: ['yolo', 'opencv', 'python', 'rtsp', 'visualai'], projects: ['detectify'] },
+  edge: { label: 'Edge AI', layer: 'edge', tagline: 'Inference next to the camera',
+    desc: 'Models deployed on Raspberry Pi so detection happens on site instead of in a distant data centre.',
+    tech: ['raspberrypi', 'edge', 'yolo'], projects: [] },
+  iot: { label: 'IoT', layer: 'edge', tagline: 'Connected hardware',
+    desc: 'Devices that sense and report, wired back to the API so events land where people can see them.',
+    tech: ['iot', 'raspberrypi'], projects: [] },
+  world: { label: 'Real World', layer: 'physical', tagline: 'Where the output matters',
+    desc: 'Results leave the screen: a violation flagged, an alert raised, a person informed.',
+    tech: [], projects: ['detectify'] }
+};
+const EDGES = [['user', 'frontend'], ['frontend', 'api'], ['api', 'database'], ['api', 'aiml'], ['aiml', 'cv'],
+  ['stream', 'cv'], ['cv', 'edge'], ['edge', 'iot'], ['iot', 'world']];
+// Stack chips by technology key, so other modules can reuse their icons.
+const techNode = key => $$('.stack-group .node').find(n => $('span', n).textContent.trim() === TECH[key]);
+const projectEl = key => $$('#projGrid .pj').find(p => slug($('h3', p).textContent) === key);
+
+/* ══ 18. SYSTEM MAP ══
+   Selecting a node lights the route a request takes to reach it (every
+   ancestor) plus what it feeds next, runs data along those edges only, mutes
+   the rest, and fills the inspector. Hover previews; click or tap pins. */
+(function () {
+  const map = $('#sysmap');
+  if (!map) return;
+  const canvas = $('#smCanvas');
+  const insp = $('#smInspector');
+  const nodes = $$('.sm-node', map);
+  const edgeEls = $$('.sm-edges path, .sm-flows path', map);
+  const stackGrid = $('.stack-grid');
+  const defaultView = insp.innerHTML;
+  let pinned = null, shown = null;
+
+  const parents = k => EDGES.filter(([, to]) => to === k).map(([from]) => from);
+  const children = k => EDGES.filter(([from]) => from === k).map(([, to]) => to);
+  function ancestors(k, acc = new Set()) {
+    parents(k).forEach(p => { if (!acc.has(p)) { acc.add(p); ancestors(p, acc); } });
+    return acc;
+  }
+
+  function el(tag, cls, text) {
+    const e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (text != null) e.textContent = text;
+    return e;
+  }
+  function chip(key) {
+    const c = el('li', 'smi-chip');
+    const src = techNode(key);
+    if (src) c.appendChild($('i', src).cloneNode(true));
+    c.appendChild(el('span', null, TECH[key]));
+    return c;
+  }
+  function render(k) {
+    const d = SYSTEM[k];
+    const wrap = el('div', 'smi-node');
+    wrap.appendChild(el('span', 'card-label mono', `layer · ${d.layer}`));
+    wrap.appendChild(el('h3', null, d.label));
+    wrap.appendChild(el('p', 'smi-tagline', d.tagline));
+    wrap.appendChild(el('p', null, d.desc));
+    // The request path follows each node's primary (first) parent back to the
+    // user; any other parent is a side input, listed separately.
+    const path = [k];
+    for (let p = parents(k)[0]; p; p = parents(p)[0]) path.unshift(p);
+    const routeEl = el('p', 'smi-route mono', path.map(a => SYSTEM[a].label).join(' → '));
+    const side = parents(k).slice(1);
+    if (side.length) routeEl.appendChild(el('span', 'smi-side', `+ fed by ${side.map(a => SYSTEM[a].label).join(', ')}`));
+    wrap.appendChild(routeEl);
+    if (d.tech.length) {
+      wrap.appendChild(el('h4', 'mono', 'related'));
+      const ul = el('ul', 'smi-chips');
+      d.tech.forEach(t => ul.appendChild(chip(t)));
+      wrap.appendChild(ul);
+    }
+    const projects = d.projects.map(projectEl).filter(Boolean);
+    if (projects.length) {
+      wrap.appendChild(el('h4', 'mono', 'seen in'));
+      const ul = el('ul', 'smi-projects');
+      projects.forEach(p => {
+        const li = el('li');
+        const b = el('button', 'smi-proj', $('h3', p).textContent);
+        b.type = 'button';
+        b.addEventListener('click', () => {
+          const key = slug($('h3', p).textContent);
+          if ($(`[data-case="${key}"]`)) Case.open(key, b);
+          else p.scrollIntoView({ behavior: REDUCE_MOTION ? 'auto' : 'smooth', block: 'center' });
+        });
+        li.appendChild(b); ul.appendChild(li);
+      });
+      wrap.appendChild(ul);
+    }
+    insp.replaceChildren(wrap);
+  }
+
+  function show(k) {
+    if (k === shown) return;
+    shown = k;
+    if (!k) {
+      map.classList.remove('has-focus');
+      nodes.forEach(n => n.classList.remove('active', 'lit'));
+      edgeEls.forEach(e => e.classList.remove('lit'));
+      stackGrid && stackGrid.classList.remove('sm-focus');
+      $$('.node.sm-hit').forEach(n => n.classList.remove('sm-hit'));
+      insp.innerHTML = defaultView;
+      return;
+    }
+    const lit = ancestors(k); lit.add(k); children(k).forEach(c => lit.add(c));
+    map.classList.add('has-focus');
+    nodes.forEach(n => {
+      n.classList.toggle('active', n.dataset.node === k);
+      n.classList.toggle('lit', lit.has(n.dataset.node));
+    });
+    edgeEls.forEach(e => {
+      const [a, b] = e.dataset.e.split('-');
+      e.classList.toggle('lit', lit.has(a) && lit.has(b) && (b === k || a === k || ancestors(k).has(b)));
+    });
+    // Related technologies light up in the stack grid below as well.
+    $$('.node.sm-hit').forEach(n => n.classList.remove('sm-hit'));
+    SYSTEM[k].tech.forEach(t => { const n = techNode(t); if (n) n.classList.add('sm-hit'); });
+    stackGrid && stackGrid.classList.toggle('sm-focus', SYSTEM[k].tech.length > 0);
+    render(k);
+  }
+
+  function pin(k) {
+    pinned = pinned === k ? null : k;
+    nodes.forEach(n => n.setAttribute('aria-pressed', n.dataset.node === pinned ? 'true' : 'false'));
+    show(pinned);
+  }
+  nodes.forEach(n => {
+    const k = n.dataset.node;
+    n.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') show(k); });
+    n.addEventListener('focus', () => show(k));
+    n.addEventListener('click', () => {
+      pin(k);
+      if (pinned && innerWidth < 960) {
+        const r = insp.getBoundingClientRect();
+        if (r.top > innerHeight - 120) insp.scrollIntoView({ behavior: REDUCE_MOTION ? 'auto' : 'smooth', block: 'nearest' });
+      }
+    });
+  });
+  canvas.addEventListener('pointerleave', e => { if (e.pointerType === 'mouse') show(pinned); });
+  canvas.addEventListener('focusout', e => { if (!canvas.contains(e.relatedTarget)) show(pinned); });
+  map.addEventListener('keydown', e => { if (e.key === 'Escape' && (pinned || shown)) { pinned = null; pin(null); show(null); } });
+
+  // Data only flows while the map is on screen.
+  if (!REDUCE_MOTION) new IntersectionObserver(([e]) => map.classList.toggle('live', e.isIntersecting)).observe(map);
+})();
+
+/* ══ 19. AI PIPELINE ══
+   Scroll-driven, never looping. While the section is pinned, scroll progress
+   moves a signal down the rail; each stage it reaches switches on and changes
+   the illustrated camera frame (raw → patches → wireframe → detector →
+   boxes → verdict → alert). Scrolling back rewinds it. Falls back to plain
+   in-flow scrolling when the pinned block would not fit the viewport. */
+(function () {
+  const scroller = $('#pipeScroll');
+  if (!scroller) return;
+  const sticky = $('#pipeSticky');
+  const frame = $('#cvFrame');
+  const pipe = $('#pipe');
+  const steps = $$('.pipe-step', pipe);
+  const rail = $('.pipe-rail');
+  const fill = $('.pipe-fill');
+  const dot = $('.pipe-dot');
+  const conf = $('#cvConf');
+  const status = $('#cvStatus');
+  const N = steps.length;
+  const clamp = (v, a, b) => Math.min(Math.max(v, a), b);
+  let stage = -1, pinned = true;
+
+  function setStage(s) {
+    if (s === stage) return;
+    stage = s;
+    steps.forEach((st, i) => {
+      st.classList.toggle('done', i < s - 1);
+      st.classList.toggle('active', i === s - 1);
+    });
+    for (let i = 1; i <= N; i++) frame.classList.toggle('s' + i, s >= i);
+    const cur = steps[s - 1];
+    status.textContent = cur ? cur.dataset.status : 'idle';
+    conf.textContent = (cur && cur.dataset.conf) || '—';
+    scroller.classList.toggle('online', s === N);
+  }
+
+  function measure() {
+    sticky.style.position = '';
+    const top = parseFloat(getComputedStyle(sticky).top) || 0;
+    pinned = !REDUCE_MOTION && sticky.offsetHeight + top + 16 <= innerHeight;
+    scroller.classList.toggle('is-static', !pinned);
+    // Scroll room for the story: one and a half screens while pinned.
+    scroller.style.height = pinned ? Math.round(sticky.offsetHeight + innerHeight * 1.5) + 'px' : '';
+  }
+
+  function update() {
+    const r = scroller.getBoundingClientRect();
+    if (r.bottom < -80 || r.top > innerHeight + 80) return;
+    const top = parseFloat(getComputedStyle(sticky).top) || 0;
+    const p = pinned
+      ? clamp((top - r.top) / Math.max(1, r.height - sticky.offsetHeight), 0, 1)
+      : clamp((innerHeight * .75 - r.top) / Math.max(1, r.height), 0, 1);
+    const t = clamp(p * 1.12 - .04, 0, 1) * (N - 1);   // 0 … N-1, a little dwell at both ends
+    const entered = pinned ? r.top <= top + 1 : r.top < innerHeight * .75;
+    setStage(entered ? Math.min(N, Math.floor(t + 1e-6) + 1) : 0);
+    scroller.classList.toggle('running', entered);
+    // Signal position: interpolate between the centres of the stage markers.
+    const rr = rail.getBoundingClientRect();
+    const c = steps.map(st => { const n = $('.ps-node', st).getBoundingClientRect(); return n.top + n.height / 2 - rr.top; });
+    const i = Math.min(Math.floor(t), N - 2), f = t - i;
+    const y = entered ? c[i] + (c[i + 1] - c[i]) * f : 0;
+    dot.style.setProperty('--y', y.toFixed(1) + 'px');
+    fill.style.setProperty('--f', (rr.height ? y / rr.height : 0).toFixed(4));
+  }
+
+  if (REDUCE_MOTION) {
+    // The finished state, with every stage readable.
+    pipe.classList.add('all-on');
+    scroller.classList.add('is-static', 'running');
+    setStage(N);
+    fill.style.setProperty('--f', '1');
+    return;
+  }
+  measure();
+  Scroll.add(update);
+  let rt = 0;
+  window.addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => { measure(); update(); }, 150); }, { passive: true });
+  if (document.fonts) document.fonts.ready.then(() => { measure(); update(); });
+})();
+
+/* ══ 20. CASE STUDIES ══
+   A native <dialog> drawer (focus trap, Esc and inert background for free).
+   Content comes from <template id="case-…">, so it stays in the HTML. */
+const Case = (function () {
+  const dlg = $('#caseDlg');
+  if (!dlg || !dlg.showModal) return { open() {}, keys: [] };
+  const body = $('#caseBody');
+  let last = null, closing = 0;
+
+  function open(key, from) {
+    const tpl = $('#case-' + key);
+    if (!tpl) return;
+    clearTimeout(closing); dlg.classList.remove('closing');
+    body.replaceChildren(tpl.content.cloneNode(true));
+    body.scrollTop = 0;
+    last = from || document.activeElement;
+    if (!dlg.open) dlg.showModal();
+    root.classList.add('modal-open');
+    $('.case-close', dlg).focus();
+  }
+  function finish() {
+    dlg.classList.remove('closing');
+    if (dlg.open) dlg.close();
+    root.classList.remove('modal-open');
+    if (last && last.isConnected) last.focus({ preventScroll: true });
+  }
+  function close() {
+    if (!dlg.open || dlg.classList.contains('closing')) return;
+    if (REDUCE_MOTION) { finish(); return; }
+    dlg.classList.add('closing');
+    closing = setTimeout(finish, 240);
+  }
+
+  dlg.addEventListener('cancel', e => { e.preventDefault(); close(); });
+  dlg.addEventListener('click', e => {
+    if (e.target === dlg) { close(); return; }
+    const c = e.target.closest('[data-close-case]');
+    if (!c) return;
+    const href = c.getAttribute('href');
+    if (href && href.startsWith('#')) {
+      // Leave the drawer first, then travel: the page is scroll-locked while open.
+      e.preventDefault(); finish();
+      $(href).scrollIntoView({ behavior: REDUCE_MOTION ? 'auto' : 'smooth' });
+    } else close();
+  });
+  document.addEventListener('click', e => {
+    const b = e.target.closest && e.target.closest('[data-case]');
+    if (!b || dlg.contains(b)) return;
+    e.preventDefault();
+    open(b.dataset.case, b);
+  });
+  return { open, close, keys: $$('template[id^="case-"]').map(t => t.id.slice(5)) };
+})();
+
+/* ══ 21. ENGINEERING MODE ══
+   The same site, re-read as an engineering interface. A scan line sweeps the
+   viewport and each element switches exactly as the line passes over it;
+   then the system panel boots row by row. Section metadata is counted from
+   the page itself, so it never drifts from the content. */
+const Eng = (function () {
+  const btn = $('#engToggle');
+  const panel = $('#engPanel');
+  const sweep = $('.eng-sweep');
+  if (!btn || !panel) return { isOn: () => false, set() {}, toggle() {} };
+  const bar = sweep && $('span', sweep);
+  const isOn = () => root.getAttribute('data-mode') === 'eng';
+  const SWEEP_MS = 1000, LINE_SHARE = 1 / 1.4; // the line crosses the viewport in the first ~71%
+
+  /* — one-time decoration: blueprint frames, tags, metadata — */
+  const count = sel => $$(sel).length;
+  function years() {
+    const ys = $$('.gl-date').flatMap(d => (d.textContent.match(/\d{4}/g) || []).map(Number));
+    return ys.length ? `${Math.min(...ys)} → ${Math.max(...ys)}` : '';
+  }
+  const META = {
+    about: () => `section#about · ${count('#about .b-card')} modules`,
+    experience: () => `${count('.gl-item')} roles + current · ${years()}`,
+    skills: () => `${count('.stack-group .node')} technologies · ${count('.stack-group')} groups · ${count('.sm-node')} system nodes`,
+    pipeline: () => `${count('.pipe-step')} stages · scroll-driven · illustrative data`,
+    projects: () => `${count('#projGrid .pj')} projects · ${count('.pj [data-case]')} case studies · ${$$('#projGrid .pj-link').filter(a => /live|play/i.test(a.textContent)).length} live demos`,
+    education: () => `${count('.edu-item')} qualifications · ${count('.cert')} certifications`,
+    contact: () => 'POST api.web3forms.com · mailto: fallback'
+  };
+  const TAGS = [
+    ['.hero-title', 'h1 · Geist 680 · −0.055em'],
+    ['.b-intro', 'about/intro.md'], ['.b-photo', 'about/photo.jpg'], ['.b-now', 'about/now'],
+    ['.b-stats', 'about/stats'], ['.b-focus', 'about/focus'], ['.b-json', 'about/profile.json'],
+    ['.exp-current', 'HEAD → current role'],
+    ['.form-shell', 'POST api.web3forms.com'], ['.mail-card', 'mailto:']
+  ];
+  function frame(el, tag) {
+    if (!el || el.querySelector(':scope > .eng-frame')) return;
+    const f = document.createElement('span');
+    f.className = 'eng-frame'; f.setAttribute('aria-hidden', 'true');
+    if (tag) { const t = document.createElement('span'); t.className = 'eng-tag mono'; t.textContent = tag; f.appendChild(t); }
+    if (getComputedStyle(el).position === 'static') el.style.position = 'relative';
+    el.appendChild(f);
+  }
+  function collapsible(cls, text) {
+    const x = document.createElement('div');
+    x.className = 'eng-x'; x.setAttribute('aria-hidden', 'true');
+    const inner = document.createElement('div');
+    const t = document.createElement('span');
+    t.className = cls + ' mono'; t.textContent = text;
+    inner.appendChild(t); x.appendChild(inner);
+    return x;
+  }
+  let decorated = false;
+  function decorate() {
+    if (decorated) return;
+    decorated = true;
+    TAGS.forEach(([sel, tag]) => frame($(sel), tag));
+    $$('.gl-card, .edu-item, .cert').forEach(el => frame(el));
+    $$('.stack-group').forEach(g => frame(g, `${$$('.node', g).length} nodes`));
+    $$('#projGrid .pj').forEach(p => {
+      frame(p, 'project/' + $('h3', p).textContent.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''));
+      if (p.dataset.flow) $('.pj-body', p).insertBefore(collapsible('eng-flow', p.dataset.flow), $('.pj-links', p));
+    });
+    Object.entries(META).forEach(([id, fn]) => {
+      const head = $(`#${id} .sec-head`);
+      if (head) head.insertBefore(collapsible('eng-meta', '// ' + fn()), head.children[1] || null);
+    });
+  }
+
+  /* — system panel — */
+  const rows = $$('.ep-list li', panel);
+  const sysRows = $$('.ep-list:not(.ep-status) li', panel);
+  const sum = $('#epSum');
+  let bootTimers = [], userTouched = false;
+  function tally() { sum.textContent = `${sysRows.filter(r => r.classList.contains('up')).length}/${sysRows.length} online`; }
+  // The panel boots open, holds long enough to be read, then folds down to its
+  // one-line summary so it never sits on top of the content.
+  function boot(instant) {
+    bootTimers.forEach(clearTimeout); bootTimers = [];
+    rows.forEach((li, i) => {
+      const st = $('.ep-state', li);
+      const up = () => { li.classList.add('up'); st.textContent = st.dataset.state; tally(); };
+      if (instant) { up(); return; }
+      li.classList.remove('up'); st.textContent = '···';
+      bootTimers.push(setTimeout(up, 420 + i * 75));
+    });
+    tally();
+    if (!instant) bootTimers.push(setTimeout(() => {
+      if (!userTouched && !panel.matches(':hover, :focus-within')) setMin(true);
+    }, 420 + rows.length * 75 + 3200));
+  }
+  panel.addEventListener('pointerdown', () => { userTouched = true; });
+  const rt = { section: $('#rtSection'), viewport: $('#rtViewport'), theme: $('#rtTheme'), motion: $('#rtMotion') };
+  function runtime() {
+    if (!isOn()) return;
+    rt.section.textContent = window.__pnSection || '#hero';
+    rt.viewport.textContent = `${innerWidth}×${innerHeight}`;
+    rt.theme.textContent = root.getAttribute('data-theme') === 'light' ? 'light' : 'dark';
+    rt.motion.textContent = REDUCE_MOTION ? 'reduced' : 'full';
+  }
+  Scroll.add(runtime);
+  window.addEventListener('pn:themechange', runtime);
+
+  const min = $('#epMin');
+  function setMin(m) {
+    panel.classList.toggle('min', m);
+    min.setAttribute('aria-expanded', m ? 'false' : 'true');
+    min.setAttribute('aria-label', m ? 'Expand system panel' : 'Collapse system panel');
+    $('i', min).className = m ? 'fas fa-plus' : 'fas fa-minus';
+  }
+  min.addEventListener('click', () => setMin(!panel.classList.contains('min')));
+  $('#epClose').addEventListener('click', () => { set(false); btn.focus(); });
+
+  /* — switching — */
+  // Each decorated element waits until the scan line reaches its position.
+  function syncToSweep(down) {
+    $$('.eng-frame, .eng-x').forEach(el => {
+      const y = el.getBoundingClientRect().top / innerHeight;
+      const at = y < 0 || y > 1 ? 0 : (down ? y : 1 - y);
+      el.style.setProperty('--ed', (at * SWEEP_MS * LINE_SHARE / 1000).toFixed(3) + 's');
+    });
+  }
+  function apply(next) {
+    if (next) root.setAttribute('data-mode', 'eng'); else root.removeAttribute('data-mode');
+    btn.setAttribute('aria-pressed', next ? 'true' : 'false');
+    window.dispatchEvent(new CustomEvent('pn:modechange', { detail: { eng: next } }));
+  }
+  function set(next, opts = {}) {
+    if (next === isOn() && !opts.force) return;
+    try { localStorage.setItem('pn-eng', next ? 'on' : 'off'); } catch (e) {}
+    if (next) decorate();
+    const animate = !REDUCE_MOTION && !opts.instant && bar;
+    if (animate) {
+      syncToSweep(next);
+      sweep.classList.toggle('up', !next);
+      sweep.style.visibility = 'visible';
+      bar.animate(
+        next ? [{ transform: 'translateY(-40vh)' }, { transform: 'translateY(100vh)' }]
+             : [{ transform: 'translateY(100vh)' }, { transform: 'translateY(-40vh)' }],
+        { duration: SWEEP_MS, easing: 'linear' }
+      ).finished.then(() => { sweep.style.visibility = ''; }, () => { sweep.style.visibility = ''; });
+    } else {
+      $$('.eng-frame, .eng-x').forEach(el => el.style.setProperty('--ed', '0s'));
+    }
+    apply(next);
+    if (next) {
+      userTouched = false;
+      setMin(innerWidth < 700);
+      boot(!animate);
+      runtime();
+    } else bootTimers.forEach(clearTimeout);
+  }
+  btn.addEventListener('click', () => set(!isOn()));
+
+  // Restored from storage by the inline head script: decorate without a sweep.
+  if (isOn()) {
+    decorate();
+    $$('.eng-frame, .eng-x').forEach(el => el.style.setProperty('--ed', '0s'));
+    btn.setAttribute('aria-pressed', 'true');
+    setMin(true);
+    boot(true); runtime();
+  }
+  return { isOn, set, toggle: () => set(!isOn()) };
+})();
+
+/* ══ 22. PORTFOLIO ASSISTANT ══
+   Deterministic, not generative: a question is matched to an intent (or to a
+   named technology / project) and the answer is assembled from this page's
+   own content. Anything it can't ground in the page gets an honest "I can
+   only answer from this portfolio". */
+const Assistant = (function () {
+  const txt = el => (el ? el.textContent.replace(/\s+/g, ' ').trim() : '');
+  const KB = {
+    stack: $$('.stack-group').map(g => ({
+      group: txt($('.sg-title', g)).replace(/^\w/, c => c.toUpperCase()), items: $$('.node', g).map(n => ({ name: txt($('span', n)), icon: $('i', n).className }))
+    })),
+    projects: $$('#projGrid .pj').map(p => ({
+      key: slug(txt($('h3', p))), title: txt($('h3', p)), cat: txt($('.pj-cat', p)),
+      tagline: txt($('.pj-tagline', p)), desc: txt($('.pj-desc', p)), tags: $$('.tags li', p).map(txt),
+      links: $$('.pj-links a', p).map(a => ({ label: txt(a), href: a.href })), el: p
+    })),
+    current: { role: txt($('.exp-current h3')), company: txt($('.ec-co')), desc: txt($('.exp-current > p:not(.ec-co)')) },
+    roles: $$('.gl-item').map(i => ({ title: txt($('h3', i)), date: txt($('.gl-date', i)), sub: txt($('.gl-sub', i)) })),
+    edu: $$('.edu-item').map(i => ({ title: txt($('h4', i)), inst: txt($('.edu-inst', i)), meta: txt($('.edu-meta', i)).replace(/(\d{4}) – (\d{4})/, '$1–$2') })),
+    certs: $$('.cert').map(c => ({ title: txt($('h4', c)), note: txt($('.cert-body p', c)) })),
+    status: txt($('.hero-meta .status-pill')),
+    location: txt($('.contact-list li:nth-child(2) span:last-child'))
+  };
+  const allTech = KB.stack.flatMap(g => g.items.map(i => ({ ...i, group: g.group })));
+  const ALIAS = {
+    'React.js': ['react', 'reactjs'], 'Next.js': ['next', 'nextjs'], 'Node.js': ['node', 'nodejs'],
+    'Express.js': ['express', 'expressjs'], 'PostgreSQL': ['postgres', 'postgresql', 'psql'], 'MongoDB': ['mongo', 'mongodb'],
+    'Laravel / PHP': ['laravel', 'php'], 'REST APIs': ['rest', 'restful'], 'TypeScript': ['typescript', 'ts'],
+    'JavaScript': ['javascript', 'js'], 'HTML5': ['html', 'html5'], 'CSS3': ['css', 'css3'], 'C++': ['c++', 'cpp'],
+    'AI / ML': ['machine learning'], 'Raspberry Pi': ['raspberry', 'rpi'], 'Edge Computing': ['edge computing'],
+    'Visual AI': ['visual ai'], 'Computer Vision': ['computer vision']
+  };
+  const PROJECT_ALIAS = {
+    detectify: ['detectify', 'traffic'], 'campus-recruitment-system': ['campus', 'recruitment'],
+    'code-editor': ['code editor', 'editor'], 'web-calculator': ['calculator'], 'rock-paper-scissors': ['rock paper', 'rps'],
+    'cyber-calendar': ['calendar'], 'background-changer': ['background changer', 'background'], 'portfolio-website': ['portfolio website']
+  };
+  const INTENTS = {
+    ai: ['ai', 'ml', 'machine', 'learning', 'vision', 'model', 'models', 'detection', 'intelligent', 'inference', 'yolo', 'opencv'],
+    systems: ['system', 'systems', 'architecture', 'kind', 'end-to-end', 'pipeline', 'iot', 'edge', 'build'],
+    stack: ['stack', 'technologies', 'technology', 'tech', 'tools', 'languages', 'language', 'skills', 'frameworks', 'use'],
+    projects: ['project', 'projects', 'built', 'showcase', 'apps', 'portfolio', 'demos', 'show'],
+    experience: ['experience', 'job', 'role', 'roles', 'career', 'worked', 'company', 'current', 'currently', 'position', 'eltern'],
+    education: ['education', 'degree', 'study', 'studied', 'university', 'college', 'mca', 'bca', 'cgpa', 'school'],
+    certs: ['certification', 'certifications', 'certificate', 'certificates', 'certified', 'course', 'courses'],
+    contact: ['contact', 'email', 'reach', 'hire', 'hiring', 'available', 'availability', 'freelance', 'phone', 'talk', 'collaborate', 'linkedin'],
+    location: ['where', 'location', 'based', 'city', 'kolkata'],
+    about: ['who', 'yourself', 'introduce', 'about'],
+    resume: ['resume', 'cv']
+  };
+
+  // "/" splits too, so "AI/ML" counts as both "ai" and "ml".
+  const tokens = q => q.toLowerCase().split(/[^a-z0-9+#.-]+/).map(t => t.replace(/\.+$/, '')).filter(Boolean);
+  const has = (q, phrase) => (' ' + q.toLowerCase().replace(/[^a-z0-9+#./ -]+/g, ' ') + ' ').includes(' ' + phrase + ' ');
+  function findTech(q) {
+    return allTech.filter(t => {
+      const names = ALIAS[t.name] || [t.name.toLowerCase()];
+      return names.some(n => has(q, n)) || has(q, t.name.toLowerCase());
+    });
+  }
+  const findProject = q => KB.projects.find(p => (PROJECT_ALIAS[p.key] || [p.title.toLowerCase()]).some(a => has(q, a)));
+
+  /* — answer builders: { title, lead, rows:[[k,v]], chips:[{name,icon}], items:[...], actions:[{label,run}] } — */
+  const go = sel => () => { const t = $(sel); if (t) t.scrollIntoView({ behavior: REDUCE_MOTION ? 'auto' : 'smooth', block: 'start' }); };
+  const A = {
+    stack: () => ({
+      title: 'My development stack',
+      lead: `${allTech.length} technologies across ${KB.stack.length} areas, from the browser to the edge.`,
+      rows: KB.stack.map(g => [g.group, g.items.map(i => i.name).join(', ')]),
+      actions: [{ label: 'Explore the system map', run: go('#sysmap') }, { label: 'See the tech stack', run: go('#skills') }]
+    }),
+    ai: () => ({
+      title: 'AI / ML work',
+      lead: 'Computer vision is the focus: models that watch live video and turn what they see into decisions.',
+      rows: ['aiml', 'cv', 'edge'].map(k => [SYSTEM[k].label, SYSTEM[k].desc]),
+      chips: ['python', 'aiml', 'opencv', 'yolo', 'visualai', 'rtsp', 'mediamtx', 'raspberrypi', 'edge', 'iot']
+        .map(k => allTech.find(t => t.name === TECH[k])).filter(Boolean),
+      items: KB.projects.filter(p => p.el.dataset.cat === 'ai').map(p => `${p.title}: ${p.desc}`),
+      actions: [{ label: 'Watch the AI pipeline', run: go('#pipeline') }, { label: 'Open the Detectify case study', run: () => Case.open('detectify') }]
+    }),
+    systems: () => ({
+      title: 'The systems I build',
+      lead: 'End to end: interfaces, APIs and databases, plus vision pipelines that run on edge devices.',
+      rows: Object.values(SYSTEM).filter(s => s.tech.length).map(s => [s.label, s.tagline]),
+      items: ['User → Frontend → API → Database', 'API → AI / ML → Computer Vision → Edge AI → IoT → Real World'],
+      actions: [{ label: 'Explore the system map', run: go('#sysmap') }]
+    }),
+    projects: () => ({
+      title: 'Projects',
+      lead: `${KB.projects.length} projects. Two have full case studies.`,
+      rows: KB.projects.map(p => [p.title, `${p.cat} · ${p.tagline || p.desc}`]),
+      actions: Case.keys.map(k => ({ label: `${KB.projects.find(p => p.key === k).title} case study`, run: () => Case.open(k) }))
+        .concat({ label: 'Go to projects', run: go('#projects') })
+    }),
+    experience: () => ({
+      title: 'Experience',
+      lead: `Currently ${KB.current.role} at ${KB.current.company}. ${KB.current.desc}`,
+      rows: KB.roles.map(r => [r.title, `${r.date} · ${r.sub}`]),
+      actions: [{ label: 'See the full timeline', run: go('#experience') }]
+    }),
+    education: () => ({
+      title: 'Education',
+      rows: KB.edu.map(e => [e.title, `${e.inst} · ${e.meta}`]),
+      items: KB.certs.length ? [`Plus ${KB.certs.length} certifications, including ${KB.certs[0].title}.`] : [],
+      actions: [{ label: 'Go to education', run: go('#education') }]
+    }),
+    certs: () => ({
+      title: 'Certifications',
+      rows: KB.certs.map(c => [c.title, c.note]),
+      actions: [{ label: 'Go to certifications', run: go('#education') }]
+    }),
+    contact: () => ({
+      title: 'Get in touch',
+      lead: `${KB.status}. Open to freelance, full-time roles and collaborations.`,
+      rows: [['Email', 'pratyushnandi100@gmail.com'], ['Phone', '+91 7890706472'], ['Location', KB.location],
+        ['GitHub', 'github.com/pratyushnandi'], ['LinkedIn', 'linkedin.com/in/pratyushnandi']],
+      actions: [{ label: 'Copy email', run: () => $('#copyEmail').click() }, { label: 'Go to the contact form', run: go('#contact') }]
+    }),
+    location: () => ({ title: 'Location', lead: `Based in ${KB.location}.`, actions: [{ label: 'Contact details', run: go('#contact') }] }),
+    about: () => ({
+      title: 'About Pratyush',
+      lead: `${KB.current.role} at ${KB.current.company}, building full-stack products, clean APIs and edge-deployed computer vision.`,
+      items: [KB.edu[0] ? `${KB.edu[0].title}, ${KB.edu[0].inst}` : '', KB.location].filter(Boolean),
+      actions: [{ label: 'Read the about section', run: go('#about') }]
+    }),
+    resume: () => ({
+      title: 'Resume',
+      lead: 'The full CV is a PDF you can download.',
+      actions: [{ label: 'Download resume', run: () => { const a = $('.n-resume'); if (a) a.click(); } }]
+    }),
+    tech: list => {
+      const t = list[0];
+      const key = Object.keys(TECH).find(k => TECH[k] === t.name);
+      const layers = key ? Object.values(SYSTEM).filter(s => s.tech.includes(key)).map(s => s.label) : [];
+      const names = (ALIAS[t.name] || []).concat(t.name.toLowerCase());
+      const used = KB.projects.filter(p => p.tags.some(tag => names.some(n => tag.toLowerCase().includes(n.split(' ')[0]))));
+      return {
+        title: t.name,
+        lead: `Yes. ${t.name} is in my stack, under ${t.group}.` + (list.length > 1 ? ` (Also matched: ${list.slice(1).map(x => x.name).join(', ')}.)` : ''),
+        rows: [].concat(layers.length ? [['System layer', layers.join(', ')]] : [],
+          used.length ? [['Used in', used.map(p => p.title).join(', ')]] : [['Used in', 'No project on this page lists it yet.']]),
+        actions: [{ label: 'See the tech stack', run: go('#skills') }]
+      };
+    },
+    project: p => ({
+      title: p.title,
+      lead: [p.tagline, p.desc].filter(Boolean).join(' '),
+      rows: [['Category', p.cat], ['Built with', p.tags.join(', ')]],
+      actions: (Case.keys.includes(p.key) ? [{ label: 'Open the case study', run: () => Case.open(p.key) }] : [])
+        .concat(p.links.map(l => ({ label: l.label, run: () => window.open(l.href, '_blank', 'noopener') })))
+        .concat({ label: 'Show it on the page', run: () => p.el.scrollIntoView({ behavior: REDUCE_MOTION ? 'auto' : 'smooth', block: 'center' }) })
+    }),
+    fallback: () => ({
+      title: 'I can only answer from this portfolio',
+      lead: "I couldn't match that to anything on this page. I'm a deterministic assistant, not an AI model, so I won't guess. Try one of these:"
+    })
+  };
+
+  function answer(q) {
+    const toks = tokens(q);
+    if (!toks.length) return A.fallback();
+    const project = findProject(q);
+    if (project) return A.project(project);
+    const score = Object.fromEntries(Object.entries(INTENTS).map(([k, words]) => [k, toks.filter(t => words.includes(t)).length]));
+    if (has(q, 'computer vision') || has(q, 'machine learning')) score.ai += 2;
+    if (has(q, 'kind of system') || has(q, 'kind of systems')) score.systems += 2;
+    const tech = findTech(q).filter(t => !['AI / ML', 'Visual AI'].includes(t.name) || !score.ai);
+    const [best, n] = Object.entries(score).sort((a, b) => b[1] - a[1])[0];
+    if (tech.length && !(best === 'ai' && n >= 2) && !(['stack', 'systems'].includes(best) && n >= 2)) return A.tech(tech);
+    return n > 0 ? A[best]() : A.fallback();
+  }
+  const SUGGESTED = [
+    'What technologies do you use?', 'What AI/ML work do you do?', 'Show me your projects.',
+    'What is your development stack?', 'What kind of systems do you build?'
+  ];
+  return { answer, SUGGESTED };
+})();
+
+/* ══ 23. COMMAND PALETTE ══
+   Ctrl/⌘ K anywhere. Every command does something real; typing a question
+   hands it to the assistant above. */
+(function () {
+  const dlg = $('#cmdk');
+  if (!dlg || !dlg.showModal) return;
+  const input = $('#cmdkInput');
+  const list = $('#cmdkList');
+  const ans = $('#cmdkAnswer');
+  const isMac = /mac|iphone|ipad/i.test((navigator.userAgentData && navigator.userAgentData.platform) || navigator.platform || '');
+  $$('.cmdk-kbd').forEach(k => { k.textContent = isMac ? '⌘ K' : 'Ctrl K'; });
+  // The accessible name leads with the visible shortcut (voice-control users say what they see).
+  $('#cmdkBtn').setAttribute('aria-label', `${isMac ? '⌘ K' : 'Ctrl K'} — command palette`);
+
+  const scrollTo = sel => () => { const t = $(sel); if (t) t.scrollIntoView({ behavior: REDUCE_MOTION ? 'auto' : 'smooth', block: 'start' }); };
+  const NAV = [
+    ['About', '#about', 'fa-user', 'who bio'], ['Experience', '#experience', 'fa-code-branch', 'work roles journey timeline'],
+    ['Tech stack', '#skills', 'fa-layer-group', 'skills technologies'], ['System architecture', '#sysmap', 'fa-diagram-project', 'map nodes system'],
+    ['AI pipeline', '#pipeline', 'fa-eye', 'ai ml computer vision yolo'], ['Projects', '#projects', 'fa-folder-open', 'work portfolio'],
+    ['Education', '#education', 'fa-graduation-cap', 'degree certifications'], ['Contact', '#contact', 'fa-paper-plane', 'email hire message']
+  ];
+  function commands() {
+    const light = root.getAttribute('data-theme') === 'light';
+    const eng = Eng.isOn();
+    return [].concat(
+      NAV.map(([label, sel, icon, kw]) => ({ group: 'Navigate', label, icon, kw, run: scrollTo(sel) })),
+      [{ group: 'Navigate', label: 'AI / ML projects', icon: 'fa-brain', kw: 'filter detectify', run: () => { const b = $('.pf[data-f="ai"]'); if (b) b.click(); scrollTo('#projects')(); } }],
+      [
+        { group: 'Actions', label: eng ? 'Turn off Engineering Mode' : 'Turn on Engineering Mode', icon: 'fa-microchip', kw: 'engineering mode eng system blueprint', run: () => Eng.toggle() },
+        { group: 'Actions', label: light ? 'Switch to dark theme' : 'Switch to light theme', icon: light ? 'fa-moon' : 'fa-sun', kw: 'toggle theme dark light mode', run: () => $('#themeToggle').click() },
+        { group: 'Actions', label: 'Copy email address', icon: 'fa-copy', kw: 'email mail clipboard', run: () => $('#copyEmail').click() },
+        { group: 'Actions', label: 'Download resume', icon: 'fa-file-arrow-down', kw: 'cv pdf', run: () => $('.n-resume').click() },
+        { group: 'Actions', label: 'Send an email', icon: 'fa-envelope', kw: 'mail contact', run: () => { location.href = 'mailto:pratyushnandi100@gmail.com'; } },
+        { group: 'Actions', label: 'Open GitHub', icon: 'fa-github', brand: true, kw: 'code repositories', run: () => window.open('https://github.com/pratyushnandi', '_blank', 'noopener') },
+        { group: 'Actions', label: 'Open LinkedIn', icon: 'fa-linkedin-in', brand: true, kw: 'profile', run: () => window.open('https://www.linkedin.com/in/pratyushnandi/', '_blank', 'noopener') }
+      ],
+      Case.keys.map(k => ({ group: 'Case studies', label: `${$('#case-' + k).content.querySelector('h2').textContent} case study`, icon: 'fa-book-open', kw: 'case study project', run: () => Case.open(k) }))
+    );
+  }
+
+  let items = [], active = 0, mode = 'list';
+  const ask = q => ({ group: 'Ask about my work', label: q, icon: 'fa-message', ask: true, run: () => showAnswer(q) });
+  const looksLikeQuestion = q => /\?$/.test(q.trim()) || /^(what|which|who|where|how|do|does|did|can|are|is|tell|show|have|why)\b/i.test(q.trim());
+
+  function filter(q) {
+    q = q.trim().toLowerCase();
+    if (!q) return commands().concat(Assistant.SUGGESTED.map(ask));
+    const words = q.split(/\s+/);
+    const hits = commands().filter(c => words.every(w => (c.label + ' ' + c.kw + ' ' + c.group).toLowerCase().includes(w)));
+    const askItem = ask(input.value.trim());
+    return looksLikeQuestion(q) ? [askItem].concat(hits) : hits.concat(askItem);
+  }
+  function render() {
+    list.replaceChildren();
+    let group = '';
+    items.forEach((c, i) => {
+      if (c.group !== group) {
+        group = c.group;
+        const h = document.createElement('li');
+        h.className = 'cmdk-group mono'; h.setAttribute('role', 'presentation'); h.textContent = group;
+        list.appendChild(h);
+      }
+      const li = document.createElement('li');
+      li.id = 'cmdk-opt-' + i; li.className = 'cmdk-item' + (c.ask ? ' is-ask' : '');
+      li.setAttribute('role', 'option');
+      const ico = document.createElement('i');
+      ico.className = (c.brand ? 'fab ' : 'fas ') + c.icon; ico.setAttribute('aria-hidden', 'true');
+      const lab = document.createElement('span');
+      lab.textContent = c.label;
+      li.append(ico, lab);
+      if (c.ask) { const t = document.createElement('span'); t.className = 'cmdk-tag mono'; t.textContent = 'ask'; li.appendChild(t); }
+      li.addEventListener('click', () => run(i));
+      li.addEventListener('pointermove', () => setActive(i));
+      list.appendChild(li);
+    });
+    setActive(0);
+  }
+  function setActive(i) {
+    if (!items.length) return;
+    active = (i + items.length) % items.length;
+    $$('.cmdk-item', list).forEach((li, j) => {
+      const on = j === active;
+      li.classList.toggle('active', on);
+      li.setAttribute('aria-selected', on ? 'true' : 'false');
+      if (on) li.scrollIntoView({ block: 'nearest' });
+    });
+    input.setAttribute('aria-activedescendant', 'cmdk-opt-' + active);
+  }
+  function run(i) {
+    const c = items[i];
+    if (!c) return;
+    if (c.ask) { c.run(); return; }
+    close();
+    // Let the dialog release the page before scrolling or opening another dialog.
+    setTimeout(c.run, 30);
+  }
+
+  function showAnswer(q) {
+    mode = 'answer';
+    const a = Assistant.answer(q);
+    const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
+    const wrap = el('div', 'ca-wrap');
+    const head = el('div', 'ca-head');
+    const back = el('button', 'ca-back');
+    back.type = 'button'; back.innerHTML = '<i class="fas fa-arrow-left" aria-hidden="true"></i>';
+    back.setAttribute('aria-label', 'Back to commands');
+    back.addEventListener('click', () => { input.value = ''; showList(); });
+    head.append(back, el('span', 'ca-q', q));
+    wrap.appendChild(head);
+    const body = el('div', 'ca-body');
+    body.appendChild(el('span', 'ca-label mono', 'portfolio assistant · from this page'));
+    body.appendChild(el('h3', null, a.title));
+    if (a.lead) body.appendChild(el('p', 'ca-lead', a.lead));
+    if (a.rows && a.rows.length) {
+      const dl = el('dl', 'ca-rows');
+      a.rows.forEach(([k, v]) => { const d = el('div'); d.append(el('dt', null, k), el('dd', null, v)); dl.appendChild(d); });
+      body.appendChild(dl);
+    }
+    if (a.chips && a.chips.length) {
+      const ul = el('ul', 'ca-chips');
+      a.chips.forEach(c => { const li = el('li'); const i = el('i', c.icon); i.setAttribute('aria-hidden', 'true'); li.append(i, el('span', null, c.name)); ul.appendChild(li); });
+      body.appendChild(ul);
+    }
+    if (a.items && a.items.length) {
+      const ul = el('ul', 'ca-items');
+      a.items.forEach(t => ul.appendChild(el('li', null, t)));
+      body.appendChild(ul);
+    }
+    const acts = el('div', 'ca-actions');
+    (a.actions || []).forEach(x => {
+      const b = el('button', 'ca-act', x.label); b.type = 'button';
+      b.addEventListener('click', () => { close(); setTimeout(x.run, 30); });
+      acts.appendChild(b);
+    });
+    if (acts.children.length) body.appendChild(acts);
+    // Follow-ups: the suggested questions not just asked.
+    const more = el('div', 'ca-more');
+    more.appendChild(el('span', 'mono', 'ask next'));
+    Assistant.SUGGESTED.filter(s => s !== q).slice(0, 3).forEach(s => {
+      const b = el('button', 'ca-suggest', s); b.type = 'button';
+      b.addEventListener('click', () => { input.value = s; showAnswer(s); });
+      more.appendChild(b);
+    });
+    body.appendChild(more);
+    wrap.appendChild(body);
+    ans.replaceChildren(wrap);
+    list.hidden = true; ans.hidden = false;
+    input.setAttribute('aria-expanded', 'false');
+    input.removeAttribute('aria-activedescendant');
+  }
+  function showList() {
+    mode = 'list';
+    ans.hidden = true; list.hidden = false;
+    input.setAttribute('aria-expanded', 'true');
+    items = filter(input.value); render();
+    input.focus();
+  }
+
+  let last = null;
+  function open(opts = {}) {
+    if (dlg.open) return;
+    last = document.activeElement;
+    input.value = '';
+    dlg.showModal();
+    root.classList.add('modal-open');
+    if (opts.ask) { items = Assistant.SUGGESTED.map(ask); mode = 'list'; ans.hidden = true; list.hidden = false; render(); }
+    else showList();
+    input.focus();
+  }
+  function close() {
+    if (!dlg.open) return;
+    dlg.close();
+    root.classList.remove('modal-open');
+    if (last && last.isConnected && !$('#caseDlg').open) last.focus({ preventScroll: true });
+  }
+
+  input.addEventListener('input', () => { if (mode === 'answer') showList(); else { items = filter(input.value); render(); } });
+  input.addEventListener('keydown', e => {
+    if (e.key === 'ArrowDown') { e.preventDefault(); if (mode === 'list') setActive(active + 1); }
+    else if (e.key === 'ArrowUp') { e.preventDefault(); if (mode === 'list') setActive(active - 1); }
+    else if (e.key === 'Enter') {
+      e.preventDefault();
+      if (mode === 'list') run(active);
+      else if (input.value.trim()) showAnswer(input.value.trim());
+    } else if (e.key === 'Backspace' && mode === 'answer' && !input.value) showList();
+  });
+  dlg.addEventListener('cancel', e => { e.preventDefault(); close(); });
+  dlg.addEventListener('click', e => { if (e.target === dlg) close(); });
+  document.addEventListener('keydown', e => {
+    if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+      e.preventDefault();
+      if (dlg.open) close(); else if (!$('#caseDlg').open) open();
+    }
+  });
+  $('#cmdkBtn').addEventListener('click', () => open());
+  $$('[data-ask]').forEach(b => b.addEventListener('click', () => open({ ask: true })));
+})();
+
+/* ══ 24. CONTEXTUAL CURSOR ══
+   The native pointer stays; a small label joins it only over things worth
+   naming. Desktop pointers only, never under reduced motion, and the rAF loop
+   stops as soon as the label has caught up. */
+(function () {
+  const cur = $('.ctx-cursor');
+  if (!cur || !FINE_POINTER || REDUCE_MOTION) return;
+  const label = $('.cc-label', cur);
+  const CONTEXT = [
+    ['a[href^="mailto:"], a[href="#contact"], .soc-btn, .mail-link', "Let's talk"],
+    ['.node, .sm-node, .smi-chip', 'Tech'],
+    ['#projGrid .pj', 'Explore']
+  ];
+  let x = 0, y = 0, cx = 0, cy = 0, raf = 0, shown = false;
+  function loop() {
+    cx += (x - cx) * .22; cy += (y - cy) * .22;
+    cur.style.transform = `translate3d(${cx.toFixed(1)}px, ${cy.toFixed(1)}px, 0)`;
+    raf = Math.abs(x - cx) + Math.abs(y - cy) > .3 ? requestAnimationFrame(loop) : 0;
+  }
+  document.addEventListener('pointermove', e => {
+    if (e.pointerType !== 'mouse') return;
+    x = e.clientX + 16; y = e.clientY + 18;
+    if (!shown) { cx = x; cy = y; }
+    let text = '';
+    if (!document.querySelector('dialog[open]')) {
+      for (const [sel, t] of CONTEXT) { if (e.target.closest && e.target.closest(sel)) { text = t; break; } }
+    }
+    if (text) { if (label.textContent !== text) label.textContent = text; }
+    shown = !!text;
+    cur.classList.toggle('on', shown);
+    if (shown && !raf) raf = requestAnimationFrame(loop);
+  }, { passive: true });
+  document.documentElement.addEventListener('pointerleave', () => { shown = false; cur.classList.remove('on'); });
 })();
 
 /* ══ CONSOLE ══ */
