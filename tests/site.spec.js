@@ -9,7 +9,9 @@ async function open(page) {
   // Never let a test run send a real contact-form email.
   await page.route('https://api.web3forms.com/**', route =>
     route.fulfill({ json: { success: true, message: 'mocked' } }));
-  await page.goto('/', { waitUntil: 'domcontentloaded' });
+  // './' not '/': relative to BASE_URL, so sub-path hosts (GitHub Pages at
+  // /Portfolio/) are tested at the site, not at the bare domain root.
+  await page.goto('./', { waitUntil: 'domcontentloaded' });
   // The intro may already have ended on its own if CDN assets were slow; only
   // skip it (any click does) when it is still on screen.
   const pre = page.locator('#preloader');
@@ -170,6 +172,9 @@ test('technology chips are toggle buttons with a text readout', async ({ page })
   await chip.scrollIntoViewIfNeeded();
   await chip.click();
   await expect(chip).toHaveAttribute('aria-pressed', 'true');
+  // Hovering another chip previews it by design; park the pointer so a smooth
+  // scroll settling under it can't turn this into a preview of a neighbour.
+  await page.mouse.move(1, 1);
   await expect(page.locator('#techReadout')).toContainText('PostgreSQL · layer: Database');
   await chip.click();
   await expect(chip).toHaveAttribute('aria-pressed', 'false');

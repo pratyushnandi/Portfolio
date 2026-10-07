@@ -14,7 +14,9 @@ module.exports = defineConfig({
   timeout: 60_000,
   reporter: CI ? [['github'], ['html', { open: 'never' }]] : [['list'], ['html', { open: 'never' }]],
   use: {
-    baseURL: process.env.BASE_URL || `http://localhost:${PORT}`,
+    // Always end in "/" so tests can open './' relative to it. GitHub Pages serves
+    // the site under /Portfolio/, and '/' would resolve to the domain root instead.
+    baseURL: (process.env.BASE_URL || `http://localhost:${PORT}`).replace(/\/?$/, '/'),
     trace: 'retain-on-failure',
     screenshot: 'only-on-failure',
     // Lets the post-deploy job reach protected Vercel preview URLs.
