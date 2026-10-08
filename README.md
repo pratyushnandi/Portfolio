@@ -241,7 +241,8 @@ http://localhost:3000
 
 | Version | Highlights |
 | :--- | :--- |
-| **[v9.1.0](https://github.com/pratyushnandi/Portfolio/releases/tag/v9.1.0)** | From the CV: Ambulance Management System project, Univolve Consulting internship (Jul – Aug 2025) and the Udemy AWS Solutions Architect Associate course certificate. |
+| **[v9.1.1](https://github.com/pratyushnandi/Portfolio/releases/tag/v9.1.1)** | Ambulance Management System: full project description (search and booking, patient and pickup details, booking status, availability, drivers, emergency requests and trip management). |
+| [v9.1.0](https://github.com/pratyushnandi/Portfolio/releases/tag/v9.1.0) | From the CV: Ambulance Management System project, Univolve Consulting internship (Jul – Aug 2025) and the Udemy AWS Solutions Architect Associate course certificate. |
 | [v9.0.1](https://github.com/pratyushnandi/Portfolio/releases/tag/v9.0.1) | Case studies complete: Detectify gains a Result section with the recorded YOLOv8 evaluation runs (including a stated limitation) and My Contribution; Campus Recruitment gains a Result section. All drawn from the DETECTIFY repository and the CV. |
 | [v9.0.0](https://github.com/pratyushnandi/Portfolio/releases/tag/v9.0.0) | Engineering identity: hero identity + request-path band into the System Map, engineering decisions per system layer, Challenge and Solution in case studies, a scroll-driven "How I build" section evidenced by this site, Current focus, context-aware palette and assistant suggestions, launcher-style palette ranking, decorative particle canvas removed. |
 | [v8.0.1](https://github.com/pratyushnandi/Portfolio/releases/tag/v8.0.1) | Post-deploy smoke test now runs against the GitHub Pages copy (served under `/Portfolio/`) instead of failing on the domain root; technology-chip selection no longer jumps to a neighbouring chip. |
