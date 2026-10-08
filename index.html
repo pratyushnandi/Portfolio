@@ -53,7 +53,7 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/devicons/devicon@v2.15.1/devicon.min.css" />
 
   <!-- ?v= is bumped with every release so returning visitors never keep a stale stylesheet. -->
-  <link rel="stylesheet" href="style.css?v=9.1.2" />
+  <link rel="stylesheet" href="style.css?v=10.0.0" />
 
   <!-- Only JS ever removes the preloader, so without it the overlay would cover
        the page forever. Reveal-on-scroll never runs either, so show everything. -->
@@ -192,7 +192,6 @@
           </div>
 
           <h1 class="hero-title" id="heroTitle">
-            <span class="ht-hi mono" data-hero>Hi! My name is</span>
             <span class="ht-name"><span class="ht-line"><span class="ht-word">Pratyush</span></span>
               <span class="ht-line"><span class="ht-word">Nandi</span></span></span>
           </h1>
@@ -207,13 +206,12 @@
           <!-- No entrance fade: this paragraph is the page's LCP element, and fading it in
                held Largest Contentful Paint back until the intro finished. -->
           <p class="hero-lead">
-            A <em class="serif">passionate programmer</em> building intelligent software systems: fast
-            full&#8209;stack products, clean APIs and edge&#8209;deployed computer vision.
+            Building intelligent software systems, <em class="serif">from interface to infrastructure</em>.
           </p>
 
           <p class="hero-bio" data-hero>
-            Software Developer at <strong>Eltern Segen Technologie Pvt. Ltd.</strong> Working across
-            <strong>React, Node.js &amp; Python</strong>. MCA @ Adamas University.
+            Software Developer at <strong>Eltern Segen Technologie Pvt. Ltd.</strong>, working across
+            React, Node.js and Python. MCA, Adamas University.
           </p>
 
           <div class="hero-actions" data-hero>
@@ -239,7 +237,8 @@
           </div>
         </div>
 
-        <!-- Visual: IDE window + profile card + deploy terminal -->
+        <!-- Visual: one composition, the IDE window, with the profile card and
+             three stack chips orbiting it. -->
         <div class="hero-visual" id="heroVisual" aria-hidden="true">
           <div class="hv-layer hv-ide" data-depth="10">
             <div class="ide">
@@ -263,7 +262,6 @@
               </div>
               <div class="ide-status">
                 <span><i class="fas fa-code-branch"></i> main</span>
-                <span class="ok"><i class="fas fa-check"></i> build passing</span>
                 <span class="ide-status-end">TypeScript · UTF-8</span>
               </div>
             </div>
@@ -276,14 +274,6 @@
                 <strong>Pratyush Nandi</strong>
                 <span><span class="pulse-dot"></span> Software Developer</span>
               </div>
-            </div>
-          </div>
-
-          <div class="hv-layer hv-term" data-depth="16">
-            <div class="mini-term">
-              <p><span class="mt-p">~/portfolio</span> <span class="mt-c">$</span> npm run deploy</p>
-              <p class="mt-dim">▸ building 42 modules…</p>
-              <p class="mt-ok">✓ deployed to production <span class="mt-dim">in 1.2s</span></p>
             </div>
           </div>
 
@@ -318,18 +308,18 @@
     <section id="about" class="sec" aria-labelledby="aboutTitle">
       <div class="container">
         <header class="sec-head" data-reveal>
-          <span class="sec-kicker mono"><span class="sk-num">01</span> about_me</span>
+          <span class="sec-kicker mono"><span class="sk-num">01</span><span class="sk-sep" aria-hidden="true">/</span> About</span>
           <h2 class="sec-title" id="aboutTitle">Who <em class="serif">I am</em></h2>
-          <p class="sec-sub">Developer by trade, builder by habit, always learning, always experimenting, always up for a challenge.</p>
+          <p class="sec-sub">From frontend experiences to AI-powered systems and edge infrastructure.</p>
         </header>
 
         <div class="bento">
           <article class="b-card b-intro" data-reveal>
             <span class="card-label mono">about.md</span>
-            <p class="b-intro-lead">I'm a <strong>passionate web developer and tech enthusiast</strong> who loves creating engaging,
-              responsive experiences.</p>
-            <p>With skills across <strong>front-end and back-end development</strong>, I enjoy building everything from
-              elegant portfolios to complex web applications. Currently a <strong>Software Developer at Eltern Segen
+            <p class="b-intro-lead">I build software systems that connect <strong>interfaces, APIs, intelligence and
+              real-world devices</strong>.</p>
+            <p>My work runs across <strong>front-end and back-end development</strong> and into computer vision, from
+              responsive interfaces to complex web applications. Currently a <strong>Software Developer at Eltern Segen
               Technologie Pvt. Ltd.</strong> and pursuing <strong>MCA at Adamas University</strong>.</p>
             <div class="b-intro-actions">
               <a href="files/PRATYUSH%20NANDI_CV%20(NEW).pdf" download class="btn btn-primary magnetic">
@@ -394,7 +384,7 @@
       <div class="container exp-wrap">
         <div class="exp-aside">
           <header class="sec-head" data-reveal>
-            <span class="sec-kicker mono"><span class="sk-num">02</span> work_experience</span>
+            <span class="sec-kicker mono"><span class="sk-num">02</span><span class="sk-sep" aria-hidden="true">/</span> Experience</span>
             <h2 class="sec-title" id="expTitle">My <em class="serif">journey</em></h2>
             <p class="sec-sub">Roles, disciplines and leadership, read like a commit history, newest on top.</p>
           </header>
@@ -550,7 +540,7 @@
       <div class="container">
         <header class="sec-head sec-head-split" data-reveal>
           <div>
-            <span class="sec-kicker mono"><span class="sk-num">03</span> tech_stack</span>
+            <span class="sec-kicker mono"><span class="sk-num">03</span><span class="sk-sep" aria-hidden="true">/</span> Technology</span>
             <h2 class="sec-title" id="skillsTitle">The <em class="serif">stack</em> I build with</h2>
           </div>
           <p class="sec-sub">From the browser to the database to a camera on the edge, the tools I reach for to take a
@@ -715,7 +705,7 @@
       <div class="container">
         <header class="sec-head sec-head-split" data-reveal>
           <div>
-            <span class="sec-kicker mono"><span class="sk-num">04</span> ai_pipeline</span>
+            <span class="sec-kicker mono"><span class="sk-num">04</span><span class="sk-sep" aria-hidden="true">/</span> AI / ML</span>
             <h2 class="sec-title" id="pipeTitle">How an intelligent system <em class="serif">sees</em></h2>
           </div>
           <p class="sec-sub">Scroll to bring a vision pipeline online, one stage at a time: from a raw camera frame to an
@@ -839,7 +829,7 @@
       <div class="container">
         <header class="sec-head sec-head-split" data-reveal>
           <div>
-            <span class="sec-kicker mono"><span class="sk-num">05</span> my_projects</span>
+            <span class="sec-kicker mono"><span class="sk-num">05</span><span class="sk-sep" aria-hidden="true">/</span> Projects</span>
             <h2 class="sec-title" id="projTitle">Selected <em class="serif">work</em></h2>
           </div>
           <div class="pf-row" role="group" aria-label="Filter projects">
@@ -1037,7 +1027,7 @@
       <div class="container proc-wrap">
         <div class="proc-aside">
           <header class="sec-head" data-reveal>
-            <span class="sec-kicker mono"><span class="sk-num">06</span> how_i_build</span>
+            <span class="sec-kicker mono"><span class="sk-num">06</span><span class="sk-sep" aria-hidden="true">/</span> Process</span>
             <h2 class="sec-title" id="processTitle">Not just interfaces. <em class="serif">Systems.</em></h2>
             <p class="sec-sub">The loop every project goes through, from idea to optimisation, shown on the one system you
               can inspect right now: this portfolio.</p>
@@ -1100,7 +1090,7 @@
     <section id="education" class="sec" aria-labelledby="eduTitle">
       <div class="container">
         <header class="sec-head" data-reveal>
-          <span class="sec-kicker mono"><span class="sk-num">07</span> education</span>
+          <span class="sec-kicker mono"><span class="sk-num">07</span><span class="sk-sep" aria-hidden="true">/</span> Education</span>
           <h2 class="sec-title" id="eduTitle">Academic <em class="serif">background</em></h2>
         </header>
 
@@ -1207,7 +1197,7 @@
       <div class="container">
         <header class="sec-head sec-head-split" data-reveal>
           <div>
-            <span class="sec-kicker mono"><span class="sk-num">08</span> current_focus</span>
+            <span class="sec-kicker mono"><span class="sk-num">08</span><span class="sk-sep" aria-hidden="true">/</span> Focus</span>
             <h2 class="sec-title" id="focusTitle">Building intelligent <em class="serif">software systems</em>.</h2>
           </div>
           <p class="sec-sub">Currently a Software Developer at Eltern Segen Technologie Pvt. Ltd. These are the areas
@@ -1231,10 +1221,10 @@
         <div class="contact-grid">
           <div class="contact-intro">
             <header class="sec-head" data-reveal>
-              <span class="sec-kicker mono"><span class="sk-num">09</span> contact_me</span>
-              <h2 class="sec-title contact-title" id="contactTitle">Let's build something <em class="serif">great</em> together.</h2>
-              <p class="sec-sub">Open to freelance, full-time roles and collaborations. Have an idea, a role or a
-                problem worth solving? My inbox is open.</p>
+              <span class="sec-kicker mono"><span class="sk-num">09</span><span class="sk-sep" aria-hidden="true">/</span> Contact</span>
+              <h2 class="sec-title contact-title" id="contactTitle">Let's build <em class="serif">something</em>.</h2>
+              <p class="sec-sub">Have a product, a system or a technical challenge? Let's discuss it. Open to
+                freelance work, full-time roles and collaborations.</p>
             </header>
 
             <div class="mail-card" data-reveal style="--i:1">
@@ -1258,12 +1248,22 @@
             </div>
           </div>
 
-          <div class="form-shell" data-reveal style="--i:1">
+          <!-- Progressive disclosure: with JavaScript the form opens from the
+               prompt below; without it, the form is simply shown. -->
+          <div class="form-shell" id="formShell" data-reveal style="--i:1">
+            <div class="cf-start">
+              <span class="card-label mono">new conversation</span>
+              <p class="cf-start-lead">Tell me what you're building, and where you'd like help.</p>
+              <p class="cf-start-sub">A short message is enough. I reply by email.</p>
+              <button type="button" class="btn btn-primary magnetic" id="cfStart" aria-expanded="false" aria-controls="contactForm">
+                <span>Start a conversation</span> <i class="fas fa-arrow-right" aria-hidden="true"></i>
+              </button>
+            </div>
             <form id="contactForm" novalidate>
               <div class="form-bar">
                 <span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>
-                <span class="mono">new_message.ts</span>
-                <span class="form-bar-end mono" aria-hidden="true">POST /api/contact</span>
+                <span class="mono">new_message</span>
+                <span class="form-bar-end mono" aria-hidden="true">via web3forms</span>
               </div>
               <div class="form-body">
                 <div class="f-row">
@@ -1332,10 +1332,10 @@
         <div class="foot-brand">
           <a href="#hero" class="logo">
             <span class="logo-mark" aria-hidden="true">PN</span>
-            <span class="logo-text">pratyush<span class="logo-dot">.</span>dev</span>
+            <span class="logo-text">Pratyush Nandi</span>
           </a>
-          <p>Software Developer · Full-Stack · Visual AI · IoT. Turning ideas into scalable, well-crafted software.</p>
-          <p class="foot-motto mono">Built with curiosity. Designed with engineering discipline.</p>
+          <p class="foot-role">Software Developer<br /><span class="mono">AI/ML · Full-Stack · Computer Vision</span></p>
+          <p class="foot-motto mono">Building intelligent systems.</p>
           <div class="foot-soc">
             <a href="https://github.com/pratyushnandi" target="_blank" rel="noopener noreferrer" class="icon-btn" aria-label="GitHub"><i class="fab fa-github"></i></a>
             <a href="https://www.linkedin.com/in/pratyushnandi/" target="_blank" rel="noopener noreferrer" class="icon-btn" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
@@ -1344,23 +1344,23 @@
         </div>
         <nav class="foot-nav" aria-label="Footer">
           <div>
-            <h3 class="mono">navigate</h3>
+            <h3 class="mono">Work</h3>
             <ul>
-              <li><a href="#about">About</a></li>
-              <li><a href="#experience">Experience</a></li>
-              <li><a href="#skills">Stack</a></li>
+              <li><a href="#projects">Projects</a></li>
+              <li><a href="#skills">Technology</a></li>
+              <li><a href="#process">Process</a></li>
             </ul>
           </div>
           <div>
-            <h3 class="mono">work</h3>
+            <h3 class="mono">Profile</h3>
             <ul>
-              <li><a href="#projects">Projects</a></li>
-              <li><a href="#education">Education</a></li>
+              <li><a href="#about">About</a></li>
+              <li><a href="#experience">Experience</a></li>
               <li><a href="#contact">Contact</a></li>
             </ul>
           </div>
           <div>
-            <h3 class="mono">elsewhere</h3>
+            <h3 class="mono">Elsewhere</h3>
             <ul>
               <li><a href="https://github.com/pratyushnandi" target="_blank" rel="noopener noreferrer">GitHub</a></li>
               <li><a href="https://www.linkedin.com/in/pratyushnandi/" target="_blank" rel="noopener noreferrer">LinkedIn</a></li>
@@ -1375,11 +1375,9 @@
       <div class="foot-bottom mono">
         <p>&copy; <span id="year">2026</span> Pratyush Nandi. Designed &amp; engineered in Kolkata.</p>
         <p class="foot-sys">
-          <span><span class="pulse-dot" aria-hidden="true"></span> all systems operational</span>
+          <span>Kolkata · IST <time id="localTime">--:--</time></span>
           <span class="foot-sep" aria-hidden="true">·</span>
-          <span>IST <time id="localTime">--:--</time></span>
-          <span class="foot-sep" aria-hidden="true">·</span>
-          <span>v9.1.2</span>
+          <span>v10.0.0</span>
         </p>
       </div>
     </div>
@@ -1393,14 +1391,14 @@
   <aside class="eng-panel" id="engPanel" aria-label="Engineering mode">
     <div class="ep-head">
       <span class="ep-title mono"><span class="eng-led on" aria-hidden="true"></span> ENGINEERING MODE</span>
-      <span class="ep-sum mono" id="epSum" aria-hidden="true">8/8 online</span>
+      <span class="ep-sum mono" id="epSum" aria-hidden="true">8/8 layers ready</span>
       <div class="ep-actions">
         <button type="button" id="epMin" aria-expanded="true" aria-controls="epBody" aria-label="Collapse system panel"><i class="fas fa-minus" aria-hidden="true"></i></button>
         <button type="button" id="epClose" aria-label="Exit engineering mode"><i class="fas fa-xmark" aria-hidden="true"></i></button>
       </div>
     </div>
     <div class="ep-body" id="epBody">
-      <p class="ep-sec mono">SYSTEM</p>
+      <p class="ep-sec mono">SYSTEM OVERVIEW</p>
       <ul class="ep-list mono">
         <li><span class="ep-dot"></span>Portfolio Core<span class="ep-state" data-state="ONLINE"></span></li>
         <li><span class="ep-dot"></span>Frontend<span class="ep-state" data-state="ONLINE"></span></li>
@@ -1412,7 +1410,7 @@
         <li><span class="ep-dot"></span>Real-Time Systems<span class="ep-state" data-state="READY"></span></li>
       </ul>
       <details class="ep-group" open>
-        <summary class="ep-sec mono">SYSTEM STATUS</summary>
+        <summary class="ep-sec mono">ARCHITECTURE</summary>
         <ul class="ep-list ep-status mono">
           <li>Architecture<span class="ep-state" data-state="STABLE"></span></li>
           <li>Interfaces<span class="ep-state" data-state="ACTIVE"></span></li>
@@ -1668,7 +1666,7 @@
     </div>
   </div>
 
-  <script src="script.js?v=9.1.2"></script>
+  <script src="script.js?v=10.0.0"></script>
 </body>
 
 </html>

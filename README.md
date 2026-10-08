@@ -241,7 +241,8 @@ http://localhost:3000
 
 | Version | Highlights |
 | :--- | :--- |
-| **[v9.1.2](https://github.com/pratyushnandi/Portfolio/releases/tag/v9.1.2)** | Cache-busting: stylesheet and script URLs carry the release version, so returning visitors get each release immediately instead of a stale cached copy. |
+| **[v10.0.0](https://github.com/pratyushnandi/Portfolio/releases/tag/v10.0.0)** | Art direction: one professional design system. Semantic design tokens (colour, spacing, radius, motion, z-index), a restrained single-hue palette, editorial section marks (01 / About), an executive hero, Engineering Mode restyled as a control center, a progressive-disclosure contact flow and a signature footer. Fabricated hero telemetry and the footer status line were removed. |
+| [v9.1.2](https://github.com/pratyushnandi/Portfolio/releases/tag/v9.1.2) | Cache-busting: stylesheet and script URLs carry the release version, so returning visitors get each release immediately instead of a stale cached copy. |
 | [v9.1.1](https://github.com/pratyushnandi/Portfolio/releases/tag/v9.1.1) | Ambulance Management System: full project description (search and booking, patient and pickup details, booking status, availability, drivers, emergency requests and trip management). |
 | [v9.1.0](https://github.com/pratyushnandi/Portfolio/releases/tag/v9.1.0) | From the CV: Ambulance Management System project, Univolve Consulting internship (Jul – Aug 2025) and the Udemy AWS Solutions Architect Associate course certificate. |
 | [v9.0.1](https://github.com/pratyushnandi/Portfolio/releases/tag/v9.0.1) | Case studies complete: Detectify gains a Result section with the recorded YOLOv8 evaluation runs (including a stated limitation) and My Contribution; Campus Recruitment gains a Result section. All drawn from the DETECTIFY repository and the CV. |

@@ -479,6 +479,21 @@ const Scroll = (function () {
 (function () {
   const form = $('#contactForm');
   if (!form) return;
+
+  // The form opens from a single prompt; anything that needs it (the
+  // palette, a deep link) asks for it with `pn:open-form`.
+  const shell = $('#formShell'), start = $('#cfStart');
+  const openForm = () => {
+    if (!shell.classList.contains('is-open')) {
+      shell.classList.add('is-open');
+      start.setAttribute('aria-expanded', 'true');
+    }
+    $('#cfName').focus({ preventScroll: true });
+    form.scrollIntoView({ behavior: REDUCE_MOTION ? 'auto' : 'smooth', block: 'center' });
+  };
+  start.addEventListener('click', openForm);
+  window.addEventListener('pn:open-form', openForm);
+
   const btn = $('#cfBtn');
   const txt = $('#cfTxt'), load = $('#cfLoad');
   const status = $('#cfStatus');
@@ -1265,7 +1280,7 @@ const Eng = (function () {
   const sysRows = $$('.ep-list:not(.ep-status) li', panel);
   const sum = $('#epSum');
   let bootTimers = [], userTouched = false;
-  function tally() { sum.textContent = `${sysRows.filter(r => r.classList.contains('up')).length}/${sysRows.length} online`; }
+  function tally() { sum.textContent = `${sysRows.filter(r => r.classList.contains('up')).length}/${sysRows.length} layers ready`; }
   // The panel boots open, holds long enough to be read, then folds down to its
   // one-line summary so it never sits on top of the content.
   function boot(instant) {
@@ -1485,7 +1500,7 @@ const Assistant = (function () {
       lead: `${KB.status}. Open to freelance, full-time roles and collaborations.`,
       rows: [['Email', 'pratyushnandi100@gmail.com'], ['Phone', '+91 7890706472'], ['Location', KB.location],
         ['GitHub', 'github.com/pratyushnandi'], ['LinkedIn', 'linkedin.com/in/pratyushnandi']],
-      actions: [{ label: 'Copy email', run: () => $('#copyEmail').click() }, { label: 'Go to the contact form', run: go('#contact') }]
+      actions: [{ label: 'Copy email', run: () => $('#copyEmail').click() }, { label: 'Open the contact form', run: () => window.dispatchEvent(new Event('pn:open-form')) }]
     }),
     location: () => ({ title: 'Location', lead: `Based in ${KB.location}.`, actions: [{ label: 'Contact details', run: go('#contact') }] }),
     about: () => ({
@@ -1626,7 +1641,7 @@ const Assistant = (function () {
     experience: ['Projects', 'Download resume'], skills: ['System architecture', 'AI pipeline'],
     pipeline: ['Detectify case study', 'AI / ML projects'], projects: ['Detectify case study', 'Campus Recruitment System case study'],
     process: ['Open GitHub', 'System architecture'], education: ['Download resume', 'Current focus'],
-    focus: ['Contact', 'Download resume'], contact: ['Copy email address', 'Send an email']
+    focus: ['Contact', 'Download resume'], contact: ['Copy email address', 'Start a conversation', 'Send an email']
   };
   function commands() {
     const light = root.getAttribute('data-theme') === 'light';
@@ -1640,6 +1655,7 @@ const Assistant = (function () {
         { group: 'Actions', label: 'Copy email address', icon: 'fa-copy', kw: 'email mail clipboard', run: () => $('#copyEmail').click() },
         { group: 'Actions', label: 'Download resume', icon: 'fa-file-arrow-down', kw: 'cv pdf', run: () => $('.n-resume').click() },
         { group: 'Actions', label: 'Send an email', icon: 'fa-envelope', kw: 'mail contact', run: () => { location.href = 'mailto:pratyushnandi100@gmail.com'; } },
+        { group: 'Actions', label: 'Start a conversation', icon: 'fa-paper-plane', kw: 'contact form message hire', run: () => window.dispatchEvent(new Event('pn:open-form')) },
         { group: 'Actions', label: 'Open GitHub', icon: 'fa-github', brand: true, kw: 'code repositories', run: () => window.open('https://github.com/pratyushnandi', '_blank', 'noopener') },
         { group: 'Actions', label: 'Open LinkedIn', icon: 'fa-linkedin-in', brand: true, kw: 'profile', run: () => window.open('https://www.linkedin.com/in/pratyushnandi/', '_blank', 'noopener') }
       ],
