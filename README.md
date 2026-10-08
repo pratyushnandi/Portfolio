@@ -1,4 +1,4 @@
-# ⚡ Pratyush Nandi — Developer Portfolio (v9.0)
+# ⚡ Pratyush Nandi — Developer Portfolio (v9.1)
 
 [![Website Vercel](https://img.shields.io/badge/Vercel-Live_Demo-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://pratyushnandi.vercel.app)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](LICENSE)
@@ -241,7 +241,8 @@ http://localhost:3000
 
 | Version | Highlights |
 | :--- | :--- |
-| **[v9.0.1](https://github.com/pratyushnandi/Portfolio/releases/tag/v9.0.1)** | Case studies complete: Detectify gains a Result section with the recorded YOLOv8 evaluation runs (including a stated limitation) and My Contribution; Campus Recruitment gains a Result section. All drawn from the DETECTIFY repository and the CV. |
+| **[v9.1.0](https://github.com/pratyushnandi/Portfolio/releases/tag/v9.1.0)** | From the CV: Ambulance Management System project, Univolve Consulting internship (Jul – Aug 2025) and the Udemy AWS Solutions Architect Associate course certificate. |
+| [v9.0.1](https://github.com/pratyushnandi/Portfolio/releases/tag/v9.0.1) | Case studies complete: Detectify gains a Result section with the recorded YOLOv8 evaluation runs (including a stated limitation) and My Contribution; Campus Recruitment gains a Result section. All drawn from the DETECTIFY repository and the CV. |
 | [v9.0.0](https://github.com/pratyushnandi/Portfolio/releases/tag/v9.0.0) | Engineering identity: hero identity + request-path band into the System Map, engineering decisions per system layer, Challenge and Solution in case studies, a scroll-driven "How I build" section evidenced by this site, Current focus, context-aware palette and assistant suggestions, launcher-style palette ranking, decorative particle canvas removed. |
 | [v8.0.1](https://github.com/pratyushnandi/Portfolio/releases/tag/v8.0.1) | Post-deploy smoke test now runs against the GitHub Pages copy (served under `/Portfolio/`) instead of failing on the domain root; technology-chip selection no longer jumps to a neighbouring chip. |
 | [v8.0.0](https://github.com/pratyushnandi/Portfolio/releases/tag/v8.0.0) | Mobile & accessibility: every signature feature gets its own touch and keyboard model (Engineering Mode bottom sheet, linear system map with inline details, toggle tech chips with a text readout, tappable pipeline stages, expandable case studies), 44px touch targets, strict focus traps, an inert page behind the mobile menu, WCAG AA contrast in every theme and mode, still hero background on touch, and no overflow from 320px to 1920px. |
