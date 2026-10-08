@@ -2455,3 +2455,25 @@ html.modal-open { overflow: hidden; }
 }
 .hero-wrap { row-gap: 18px; }
 .hero-system { margin-top: 6px; }.proc-proof { opacity: .8; }
+/* ─── Case study results table ─── */
+.cs-table-wrap { margin-top: 14px; overflow-x: auto; border-radius: 12px; border: 1px solid var(--line); }
+.cs-metrics { width: 100%; min-width: 560px; border-collapse: collapse; font-size: .82rem; font-variant-numeric: tabular-nums; }
+.cs-metrics th, .cs-metrics td { padding: 9px 12px; text-align: left; border-bottom: 1px solid var(--line); }
+.cs-metrics thead th {
+  font: 500 .64rem var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--text-3); background: var(--surface-2);
+}
+.cs-metrics tbody th { font-weight: 600; color: var(--text); white-space: nowrap; }
+.cs-metrics td { color: var(--text-2); }
+.cs-metrics td:nth-child(n+3) { font-family: var(--mono); color: var(--text); }
+.cs-metrics td strong { color: var(--ok); }
+.cs-metrics tbody tr:last-child > * { border-bottom: 0; }
+.cs-metrics tbody tr:hover { background: var(--accent-soft); }
+.cs-table-wrap:focus-visible { outline-offset: 2px; }
+.cs-note { margin-top: 10px; font-size: .72rem !important; color: var(--text-3) !important; }.cs-metrics { min-width: 470px; }
+.cs-metrics tbody th span { display: block; margin-top: 3px; font-size: .64rem; font-weight: 400; color: var(--text-3); white-space: normal; }
+.cs-metrics td:nth-child(n+2) { font-family: var(--mono); color: var(--text); }
+.cs-metrics thead th:nth-child(n+2), .cs-metrics td { text-align: right; }
+/* The section grid must be allowed to shrink, or the table's min-width widens it. */
+.cs-sec { grid-template-columns: 130px minmax(0, 1fr); }
+.cs-panel { min-width: 0; }
+@media (max-width: 760px) { .cs-sec { grid-template-columns: minmax(0, 1fr); } }
