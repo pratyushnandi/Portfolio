@@ -23,10 +23,15 @@ function trapTab(dialog) {
     else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
   });
 }
+// Features announce when the visitor goes deeper than reading (pins a layer,
+// opens a case study…). The session layer (§25) records it for this tab only.
+const inspect = (kind, key, label) =>
+  window.dispatchEvent(new CustomEvent('pn:inspect', { detail: { kind, key, label } }));
 
-/* ══ 1. PRELOADER ══
-   Short by design: ~1.3s on a first visit, ~0.45s on a reload in the same
-   tab, near-instant with reduced motion. Any click or key skips it. Everything
+/* ══ 1. BOOT ══
+   The full sequence (subsystems coming up one by one) plays once per browser:
+   ~1.5s. Every later load, in this tab or a new one, gets the ~0.45s quick
+   boot; reduced motion is near-instant. Any click or key skips it. Everything
    that waits on the intro listens for `pn:introdone` (or reads the flag). */
 (function () {
   const loader = $('#preloader');
@@ -40,10 +45,10 @@ function trapTab(dialog) {
   if (!loader) { introDone(); return; }
 
   let seen = false;
-  try { seen = sessionStorage.getItem('pn-seen') === '1'; } catch (e) {}
-  try { sessionStorage.setItem('pn-seen', '1'); } catch (e) {}
+  try { seen = sessionStorage.getItem('pn-seen') === '1' || localStorage.getItem('pn-booted') === '1'; } catch (e) {}
+  try { sessionStorage.setItem('pn-seen', '1'); localStorage.setItem('pn-booted', '1'); } catch (e) {}
   const mode = REDUCE_MOTION ? 'calm' : (seen ? 'quick' : 'full');
-  const DURATION = { full: 1300, quick: 450, calm: 150 }[mode];
+  const DURATION = { full: 1500, quick: 450, calm: 150 }[mode];
   loader.classList.add('mode-' + mode);
   root.classList.add('is-loading');
 
@@ -53,13 +58,15 @@ function trapTab(dialog) {
     bar.style.transition = `transform ${DURATION}ms cubic-bezier(.65,0,.35,1)`;
     requestAnimationFrame(() => requestAnimationFrame(() => { bar.style.transform = 'scaleX(1)'; }));
   }
-  const cmdT = setTimeout(() => { if (cmd) cmd.textContent = 'ready ✓'; }, DURATION * .75);
+  const timers = [];
+  if (mode === 'full') $$('#plLog li').forEach((li, i) => timers.push(setTimeout(() => li.classList.add('up'), 220 + i * 140)));
+  timers.push(setTimeout(() => { if (cmd) cmd.textContent = 'system online ✓'; }, DURATION * .8));
 
   let finished = false;
   function finish() {
     if (finished) return;
     finished = true;
-    clearTimeout(cmdT);
+    timers.forEach(clearTimeout);
     document.removeEventListener('keydown', onKey);
     loader.classList.add('gone');
     loader.setAttribute('aria-hidden', 'true');
@@ -897,6 +904,7 @@ const projectEl = key => $$('#projGrid .pj').find(p => slug($('h3', p).textConte
     nodes.forEach(n => n.setAttribute('aria-pressed', n.dataset.node === pinned ? 'true' : 'false'));
     show(pinned);
     place();
+    if (pinned) inspect('layer', pinned, SYSTEM[pinned].label);
   }
   nodes.forEach(n => {
     const k = n.dataset.node;
@@ -998,6 +1006,7 @@ const projectEl = key => $$('#projGrid .pj').find(p => slug($('h3', p).textConte
     pinned = pinned === li ? null : li;
     items.forEach(x => $('.node-btn', x).setAttribute('aria-pressed', x === pinned ? 'true' : 'false'));
     show(pinned);
+    if (pinned) inspect('tech', name(pinned), name(pinned));
   }
   items.forEach(li => {
     const b = $('.node-btn', li);
@@ -1065,6 +1074,8 @@ const projectEl = key => $$('#projGrid .pj').find(p => slug($('h3', p).textConte
     status.textContent = cur ? cur.dataset.status : 'idle';
     conf.textContent = (cur && cur.dataset.conf) || '—';
     scroller.classList.toggle('online', s === N);
+    // Reduced motion starts on the finished state, so only a scrolled-through run counts.
+    if (s === N && !REDUCE_MOTION) inspect('pipeline', 'online', 'Vision pipeline, run end to end');
   }
 
   function measure() {
@@ -1146,6 +1157,7 @@ const Case = (function () {
     if (!dlg.open) dlg.showModal();
     root.classList.add('modal-open');
     $('.case-close', dlg).focus();
+    inspect('case', key, `${tpl.content.querySelector('h2').textContent} case study`);
   }
   // Each section heading becomes a disclosure button. Phones open with only
   // Problem and Architecture expanded; wider screens open everything.
@@ -1298,7 +1310,15 @@ const Eng = (function () {
     }, 420 + rows.length * 75 + 3200));
   }
   panel.addEventListener('pointerdown', () => { userTouched = true; });
-  const rt = { section: $('#rtSection'), viewport: $('#rtViewport'), theme: $('#rtTheme'), motion: $('#rtMotion') };
+  const rt = { section: $('#rtSection'), viewport: $('#rtViewport'), theme: $('#rtTheme'), motion: $('#rtMotion'), local: $('#rtLocal') };
+  // The visitor's own clock (no timeZone option), never presented as server time.
+  const localFmt = window.Intl ? new Intl.DateTimeFormat('en-GB', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : null;
+  function clock() {
+    if (!isOn() || !localFmt) return;
+    const now = new Date();
+    rt.local.textContent = localFmt.format(now).replace(',', ' ·').toLowerCase();
+    rt.local.dateTime = now.toISOString();
+  }
   function runtime() {
     if (!isOn()) return;
     rt.section.textContent = '#' + (root.dataset.context || 'hero');
@@ -1308,6 +1328,8 @@ const Eng = (function () {
   }
   Scroll.add(runtime);
   window.addEventListener('pn:themechange', runtime);
+  window.addEventListener('pn:modechange', clock);
+  setInterval(clock, 30000);
 
   const min = $('#epMin');
   function setMin(m) {
@@ -1374,7 +1396,7 @@ const Eng = (function () {
     $$('.eng-frame, .eng-x').forEach(el => el.style.setProperty('--ed', '0s'));
     btn.setAttribute('aria-pressed', 'true');
     setMin(true);
-    boot(true); runtime();
+    boot(true); runtime(); clock();
   }
   return { isOn, set, toggle: () => set(!isOn()) };
 })();
@@ -1566,6 +1588,12 @@ const Assistant = (function () {
         .concat(p.links.map(l => ({ label: l.label, run: () => window.open(l.href, '_blank', 'noopener') })))
         .concat({ label: 'Show it on the page', run: () => p.el.scrollIntoView({ behavior: REDUCE_MOTION ? 'auto' : 'smooth', block: 'center' }) })
     }),
+    // The one thing on this site that no menu links to. The console hints at it.
+    hidden: () => ({
+      label: 'system message',
+      title: 'You found something that wasn’t in the navigation.',
+      lead: 'Good engineers look deeper.'
+    }),
     fallback: () => ({
       title: 'I can only answer from this portfolio',
       lead: "I couldn't match that to anything on this page. I'm a deterministic assistant, not an AI model, so I won't guess. Try one of these:"
@@ -1573,6 +1601,7 @@ const Assistant = (function () {
   };
 
   function answer(q) {
+    if (/^\s*ls\s+-(a|la|al)\s*$/i.test(q)) { inspect('hidden', 'ls-a', 'A hidden file'); return A.hidden(); }
     const toks = tokens(q);
     if (!toks.length) return A.fallback();
     const project = findProject(q);
@@ -1630,10 +1659,11 @@ const Assistant = (function () {
   const NAV = [
     ['About', '#about', 'fa-user', 'who bio'], ['Experience', '#experience', 'fa-code-branch', 'work roles journey timeline'],
     ['Tech stack', '#skills', 'fa-layer-group', 'skills technologies'], ['System architecture', '#sysmap', 'fa-diagram-project', 'map nodes system'],
-    ['AI pipeline', '#pipeline', 'fa-eye', 'ai ml computer vision yolo'], ['Projects', '#projects', 'fa-folder-open', 'work portfolio'],
+    ['AI pipeline', '#pipeline', 'fa-eye', 'ai lab ml computer vision yolo'], ['Projects', '#projects', 'fa-folder-open', 'work portfolio'],
     ['How I build', '#process', 'fa-gears', 'process engineering deploy testing systems'],
     ['Education', '#education', 'fa-graduation-cap', 'degree certifications'],
-    ['Current focus', '#focus', 'fa-crosshairs', 'now focus areas'], ['Contact', '#contact', 'fa-paper-plane', 'email hire message']
+    ['Current focus', '#focus', 'fa-crosshairs', 'now focus areas'], ['Contact', '#contact', 'fa-paper-plane', 'email hire message'],
+    ['Your exploration', '#sessEnd', 'fa-route', 'session complete trace route restart clear']
   ];
   // "Suggested here": the commands that fit the section being read.
   const HERE = {
@@ -1753,7 +1783,7 @@ const Assistant = (function () {
     head.append(back, el('span', 'ca-q', q));
     wrap.appendChild(head);
     const body = el('div', 'ca-body');
-    body.appendChild(el('span', 'ca-label mono', 'portfolio assistant · from this page'));
+    body.appendChild(el('span', 'ca-label mono', a.label || 'portfolio assistant · from this page'));
     body.appendChild(el('h3', null, a.title));
     if (a.lead) body.appendChild(el('p', 'ca-lead', a.lead));
     if (a.rows && a.rows.length) {
@@ -1878,6 +1908,248 @@ const Assistant = (function () {
   document.documentElement.addEventListener('pointerleave', () => { shown = false; cur.classList.remove('on'); });
 })();
 
+/* ══ 25. SESSION ══
+   The OS layer. One record of the visitor's route through this page, drawn
+   three ways: the rail (where you are), system events (a rare note when
+   something is first discovered) and the trace in "Session complete". It lives
+   in sessionStorage for this tab only and holds section ids and things opened
+   on this page: nothing about the visitor, nothing sent anywhere. */
+(function () {
+  const MODULES = [
+    ['about', 'About'], ['experience', 'Experience'], ['skills', 'Technology'], ['pipeline', 'AI Lab'],
+    ['projects', 'Projects'], ['process', 'Process'], ['education', 'Education'], ['focus', 'Focus'], ['contact', 'Contact']
+  ].filter(([id]) => document.getElementById(id)).map(([id, label]) => ({ id, label }));
+  const labelOf = id => (MODULES.find(m => m.id === id) || {}).label;
+  // Which section a deeper look belongs to on the trace.
+  const HOME = { layer: 'skills', tech: 'skills', pipeline: 'pipeline', case: 'projects' };
+  const KIND = { layer: 'layer', tech: 'tech', pipeline: 'ai lab', case: 'project', eng: 'mode', hidden: 'found' };
+
+  /* — store — */
+  const KEY = 'pn-session';
+  const blank = () => ({ path: [], inspected: [], events: [] });
+  let state = blank();
+  try {
+    const s = JSON.parse(sessionStorage.getItem(KEY));
+    if (s && Array.isArray(s.path) && Array.isArray(s.inspected) && Array.isArray(s.events)) {
+      state = { path: s.path.filter(labelOf), inspected: s.inspected.filter(x => x && KIND[x.kind]), events: s.events };
+    }
+  } catch (e) {}
+  const save = () => { try { sessionStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} };
+  const subs = [];
+  const changed = () => { save(); subs.forEach(f => f()); };
+
+  /* — system events: each at most once, never back to back, four per session — */
+  const toast = document.createElement('div');
+  toast.className = 'sysev';
+  toast.setAttribute('role', 'status');
+  toast.innerHTML = '<span class="sysev-k mono">system event</span><span class="sysev-t mono"></span>';
+  document.body.appendChild(toast);
+  const toastText = $('.sysev-t', toast);
+  let lastAt = -Infinity, hideT = 0, pending = null;
+  function event(key, text) {
+    if (state.events.includes(key) || state.events.length >= 4) return;
+    // Under a dialog the note would go unseen: hold it until the dialog closes.
+    if (document.querySelector('dialog[open]')) { pending = [key, text]; return; }
+    if (performance.now() - lastAt < 12000) return;
+    lastAt = performance.now();
+    state.events.push(key); save();
+    say(text);
+  }
+  function say(text) {
+    toastText.textContent = text;
+    toast.classList.add('on');
+    clearTimeout(hideT);
+    hideT = setTimeout(() => toast.classList.remove('on'), 3600);
+  }
+  $$('dialog').forEach(d => d.addEventListener('close', () => {
+    if (!pending) return;
+    const p = pending; pending = null;
+    setTimeout(() => event(...p), 450);
+  }));
+
+  /* — recording — */
+  // A section counts as explored once the visitor stays in it, not when a
+  // nav jump merely scrolls through it.
+  let current = 'hero', dwell = 0;
+  function onContext(id) {
+    current = id;
+    paintRail();
+    clearTimeout(dwell);
+    if (!labelOf(id) || state.path.includes(id)) return;
+    dwell = setTimeout(() => {
+      state.path.push(id); changed();
+      if (id === 'pipeline') event('ai-lab', 'AI Lab discovered');
+    }, 1200);
+  }
+  window.addEventListener('pn:context', e => onContext(e.detail.context));
+  window.addEventListener('pn:inspect', e => {
+    const { kind, key, label } = e.detail;
+    if (state.inspected.some(x => x.kind === kind && x.key === key)) return;
+    state.inspected.push({ kind, key, label });
+    if (state.inspected.length > 16) state.inspected.shift();
+    changed();
+    const first = state.inspected.filter(x => x.kind === kind).length === 1;
+    if (first && kind === 'layer') event('arch', 'Architecture expanded');
+    if (first && kind === 'case') event('case', 'Project inspected');
+  });
+  window.addEventListener('pn:modechange', e => {
+    if (!e.detail.eng) return;
+    inspect('eng', 'on', 'Engineering Mode');
+    event('eng', 'Engineering mode enabled');
+  });
+
+  /* — rail: a quiet map of the page at the right edge (wide screens only) —
+     A visual mirror of the primary nav, so it is hidden from assistive tech
+     and kept out of the tab order; the nav and the summary below carry it. */
+  const rail = document.createElement('div');
+  rail.className = 'srail';
+  rail.setAttribute('aria-hidden', 'true');
+  rail.innerHTML = '<span class="srail-track"><span class="srail-fill"></span></span>' +
+    MODULES.map(m => `<a href="#${m.id}" tabindex="-1" data-m="${m.id}"><span class="srail-lbl mono">${m.label}</span><i></i></a>`).join('');
+  document.body.appendChild(rail);
+  const railLinks = $$('a', rail);
+  function paintRail() {
+    const i = MODULES.findIndex(m => m.id === current);
+    rail.classList.toggle('on', i >= 0);
+    railLinks.forEach((a, j) => {
+      a.classList.toggle('cur', j === i);
+      a.classList.toggle('seen', state.path.includes(a.dataset.m));
+    });
+    if (i >= 0) rail.style.setProperty('--p', (i / Math.max(1, MODULES.length - 1)).toFixed(3));
+  }
+  subs.push(paintRail);
+
+  /* — session complete: the route, drawn — */
+  const end = $('#sessEnd');
+  if (end) {
+    const svg = $('#seSvg'), sum = $('#seSum'), list = $('#seInspected');
+    const NS = 'http://www.w3.org/2000/svg';
+    const narrow = window.matchMedia('(max-width: 640px)');
+    const make = (tag, attrs, parent) => {
+      const n = document.createElementNS(NS, tag);
+      Object.entries(attrs).forEach(([k, v]) => n.setAttribute(k, v));
+      if (parent) parent.appendChild(n);
+      return n;
+    };
+    // Desktop: the sections as a left-to-right wave. Phones: a vertical flow.
+    function layout() {
+      const n = MODULES.length;
+      if (narrow.matches) return { w: 300, h: 28 + (n - 1) * 36 + 20, vertical: true,
+        pts: MODULES.map((m, i) => [i % 2 ? 36 : 14, 22 + i * 36]) };
+      return { w: 640, h: 210, vertical: false,
+        pts: MODULES.map((m, i) => [34 + i * (572 / (n - 1)), i % 2 ? 72 : 140]) };
+    }
+    let raf = 0, drawnSig = null, visible = false;
+    function render() {
+      cancelAnimationFrame(raf); raf = 0;
+      const L = layout();
+      const at = id => L.pts[MODULES.findIndex(m => m.id === id)];
+      svg.setAttribute('viewBox', `0 0 ${L.w} ${L.h}`);
+      svg.replaceChildren();
+      make('polyline', { class: 'se-sys', points: L.pts.join(' ') }, svg);
+      const route = make('polyline', { class: 'se-route', points: state.path.map(at).join(' ') }, svg);
+      const counts = {};
+      state.inspected.forEach(x => { if (HOME[x.kind]) counts[HOME[x.kind]] = (counts[HOME[x.kind]] || 0) + 1; });
+      const nodes = MODULES.map((m, i) => {
+        const [x, y] = L.pts[i];
+        const step = state.path.indexOf(m.id);
+        const g = make('g', { class: 'se-node' + (step >= 0 ? ' seen' : '') + (step >= 0 && step === state.path.length - 1 ? ' last' : '') }, svg);
+        make('circle', { class: 'se-ring', cx: x, cy: y, r: 11 }, g);
+        make('circle', { class: 'se-dot', cx: x, cy: y, r: 5 }, g);
+        const up = !L.vertical && i % 2;
+        const t = make('text', L.vertical
+          ? { x: 104, y: y + 4, class: 'se-lbl' }
+          : { x, y: up ? y - 22 : y + 30, 'text-anchor': 'middle', class: 'se-lbl' }, g);
+        t.textContent = m.label.toUpperCase();
+        if (step >= 0) {
+          const s = make('text', L.vertical
+            ? { x: 94, y: y + 4, 'text-anchor': 'end', class: 'se-step' }
+            : { x, y: up ? y - 36 : y + 44, 'text-anchor': 'middle', class: 'se-step' }, g);
+          s.textContent = String(step + 1).padStart(2, '0') + (counts[m.id] ? ` · +${counts[m.id]}` : '');
+        }
+        return g;
+      });
+      const packet = make('circle', { class: 'se-packet', r: 3.5, cx: 0, cy: 0, visibility: 'hidden' }, svg);
+      paintText();
+      return { route, nodes, packet, L, at };
+    }
+    function paintText() {
+      const n = state.path.length, k = state.inspected.length;
+      sum.textContent = n
+        ? `${n} of ${MODULES.length} sections explored` + (k ? `, ${k} thing${k > 1 ? 's' : ''} inspected` : '') +
+          `. Route: ${state.path.map(labelOf).join(' → ')}.`
+        : 'Nothing explored yet. The route draws itself as you stop to read.';
+      list.replaceChildren();
+      if (!k) {
+        const li = document.createElement('li');
+        li.className = 'se-empty';
+        li.textContent = 'Nothing yet. Select a system layer or a technology, or open a case study.';
+        list.appendChild(li);
+      }
+      state.inspected.forEach(x => {
+        const li = document.createElement('li');
+        const kind = document.createElement('span');
+        kind.className = 'mono'; kind.textContent = KIND[x.kind];
+        li.append(kind, document.createTextNode(' ' + x.label));
+        list.appendChild(li);
+      });
+    }
+    // The signal runs the route once, lighting each section as it arrives.
+    function draw(v) {
+      const sig = state.path.join();
+      if (REDUCE_MOTION || state.path.length < 2 || sig === drawnSig) return;
+      drawnSig = sig;
+      const len = v.route.getTotalLength();
+      if (!len) return;
+      const seen = v.nodes.filter(g => g.classList.contains('seen'));
+      // Where along the route each visited section sits.
+      let acc = 0;
+      const stops = state.path.map((id, i) => {
+        if (i) { const [a, b] = [v.at(state.path[i - 1]), v.at(id)]; acc += Math.hypot(b[0] - a[0], b[1] - a[1]); }
+        return acc;
+      });
+      const order = state.path.map(id => v.nodes[MODULES.findIndex(m => m.id === id)]);
+      seen.forEach(g => g.classList.add('dim'));
+      v.route.style.strokeDasharray = len;
+      v.packet.setAttribute('visibility', 'visible');
+      const dur = Math.min(2200, 500 + state.path.length * 180), t0 = performance.now();
+      const ease = t => 1 - Math.pow(1 - t, 3);
+      const step = now => {
+        const p = ease(Math.min((now - t0) / dur, 1)), d = len * p;
+        v.route.style.strokeDashoffset = (len - d).toFixed(1);
+        const pt = v.route.getPointAtLength(d);
+        v.packet.setAttribute('cx', pt.x.toFixed(1)); v.packet.setAttribute('cy', pt.y.toFixed(1));
+        order.forEach((g, i) => { if (stops[i] <= d + .5) g.classList.remove('dim'); });
+        if (p < 1) raf = requestAnimationFrame(step);
+        else { raf = 0; v.packet.setAttribute('visibility', 'hidden'); }
+      };
+      raf = requestAnimationFrame(step);
+    }
+    let view = render();
+    subs.push(() => { view = render(); if (visible) draw(view); });
+    narrow.addEventListener('change', () => { view = render(); });
+    new IntersectionObserver(([e]) => {
+      visible = e.isIntersecting;
+      if (visible) draw(view);
+    }, { threshold: .3 }).observe(end);
+
+    $('#seRestart').addEventListener('click', () => {
+      window.scrollTo({ top: 0, behavior: REDUCE_MOTION ? 'auto' : 'smooth' });
+      $('#main').focus({ preventScroll: true });
+    });
+    // Events already shown stay shown: clearing the route shouldn't replay them.
+    $('#seClear').addEventListener('click', () => {
+      state = { ...blank(), events: state.events };
+      drawnSig = null;
+      changed();
+      say('Exploration cleared');
+    });
+  }
+
+  onContext(root.dataset.context || 'hero');
+})();
+
 /* ══ CONSOLE ══ */
 console.log('%cPratyush Nandi%c  Software Developer', 'font:700 14px system-ui;color:#8b7bff', 'font:12px system-ui;color:#8a90a2');
 console.log('%cLike what you see? → pratyushnandi100@gmail.com', 'font:12px ui-monospace,monospace;color:#22d3ee');
+console.log('%cNot everything is in the navigation. Ctrl K, then: ls -a', 'font:12px ui-monospace,monospace;color:#8a90a2');

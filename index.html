@@ -53,7 +53,7 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/devicons/devicon@v2.15.1/devicon.min.css" />
 
   <!-- ?v= is bumped with every release so returning visitors never keep a stale stylesheet. -->
-  <link rel="stylesheet" href="style.css?v=10.0.0" />
+  <link rel="stylesheet" href="style.css?v=10.2.0" />
 
   <!-- Only JS ever removes the preloader, so without it the overlay would cover
        the page forever. Reveal-on-scroll never runs either, so show everything. -->
@@ -127,9 +127,14 @@
       </svg>
       <div class="pl-text">
         <span class="pl-name">Pratyush Nandi</span>
-        <span class="pl-cmd"><span class="pl-prompt">$</span> <span id="plCmd">npm run build</span></span>
+        <span class="pl-cmd"><span class="pl-prompt">$</span> <span id="plCmd">boot --session</span></span>
       </div>
+      <!-- First visit only: the subsystems come up one by one. -->
+      <ol class="pl-log mono" id="plLog">
+        <li>identity</li><li>engineering</li><li>ai systems</li><li>projects</li><li>architecture</li><li>interface</li>
+      </ol>
       <div class="pl-bar"><span id="plBar"></span></div>
+      <p class="pl-skip mono">tap or press any key to skip</p>
     </div>
   </div>
 
@@ -144,7 +149,7 @@
         <li><a href="#about">About</a></li>
         <li><a href="#experience">Experience</a></li>
         <li><a href="#skills">Stack</a></li>
-        <li><a href="#pipeline">AI</a></li>
+        <li><a href="#pipeline">AI Lab</a></li>
         <li><a href="#projects">Projects</a></li>
         <li><a href="#education">Education</a></li>
         <li><a href="#contact">Contact</a></li>
@@ -705,7 +710,7 @@
       <div class="container">
         <header class="sec-head sec-head-split" data-reveal>
           <div>
-            <span class="sec-kicker mono"><span class="sk-num">04</span><span class="sk-sep" aria-hidden="true">/</span> AI / ML</span>
+            <span class="sec-kicker mono"><span class="sk-num">04</span><span class="sk-sep" aria-hidden="true">/</span> AI Lab</span>
             <h2 class="sec-title" id="pipeTitle">How an intelligent system <em class="serif">sees</em></h2>
           </div>
           <p class="sec-sub">Scroll to bring a vision pipeline online, one stage at a time: from a raw camera frame to an
@@ -1327,6 +1332,35 @@
 
   <!-- ═══ FOOTER ═══ -->
   <footer class="footer">
+    <!-- ═══ SESSION COMPLETE ═══
+         The visitor's own route through the page, drawn from what they stopped
+         to read and opened. Kept in sessionStorage for this tab only; nothing
+         about the visitor is collected or sent. Needs JS, so hidden without it. -->
+    <section class="sess-end" id="sessEnd" aria-labelledby="sessTitle">
+      <div class="container se-wrap">
+        <div class="se-copy">
+          <span class="card-label mono">system</span>
+          <h2 class="se-title" id="sessTitle">Session <em class="serif">complete</em></h2>
+          <p class="se-lead">Thanks for exploring. This is the route you took through the system.</p>
+          <p class="se-sum" id="seSum"></p>
+          <div class="se-actions">
+            <button type="button" class="btn btn-primary magnetic" id="seRestart">
+              <i class="fas fa-rotate-left" aria-hidden="true"></i> <span>Restart experience</span>
+            </button>
+            <button type="button" class="btn btn-ghost" id="seClear">Clear exploration</button>
+          </div>
+          <p class="se-note mono">Kept in this tab only. Nothing is sent anywhere.</p>
+        </div>
+        <figure class="se-trace">
+          <svg class="se-svg" id="seSvg" aria-hidden="true"></svg>
+          <figcaption class="se-cap">
+            <span class="mono se-cap-h">inspected</span>
+            <ul class="se-inspected" id="seInspected"></ul>
+          </figcaption>
+        </figure>
+      </div>
+    </section>
+
     <div class="container">
       <div class="foot-top">
         <div class="foot-brand">
@@ -1377,7 +1411,7 @@
         <p class="foot-sys">
           <span>Kolkata · IST <time id="localTime">--:--</time></span>
           <span class="foot-sep" aria-hidden="true">·</span>
-          <span>v10.0.0</span>
+          <span>v10.2.0</span>
         </p>
       </div>
     </div>
@@ -1425,6 +1459,7 @@
           <div><dt>viewport</dt><dd id="rtViewport">–</dd></div>
           <div><dt>theme</dt><dd id="rtTheme">–</dd></div>
           <div><dt>motion</dt><dd id="rtMotion">–</dd></div>
+          <div><dt>your clock</dt><dd><time id="rtLocal">–</time></dd></div>
         </dl>
       </details>
       <button type="button" class="ep-arch" id="epArch"><i class="fas fa-diagram-project" aria-hidden="true"></i> View architecture</button>
@@ -1666,7 +1701,7 @@
     </div>
   </div>
 
-  <script src="script.js?v=10.0.0"></script>
+  <script src="script.js?v=10.2.0"></script>
 </body>
 
 </html>
