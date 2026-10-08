@@ -249,7 +249,13 @@ test('contact form validates, then submits (API mocked)', async ({ page }) => {
     return route.fulfill({ json: { success: true } });
   });
   const status = page.locator('#cfStatus');
-  await page.locator('#contactForm').scrollIntoViewIfNeeded();
+  // Progressive disclosure: the form opens from its prompt and takes focus.
+  const start = page.locator('#cfStart');
+  await start.scrollIntoViewIfNeeded();
+  await expect(page.locator('#contactForm')).toBeHidden();
+  await start.click();
+  await expect(start).toHaveAttribute('aria-expanded', 'true');
+  await expect(page.locator('#cfName')).toBeFocused();
   await page.locator('#cfBtn').click();
   await expect(status).toContainText('name is required');
   expect(posts).toBe(0);
