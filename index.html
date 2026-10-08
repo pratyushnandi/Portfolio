@@ -1332,7 +1332,7 @@
           <span class="foot-sep" aria-hidden="true">·</span>
           <span>IST <time id="localTime">--:--</time></span>
           <span class="foot-sep" aria-hidden="true">·</span>
-          <span>v9.0.0</span>
+          <span>v9.0.1</span>
         </p>
       </div>
     </div>
@@ -1453,7 +1453,7 @@
         <ol class="cs-flow">
           <li style="--i:0"><span class="cf-ico" aria-hidden="true"><i class="fas fa-video"></i></span><strong>Camera feed</strong><span class="mono">live video</span></li>
           <li style="--i:1"><span class="cf-ico" aria-hidden="true"><i class="devicon-opencv-plain"></i></span><strong>Python + OpenCV</strong><span class="mono">frame processing</span></li>
-          <li style="--i:2"><span class="cf-ico" aria-hidden="true"><i class="fas fa-brain"></i></span><strong>ML models</strong><span class="mono">violation detection</span></li>
+          <li style="--i:2"><span class="cf-ico" aria-hidden="true"><i class="fas fa-brain"></i></span><strong>YOLOv8 models</strong><span class="mono">violation detection</span></li>
           <li style="--i:3"><span class="cf-ico" aria-hidden="true"><i class="fas fa-triangle-exclamation"></i></span><strong>Alert</strong><span class="mono">for enforcement</span></li>
         </ol>
       </div>
@@ -1463,8 +1463,9 @@
       <dl class="cs-tech">
         <div><dt>Python</dt><dd>The pipeline and the models.</dd></div>
         <div><dt>OpenCV</dt><dd>Reading and processing video frames.</dd></div>
+        <div><dt>YOLOv8 · Ultralytics</dt><dd>The detection models: one for helmet violations, others for vehicles, traffic lights and red-light violations.</dd></div>
         <div><dt>ML · Computer Vision</dt><dd>Detecting vehicles, riders and signal state in each frame.</dd></div>
-        <div><dt>Jupyter Notebook</dt><dd>Where the project is developed: the repository's primary language.</dd></div>
+        <div><dt>Jupyter Notebook · Google Colab</dt><dd>Where the models are trained and evaluated: the repository's primary language.</dd></div>
       </dl>
     </section>
     <section class="cs-sec">
@@ -1475,8 +1476,9 @@
     </section>
     <section class="cs-sec">
       <h3 class="mono">solution</h3>
-      <div><p>One pipeline instead of three tools. Frames from the camera feed are processed with OpenCV and passed to
-        ML models that check for each violation, and anything they find is raised as an alert.</p></div>
+      <div><p>One pipeline instead of three tools. Frames from the camera feed are processed and passed to YOLOv8
+        detection models that look for vehicles, signal states, helmets and stop-line crossings, and anything that
+        breaks a rule is raised as an alert.</p></div>
     </section>
     <section class="cs-sec">
       <h3 class="mono">engineering</h3>
@@ -1486,8 +1488,36 @@
         <li><strong>Alerts, not raw detections.</strong> The output is a violation alert, so people review what matters rather than every detected object.</li>
       </ul>
     </section>
+    <section class="cs-sec">
+      <h3 class="mono">result</h3>
+      <div>
+        <p>Evaluation runs recorded in the repository's notebooks. Known limitation: on the small held-out helmet
+          test set, recall drops to 0.52, so more varied helmet data is the clear next step.</p>
+        <section class="cs-table-wrap" aria-label="Detectify evaluation results" tabindex="0">
+          <table class="cs-metrics">
+            <caption class="sr-only">Detectify model evaluation results</caption>
+            <thead>
+              <tr><th scope="col">Model · data</th><th scope="col">Precision</th><th scope="col">Recall</th><th scope="col">mAP50</th><th scope="col">mAP50-95</th></tr>
+            </thead>
+            <tbody>
+              <tr><th scope="row">Helmet violation<span class="mono">validation · 30 images · 38 objects</span></th><td>0.868</td><td>0.908</td><td><strong>0.989</strong></td><td>0.775</td></tr>
+              <tr><th scope="row">Helmet violation<span class="mono">held-out test · 11 images · 15 objects</span></th><td>0.958</td><td>0.522</td><td>0.625</td><td>0.467</td></tr>
+              <tr><th scope="row">Vehicles &amp; traffic lights<span class="mono">validation · 655 images · 3,225 objects</span></th><td>0.812</td><td>0.830</td><td>0.870</td><td>0.640</td></tr>
+              <tr><th scope="row">Red-light violation<span class="mono">test · 319 images · 1,492 objects</span></th><td>0.809</td><td>0.837</td><td>0.886</td><td>0.664</td></tr>
+            </tbody>
+          </table>
+        </section>
+        <p class="cs-note mono">Inference took about 4–6 ms per 640 × 640 image during validation on Google Colab.</p>
+      </div>
+    </section>
+    <section class="cs-sec">
+      <h3 class="mono">my contribution</h3>
+      <div><p>Sole contributor to the public repository. It holds the two model notebooks I built: helmet-violation
+        detection, and traffic-light, vehicle and red-light-violation detection, each trained and evaluated with
+        Ultralytics YOLOv8.</p></div>
+    </section>
     <div class="cs-foot">
-      <p class="mono">Performance metrics and model details aren't published here.</p>
+      <p class="mono">Results above are from the repository's recorded evaluation runs.</p>
       <div class="cs-actions">
         <a href="https://github.com/pratyushnandi/DETECTIFY" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-ghost"><i class="fab fa-github" aria-hidden="true"></i> Source code</a>
         <a href="#contact" class="btn btn-sm btn-primary" data-close-case><span>Ask me about it</span> <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
@@ -1536,7 +1566,8 @@
     <section class="cs-sec">
       <h3 class="mono">solution</h3>
       <div><p>A single Laravel application over one MySQL database, with separate views for companies, students and
-        admins, and notifications when an application changes.</p></div>
+        admins: students upload resumes and apply, companies review eligible candidates, and notifications follow
+        each application as it changes.</p></div>
     </section>
     <section class="cs-sec">
       <h3 class="mono">engineering</h3>
@@ -1546,8 +1577,13 @@
         <li><strong>Oversight built in.</strong> Admin dashboards give a single view across postings and applications.</li>
       </ul>
     </section>
+    <section class="cs-sec">
+      <h3 class="mono">result</h3>
+      <div><p>A responsive, working platform that covers the whole campus-recruitment workflow in one place: job
+        postings, eligibility review, resume upload, applications and real-time status tracking.</p></div>
+    </section>
     <div class="cs-foot">
-      <p class="mono">Outcome metrics aren't published here.</p>
+      <p class="mono">Usage metrics aren't published here.</p>
       <div class="cs-actions">
         <a href="https://github.com/pratyushnandi" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-ghost"><i class="fab fa-github" aria-hidden="true"></i> GitHub</a>
         <a href="#contact" class="btn btn-sm btn-primary" data-close-case><span>Ask me about it</span> <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
