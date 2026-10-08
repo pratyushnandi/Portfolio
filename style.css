@@ -2477,3 +2477,27 @@ html.modal-open { overflow: hidden; }
 .cs-sec { grid-template-columns: 130px minmax(0, 1fr); }
 .cs-panel { min-width: 0; }
 @media (max-width: 760px) { .cs-sec { grid-template-columns: minmax(0, 1fr); } }
+/* ─── Wide project card (Ambulance Management System) ─── */
+.pj-wide { grid-column: 1 / -1; display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); }
+.pj-wide .pj-art { aspect-ratio: auto; min-height: 220px; border-bottom: 0; border-right: 1px solid var(--line); }
+.pj-wide .pj-body { justify-content: center; padding: 26px 30px; }
+.art-dispatch {
+  display: grid; gap: 7px; width: min(300px, 78%); padding: 14px; border-radius: 12px;
+  background: var(--surface); border: 1px solid var(--line-2); box-shadow: var(--shadow-lg);
+  font-family: var(--mono); font-size: .66rem; color: var(--text-2);
+}
+.art-dispatch b { font-weight: 500; font-size: .6rem; letter-spacing: .14em; text-transform: uppercase; color: var(--text-3); margin-bottom: 2px; }
+.ad-row { display: grid; grid-template-columns: 10px 1fr auto; align-items: center; gap: 8px; padding: 6px 8px; border-radius: 7px; background: var(--surface-2); border: 1px solid var(--line); }
+.ad-row i { width: 7px; height: 7px; border-radius: 50%; background: var(--ok); }
+.ad-row i.on { background: var(--accent); box-shadow: 0 0 8px var(--accent); }
+.ad-row i.busy { background: var(--err); }
+.ad-row em { font-style: normal; color: var(--text); }
+.pj-card:hover .art-dispatch .ad-row:first-of-type { border-color: color-mix(in srgb, var(--accent) 45%, transparent); }
+@media (max-width: 960px) {
+  .pj-wide { grid-column: 1 / -1; }
+}
+@media (max-width: 640px) {
+  .pj-wide { grid-template-columns: 1fr; }
+  .pj-wide .pj-art { aspect-ratio: 16 / 10; min-height: 0; border-right: 0; border-bottom: 1px solid var(--line); }
+  .pj-wide .pj-body { padding: 22px 24px 24px; }
+}

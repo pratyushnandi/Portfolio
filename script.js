@@ -682,10 +682,10 @@ const SYSTEM = {
     tech: ['react', 'nextjs', 'typescript', 'javascript', 'html5', 'css3'], projects: ['code-editor', 'portfolio-website', 'cyber-calendar'] },
   api: { label: 'API', layer: 'service', tagline: 'The contract between client and system',
     desc: 'REST APIs on Node.js with Fastify or Express, plus Python where the work is data or ML.',
-    tech: ['nodejs', 'fastify', 'express', 'rest', 'python', 'laravel'], projects: ['campus-recruitment-system', 'web-calculator', 'background-changer'] },
+    tech: ['nodejs', 'fastify', 'express', 'rest', 'python', 'laravel'], projects: ['campus-recruitment-system', 'ambulance-management-system', 'web-calculator', 'background-changer'] },
   database: { label: 'Database', layer: 'service', tagline: 'Durable, queryable state',
     desc: 'Relational data in PostgreSQL or MySQL through Prisma, and MongoDB where documents fit better.',
-    tech: ['postgresql', 'mysql', 'prisma', 'mongodb'], projects: ['campus-recruitment-system'] },
+    tech: ['postgresql', 'mysql', 'prisma', 'mongodb'], projects: ['campus-recruitment-system', 'ambulance-management-system'] },
   aiml: { label: 'AI / ML', layer: 'intelligence', tagline: 'Learning from data',
     desc: 'Python machine learning that turns raw input into predictions the rest of the system can act on.',
     tech: ['python', 'aiml', 'opencv'], projects: ['detectify'] },
@@ -1399,7 +1399,8 @@ const Assistant = (function () {
   const PROJECT_ALIAS = {
     detectify: ['detectify', 'traffic'], 'campus-recruitment-system': ['campus', 'recruitment'],
     'code-editor': ['code editor', 'editor'], 'web-calculator': ['calculator'], 'rock-paper-scissors': ['rock paper', 'rps'],
-    'cyber-calendar': ['calendar'], 'background-changer': ['background changer', 'background'], 'portfolio-website': ['portfolio website']
+    'cyber-calendar': ['calendar'], 'background-changer': ['background changer', 'background'], 'portfolio-website': ['portfolio website'],
+    'ambulance-management-system': ['ambulance']
   };
   const INTENTS = {
     ai: ['ai', 'ml', 'machine', 'learning', 'vision', 'model', 'models', 'detection', 'intelligent', 'inference', 'yolo', 'opencv'],
