@@ -2662,3 +2662,140 @@ html.modal-open { overflow: hidden; }
 @media (prefers-reduced-motion: reduce) {
   .form-shell.is-open #contactForm { animation: none; }
 }
+
+/* ══════════════════════════════════════════════════════
+   v11 · SESSION LAYER
+   Boot, rail, system events, session complete. One quiet
+   system under the page, discovered as you go (script.js §1, §25).
+══════════════════════════════════════════════════════ */
+
+/* ─── Boot: subsystems come up, first visit only ─── */
+.pl-log, .pl-skip { display: none; }
+#preloader.mode-full .pl-log {
+  display: grid; gap: 3px; width: 232px;
+  font-size: .62rem; letter-spacing: .12em; text-transform: uppercase; color: var(--color-muted);
+}
+.pl-log li { display: flex; align-items: baseline; gap: 8px; opacity: .4; transition: opacity var(--duration-fast), color var(--duration-fast); }
+/* name · leader · state, with the state drawn from ::before so it sits last */
+.pl-log li::after { content: ''; order: 1; flex: 1; border-bottom: 1px dotted var(--color-border-strong); transform: translateY(-3px); }
+.pl-log li::before { content: 'standby'; order: 2; }
+.pl-log li.up { opacity: 1; color: var(--color-text-secondary); }
+.pl-log li.up::before { content: 'ready'; color: var(--color-success); }
+#preloader.mode-full .pl-skip {
+  display: block; font-size: .6rem; letter-spacing: .12em; text-transform: uppercase; color: var(--color-muted);
+  animation: fade-in .4s ease .6s both;
+}
+
+/* ─── Rail: where you are, where you have been ───
+   Wide screens only; below that the nav and its progress bar do the job. */
+.srail { display: none; }
+@media (min-width: 1360px) and (hover: hover) {
+  .srail {
+    position: fixed; right: 18px; top: 50%; z-index: var(--z-float);
+    display: grid; gap: 14px; justify-items: end;
+    opacity: 0; transform: translate(8px, -50%); pointer-events: none;
+    transition: opacity var(--duration-normal) var(--ease-out), transform var(--duration-normal) var(--ease-out);
+  }
+  .srail.on { opacity: 1; transform: translate(0, -50%); pointer-events: auto; }
+}
+.srail a { display: flex; align-items: center; gap: 10px; height: 14px; }
+.srail i {
+  position: relative; z-index: 1; width: 7px; height: 7px; border-radius: 50%; flex: none;
+  background: var(--color-bg); border: 1px solid var(--line-strong);
+  transition: background-color var(--duration-fast), border-color var(--duration-fast), box-shadow var(--duration-fast);
+}
+.srail a.seen i { background: var(--color-muted); border-color: var(--color-muted); }
+.srail a.cur i { background: var(--color-accent); border-color: var(--color-accent); box-shadow: 0 0 0 4px var(--color-accent-soft); }
+.srail a:hover i { border-color: var(--color-accent); }
+.srail-lbl {
+  padding: 2px 8px; border-radius: var(--radius-pill); white-space: nowrap;
+  font-size: .6rem; letter-spacing: .12em; text-transform: uppercase; color: var(--color-text-secondary);
+  background: var(--glass); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+  opacity: 0; transform: translateX(6px);
+  transition: opacity var(--duration-fast), transform var(--duration-fast) var(--ease-out), color var(--duration-fast);
+}
+.srail:hover .srail-lbl { opacity: 1; transform: none; }
+.srail a:hover .srail-lbl, .srail a.cur .srail-lbl { color: var(--color-text); }
+/* The current section is named permanently only where the margin can hold it. */
+@media (min-width: 1520px) { .srail a.cur .srail-lbl { opacity: 1; transform: none; } }
+/* Track through the dot centres; the cyan fill is the signal, up to here. */
+.srail-track { position: absolute; right: 3px; top: 7px; bottom: 7px; width: 1px; background: var(--color-border-strong); }
+.srail-fill {
+  position: absolute; inset: 0; background: var(--color-signal);
+  transform-origin: top; transform: scaleY(var(--p, 0));
+  transition: transform var(--duration-slow) var(--ease-out);
+}
+
+/* ─── System events: rare, small, never in the way ─── */
+.sysev {
+  position: fixed; left: 50%; bottom: 22px; z-index: var(--z-float);
+  display: flex; align-items: center; gap: 12px; max-width: calc(100vw - 32px);
+  padding: 10px 16px; border-radius: var(--radius-pill); white-space: nowrap;
+  font-size: .62rem; letter-spacing: .14em; text-transform: uppercase;
+  background: var(--glass); border: 1px solid var(--color-border-strong); box-shadow: var(--shadow-lg);
+  -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
+  opacity: 0; transform: translate(-50%, 10px); pointer-events: none;
+  transition: opacity .4s var(--ease-out), transform .5s var(--ease-out);
+}
+.sysev.on { opacity: 1; transform: translate(-50%, 0); }
+.sysev-k { display: inline-flex; align-items: center; gap: 8px; color: var(--color-muted); }
+.sysev-k::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--color-signal); }
+.sysev-t { color: var(--color-text); }
+@media (max-width: 640px) {
+  /* Above the fold on phones, clear of the back-to-top button. */
+  .sysev {
+    top: 88px; bottom: auto; flex-direction: column; align-items: flex-start; gap: 2px;
+    border-radius: var(--radius-md); transform: translate(-50%, -8px);
+  }
+}
+
+/* ─── Session complete ─── */
+.sess-end { display: none; }
+.js .sess-end {
+  display: block;
+  padding-bottom: clamp(56px, 7vw, 88px); margin-bottom: clamp(56px, 7vw, 88px);
+  border-bottom: 1px solid var(--color-border);
+}
+.se-wrap { display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); gap: clamp(32px, 5vw, 72px); align-items: center; }
+.se-copy { display: grid; justify-items: start; gap: var(--space-sm); }
+.se-title { font-size: clamp(2rem, 4.4vw, 3.2rem); letter-spacing: -.045em; }
+.se-lead { color: var(--color-text-secondary); max-width: 40ch; }
+.se-sum { max-width: 46ch; font-size: .9rem; color: var(--color-text); }
+.se-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: var(--space-xs); }
+.se-note { font-size: .66rem; letter-spacing: .04em; color: var(--color-muted); }
+
+.se-trace {
+  padding: clamp(16px, 3vw, 28px); border-radius: var(--radius-lg);
+  background: var(--color-surface); border: 1px solid var(--color-border); box-shadow: var(--shadow-md);
+}
+.se-svg { width: 100%; height: auto; overflow: visible; }
+.se-sys { fill: none; stroke: var(--color-border-strong); stroke-width: 1; stroke-dasharray: 3 5; }
+.se-route { fill: none; stroke: var(--color-accent); stroke-width: 1.6; stroke-linejoin: round; stroke-linecap: round; }
+.se-ring { fill: none; stroke: none; }
+.se-dot { fill: var(--color-surface); stroke: var(--line-strong); stroke-width: 1.2; transition: fill .3s, stroke .3s; }
+.se-lbl { font-family: var(--mono); font-size: 10px; letter-spacing: .1em; fill: var(--color-muted); transition: fill .3s; }
+.se-step { font-family: var(--mono); font-size: 9px; letter-spacing: .06em; fill: var(--accent-ink); transition: opacity .3s; }
+.se-node.seen .se-dot { fill: var(--color-accent); stroke: var(--color-accent); }
+.se-node.seen .se-lbl { fill: var(--color-text); }
+.se-node.last .se-ring { stroke: var(--color-accent); stroke-opacity: .35; }
+/* While the signal is running the route, sections wait for it to arrive. */
+.se-node.dim .se-dot { fill: var(--color-surface); stroke: var(--line-strong); }
+.se-node.dim .se-lbl { fill: var(--color-muted); }
+.se-node.dim .se-step, .se-node.dim .se-ring { opacity: 0; }
+.se-packet { fill: var(--color-signal); }
+
+.se-cap { display: grid; gap: 10px; margin-top: var(--space-md); padding-top: var(--space-md); border-top: 1px solid var(--color-border); }
+.se-cap-h { font-size: .62rem; letter-spacing: var(--tracking-kicker); text-transform: uppercase; color: var(--color-muted); }
+.se-inspected { display: flex; flex-wrap: wrap; gap: 6px; }
+.se-inspected li {
+  padding: 4px 10px; border-radius: var(--radius-pill); border: 1px solid var(--color-border-strong);
+  font-size: .78rem; color: var(--color-text-secondary);
+}
+.se-inspected li .mono { margin-right: 2px; font-size: .6rem; letter-spacing: .1em; text-transform: uppercase; color: var(--accent-ink); }
+.se-inspected .se-empty { padding: 0; border: 0; font-size: .82rem; color: var(--color-muted); }
+
+@media (max-width: 960px) { .se-wrap { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 640px) {
+  .se-svg { max-width: 340px; }
+  .se-actions .btn { flex: 1 1 auto; }
+}

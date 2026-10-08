@@ -241,6 +241,42 @@ test('command palette suggests commands for the section being read', async ({ pa
   await expect(page.locator('.cmdk-item').first()).toContainText('Copy email address');
 });
 
+test('boot plays in full once per browser, then stays quick', async ({ page }) => {
+  await open(page);
+  expect(await page.evaluate(() => localStorage.getItem('pn-booted'))).toBe('1');
+  await page.evaluate(() => sessionStorage.clear());
+  await page.reload({ waitUntil: 'domcontentloaded' });
+  await expect(page.locator('#preloader')).not.toHaveClass(/mode-full/);
+});
+
+test('session layer records the route, draws it at the end and clears it', async ({ page }) => {
+  await open(page);
+  const path = () => page.evaluate(() => (JSON.parse(sessionStorage.getItem('pn-session') || '{}').path) || []);
+  await page.evaluate(() => document.getElementById('skills').scrollIntoView());
+  // A section only counts once the visitor stays in it.
+  await expect.poll(path, { timeout: 5000 }).toContain('skills');
+  await page.locator('.sm-node[data-node="cv"]').click();
+
+  await page.locator('#sessEnd').scrollIntoViewIfNeeded();
+  await expect(page.locator('#seSum')).toContainText('Technology');
+  await expect(page.locator('#seInspected')).toContainText('Computer Vision');
+  await expect(page.locator('#seSvg .se-node.seen')).not.toHaveCount(0);
+
+  await page.locator('#seClear').click();
+  await expect(page.locator('#seSum')).toContainText('Nothing explored yet');
+  await expect(page.locator('.sysev')).toContainText('Exploration cleared');
+  expect(await path()).toEqual([]);
+});
+
+test('the hidden command answers with a system message', async ({ page }) => {
+  await open(page);
+  await page.locator('#cmdkBtn').click();
+  await page.locator('#cmdkInput').fill('ls -a');
+  await page.keyboard.press('Enter');
+  await expect(page.locator('#cmdkAnswer h3')).toContainText('wasn’t in the navigation');
+  await expect(page.locator('#cmdkAnswer')).toContainText('Good engineers look deeper.');
+});
+
 test('contact form validates, then submits (API mocked)', async ({ page }) => {
   await open(page);
   let posts = 0;
