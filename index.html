@@ -898,8 +898,8 @@
             </div>
           </article>
 
-          <!-- ASPEND — Featured. Private repository: everything here comes from its
-               code, README and commit history. -->
+          <!-- ASPEND — Featured. Built at Eltern Segen Technologie; private repository.
+               Only product behaviour and high-level architecture are shown. -->
           <article class="pj pj-feature pj-flip" data-cat="mobile" data-reveal data-flow="Expo Router screens → Zustand store → repositories → SQLite on device · CSV / XLSX / PDF export">
             <div class="pj-media pj-media-art art-phone-stage" aria-hidden="true">
               <span class="art-phone-body">
@@ -914,7 +914,7 @@
               <span class="pj-badge mono"><i class="fas fa-star" aria-hidden="true"></i> Case study</span>
             </div>
             <div class="pj-body">
-              <span class="pj-cat mono">Mobile App · Android</span>
+              <span class="pj-cat mono">Mobile App · Android · at Eltern Segen</span>
               <h3>Aspend</h3>
               <p class="pj-tagline">Offline-first expense tracker for Android</p>
               <p class="pj-desc">Quick one-handed entry, credit-card accounting that tracks limits and due dates without counting
@@ -923,13 +923,13 @@
               <ul class="tags"><li>React Native</li><li>Expo</li><li>TypeScript</li><li>SQLite</li><li>Zustand</li></ul>
               <div class="pj-links">
                 <button type="button" class="btn btn-sm btn-primary" data-case="aspend" aria-haspopup="dialog"><span>Read the case study</span> <i class="fas fa-arrow-right" aria-hidden="true"></i></button>
-                <span class="pj-private mono"><i class="fas fa-lock" aria-hidden="true"></i> Private repository</span>
+                <span class="pj-private mono"><i class="fas fa-lock" aria-hidden="true"></i> Built at Eltern Segen Technologie · private</span>
               </div>
             </div>
           </article>
 
           <!-- CAMPUS RECRUITMENT -->
-          <article class="pj pj-card" data-cat="web fullstack" data-reveal data-flow="browser → Laravel (PHP) → MySQL · notifications · admin dashboard">
+          <article class="pj pj-card" data-cat="web fullstack" data-reveal data-flow="browser (HTML · JS) → Express REST API · JWT roles → JSON store · resume files · CSV export">
             <div class="pj-art art-board" aria-hidden="true">
               <span class="art-kanban">
                 <span><b>applied</b><i></i><i></i><i></i></span>
@@ -941,9 +941,10 @@
               <span class="pj-cat mono">Web App · Full-Stack</span>
               <h3>Campus Recruitment System</h3>
               <p class="pj-tagline">Campus recruitment, from posting to offer</p>
-              <p class="pj-desc">A PHP and Laravel platform: companies post jobs and review eligible students; students register,
-                upload resumes, apply and track each application with real-time notifications; admins oversee both.</p>
-              <ul class="tags"><li>PHP</li><li>Laravel</li><li>MySQL</li><li>HTML/CSS</li></ul>
+              <p class="pj-desc">A campus placement portal on Node.js and Express with three roles. Students see their eligibility
+                for each job before applying and follow every application through its stages; recruiters post drives and
+                move candidates along; the placement office approves postings, verifies companies and exports the register.</p>
+              <ul class="tags"><li>Node.js</li><li>Express</li><li>JWT</li><li>JavaScript</li><li>HTML/CSS</li></ul>
               <div class="pj-links">
                 <button type="button" class="btn btn-sm btn-ghost" data-case="campus-recruitment-system" aria-haspopup="dialog"><span>Case study</span> <i class="fas fa-arrow-right" aria-hidden="true"></i></button>
               </div>
@@ -1640,14 +1641,14 @@
 
   <template id="case-aspend">
     <div class="cs-head">
-      <span class="pj-cat mono">case study · mobile · android</span>
+      <span class="pj-cat mono">case study · mobile · android · eltern segen technologie</span>
       <h2 id="caseTitle">Aspend</h2>
       <p class="cs-tagline">Offline-first expense tracker for Android</p>
       <ul class="tags"><li>React Native</li><li>Expo</li><li>TypeScript</li><li>SQLite</li><li>Zustand</li></ul>
       <dl class="cs-facts">
         <div><dt class="mono">role</dt><dd>Design &amp; development</dd></div>
-        <div><dt class="mono">builds</dt><dd>v1.0.0 → v1.0.5</dd></div>
-        <div><dt class="mono">evidence</dt><dd>Private repository</dd></div>
+        <div><dt class="mono">built at</dt><dd>Eltern Segen Technologie</dd></div>
+        <div><dt class="mono">platform</dt><dd>Android</dd></div>
       </dl>
     </div>
     <section class="cs-sec">
@@ -1658,8 +1659,8 @@
     </section>
     <section class="cs-sec">
       <h3 class="mono">my contribution</h3>
-      <div><p>I designed and built the app: the data model, the credit-card ledger, the screens, exports, app lock, Google
-        Drive backup and the release pipeline. 21 of the repository's 23 commits are mine.</p></div>
+      <div><p>Built as part of my role at Eltern Segen Technologie. I designed and developed the app: the data model, the
+        credit-card ledger, the screens, exports, the app lock and Google Drive backup.</p></div>
     </section>
     <section class="cs-sec">
       <h3 class="mono">architecture</h3>
@@ -1684,7 +1685,6 @@
         <div><dt>Local authentication</dt><dd>Fingerprint or face unlock, and a 4-digit PIN kept in secure storage.</dd></div>
         <div><dt>Exports</dt><dd>CSV, Excel and PDF reports sent through the Android share sheet.</dd></div>
         <div><dt>Google Drive API</dt><dd>Optional backup and restore, signed in with OAuth 2.0.</dd></div>
-        <div><dt>GitHub Actions</dt><dd>Pushing a version tag builds the APK and publishes a release.</dd></div>
       </dl>
     </section>
     <section class="cs-sec">
@@ -1698,16 +1698,15 @@
         <li><strong>Payments are not expenses.</strong> Card purchases are expenses; bill payments live in their own table. A card's outstanding balance is purchases minus payments, never below zero, and available credit is the limit minus that balance.</li>
         <li><strong>Offline first.</strong> All data sits in one SQLite file on the device, with no account and no server. Backup is the user's explicit choice: a JSON snapshot or Google Drive.</li>
         <li><strong>A lock that resists guessing.</strong> After five wrong PINs the app locks, and the lockout grows with each further failure.</li>
-        <li><strong>Tested where money is calculated.</strong> Unit tests cover totals, daily trends across month and leap-year boundaries, card-ledger edge cases and the PIN lockout.</li>
       </ul>
     </section>
     <section class="cs-sec">
       <h3 class="mono">result</h3>
-      <div><p>A working Android app, released as builds v1.0.0 to v1.0.5, with automated APK releases from version tags. No
-        download or usage numbers are published here.</p></div>
+      <div><p>A working Android app with the money logic covered by unit tests. No download or usage numbers are published
+        here.</p></div>
     </section>
     <div class="cs-foot">
-      <p class="mono">The repository is private. Everything above comes from its code, README, tests and commit history.</p>
+      <p class="mono">Built at Eltern Segen Technologie. The source is private, so only product behaviour and high-level design are shown.</p>
       <div class="cs-actions">
         <a href="#contact" class="btn btn-sm btn-primary" data-close-case><span>Ask me about it</span> <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
       </div>
@@ -1718,61 +1717,68 @@
     <div class="cs-head">
       <span class="pj-cat mono">case study · web app · full-stack</span>
       <h2 id="caseTitle">Campus Recruitment System</h2>
-      <p class="cs-tagline">Full-Stack Campus Recruitment Management Platform</p>
-      <ul class="tags"><li>PHP</li><li>Laravel</li><li>MySQL</li><li>HTML/CSS</li></ul>
+      <p class="cs-tagline">Campus placement, from posting to offer</p>
+      <ul class="tags"><li>Node.js</li><li>Express</li><li>JWT</li><li>JavaScript</li><li>HTML/CSS</li></ul>
+      <dl class="cs-facts">
+        <div><dt class="mono">roles</dt><dd>Student · Recruiter · Placement office</dd></div>
+        <div><dt class="mono">api</dt><dd>REST on Express</dd></div>
+        <div><dt class="mono">evidence</dt><dd>Private source</dd></div>
+      </dl>
     </div>
     <section class="cs-sec">
       <h3 class="mono">problem</h3>
-      <div><p>Campus recruitment brings companies and students together around job postings, applications and their
-        status. Both sides need one place to manage all of it.</p></div>
+      <div><p>Campus placement runs on three groups who need different things from the same data. Students want to know
+        which drives they qualify for and where each application stands. Recruiters want a clean shortlist. The training
+        and placement office has to approve everything and report on outcomes.</p></div>
     </section>
     <section class="cs-sec">
       <h3 class="mono">architecture</h3>
       <div>
-        <p>A Laravel application serves the interface, handles the logic for postings and applications, and stores
-          everything in MySQL.</p>
+        <p>A Node.js and Express server hosts plain HTML, CSS and JavaScript pages and a REST API behind them. Every request
+          carries a JWT that names its role; route guards check the role before any data is read. Data lives in a small
+          JSON-file store behind one module, so moving to SQLite or PostgreSQL means replacing only that module.</p>
         <ol class="cs-flow">
-          <li style="--i:0"><span class="cf-ico" aria-hidden="true"><i class="fas fa-desktop"></i></span><strong>Browser</strong><span class="mono">HTML · CSS</span></li>
-          <li style="--i:1"><span class="cf-ico" aria-hidden="true"><i class="devicon-laravel-plain"></i></span><strong>Laravel (PHP)</strong><span class="mono">application logic</span></li>
-          <li style="--i:2"><span class="cf-ico" aria-hidden="true"><i class="devicon-mysql-plain"></i></span><strong>MySQL</strong><span class="mono">jobs · applications</span></li>
-          <li style="--i:3"><span class="cf-ico" aria-hidden="true"><i class="fas fa-bell"></i></span><strong>Notifications</strong><span class="mono">+ admin dashboards</span></li>
+          <li style="--i:0"><span class="cf-ico" aria-hidden="true"><i class="fas fa-desktop"></i></span><strong>Browser</strong><span class="mono">HTML · CSS · JS</span></li>
+          <li style="--i:1"><span class="cf-ico" aria-hidden="true"><i class="fas fa-key"></i></span><strong>JWT + roles</strong><span class="mono">route guards</span></li>
+          <li style="--i:2"><span class="cf-ico" aria-hidden="true"><i class="devicon-express-original"></i></span><strong>Express API</strong><span class="mono">jobs · applications · admin</span></li>
+          <li style="--i:3"><span class="cf-ico" aria-hidden="true"><i class="fas fa-file-lines"></i></span><strong>JSON store</strong><span class="mono">+ resume files</span></li>
         </ol>
       </div>
     </section>
     <section class="cs-sec">
       <h3 class="mono">technology</h3>
       <dl class="cs-tech">
-        <div><dt>PHP · Laravel</dt><dd>The application framework.</dd></div>
-        <div><dt>MySQL</dt><dd>Relational data for postings, students and applications.</dd></div>
-        <div><dt>HTML · CSS</dt><dd>The interface for students, companies and admins.</dd></div>
+        <div><dt>Node.js · Express</dt><dd>The REST API and static hosting, in one server.</dd></div>
+        <div><dt>JWT · bcryptjs</dt><dd>Signed sessions that carry a role, and hashed passwords.</dd></div>
+        <div><dt>multer</dt><dd>Resume uploads, stored as files and served only to the people allowed to see them.</dd></div>
+        <div><dt>HTML · CSS · JavaScript</dt><dd>Separate pages for students, recruiters and the placement office, with no build step.</dd></div>
       </dl>
     </section>
     <section class="cs-sec">
       <h3 class="mono">challenge</h3>
-      <div><p>Three kinds of users want different things from the same data: companies manage postings and applicants,
-        students search, apply and follow their applications, and admins need oversight of both.</p></div>
-    </section>
-    <section class="cs-sec">
-      <h3 class="mono">solution</h3>
-      <div><p>A single Laravel application over one MySQL database, with separate views for companies, students and
-        admins: students upload resumes and apply, companies review eligible candidates, and notifications follow
-        each application as it changes.</p></div>
+      <div><p>Who can see what. Student profiles and resumes are personal data, and a recruiter from an unverified company
+        must not be able to browse them. Eligibility rules also vary by drive, so a student needs to know before applying
+        whether they qualify, and why not if they don't.</p></div>
     </section>
     <section class="cs-sec">
       <h3 class="mono">engineering</h3>
       <ul class="cs-points">
-        <li><strong>Two sides, one platform.</strong> Companies post jobs; students register, apply and track their applications in the same system.</li>
-        <li><strong>Status you can follow.</strong> Application tracking and real-time notifications keep students informed as things change.</li>
-        <li><strong>Oversight built in.</strong> Admin dashboards give a single view across postings and applications.</li>
+        <li><strong>Eligibility, explained.</strong> Each drive sets rules for CGPA, active backlogs, branch and batch. Students see whether they qualify, with the reason, before they apply.</li>
+        <li><strong>A pipeline, not a status field.</strong> Applications move through applied, shortlisted, interview, offered or rejected, and every change is kept on a timeline. Students can withdraw until a decision is made.</li>
+        <li><strong>Access by role and by relationship.</strong> A resume can be downloaded only by its owner, an admin, or an active recruiter whose company the student applied to. Unverified companies cannot search students at all.</li>
+        <li><strong>Nothing goes live unchecked.</strong> The placement office approves each posting, with a reason sent back if it is rejected, and verifies each company before it is activated.</li>
+        <li><strong>Small safeguards.</strong> Failed logins are throttled per email and IP, and links that users enter are limited to http(s), so a <code>javascript:</code> link can never be rendered.</li>
       </ul>
     </section>
     <section class="cs-sec">
       <h3 class="mono">result</h3>
-      <div><p>A responsive, working platform that covers the whole campus-recruitment workflow in one place: job
-        postings, eligibility review, resume upload, applications and real-time status tracking.</p></div>
+      <div><p>A working portal that covers the whole placement workflow: drive search with filters, eligibility, resume upload,
+        applications, recruiter shortlisting, approvals, placement statistics and a CSV export of the placement register.
+        It runs against seeded demo data. The README lists what has to change before production use: a real database,
+        a secret set from the environment, and a shared login throttle.</p></div>
     </section>
     <div class="cs-foot">
-      <p class="mono">The source isn't in a public repository, and usage metrics aren't published here.</p>
+      <p class="mono">The source isn't public. Everything above comes from its code and README.</p>
       <div class="cs-actions">
         <a href="#contact" class="btn btn-sm btn-primary" data-close-case><span>Ask me about it</span> <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
       </div>

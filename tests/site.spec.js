@@ -422,13 +422,14 @@ test('architecture explorer traces a whole flow and explains its steps', async (
   await expect(page.locator('#smInspector .smi-io')).toContainText('API');
 });
 
-test('Aspend has a case study drawn from its repository', async ({ page }) => {
+test('Aspend has a case study, credited to Eltern Segen', async ({ page }) => {
   await open(page);
   const btn = page.locator('.pj [data-case="aspend"]');
   await btn.scrollIntoViewIfNeeded();
+  await expect(page.locator('.pj:has([data-case="aspend"])')).toContainText('Built at Eltern Segen Technologie');
   await btn.click();
   await expect(page.locator('#caseTitle')).toHaveText('Aspend');
-  await expect(page.locator('#caseBody')).toContainText('v1.0.0 → v1.0.5');
+  await expect(page.locator('#caseBody')).toContainText('Built as part of my role at Eltern Segen Technologie');
   await expect(page.locator('#caseBody')).toContainText('Payments are not expenses');
   await page.keyboard.press('Escape');
   await expect(page.locator('#caseDlg')).toBeHidden();
@@ -442,6 +443,16 @@ test('project cards show no mock-up screenshots, and Detectify states its scope'
   await btn.scrollIntoViewIfNeeded();
   await btn.click();
   await expect(page.locator('#caseBody .cs-scope')).toContainText('not in the public repository');
+});
+
+test('Campus Recruitment describes the Node.js build and its access rules', async ({ page }) => {
+  await open(page);
+  const btn = page.locator('.pj [data-case="campus-recruitment-system"]');
+  await btn.scrollIntoViewIfNeeded();
+  await expect(page.locator('.pj:has([data-case="campus-recruitment-system"]) .tags')).toContainText('Express');
+  await btn.click();
+  await expect(page.locator('#caseBody')).toContainText('Eligibility, explained');
+  await expect(page.locator('#caseBody')).not.toContainText('Laravel');
 });
 
 test('page metadata: canonical, social preview and structured data', async ({ page }) => {
