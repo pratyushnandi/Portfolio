@@ -52,7 +52,7 @@ const inspect = (kind, key, label) =>
   try { seen = sessionStorage.getItem('pn-seen') === '1' || localStorage.getItem('pn-booted') === '1'; } catch (e) {}
   try { sessionStorage.setItem('pn-seen', '1'); localStorage.setItem('pn-booted', '1'); } catch (e) {}
   const mode = REDUCE_MOTION ? 'calm' : (seen ? 'quick' : 'full');
-  const DURATION = { full: 1500, quick: 450, calm: 150 }[mode];
+  const DURATION = { full: 1100, quick: 400, calm: 150 }[mode];
   loader.classList.add('mode-' + mode);
   root.classList.add('is-loading');
 
@@ -63,7 +63,7 @@ const inspect = (kind, key, label) =>
     requestAnimationFrame(() => requestAnimationFrame(() => { bar.style.transform = 'scaleX(1)'; }));
   }
   const timers = [];
-  if (mode === 'full') $$('#plLog li').forEach((li, i) => timers.push(setTimeout(() => li.classList.add('up'), 220 + i * 140)));
+  if (mode === 'full') $$('#plLog li').forEach((li, i) => timers.push(setTimeout(() => li.classList.add('up'), 160 + i * 110)));
   timers.push(setTimeout(() => { if (cmd) cmd.textContent = 'system online ✓'; }, DURATION * .8));
 
   let finished = false;
@@ -82,13 +82,13 @@ const inspect = (kind, key, label) =>
   loader.addEventListener('click', finish);
   document.addEventListener('keydown', onKey);
 
-  // Lift at the later of (animation done, web fonts ready), never past 2.4s,
+  // Lift at the later of (animation done, web fonts ready), never past 1.8s,
   // so the hero reveal never runs with a font swap under it.
   let timeUp = false, fontsUp = !document.fonts;
   const maybe = () => { if (timeUp && fontsUp) finish(); };
   setTimeout(() => { timeUp = true; maybe(); }, DURATION);
   if (document.fonts) document.fonts.ready.then(() => { fontsUp = true; maybe(); }, () => { fontsUp = true; maybe(); });
-  setTimeout(finish, 2400);
+  setTimeout(finish, 1800);
 })();
 
 /* ══ 2. THEME ══
@@ -106,7 +106,7 @@ const inspect = (kind, key, label) =>
   function apply(theme) {
     if (theme === 'light') root.setAttribute('data-theme', 'light');
     else root.removeAttribute('data-theme');
-    if (meta) meta.setAttribute('content', theme === 'light' ? '#f6f6f3' : '#07080c');
+    if (meta) meta.setAttribute('content', theme === 'light' ? '#f6f3ee' : '#0c0d0f');
     label();
     window.dispatchEvent(new CustomEvent('pn:themechange', { detail: { theme } }));
   }
@@ -270,17 +270,10 @@ const Scroll = (function () {
   $$('[data-hero]', hero).forEach((el, i) => el.style.setProperty('--hi', i));
   $$('.hv-layer', hero).forEach((el, i) => el.style.setProperty('--vi', i));
 
-  // Code lines reveal one by one; the cursor rests on `available: true`.
-  const code = $('#ideCode code');
-  if (code) {
-    code.innerHTML = code.innerHTML.split('\n')
-      .map((l, i) => `<span class="ln${i === 6 ? ' cur' : ''}" style="--l:${i}">${l || ' '}</span>`).join('');
-  }
-
-  // Looping CSS (request-path packet, bee chips) pauses while the hero is off screen.
+  // The sees → thinks → acts signal loops in CSS; it pauses while the hero is off screen.
   new IntersectionObserver(([e]) => hero.classList.toggle('paused', !e.isIntersecting)).observe(hero);
 
-  // Request path: each layer opens the System Map with that node selected.
+  // Explore the system: each stop opens the system map with that component selected.
   $$('[data-goto-node]', hero).forEach(b => b.addEventListener('click', () => {
     window.dispatchEvent(new CustomEvent('pn:select-node', { detail: { node: b.dataset.gotoNode, from: b } }));
   }));
@@ -411,8 +404,10 @@ const Scroll = (function () {
     moveInd(btn);
     const f = btn.dataset.f;
     let shown = 0;
+    // data-cat is a space-separated list: a project can belong to two filters.
+    const inFilter = el => f === 'all' || el.dataset.cat.split(' ').includes(f);
     cards.forEach(card => {
-      const show = f === 'all' || card.dataset.cat === f;
+      const show = inFilter(card);
       card.classList.toggle('is-hidden', !show);
       card.classList.remove('filter-in');
       if (show && !REDUCE_MOTION) {
@@ -424,7 +419,7 @@ const Scroll = (function () {
     });
     // The experiment rows follow the same filter; their block hides when empty.
     const minis = $$('.pj-mini');
-    minis.forEach(m => { m.hidden = !(f === 'all' || m.dataset.cat === f); });
+    minis.forEach(m => { m.hidden = !inFilter(m); });
     const more = $('.proj-more');
     if (more) more.hidden = minis.every(m => m.hidden);
   }));
@@ -494,8 +489,11 @@ const Scroll = (function () {
 
 /* ══ 14. CONTACT FORM ══
    `novalidate` keeps native bubbles off, so constraint validation is checked
-   here (required, type=email, type=url all honoured). Web3Forms first, with a
-   prefilled mailto: link as the fallback if the request fails. */
+   here (required, type=email, type=url, minlength all honoured). Each field
+   gets its own message, linked with aria-describedby and re-checked as the
+   visitor fixes it. Web3Forms first, with a 15s timeout; if the request fails
+   for any reason, a prefilled mailto: link takes over. Nothing typed into the
+   form is ever logged. */
 (function () {
   const form = $('#contactForm');
   if (!form) return;
@@ -517,72 +515,109 @@ const Scroll = (function () {
   const btn = $('#cfBtn');
   const txt = $('#cfTxt'), load = $('#cfLoad');
   const status = $('#cfStatus');
-  const FIELD_LABELS = {
-    user_name: 'name', user_email: 'email', contact_reason: 'reason',
-    subject: 'subject', social_link: 'profile link', message: 'message'
+  // [required message, invalid message]
+  const MESSAGES = {
+    user_name: ['Please enter your name.'],
+    user_email: ['Please enter your email address.', 'Enter a full email address, like name@company.com.'],
+    contact_reason: ['Please choose a reason.'],
+    subject: ['Please add a subject.'],
+    social_link: [null, 'Enter a full link, starting with https://.'],
+    message: ['Please write a short message.', 'A little more detail helps: at least 10 characters.']
   };
-  const fields = $$('input, textarea, select', form);
-  const firstInvalid = () => fields.find(el => !el.checkValidity()) || null;
-  function showInvalid(el) {
-    const label = FIELD_LABELS[el.name] || el.name || 'field';
-    status.textContent = !el.value.trim() ? `✗ ${label} is required.` : `✗ ${label} is not valid.`;
-    status.className = 'cf-status err';
-    el.classList.add('cf-invalid');
-    el.setAttribute('aria-invalid', 'true');
-    el.focus();
-  }
+  const fields = $$('input, textarea, select', form).filter(el => el.name in MESSAGES);
+  const errOf = el => $('#' + el.id + 'Err');
+  // One message element per field, announced with the field itself.
   fields.forEach(el => {
-    const clear = () => { el.classList.remove('cf-invalid'); el.removeAttribute('aria-invalid'); };
-    el.addEventListener('input', clear);
-    el.addEventListener('change', clear);
+    const p = document.createElement('p');
+    p.className = 'f-err'; p.id = el.id + 'Err'; p.hidden = true;
+    el.closest('.f-grp').appendChild(p);
+    el.setAttribute('aria-describedby', p.id);
   });
+  const messageFor = el => {
+    if (el.checkValidity()) return '';
+    const [req, bad] = MESSAGES[el.name];
+    return (!el.value.trim() ? req : bad) || bad || req;
+  };
+  function mark(el) {
+    const msg = messageFor(el), err = errOf(el);
+    el.classList.toggle('cf-invalid', !!msg);
+    if (msg) el.setAttribute('aria-invalid', 'true'); else el.removeAttribute('aria-invalid');
+    err.textContent = msg; err.hidden = !msg;
+    return !msg;
+  }
+  // Errors appear once a field has been left (or a send attempted), then
+  // follow every keystroke so the message clears the moment it is fixed.
+  fields.forEach(el => {
+    el.addEventListener('blur', () => { if (el.value.trim() || el.dataset.touched) { el.dataset.touched = '1'; mark(el); } });
+    el.addEventListener('input', () => { if (el.dataset.touched) mark(el); });
+    el.addEventListener('change', () => { if (el.dataset.touched) mark(el); });
+  });
+
+  const setStatus = (kind, text) => { status.className = 'cf-status' + (kind ? ' ' + kind : ''); status.textContent = text; };
+  const busy = on => { txt.hidden = on; load.hidden = !on; btn.disabled = on; form.setAttribute('aria-busy', on ? 'true' : 'false'); };
 
   form.addEventListener('submit', async e => {
     e.preventDefault();
-    const bad = firstInvalid();
-    if (bad) { showInvalid(bad); return; }
-    txt.hidden = true; load.hidden = false; btn.disabled = true;
-    status.textContent = ''; status.className = 'cf-status';
+    fields.forEach(el => { el.dataset.touched = '1'; });
+    const bad = fields.filter(el => !mark(el));
+    if (bad.length) {
+      setStatus('err', bad.length === 1 ? '✗ One field needs attention.' : `✗ ${bad.length} fields need attention.`);
+      bad[0].focus();
+      return;
+    }
 
     const val = n => (form.querySelector(`[name="${n}"]`) || {}).value || '';
-    const name = val('user_name');
-    const email = val('user_email');
+    const name = val('user_name').trim();
+    const email = val('user_email').trim();
     const reason = val('contact_reason') || 'General Inquiry';
-    const company = val('company') || 'N/A';
-    const subject = val('subject') || 'Portfolio Contact';
-    const socialLink = val('social_link') || 'N/A';
-    const message = val('message');
-
+    const company = val('company').trim() || 'N/A';
+    const subject = val('subject').trim() || 'Portfolio Contact';
+    const socialLink = val('social_link').trim() || 'N/A';
+    const message = val('message').trim();
     const mailtoUrl = 'mailto:pratyushnandi100@gmail.com?subject=' +
       encodeURIComponent(`[${reason}] ${subject}`) + '&body=' + encodeURIComponent(
         `Name: ${name}\nEmail: ${email}\nReason: ${reason}\nCompany: ${company}\nLink: ${socialLink}\n\nMessage:\n${message}`);
+    const fallback = reasonText => {
+      setStatus('err', `✗ ${reasonText} Your message is still here. `);
+      const a = document.createElement('a');
+      a.href = mailtoUrl; a.textContent = 'Send it with your email app instead';
+      status.appendChild(a);
+    };
 
+    // Bots fill every field, including the one people never see.
+    if (form.querySelector('[name="botcheck"]').checked) { setStatus('ok', '✓ Message sent successfully.'); form.reset(); return; }
+    if (navigator.onLine === false) { fallback("You're offline, so it couldn't be sent."); return; }
+
+    busy(true);
+    setStatus('', 'Sending…');
+    const ctl = new AbortController();
+    const timer = setTimeout(() => ctl.abort(), 15000);
     try {
       const res = await fetch('https://api.web3forms.com/submit', {
         method: 'POST',
+        signal: ctl.signal,
         headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
         body: JSON.stringify({
           access_key: 'dd789f34-7888-4300-a4ac-7842d5524490',
           name, email, reason, company,
           social_link: socialLink,
           subject: `[${reason}] ${subject} from ${name}`,
-          message
+          message,
+          botcheck: false
         })
       });
-      const data = await res.json();
-      if (!data.success) throw new Error(data.message || 'Submission failed');
-      status.textContent = "✓ Message sent successfully! I'll get back to you soon.";
-      status.className = 'cf-status ok';
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || !data.success) throw new Error(res.ok ? 'rejected' : 'http ' + res.status);
+      setStatus('ok', `✓ Message sent successfully. I'll reply to ${email}.`);
       form.reset();
+      fields.forEach(el => { delete el.dataset.touched; mark(el); });
     } catch (err) {
-      console.error('Contact Form Error:', err);
-      status.textContent = '✗ Send failed. ';
-      const a = document.createElement('a');
-      a.href = mailtoUrl; a.textContent = 'Send it with your email app instead';
-      status.appendChild(a);
-      status.className = 'cf-status err';
+      // The reason only, never the message: nothing the visitor typed is logged.
+      console.warn('Contact form: send failed (' + (err.name === 'AbortError' ? 'timeout' : err.message) + ')');
+      fallback(err.name === 'AbortError' ? 'The form service took too long to answer.' : "The message couldn't be sent.");
     } finally {
-      txt.hidden = false; load.hidden = true; btn.disabled = false;
+      clearTimeout(timer);
+      busy(false);
     }
   });
 })();
@@ -699,7 +734,8 @@ const Scroll = (function () {
 /* ══ SHARED KNOWLEDGE ══
    One source for the system map, the case studies, the command palette and
    the assistant. Technologies are only ones listed in the Stack section;
-   project keys are the slugs of the project titles on the page. */
+   project keys are the slugs of the project titles on the page. A component
+   lists a project only when that project's own evidence shows the layer. */
 const slug = s => s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 const TECH = {
   react: 'React.js', nextjs: 'Next.js', reactnative: 'React Native', typescript: 'TypeScript', javascript: 'JavaScript', html5: 'HTML5', css3: 'CSS3',
@@ -709,36 +745,40 @@ const TECH = {
   raspberrypi: 'Raspberry Pi', edge: 'Edge Computing', iot: 'IoT'
 };
 const SYSTEM = {
-  user: { label: 'User', layer: 'client', tagline: 'Where every request begins',
-    desc: 'A person in a browser. Everything downstream exists to make that moment fast and reliable.',
+  browser: { label: 'Browser', lane: 'web', tagline: 'Where every request begins',
+    desc: 'A person on a laptop or a phone. Everything downstream exists to make that moment fast, accessible and reliable.',
     tech: [], projects: [] },
-  frontend: { label: 'Frontend', layer: 'client', tagline: 'Interfaces people enjoy using',
+  frontend: { label: 'Frontend', lane: 'web', tagline: 'Interfaces people enjoy using',
     desc: 'Component-driven interfaces in React and Next.js on the web and React Native on Android, typed with TypeScript.',
     tech: ['react', 'nextjs', 'reactnative', 'typescript', 'javascript', 'html5', 'css3'], projects: ['aspend', 'code-editor', 'portfolio-website', 'cyber-calendar'] },
-  api: { label: 'API', layer: 'service', tagline: 'The contract between client and system',
-    desc: 'REST APIs on Node.js with Fastify or Express, plus Python where the work is data or ML.',
+  api: { label: 'API', lane: 'web', tagline: 'The contract between client and system',
+    desc: 'REST APIs on Node.js with Fastify or Express, plus Python where the work is data or ML. Alerts from the vision pipeline arrive here too, so they land where people already work.',
     tech: ['nodejs', 'fastify', 'express', 'rest', 'python', 'laravel'], projects: ['campus-recruitment-system', 'ambulance-management-system', 'web-calculator', 'background-changer'] },
-  database: { label: 'Database', layer: 'service', tagline: 'Durable, queryable state',
+  database: { label: 'Database', lane: 'web', tagline: 'Durable, queryable state',
     desc: 'Relational data in PostgreSQL or MySQL through Prisma, MongoDB where documents fit better, and SQLite on the device when an app works offline.',
     tech: ['postgresql', 'mysql', 'prisma', 'mongodb', 'sqlite'], projects: ['campus-recruitment-system', 'ambulance-management-system', 'aspend'] },
-  aiml: { label: 'AI / ML', layer: 'intelligence', tagline: 'Learning from data',
-    desc: 'Python machine learning that turns raw input into predictions the rest of the system can act on.',
-    tech: ['python', 'aiml', 'opencv'], projects: ['detectify'] },
-  stream: { label: 'Stream', layer: 'intelligence', tagline: 'Live video, delivered',
-    desc: 'Camera feeds over RTSP, routed through MediaMTX so models and dashboards read the same stream.',
+  camera: { label: 'Camera', lane: 'vision', tagline: 'The eye of the system',
+    desc: 'An IP camera at a junction or a site. It produces the frames everything else reasons about, over a protocol it already speaks.',
+    tech: ['rtsp'], projects: [] },
+  stream: { label: 'RTSP stream', lane: 'vision', tagline: 'Live video, delivered',
+    desc: 'Camera feeds over RTSP, routed through MediaMTX so a model and a dashboard can read the same stream.',
     tech: ['rtsp', 'mediamtx'], projects: [] },
-  cv: { label: 'Computer Vision', layer: 'intelligence', tagline: 'Real-time visual intelligence',
-    desc: 'Detection with YOLO and image processing with OpenCV, working on live feeds rather than stored footage.',
-    tech: ['yolo', 'opencv', 'python', 'rtsp', 'visualai'], projects: ['detectify'] },
-  edge: { label: 'Edge AI', layer: 'edge', tagline: 'Inference next to the camera',
-    desc: 'Models deployed on Raspberry Pi so detection happens on site instead of in a distant data centre.',
-    tech: ['raspberrypi', 'edge', 'yolo'], projects: [] },
-  iot: { label: 'IoT', layer: 'edge', tagline: 'Connected hardware',
-    desc: 'Devices that sense and report, wired back to the API so events land where people can see them.',
-    tech: ['iot', 'raspberrypi'], projects: [] },
-  world: { label: 'Real World', layer: 'physical', tagline: 'Where the output matters',
-    desc: 'Results leave the screen: a violation flagged, an alert raised, a person informed.',
-    tech: [], projects: ['detectify'] }
+  cv: { label: 'Computer Vision', lane: 'vision', tagline: 'Seeing what is in each frame',
+    desc: 'Python machine learning on images: YOLO detects objects in a single pass and OpenCV prepares each frame before it reaches the model.',
+    tech: ['yolo', 'opencv', 'python', 'aiml', 'visualai'], projects: ['detectify'] },
+  edge: { label: 'Edge device', lane: 'vision', tagline: 'Inference next to the camera',
+    desc: 'Models deployed on a Raspberry Pi so detection happens on site instead of in a distant data centre, alongside other connected devices.',
+    tech: ['raspberrypi', 'edge', 'iot', 'yolo'], projects: [] },
+  alert: { label: 'Alert', lane: 'vision', tagline: 'Detections become decisions',
+    desc: 'Rules turn detections into events, such as a car past the stop line on red. The event posts to the API and reaches a person to review: the system flags, a human decides.',
+    tech: ['rest', 'nodejs'], projects: [] }
+};
+// The two flows the map explains. Order is the order data travels.
+const LANES = {
+  web: { label: 'Web request path', nodes: ['browser', 'frontend', 'api', 'database'],
+    desc: 'What happens when someone uses a web app I build: the browser renders the interface, the interface calls a typed API, and the API reads and writes durable data.' },
+  vision: { label: 'Vision pipeline', nodes: ['camera', 'stream', 'cv', 'edge', 'alert'],
+    desc: 'How a camera frame becomes an action: the stream is read next to the camera, a detector finds objects, rules decide what matters, and only an alert travels on, back through the same API.' }
 };
 // Engineering decisions: why each tool earns its place in the stack. This is
 // reasoning about the tools, not a claim about how a specific project was built.
@@ -755,52 +795,60 @@ const WHY = {
     ['Why PostgreSQL?', 'Relational integrity, joins and transactions for data that has to stay consistent.'],
     ['Why Prisma?', 'A typed client and versioned migrations, so schema changes are reviewed like code.']
   ],
-  aiml: [
-    ['Why Python?', 'The machine-learning ecosystem lives there, and a model can sit behind the same API as everything else.']
-  ],
   stream: [
     ['Why RTSP?', 'It is the protocol IP cameras already speak, so feeds arrive without custom firmware.'],
     ['Why MediaMTX?', 'One camera connection, re-served to many readers: a model and a dashboard share a feed instead of each opening the camera.']
   ],
   cv: [
     ['Why YOLO?', 'A single-pass detector, fast enough to keep up with live video.'],
-    ['Why OpenCV?', 'Proven frame decoding and preprocessing before anything reaches the model.']
+    ['Why OpenCV?', 'Proven frame decoding and preprocessing before anything reaches the model.'],
+    ['Why Python?', 'The machine-learning ecosystem lives there, and a model can sit behind the same API as everything else.']
   ],
   edge: [
     ['Why process at the edge?', 'Frames are analysed next to the camera: lower latency, far less bandwidth, and raw video never has to leave the site.']
   ],
-  iot: [
-    ['Why report through the API?', 'Devices post events to the same API as the web app, so everything lands in one place people can see.']
+  alert: [
+    ['Why report through the API?', 'Devices post events to the same API as the web app, so everything lands in one place people can see.'],
+    ['Why a human in the loop?', 'A detector can be wrong. An alert asks a person to confirm instead of acting on its own.']
   ]
 };
 Object.entries(WHY).forEach(([k, w]) => { SYSTEM[k].why = w; });
-const EDGES = [['user', 'frontend'], ['frontend', 'api'], ['api', 'database'], ['api', 'aiml'], ['aiml', 'cv'],
-  ['stream', 'cv'], ['cv', 'edge'], ['edge', 'iot'], ['iot', 'world']];
+// First parent listed = the primary path; any other parent is a side input.
+const EDGES = [['browser', 'frontend'], ['frontend', 'api'], ['api', 'database'],
+  ['camera', 'stream'], ['stream', 'cv'], ['cv', 'edge'], ['edge', 'alert'], ['alert', 'api']];
 // Stack chips by technology key, so other modules can reuse their icons.
 const techNode = key => $$('.stack-group .node').find(n => $('span', n).textContent.trim() === TECH[key]);
 const projectEl = key => $$(PROJECTS).find(p => slug(titleOf(p).textContent) === key);
 
-/* ══ 18. SYSTEM MAP ══
-   Selecting a node lights the route a request takes to reach it (every
-   ancestor) plus what it feeds next, runs data along those edges only, mutes
-   the rest, and fills the inspector. Hover previews; click or tap pins. */
+/* ══ 18. SYSTEM ARCHITECTURE EXPLORER ══
+   Two flows: a web request (Browser → Frontend → API → Database) and a vision
+   pipeline (Camera → RTSP → Computer Vision → Edge → Alert), joined where
+   alerts post back to the API. Selecting a component lights the route data
+   takes to reach it plus what it feeds next, and fills the inspector with its
+   purpose, inputs and outputs, tools, decisions and projects. "Trace" lights a
+   whole flow and explains it step by step. Hover previews; click or tap pins. */
 (function () {
   const map = $('#sysmap');
   if (!map) return;
   const canvas = $('#smCanvas');
   const insp = $('#smInspector');
   const nodes = $$('.sm-node', map);
+  const laneBtns = $$('.sm-lane-btn', map);
   const edgeEls = $$('.sm-edges path, .sm-flows path', map);
   const stackGrid = $('.stack-grid');
   const defaultView = insp.innerHTML;
-  let pinned = null, shown = null;
+  let pinned = null, shown = null, lane = null;
 
   const parents = k => EDGES.filter(([, to]) => to === k).map(([from]) => from);
   const children = k => EDGES.filter(([from]) => from === k).map(([, to]) => to);
+  // The route to a component follows primary parents only, so the alert
+  // bridge into the API doesn't light the whole vision pipeline.
   function ancestors(k, acc = new Set()) {
-    parents(k).forEach(p => { if (!acc.has(p)) { acc.add(p); ancestors(p, acc); } });
+    const p = parents(k)[0];
+    if (p && !acc.has(p)) { acc.add(p); ancestors(p, acc); }
     return acc;
   }
+  const names = keys => keys.map(a => SYSTEM[a].label).join(', ');
 
   function el(tag, cls, text) {
     const e = document.createElement(tag);
@@ -815,23 +863,50 @@ const projectEl = key => $$(PROJECTS).find(p => slug(titleOf(p).textContent) ===
     c.appendChild(el('span', null, TECH[key]));
     return c;
   }
+  function projectList(keys, wrap) {
+    const projects = keys.map(projectEl).filter(Boolean);
+    wrap.appendChild(el('h4', 'mono', 'seen in'));
+    if (!projects.length) {
+      // Honest about it: the layer is in the stack, but no public project here shows it yet.
+      const p = el('p', 'smi-none', 'No project on this page shows this layer yet. It is one of my current focus areas. ');
+      const a = el('a', null, 'See current focus');
+      a.href = '#focus';
+      p.appendChild(a);
+      wrap.appendChild(p);
+      return;
+    }
+    const ul = el('ul', 'smi-projects');
+    projects.forEach(p => {
+      const li = el('li');
+      const b = el('button', 'smi-proj', titleOf(p).textContent);
+      b.type = 'button';
+      b.addEventListener('click', () => {
+        const key = slug(titleOf(p).textContent);
+        if ($(`[data-case="${key}"]`)) Case.open(key, b);
+        else p.scrollIntoView({ behavior: REDUCE_MOTION ? 'auto' : 'smooth', block: 'center' });
+      });
+      li.appendChild(b); ul.appendChild(li);
+    });
+    wrap.appendChild(ul);
+  }
   function render(k) {
     const d = SYSTEM[k];
     const wrap = el('div', 'smi-node');
-    wrap.appendChild(el('span', 'card-label mono', `layer · ${d.layer}`));
+    wrap.appendChild(el('span', 'card-label mono', LANES[d.lane].label.toLowerCase()));
     wrap.appendChild(el('h3', null, d.label));
     wrap.appendChild(el('p', 'smi-tagline', d.tagline));
     wrap.appendChild(el('p', null, d.desc));
-    // The request path follows each node's primary (first) parent back to the
-    // user; any other parent is a side input, listed separately.
+    // Inputs and outputs: what this component receives and where its data goes.
+    const io = el('dl', 'smi-io mono');
+    const row = (dt, dd) => { const r = el('div'); r.append(el('dt', null, dt), el('dd', null, dd)); io.appendChild(r); };
+    row('receives', parents(k).length ? names(parents(k)) : 'a person');
+    row('sends to', children(k).length ? names(children(k)) : 'stored, for later reads');
+    wrap.appendChild(io);
     const path = [k];
     for (let p = parents(k)[0]; p; p = parents(p)[0]) path.unshift(p);
-    const routeEl = el('p', 'smi-route mono', path.map(a => SYSTEM[a].label).join(' → '));
-    const side = parents(k).slice(1);
-    if (side.length) routeEl.appendChild(el('span', 'smi-side', `+ fed by ${side.map(a => SYSTEM[a].label).join(', ')}`));
-    wrap.appendChild(routeEl);
+    wrap.appendChild(el('p', 'smi-route mono', path.map(a => SYSTEM[a].label).join(' → ')));
     if (d.tech.length) {
-      wrap.appendChild(el('h4', 'mono', 'related'));
+      wrap.appendChild(el('h4', 'mono', 'technologies'));
       const ul = el('ul', 'smi-chips');
       d.tech.forEach(t => ul.appendChild(chip(t)));
       wrap.appendChild(ul);
@@ -839,70 +914,96 @@ const projectEl = key => $$(PROJECTS).find(p => slug(titleOf(p).textContent) ===
     if (d.why) {
       wrap.appendChild(el('h4', 'mono', 'engineering decisions'));
       const dl = el('dl', 'smi-why');
-      d.why.forEach(([q, a]) => { const row = el('div'); row.append(el('dt', null, q), el('dd', null, a)); dl.appendChild(row); });
+      d.why.forEach(([q, a]) => { const r = el('div'); r.append(el('dt', null, q), el('dd', null, a)); dl.appendChild(r); });
       wrap.appendChild(dl);
     }
-    const projects = d.projects.map(projectEl).filter(Boolean);
-    if (projects.length) {
-      wrap.appendChild(el('h4', 'mono', 'seen in'));
-      const ul = el('ul', 'smi-projects');
-      projects.forEach(p => {
-        const li = el('li');
-        const b = el('button', 'smi-proj', titleOf(p).textContent);
-        b.type = 'button';
-        b.addEventListener('click', () => {
-          const key = slug(titleOf(p).textContent);
-          if ($(`[data-case="${key}"]`)) Case.open(key, b);
-          else p.scrollIntoView({ behavior: REDUCE_MOTION ? 'auto' : 'smooth', block: 'center' });
-        });
-        li.appendChild(b); ul.appendChild(li);
-      });
-      wrap.appendChild(ul);
-    }
+    if (k !== 'browser') projectList(d.projects, wrap);
+    insp.replaceChildren(wrap);
+  }
+  function renderLane(l) {
+    const L = LANES[l];
+    const wrap = el('div', 'smi-node smi-lane');
+    wrap.appendChild(el('span', 'card-label mono', 'flow'));
+    wrap.appendChild(el('h3', null, L.label));
+    wrap.appendChild(el('p', null, L.desc));
+    const ol = el('ol', 'smi-steps');
+    L.nodes.forEach((k, i) => {
+      const li = el('li');
+      const b = el('button', 'smi-step');
+      b.type = 'button';
+      b.append(el('span', 'mono', String(i + 1).padStart(2, '0')), el('strong', null, SYSTEM[k].label), el('span', null, SYSTEM[k].tagline));
+      b.addEventListener('click', () => { pin(k); const n = nodes.find(x => x.dataset.node === k); if (n) n.focus(); });
+      li.appendChild(b); ol.appendChild(li);
+    });
+    wrap.appendChild(ol);
+    projectList([...new Set(L.nodes.flatMap(k => SYSTEM[k].projects))], wrap);
     insp.replaceChildren(wrap);
   }
 
+  function light(lit, isEdgeLit) {
+    map.classList.add('has-focus');
+    nodes.forEach(n => n.classList.toggle('lit', lit.has(n.dataset.node)));
+    edgeEls.forEach(e => { const [a, b] = e.dataset.e.split('-'); e.classList.toggle('lit', isEdgeLit(a, b)); });
+  }
+  function clearLight() {
+    map.classList.remove('has-focus');
+    nodes.forEach(n => n.classList.remove('active', 'lit'));
+    edgeEls.forEach(e => e.classList.remove('lit'));
+    stackGrid && stackGrid.classList.remove('sm-focus');
+    $$('.node.sm-hit').forEach(n => n.classList.remove('sm-hit'));
+  }
+  function hitTech(keys) {
+    $$('.node.sm-hit').forEach(n => n.classList.remove('sm-hit'));
+    keys.forEach(t => { const n = techNode(t); if (n) n.classList.add('sm-hit'); });
+    stackGrid && stackGrid.classList.toggle('sm-focus', keys.length > 0);
+  }
   function show(k) {
     if (k === shown) return;
     shown = k;
     if (!k) {
-      map.classList.remove('has-focus');
-      nodes.forEach(n => n.classList.remove('active', 'lit'));
-      edgeEls.forEach(e => e.classList.remove('lit'));
-      stackGrid && stackGrid.classList.remove('sm-focus');
-      $$('.node.sm-hit').forEach(n => n.classList.remove('sm-hit'));
-      insp.innerHTML = defaultView;
+      clearLight();
+      if (lane) showLane(lane); else insp.innerHTML = defaultView;
       return;
     }
-    const lit = ancestors(k); lit.add(k); children(k).forEach(c => lit.add(c));
-    map.classList.add('has-focus');
-    nodes.forEach(n => {
-      n.classList.toggle('active', n.dataset.node === k);
-      n.classList.toggle('lit', lit.has(n.dataset.node));
-    });
-    edgeEls.forEach(e => {
-      const [a, b] = e.dataset.e.split('-');
-      e.classList.toggle('lit', lit.has(a) && lit.has(b) && (b === k || a === k || ancestors(k).has(b)));
-    });
-    // Related technologies light up in the stack grid below as well.
-    $$('.node.sm-hit').forEach(n => n.classList.remove('sm-hit'));
-    SYSTEM[k].tech.forEach(t => { const n = techNode(t); if (n) n.classList.add('sm-hit'); });
-    stackGrid && stackGrid.classList.toggle('sm-focus', SYSTEM[k].tech.length > 0);
+    const anc = ancestors(k);
+    const side = parents(k).slice(1);
+    const lit = new Set([...anc, k, ...children(k), ...side]);
+    light(lit, (a, b) => lit.has(a) && lit.has(b) && (b === k || a === k || anc.has(b)));
+    nodes.forEach(n => n.classList.toggle('active', n.dataset.node === k));
+    hitTech(SYSTEM[k].tech);
     render(k);
   }
+  function showLane(l) {
+    const set = new Set(LANES[l].nodes);
+    light(set, (a, b) => set.has(a) && set.has(b));
+    nodes.forEach(n => n.classList.remove('active'));
+    hitTech([...new Set(LANES[l].nodes.flatMap(k => SYSTEM[k].tech))]);
+    renderLane(l);
+  }
+  function setLane(l) {
+    lane = lane === l ? null : l;
+    laneBtns.forEach(b => b.setAttribute('aria-pressed', b.dataset.lane === lane ? 'true' : 'false'));
+    if (lane) {
+      pinned = null; shown = null;
+      nodes.forEach(n => n.setAttribute('aria-pressed', 'false'));
+      place();
+      showLane(lane);
+      inspect('layer', 'lane-' + lane, LANES[lane].label);
+    } else { shown = undefined; show(null); }
+  }
+  laneBtns.forEach(b => b.addEventListener('click', () => setLane(b.dataset.lane)));
 
-  // Screen readers hear what a node is for, not only its name.
+  // Screen readers hear what a component is for, not only its name.
   nodes.forEach(n => {
     // A real space between the name and its subtitle ("Database PostgreSQL…").
     const strong = $('strong', n);
     if (strong) strong.after(document.createTextNode(' '));
-    const s = el('span', 'sr-only', `, ${SYSTEM[n.dataset.node].tagline}`);
-    n.appendChild(s);
+    n.appendChild(el('span', 'sr-only', `, ${SYSTEM[n.dataset.node].tagline}`));
     n.setAttribute('aria-controls', 'smInspector');
   });
 
   // Phones get a linear list (CSS) and the inspector opens inline under the
-  // selected node, like an accordion. Wider screens keep it beside the graph.
+  // selected component, like an accordion. Wider screens keep it beside the graph.
   const narrow = window.matchMedia('(max-width: 640px)');
   const home = insp.parentNode;
   function place() {
@@ -914,7 +1015,9 @@ const projectEl = key => $$(PROJECTS).find(p => slug(titleOf(p).textContent) ===
 
   function pin(k) {
     pinned = pinned === k ? null : k;
+    if (pinned && lane) { lane = null; laneBtns.forEach(b => b.setAttribute('aria-pressed', 'false')); }
     nodes.forEach(n => n.setAttribute('aria-pressed', n.dataset.node === pinned ? 'true' : 'false'));
+    shown = undefined;
     show(pinned);
     place();
     if (pinned) inspect('layer', pinned, SYSTEM[pinned].label);
@@ -935,7 +1038,7 @@ const projectEl = key => $$(PROJECTS).find(p => slug(titleOf(p).textContent) ===
   });
   canvas.addEventListener('pointerleave', e => { if (e.pointerType === 'mouse' && !narrow.matches) show(pinned); });
   canvas.addEventListener('focusout', e => { if (!canvas.contains(e.relatedTarget)) show(pinned); });
-  // Arrow keys walk the nodes in flow order; Escape clears the selection.
+  // Arrow keys walk the components in flow order; Escape clears the selection.
   canvas.addEventListener('keydown', e => {
     const i = nodes.indexOf(document.activeElement);
     if (i < 0 || !['ArrowDown', 'ArrowUp', 'ArrowRight', 'ArrowLeft'].includes(e.key)) return;
@@ -944,18 +1047,20 @@ const projectEl = key => $$(PROJECTS).find(p => slug(titleOf(p).textContent) ===
     nodes[(i + d + nodes.length) % nodes.length].focus();
   });
   map.addEventListener('keydown', e => {
-    if (e.key !== 'Escape' || !(pinned || shown)) return;
-    const was = pinned;
-    pinned = null;
+    if (e.key !== 'Escape' || !(pinned || shown || lane)) return;
+    const was = pinned, wasLane = lane;
+    pinned = null; lane = null;
     nodes.forEach(n => n.setAttribute('aria-pressed', 'false'));
-    show(null); place();
+    laneBtns.forEach(b => b.setAttribute('aria-pressed', 'false'));
+    shown = undefined; show(null); place();
     if (was) { const n = nodes.find(x => x.dataset.node === was); if (n) n.focus(); }
+    else if (wasLane) { const b = laneBtns.find(x => x.dataset.lane === wasLane); if (b) b.focus(); }
   });
 
   // Data only flows while the map is on screen.
   if (!REDUCE_MOTION) new IntersectionObserver(([e]) => map.classList.toggle('live', e.isIntersecting)).observe(map);
 
-  // Deep links (hero request path, assistant, palette): select a node and go to it.
+  // Deep links (hero, assistant, palette): select a component and go to it.
   window.addEventListener('pn:select-node', e => {
     const k = e.detail && e.detail.node;
     const n = nodes.find(x => x.dataset.node === k);
@@ -1032,122 +1137,246 @@ const projectEl = key => $$(PROJECTS).find(p => slug(titleOf(p).textContent) ===
   });
 })();
 
-/* ══ 19. AI PIPELINE ══
-   Scroll-driven, never looping. While the section is pinned, scroll progress
-   moves a signal down the rail; each stage it reaches switches on and changes
-   the illustrated camera frame (raw → patches → wireframe → detector →
-   boxes → verdict → alert). Scrolling back rewinds it. Falls back to plain
-   in-flow scrolling when the pinned block would not fit the viewport. */
+/* ══ 19. VISUAL AI PLAYGROUND ══
+   Three drawn sample frames, each with a fixed list of detections (class,
+   confidence, box). Nothing is inferred here and the page says so. What is
+   real is everything after the model: the confidence threshold filters the
+   detections, rules evaluate what survives, and the alerts, the event log and
+   the hint follow from that. Lower the threshold and a puddle becomes a "car"
+   that trips the red-light rule; raise it and a real violation is missed.
+   Stages are stepped with buttons (Run, ‹ ›, or a stage itself); the run plays
+   once when the lab first comes into view, never under reduced motion. */
 (function () {
-  const scroller = $('#pipeScroll');
-  if (!scroller) return;
-  const sticky = $('#pipeSticky');
+  const lab = $('#lab');
+  if (!lab) return;
   const frame = $('#cvFrame');
-  const pipe = $('#pipe');
+  const detsEl = $('#cvDets'), zonesEl = $('#cvZones');
+  const pipe = $('#pipe', lab);
   const steps = $$('.pipe-step', pipe);
-  const rail = $('.pipe-rail');
-  const fill = $('.pipe-fill');
-  const dot = $('.pipe-dot');
-  const conf = $('#cvConf');
-  const status = $('#cvStatus');
   const N = steps.length;
-  const clamp = (v, a, b) => Math.min(Math.max(v, a), b);
-  let stage = -1, pinned = true;
+  const fill = $('.pipe-fill', lab);
+  const thr = $('#labThr'), thrOut = $('#labThrOut'), hint = $('#labThrHint');
+  const rules = $$('[data-rule]', lab);
+  const logEl = $('#labLog'), statusEl = $('#labStatus');
+  const runBtn = $('#labRun'), prevBtn = $('#labPrev'), nextBtn = $('#labNext'), posEl = $('#labPos');
+  const hud = { name: $('#cvSceneName'), stage: $('#cvStage'), count: $('#cvCount') };
+  const alertEl = $('#cvAlert'), alertTitle = $('#cvAlertTitle'), alertSub = $('#cvAlertSub');
+  const NS = 'http://www.w3.org/2000/svg';
+  const STAGES = ['input', 'data', 'processing', 'model', 'inference', 'decision', 'action'];
+  const VEHICLES = ['car', 'motorcycle'];
+  const JUNCTION_ZONE = { x: 252, y: 108, w: 66, h: 186 };   // the controlled lane, past the stop line
 
-  // Stage state is spoken, not only coloured: each head carries a hidden
-  // "completed" / "current stage" suffix and aria-expanded for its detail.
-  const heads = steps.map((st, i) => {
-    const h = $('.ps-head', st);
-    const more = $('.ps-more', st);
+  /* — sample data (simulated detections; boxes in the 640 × 400 frame) — */
+  const SCENES = {
+    junction: { name: 'junction · red light', frame: '0142', zone: JUNCTION_ZONE, dets: [
+      { cls: 'car', conf: .96, box: [60, 146, 86, 48] },
+      { cls: 'car', conf: .94, box: [260, 144, 50, 82] },
+      { cls: 'car', conf: .91, box: [464, 206, 88, 48] },
+      { cls: 'motorcycle', conf: .88, box: [332, 24, 28, 56] },
+      { cls: 'signal', state: 'red', conf: .97, box: [212, 58, 28, 52] },
+      { cls: 'person', conf: .62, box: [174, 300, 16, 26] },
+      { cls: 'person', conf: .58, box: [558, 82, 16, 26] },
+      { cls: 'person', conf: .34, box: [582, 308, 16, 26] },
+      { cls: 'car', conf: .31, box: [284, 234, 34, 26], fp: 'a puddle' }
+    ] },
+    helmet: { name: 'two-wheelers · helmets', frame: '0087', dets: [
+      { cls: 'motorcycle', conf: .93, box: [118, 228, 138, 66] },
+      { cls: 'rider', conf: .9, box: [160, 148, 52, 100] },
+      { cls: 'helmet', conf: .87, box: [168, 150, 32, 32] },
+      { cls: 'motorcycle', conf: .89, box: [378, 232, 138, 66] },
+      { cls: 'rider', conf: .86, box: [420, 156, 52, 98] },
+      { cls: 'no_helmet', conf: .74, box: [428, 156, 32, 30] },
+      { cls: 'car', conf: .52, box: [566, 144, 74, 52] },
+      { cls: 'person', conf: .29, box: [44, 26, 28, 84], fp: 'a lamp post' }
+    ] },
+    green: { name: 'junction · green light', frame: '0311', zone: JUNCTION_ZONE, dets: [
+      { cls: 'car', conf: .95, box: [260, 184, 50, 82] },
+      { cls: 'car', conf: .93, box: [60, 146, 86, 48] },
+      { cls: 'car', conf: .9, box: [464, 206, 88, 48] },
+      { cls: 'signal', state: 'green', conf: .96, box: [212, 58, 28, 52] },
+      { cls: 'person', conf: .61, box: [174, 300, 16, 26] },
+      { cls: 'person', conf: .44, box: [558, 82, 16, 26] }
+    ] }
+  };
+
+  /* — rules: plain functions over the detections that passed the threshold — */
+  const center = ([x, y, w, h]) => [x + w / 2, y + h / 2];
+  const inside = ([cx, cy], z) => cx >= z.x && cx <= z.x + z.w && cy >= z.y && cy <= z.y + z.h;
+  const overlaps = (a, b) => a[0] < b[0] + b[2] && b[0] < a[0] + a[2] && a[1] < b[1] + b[3] && b[1] < a[1] + a[3];
+  const RULES = {
+    red_light: (kept, s) => {
+      if (!s.zone) return { note: 'skipped, no stop line in view' };
+      const sig = kept.find(d => d.cls === 'signal');
+      if (!sig) return { note: 'skipped, no signal detected' };
+      if (sig.state !== 'red') return { note: `passed, the signal is ${sig.state}` };
+      const hits = kept.filter(d => VEHICLES.includes(d.cls) && inside(center(d.box), s.zone));
+      return hits.length ? { hits, title: 'Red-light violation', why: 'past the stop line on red' } : { note: 'passed, nothing past the stop line' };
+    },
+    no_helmet: kept => {
+      const riders = kept.filter(d => d.cls === 'rider');
+      if (!riders.length) return { note: 'skipped, no riders detected' };
+      const hits = kept.filter(d => d.cls === 'no_helmet' && riders.some(r => overlaps(r.box, d.box)));
+      return hits.length ? { hits, title: 'Rider without a helmet', why: 'rider with no helmet' } : { note: 'passed, every rider wears a helmet' };
+    }
+  };
+  const ruleOn = k => { const c = rules.find(r => r.dataset.rule === k); return !c || c.checked; };
+  const label = d => (d.cls === 'signal' ? 'signal: ' + d.state : d.cls.replace('_', ' ')) + ' ' + d.conf.toFixed(2);
+
+  function evaluate(t) {
+    const s = SCENES[scene];
+    const kept = s.dets.filter(d => d.conf >= t - 1e-9);
+    const results = Object.keys(RULES).map(k => ({ k, ...(ruleOn(k) ? RULES[k](kept, s) : { note: 'off' }) }));
+    const alerts = results.flatMap(r => (r.hits || []).map(det => ({ rule: r.k, title: r.title, why: r.why, det })));
+    return { s, kept, results, alerts };
+  }
+
+  /* — state — */
+  let scene = 'junction', stage = 0, timers = [], userRan = false;
+  const t = () => +thr.value;
+
+  function svg(tag, attrs, parent) {
+    const n = document.createElementNS(NS, tag);
+    Object.entries(attrs).forEach(([k, v]) => n.setAttribute(k, v));
+    if (parent) parent.appendChild(n);
+    return n;
+  }
+  function drawBoxes(ev) {
+    const hit = new Set(ev.alerts.map(a => a.det));
+    detsEl.replaceChildren();
+    ev.s.dets.forEach((d, i) => {
+      const [x, y, w, h] = d.box;
+      const cls = ['det', 'det-' + d.cls, d.conf < t() - 1e-9 ? 'below' : '', hit.has(d) ? 'det-hit' : ''].join(' ').trim();
+      const g = svg('g', { class: cls, style: `--d:${(i * .07).toFixed(2)}s` }, detsEl);
+      svg('rect', { x, y, width: w, height: h, class: 'box' }, g);
+      const text = label(d);
+      const tw = Math.max(48, text.length * 5.6 + 8);
+      const ty = y - 14 < 0 ? y + h : y - 14;
+      const tx = Math.min(x, 640 - tw);
+      svg('rect', { x: tx, y: ty, width: tw, height: 14, class: 'tag' }, g);
+      svg('text', { x: tx + 4, y: ty + 10 }, g).textContent = text;
+    });
+    zonesEl.replaceChildren();
+    if (ev.s.zone) {
+      const z = ev.s.zone;
+      svg('rect', { x: z.x, y: z.y, width: z.w, height: z.h, class: 'zone' }, zonesEl);
+      svg('text', { x: z.x + 4, y: z.y + z.h - 6, class: 'zone-lbl' }, zonesEl).textContent = 'rule zone';
+    }
+  }
+  function logLines(ev) {
+    const s = ev.s, lines = [];
+    if (stage >= 1) lines.push(['', `frame ${s.frame} · ${s.name}`]);
+    if (stage >= 2) lines.push(['', 'decoded 640×400 · tiled for the model']);
+    if (stage >= 3) lines.push(['', 'pre-processed · denoise, normalise']);
+    if (stage >= 4) lines.push(['', 'detector ready · sample detections']);
+    if (stage >= 5) lines.push(['', `${s.dets.length} detections · ${ev.kept.length} at ≥ ${t().toFixed(2)}`]);
+    if (stage >= 6) ev.results.forEach(r => lines.push(r.hits
+      ? ['bad', `rule ${r.k} → ALERT · ${r.hits.map(label).join(', ')} ${r.why}`]
+      : [r.note === 'off' ? 'off' : 'ok', `rule ${r.k} → ${r.note}`]));
+    if (stage >= 7) lines.push(ev.alerts.length
+      ? ['bad', `action → POST /api/alerts (simulated) · ${ev.alerts.length} for human review`]
+      : ['ok', 'action → no alert raised']);
+    return lines;
+  }
+  // What the threshold just did, in words: a false alarm, a miss, or neither.
+  function explain(ev) {
+    if (stage < 5) return 'Detections below the threshold are dropped before any rule sees them.';
+    const fp = ev.alerts.find(a => a.det.fp);
+    if (fp) return `False alarm: at ${t().toFixed(2)} the detector's "${fp.det.cls}" is really ${fp.det.fp}. Low thresholds trade misses for false alarms.`;
+    const all = evaluate(0).alerts.filter(a => !a.det.fp);
+    const missed = all.filter(a => !ev.alerts.some(b => b.det === a.det));
+    if (missed.length) return `Missed: the threshold dropped a real ${missed[0].det.cls} at ${missed[0].det.conf.toFixed(2)}, so no alert. High thresholds trade false alarms for misses.`;
+    const quiet = ev.s.dets.filter(d => d.fp && d.conf < t());
+    if (quiet.length) return `At ${t().toFixed(2)}, ${quiet[0].fp} (scored ${quiet[0].conf.toFixed(2)} as a ${quiet[0].cls}) is filtered out. Try lowering the threshold.`;
+    return 'Detections below the threshold are dropped before any rule sees them.';
+  }
+
+  function draw() {
+    const ev = evaluate(t());
+    for (let i = 1; i <= N; i++) frame.classList.toggle('s' + i, stage >= i);
+    drawBoxes(ev);
+    hud.name.textContent = 'SAMPLE · ' + ev.s.name;
+    hud.stage.textContent = stage ? STAGES[stage - 1] : 'idle';
+    hud.count.textContent = stage >= 5 ? `${ev.kept.length} / ${ev.s.dets.length}` : '—';
+    const ok = !ev.alerts.length;
+    alertEl.classList.toggle('is-ok', ok);
+    alertTitle.textContent = ok ? 'No violation' : ev.alerts[0].title + (ev.alerts.length > 1 ? ` +${ev.alerts.length - 1} more` : '');
+    alertSub.textContent = ok ? 'every active rule passed' : 'sent for human review · simulated';
+    logEl.replaceChildren(...logLines(ev).map(([k, text]) => { const li = document.createElement('li'); if (k) li.className = k; li.textContent = text; return li; }));
+    logEl.scrollTop = logEl.scrollHeight;
+    hint.textContent = explain(ev);
+    hint.classList.toggle('warn', /^(False alarm|Missed)/.test(hint.textContent));
+    return ev;
+  }
+  // One spoken summary when a run ends or a control changes the result.
+  function announce(ev) {
+    statusEl.textContent = `Simulated ${ev.s.name}: ${ev.kept.length} of ${ev.s.dets.length} detections at threshold ${t().toFixed(2)}. ` +
+      (ev.alerts.length ? `${ev.alerts.length} alert${ev.alerts.length > 1 ? 's' : ''}: ${[...new Set(ev.alerts.map(a => a.title))].join(', ')}.` : 'No alert raised.');
+  }
+
+  function setStage(n, opts = {}) {
+    stage = Math.max(0, Math.min(N, n));
+    steps.forEach((st, i) => {
+      st.classList.toggle('done', i < stage - 1);
+      st.classList.toggle('active', i === stage - 1);
+      const h = $('.ps-head', st);
+      h.setAttribute('aria-expanded', i === stage - 1 ? 'true' : 'false');
+      if (i === stage - 1) h.setAttribute('aria-current', 'step'); else h.removeAttribute('aria-current');
+    });
+    fill.style.setProperty('--f', (stage / N).toFixed(3));
+    posEl.textContent = `stage ${stage} / ${N}`;
+    prevBtn.disabled = stage <= 1;
+    nextBtn.disabled = stage >= N;
+    const ev = draw();
+    if (stage === N && !opts.quiet) announce(ev);
+    if (stage === N && userRan) inspect('pipeline', 'online', 'Vision pipeline, run end to end');
+  }
+  const stop = () => { timers.forEach(clearTimeout); timers = []; lab.classList.remove('running'); runBtn.disabled = false; };
+  function run(byUser) {
+    stop();
+    if (byUser) userRan = true;
+    $('span', runBtn).textContent = 'Run again';
+    if (REDUCE_MOTION) { setStage(N); return; }
+    lab.classList.add('running');
+    runBtn.disabled = true;
+    setStage(1, { quiet: true });
+    for (let i = 2; i <= N; i++) timers.push(setTimeout(() => setStage(i), (i - 1) * 650));
+    timers.push(setTimeout(stop, (N - 1) * 650));
+  }
+
+  // Each stage head explains itself and jumps the pipeline to that point.
+  steps.forEach((st, i) => {
+    const h = $('.ps-head', st), more = $('.ps-more', st);
     $('.ps-name', h).after(document.createTextNode(' '));
     more.id = 'psMore' + i;
     h.setAttribute('aria-controls', more.id);
-    const sr = document.createElement('span');
-    sr.className = 'sr-only ps-state';
-    h.appendChild(sr);
-    return h;
+    h.addEventListener('click', () => { stop(); userRan = true; setStage(i + 1); });
   });
-  function syncA11y() {
-    steps.forEach((st, i) => {
-      const open = pipe.classList.contains('all-on') || st.classList.contains('active') || st.classList.contains('open');
-      heads[i].setAttribute('aria-expanded', open ? 'true' : 'false');
-      $('.ps-state', heads[i]).textContent = st.classList.contains('active') ? ', current stage' : st.classList.contains('done') ? ', completed' : '';
-    });
-  }
-  function setStage(s) {
-    if (s === stage) return;
-    stage = s;
-    steps.forEach((st, i) => {
-      st.classList.toggle('done', i < s - 1);
-      st.classList.toggle('active', i === s - 1);
-    });
-    syncA11y();
-    for (let i = 1; i <= N; i++) frame.classList.toggle('s' + i, s >= i);
-    const cur = steps[s - 1];
-    status.textContent = cur ? cur.dataset.status : 'idle';
-    conf.textContent = (cur && cur.dataset.conf) || '—';
-    scroller.classList.toggle('online', s === N);
-    // Reduced motion starts on the finished state, so only a scrolled-through run counts.
-    if (s === N && !REDUCE_MOTION) inspect('pipeline', 'online', 'Vision pipeline, run end to end');
-  }
+  runBtn.addEventListener('click', () => run(true));
+  prevBtn.addEventListener('click', () => { stop(); setStage(stage - 1); });
+  nextBtn.addEventListener('click', () => { stop(); userRan = true; setStage(stage + 1); });
 
-  function measure() {
-    sticky.style.position = '';
-    const top = parseFloat(getComputedStyle(sticky).top) || 0;
-    pinned = !REDUCE_MOTION && sticky.offsetHeight + top + 16 <= innerHeight;
-    scroller.classList.toggle('is-static', !pinned);
-    // Scroll room for the story: one and a half screens while pinned.
-    scroller.style.height = pinned ? Math.round(sticky.offsetHeight + innerHeight * 1.5) + 'px' : '';
-  }
-
-  function update() {
-    const r = scroller.getBoundingClientRect();
-    if (r.bottom < -80 || r.top > innerHeight + 80) return;
-    const top = parseFloat(getComputedStyle(sticky).top) || 0;
-    const p = pinned
-      ? clamp((top - r.top) / Math.max(1, r.height - sticky.offsetHeight), 0, 1)
-      : clamp((innerHeight * .75 - r.top) / Math.max(1, r.height), 0, 1);
-    const t = clamp(p * 1.12 - .04, 0, 1) * (N - 1);   // 0 … N-1, a little dwell at both ends
-    const entered = pinned ? r.top <= top + 1 : r.top < innerHeight * .75;
-    setStage(entered ? Math.min(N, Math.floor(t + 1e-6) + 1) : 0);
-    scroller.classList.toggle('running', entered);
-    // Signal position: interpolate between the centres of the stage markers.
-    const rr = rail.getBoundingClientRect();
-    const c = steps.map(st => { const n = $('.ps-node', st).getBoundingClientRect(); return n.top + n.height / 2 - rr.top; });
-    const i = Math.min(Math.floor(t), N - 2), f = t - i;
-    const y = entered ? c[i] + (c[i + 1] - c[i]) * f : 0;
-    dot.style.setProperty('--y', y.toFixed(1) + 'px');
-    fill.style.setProperty('--f', (rr.height ? y / rr.height : 0).toFixed(4));
-  }
-
-  // Tap / click / Enter on a stage. Pinned: travel to that point in the story.
-  // In-flow (reduced motion, or too short to pin): open or close its detail.
-  heads.forEach((h, i) => h.addEventListener('click', () => {
-    if (pinned && !REDUCE_MOTION) {
-      const top = parseFloat(getComputedStyle(sticky).top) || 0;
-      const p = ((Math.min(i + .35, N - 1) / (N - 1)) + .04) / 1.12;
-      const y = scroller.getBoundingClientRect().top + scrollY - top + p * (scroller.offsetHeight - sticky.offsetHeight);
-      window.scrollTo({ top: y, behavior: 'smooth' });
-    } else {
-      steps[i].classList.toggle('open');
-      syncA11y();
-    }
+  // Controls give an answer at once: if the run hasn't reached the boxes yet,
+  // jump to the end so the effect of the change is visible.
+  const changed = () => { stop(); if (stage < N) setStage(N, { quiet: true }); announce(draw()); };
+  thr.addEventListener('input', () => { thrOut.value = t().toFixed(2); thrOut.textContent = t().toFixed(2); changed(); });
+  rules.forEach(r => r.addEventListener('change', changed));
+  $$('.lab-scene', lab).forEach(b => b.addEventListener('click', () => {
+    scene = b.dataset.scene;
+    $$('.lab-scene', lab).forEach(x => x.setAttribute('aria-pressed', x === b ? 'true' : 'false'));
+    $$('.cv-scene', frame).forEach(g => g.classList.toggle('on', g.dataset.scene === scene));
+    if (stage) changed(); else draw();
   }));
 
-  if (REDUCE_MOTION) {
-    // The finished state, every stage open and readable (each still toggles).
-    scroller.classList.add('is-static', 'running');
-    setStage(N);
-    steps.forEach(st => st.classList.add('open'));
-    syncA11y();
-    fill.style.setProperty('--f', '1');
-    return;
-  }
-  measure();
-  Scroll.add(update);
-  let rt = 0;
-  window.addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => { measure(); update(); }, 150); }, { passive: true });
-  if (document.fonts) document.fonts.ready.then(() => { measure(); update(); });
+  thrOut.textContent = t().toFixed(2);
+  setStage(0);
+  if (REDUCE_MOTION || !('IntersectionObserver' in window)) { setStage(N, { quiet: true }); return; }
+  // Plays once, the first time the frame is properly on screen.
+  const io = new IntersectionObserver(([e]) => {
+    if (!e.isIntersecting) return;
+    io.disconnect();
+    if (stage === 0) run(false);
+  }, { threshold: .55 });
+  io.observe(frame);
 })();
 
 /* ══ 20. CASE STUDIES ══
@@ -1251,7 +1480,7 @@ const Eng = (function () {
     about: () => `section#about · ${count('#about .b-card')} modules`,
     experience: () => `${count('.gl-item')} roles + current · ${count('.disc-list > li')} disciplines · ${years()}`,
     skills: () => `${count('.stack-group .node')} technologies · ${count('.stack-group')} groups · ${count('.sm-node')} system nodes`,
-    pipeline: () => `${count('.pipe-step')} stages · scroll-driven · illustrative data`,
+    pipeline: () => `${count('.pipe-step')} stages · ${count('.lab-scene')} sample frames · simulated detections, real rules`,
     projects: () => `${count(PROJECTS)} projects · ${count('.pj [data-case]')} case studies · ${$$('#projGrid .pj-link, .pj-mini .pj-link').filter(a => /live|play/i.test(a.textContent)).length} live demos`,
     education: () => `${count('.edu-item')} qualifications · ${count('.cert')} certifications`,
     process: () => `${count('.proc-step')} stages · each evidenced by this site`,
@@ -1259,10 +1488,10 @@ const Eng = (function () {
     contact: () => 'POST api.web3forms.com · mailto: fallback'
   };
   const TAGS = [
-    ['.hero-title', 'h1 · Geist 680 · −0.055em'],
+    ['.hero-title', 'h1 · Geist 650 · sees / thinks / acts'],
     ['.b-intro', 'about/intro.md'], ['.b-photo', 'about/photo.jpg'], ['.b-now', 'about/now'],
     ['.b-stats', 'about/stats'], ['.b-json', 'about/profile.json'],
-    ['.hero-system', 'request path · select a layer'],
+    ['.hero-system', 'two flows · select a component'], ['.hero-visual', 'illustration · not live data'],
     ['.exp-current', 'HEAD → current role'],
     ['.form-shell', 'POST api.web3forms.com'], ['.mail-card', 'mailto:']
   ];
@@ -1305,7 +1534,7 @@ const Eng = (function () {
   const sysRows = $$('.ep-list:not(.ep-status) li', panel);
   const sum = $('#epSum');
   let bootTimers = [], userTouched = false;
-  function tally() { sum.textContent = `${sysRows.filter(r => r.classList.contains('up')).length}/${sysRows.length} layers ready`; }
+  function tally() { sum.textContent = `${sysRows.filter(r => r.classList.contains('up')).length} layers mapped`; }
   // The panel boots open, holds long enough to be read, then folds down to its
   // one-line summary so it never sits on top of the content.
   function boot(instant) {
@@ -1495,22 +1724,22 @@ const Assistant = (function () {
     ai: () => ({
       title: 'AI / ML work',
       lead: 'Computer vision is the focus: models that watch live video and turn what they see into decisions.',
-      rows: ['aiml', 'cv', 'edge'].map(k => [SYSTEM[k].label, SYSTEM[k].desc]),
+      rows: ['cv', 'edge', 'alert'].map(k => [SYSTEM[k].label, SYSTEM[k].desc]),
       chips: ['python', 'aiml', 'opencv', 'yolo', 'visualai', 'rtsp', 'mediamtx', 'raspberrypi', 'edge', 'iot']
         .map(k => allTech.find(t => t.name === TECH[k])).filter(Boolean),
       items: KB.projects.filter(p => p.el.dataset.cat === 'ai').map(p => `${p.title}: ${p.desc}`),
-      actions: [{ label: 'Watch the AI pipeline', run: go('#pipeline') }, { label: 'Open the Detectify case study', run: () => Case.open('detectify') }]
+      actions: [{ label: 'Try the Visual AI playground', run: go('#lab') }, { label: 'Open the Detectify case study', run: () => Case.open('detectify') }]
     }),
     systems: () => ({
       title: 'The systems I build',
       lead: 'End to end: interfaces, APIs and databases, plus vision pipelines that run on edge devices.',
       rows: Object.values(SYSTEM).filter(s => s.tech.length).map(s => [s.label, s.tagline]),
-      items: ['User → Frontend → API → Database', 'API → AI / ML → Computer Vision → Edge AI → IoT → Real World'],
+      items: Object.values(LANES).map(l => `${l.label}: ${l.nodes.map(k => SYSTEM[k].label).join(' → ')}`),
       actions: [{ label: 'Explore the system map', run: go('#sysmap') }]
     }),
     projects: () => ({
       title: 'Projects',
-      lead: `${KB.projects.length} projects. Two have full case studies.`,
+      lead: `${KB.projects.length} projects. ${Case.keys.length} have full case studies.`,
       rows: KB.projects.map(p => [p.title, `${p.cat} · ${p.tagline || p.desc}`]),
       actions: Case.keys.map(k => ({ label: `${KB.projects.find(p => p.key === k).title} case study`, run: () => Case.open(k) }))
         .concat({ label: 'Go to projects', run: go('#projects') })
@@ -1674,8 +1903,8 @@ const Assistant = (function () {
   const scrollTo = sel => () => { const t = $(sel); if (t) t.scrollIntoView({ behavior: REDUCE_MOTION ? 'auto' : 'smooth', block: 'start' }); };
   const NAV = [
     ['About', '#about', 'fa-user', 'who bio'], ['Experience', '#experience', 'fa-code-branch', 'work roles journey timeline'],
-    ['Tech stack', '#skills', 'fa-layer-group', 'skills technologies'], ['System architecture', '#sysmap', 'fa-diagram-project', 'map nodes system'],
-    ['AI pipeline', '#pipeline', 'fa-eye', 'ai lab ml computer vision yolo'], ['Projects', '#projects', 'fa-folder-open', 'work portfolio'],
+    ['Tech stack', '#skills', 'fa-layer-group', 'skills technologies'], ['System architecture', '#sysmap', 'fa-diagram-project', 'map nodes system flow camera browser api'],
+    ['Visual AI playground', '#lab', 'fa-eye', 'ai lab pipeline ml computer vision yolo demo threshold'], ['Projects', '#projects', 'fa-folder-open', 'work portfolio'],
     ['How I build', '#process', 'fa-gears', 'process engineering deploy testing systems'],
     ['Education', '#education', 'fa-graduation-cap', 'degree certifications'],
     ['Current focus', '#focus', 'fa-crosshairs', 'now focus areas'], ['Contact', '#contact', 'fa-paper-plane', 'email hire message'],
@@ -1684,8 +1913,8 @@ const Assistant = (function () {
   // "Suggested here": the commands that fit the section being read.
   const HERE = {
     hero: ['System architecture', 'Turn on Engineering Mode'], about: ['Download resume', 'Experience'],
-    experience: ['Projects', 'Download resume'], skills: ['System architecture', 'AI pipeline'],
-    pipeline: ['Detectify case study', 'AI / ML projects'], projects: ['Detectify case study', 'Campus Recruitment System case study'],
+    experience: ['Projects', 'Download resume'], skills: ['System architecture', 'Visual AI playground'],
+    pipeline: ['Detectify case study', 'AI / ML projects'], projects: ['Detectify case study', 'Aspend case study'],
     process: ['Open GitHub', 'System architecture'], education: ['Download resume', 'Current focus'],
     focus: ['Contact', 'Download resume'], contact: ['Copy email address', 'Start a conversation', 'Send an email']
   };
@@ -2166,6 +2395,6 @@ const Assistant = (function () {
 })();
 
 /* ══ CONSOLE ══ */
-console.log('%cPratyush Nandi%c  Software Developer', 'font:700 14px system-ui;color:#8b7bff', 'font:12px system-ui;color:#8a90a2');
-console.log('%cLike what you see? → pratyushnandi100@gmail.com', 'font:12px ui-monospace,monospace;color:#22d3ee');
+console.log('%cPratyush Nandi%c  Software Developer', 'font:700 14px system-ui;color:#f0a83a', 'font:12px system-ui;color:#8a90a2');
+console.log('%cLike what you see? → pratyushnandi100@gmail.com', 'font:12px ui-monospace,monospace;color:#f6c56f');
 console.log('%cNot everything is in the navigation. Ctrl K, then: ls -a', 'font:12px ui-monospace,monospace;color:#8a90a2');

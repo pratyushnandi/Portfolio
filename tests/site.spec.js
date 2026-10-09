@@ -34,7 +34,9 @@ test('loads without JavaScript errors or broken local assets', async ({ page, ba
   expect(errors, 'page errors').toEqual([]);
   expect(bad, 'same-origin responses with 4xx/5xx').toEqual([]);
   await expect(page).toHaveTitle(/Pratyush Nandi/);
-  await expect(page.locator('h1')).toContainText('Pratyush');
+  // The headline is the h1; the name sits right above it.
+  await expect(page.locator('h1')).toHaveText('I Build Software That Sees, Thinks & Acts.');
+  await expect(page.locator('.hero-name')).toContainText('Pratyush Nandi');
 });
 
 test('fonts and icons come from this site, and icons render', async ({ page }) => {
@@ -100,7 +102,7 @@ test('project filter shows only the matching category', async ({ page }) => {
   await page.locator('.pf[data-f="all"]').click();
   expect(await visible()).toBe(total);
   await expect(page.locator('.proj-more')).toBeVisible();
-  await expect(page.locator('.pj-mini')).toHaveCount(4);
+  await expect(page.locator('.pj-mini')).toHaveCount(6);
 });
 
 test('mobile filter shows Aspend, and the system map links it', async ({ page }) => {
@@ -157,7 +159,9 @@ test('system map selection lights the route and fills the inspector', async ({ p
   await expect(page.locator('.sm-node[data-node="cv"]')).toHaveAttribute('aria-pressed', 'true');
   await expect(page.locator('#smInspector h3')).toHaveText('Computer Vision');
   await expect(page.locator('#smInspector .smi-chip')).toContainText(['YOLO']);
-  await expect(page.locator('.sm-node[data-node="api"]')).toHaveClass(/lit/);
+  await expect(page.locator('#smInspector .smi-io')).toContainText('RTSP stream');
+  // The route back to the camera lights; the web lane does not.
+  await expect(page.locator('.sm-node[data-node="camera"]')).toHaveClass(/lit/);
   await expect(page.locator('.sm-node[data-node="database"]')).not.toHaveClass(/lit/);
 });
 
@@ -238,7 +242,7 @@ test('mobile: system map shows details inline and the menu makes the page inert'
   await node.scrollIntoViewIfNeeded();
   await node.click();
   await expect(page.locator('#smCanvas > #smInspector')).toBeVisible();
-  await expect(page.locator('#smInspector h3')).toHaveText('Edge AI');
+  await expect(page.locator('#smInspector h3')).toHaveText('Edge device');
   await node.click();
   await expect(page.locator('#smCanvas > #smInspector')).toHaveCount(0);
 
@@ -336,8 +340,16 @@ test('contact form validates, then submits (API mocked)', async ({ page }) => {
   await expect(start).toHaveAttribute('aria-expanded', 'true');
   await expect(page.locator('#cfName')).toBeFocused();
   await page.locator('#cfBtn').click();
-  await expect(status).toContainText('name is required');
+  await expect(status).toContainText('fields need attention');
+  // Each field explains itself, and is linked to its message.
+  await expect(page.locator('#cfNameErr')).toHaveText('Please enter your name.');
+  await expect(page.locator('#cfName')).toHaveAttribute('aria-invalid', 'true');
+  await expect(page.locator('#cfName')).toHaveAttribute('aria-describedby', 'cfNameErr');
+  await expect(page.locator('#cfName')).toBeFocused();
   expect(posts).toBe(0);
+  await page.fill('#cfEmail', 'not-an-email');
+  await page.locator('#cfEmail').blur();
+  await expect(page.locator('#cfEmailErr')).toContainText('full email address');
 
   await page.fill('#cfName', 'CI Bot');
   await page.fill('#cfEmail', 'ci@example.com');
@@ -347,4 +359,106 @@ test('contact form validates, then submits (API mocked)', async ({ page }) => {
   await page.locator('#cfBtn').click();
   await expect(status).toContainText('Message sent successfully');
   expect(posts).toBe(1);
+});
+
+test('visual AI playground: labelled simulated, and the threshold really changes the alerts', async ({ page }) => {
+  await open(page);
+  const lab = page.locator('#lab');
+  await lab.scrollIntoViewIfNeeded();
+  await expect(lab.locator('.lab-sim')).toContainText('No camera');
+  await expect(page.locator('.cv-hud-tr')).toHaveText('simulated');
+  const thr = page.locator('#labThr');
+  const setThr = async v => { await thr.fill(v); await thr.dispatchEvent('input'); };
+  // Default threshold: one red-light violation.
+  await setThr('0.5');
+  await expect(page.locator('#labPos')).toHaveText('stage 7 / 7');
+  await expect(page.locator('#labStatus')).toContainText('1 alert: Red-light violation');
+  // Low threshold: a puddle becomes a car, and the hint calls it a false alarm.
+  await setThr('0.3');
+  await expect(page.locator('#labStatus')).toContainText('2 alerts');
+  await expect(page.locator('#labThrHint')).toContainText('False alarm');
+  // High threshold: the real violation is missed.
+  await setThr('0.95');
+  await expect(page.locator('#labStatus')).toContainText('No alert raised');
+  await expect(page.locator('#labThrHint')).toContainText('Missed');
+  // Rules can be switched off; the green-light frame raises nothing.
+  await setThr('0.5');
+  await page.locator('[data-rule="red_light"]').uncheck();
+  await expect(page.locator('#labStatus')).toContainText('No alert raised');
+  await page.locator('[data-rule="red_light"]').check();
+  await page.locator('.lab-scene[data-scene="green"]').click();
+  await expect(page.locator('.lab-scene[data-scene="green"]')).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.locator('#labLog')).toContainText('the signal is green');
+  await page.locator('.lab-scene[data-scene="helmet"]').click();
+  await expect(page.locator('#labStatus')).toContainText('Rider without a helmet');
+});
+
+test('playground stages step with buttons and expose the current step', async ({ page }) => {
+  await open(page);
+  await page.locator('#lab').scrollIntoViewIfNeeded();
+  await page.locator('.ps-head').nth(2).click();
+  await expect(page.locator('#labPos')).toHaveText('stage 3 / 7');
+  await expect(page.locator('.ps-head').nth(2)).toHaveAttribute('aria-current', 'step');
+  await page.locator('#labNext').click();
+  await expect(page.locator('#labPos')).toHaveText('stage 4 / 7');
+  await page.locator('#labPrev').click();
+  await expect(page.locator('#labPos')).toHaveText('stage 3 / 7');
+});
+
+test('architecture explorer traces a whole flow and explains its steps', async ({ page }) => {
+  await open(page);
+  await page.locator('#sysmap').scrollIntoViewIfNeeded();
+  const vision = page.locator('.sm-lane-btn[data-lane="vision"]');
+  await vision.click();
+  await expect(vision).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.locator('#smInspector h3')).toHaveText('Vision pipeline');
+  await expect(page.locator('#smInspector .smi-step')).toHaveCount(5);
+  await expect(page.locator('.sm-node.lit')).toHaveCount(5);
+  await expect(page.locator('.sm-node[data-node="browser"]')).not.toHaveClass(/lit/);
+  // A step selects its component.
+  await page.locator('#smInspector .smi-step', { hasText: 'Alert' }).click();
+  await expect(page.locator('.sm-node[data-node="alert"]')).toHaveAttribute('aria-pressed', 'true');
+  await expect(vision).toHaveAttribute('aria-pressed', 'false');
+  await expect(page.locator('#smInspector .smi-io')).toContainText('API');
+});
+
+test('Aspend has a case study drawn from its repository', async ({ page }) => {
+  await open(page);
+  const btn = page.locator('.pj [data-case="aspend"]');
+  await btn.scrollIntoViewIfNeeded();
+  await btn.click();
+  await expect(page.locator('#caseTitle')).toHaveText('Aspend');
+  await expect(page.locator('#caseBody')).toContainText('v1.0.0 → v1.0.5');
+  await expect(page.locator('#caseBody')).toContainText('Payments are not expenses');
+  await page.keyboard.press('Escape');
+  await expect(page.locator('#caseDlg')).toBeHidden();
+});
+
+test('project cards show no mock-up screenshots, and Detectify states its scope', async ({ page }) => {
+  await open(page);
+  await expect(page.locator('#projGrid img')).toHaveCount(0);
+  await expect(page.locator('.art-eval')).toContainText('0.989');
+  const btn = page.locator('.pj [data-case="detectify"]');
+  await btn.scrollIntoViewIfNeeded();
+  await btn.click();
+  await expect(page.locator('#caseBody .cs-scope')).toContainText('not in the public repository');
+});
+
+test('page metadata: canonical, social preview and structured data', async ({ page }) => {
+  await open(page);
+  await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', 'https://pratyushnandi.vercel.app/');
+  await expect(page.locator('meta[property="og:url"]')).toHaveAttribute('content', 'https://pratyushnandi.vercel.app/');
+  await expect(page.locator('meta[name="twitter:card"]')).toHaveAttribute('content', /summary/);
+  const ld = JSON.parse(String(await page.locator('script[type="application/ld+json"]').textContent()));
+  expect(ld['@type']).toBe('Person');
+  expect(await page.locator('h1').count()).toBe(1);
+});
+
+test('the intro has a real skip button that ends it at once', async ({ page }) => {
+  await page.goto('./', { waitUntil: 'domcontentloaded' });
+  const skip = page.locator('#plSkip');
+  // The intro may already be over on a fast machine; only press it while it shows.
+  if (await skip.isVisible().catch(() => false)) await skip.click({ timeout: 2000 }).catch(() => {});
+  await page.waitForFunction(() => !document.documentElement.classList.contains('is-loading'), null, { timeout: 2500 });
+  await expect(page.locator('h1')).toBeVisible();
 });
