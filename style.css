@@ -875,10 +875,11 @@ html.theme-fade, html.theme-fade *, html.theme-fade *::before, html.theme-fade *
 
 .stack-grid {
   display: grid; gap: 16px; grid-template-columns: repeat(6, minmax(0, 1fr));
+  /* Edge, data and tools share one row: the edge group spanned two rows only
+     while a log filled its lower half. */
   grid-template-areas:
     "lang lang front front back back"
-    "edge edge edge edge data data"
-    "edge edge edge edge tools tools";
+    "edge edge edge data data tools";
 }
 .stack-group:nth-child(1) { grid-area: lang; }
 .stack-group:nth-child(2) { grid-area: front; }
@@ -1035,7 +1036,7 @@ html.theme-fade, html.theme-fade *, html.theme-fade *::before, html.theme-fade *
 .pj-card:hover .pj-art > span { transform: translateY(-6px) scale(1.04); }
 .pj-card .pj-body { padding: 22px 24px 24px; gap: 10px; }
 
-.art-split, .art-site, .art-calc-body {
+.art-split, .art-site, .art-phone-body {
   display: flex; border-radius: 10px; overflow: hidden;
   background: var(--surface); border: 1px solid var(--line-2); box-shadow: var(--shadow-lg);
 }
@@ -1059,12 +1060,20 @@ html.theme-fade, html.theme-fade *, html.theme-fade *::before, html.theme-fade *
 .art-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-top: auto; }
 .art-cards i { height: 26px; border-radius: 6px; background: color-mix(in srgb, var(--accent) 20%, var(--surface-2)); border: 1px solid var(--line); }
 
-.art-calc-body { flex-direction: column; width: 38%; padding: 12px; gap: 10px; }
-.art-calc-body b { font-family: var(--mono); font-weight: 500; font-size: 1rem; text-align: right; color: var(--text); padding: 2px 4px; }
-.art-keys { display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; }
-.art-keys i { aspect-ratio: 1; border-radius: 6px; background: var(--surface-2); border: 1px solid var(--line); }
-.art-keys i:nth-child(4n) { background: var(--accent); border-color: transparent; }
-
+/* Aspend: a phone with a balance, three transactions and the floating + button. */
+.art-phone-body {
+  position: relative; flex-direction: column; gap: 9px; width: 30%; aspect-ratio: 9 / 16; max-height: 82%;
+  padding: 14px 12px; border-radius: 18px;
+}
+.art-phone-body b { font-family: var(--mono); font-weight: 500; font-size: .9rem; color: var(--text); margin-bottom: 4px; }
+.ap-row { display: flex; align-items: center; gap: 7px; }
+.ap-row i { width: 14px; height: 14px; border-radius: 50%; flex: none; background: color-mix(in srgb, var(--accent) 40%, var(--surface-2)); }
+.ap-row em { flex: 1; height: 5px; border-radius: 3px; background: var(--line-2); }
+.ap-row span { width: 24%; height: 5px; border-radius: 3px; background: var(--line-strong); }
+.ap-fab {
+  position: absolute; right: 10px; bottom: 10px; width: 24px; height: 24px; border-radius: 50%;
+  background: var(--accent); box-shadow: 0 6px 16px -6px var(--accent);
+}
 .proj-cta { display: flex; justify-content: center; margin-top: 48px; }
 
 /* ─── EDUCATION ─── */
