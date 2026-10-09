@@ -229,10 +229,14 @@ const Scroll = (function () {
   const subs = [Nav.onScroll];
   let ticking = false;
   function run() { ticking = false; subs.forEach(f => f()); }
-  window.addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(run); } }, { passive: true });
-  window.addEventListener('resize', () => requestAnimationFrame(run), { passive: true });
-  requestAnimationFrame(run);
-  return { add: f => { subs.push(f); f(); } };
+  const schedule = () => { if (!ticking) { ticking = true; requestAnimationFrame(run); } };
+  window.addEventListener('scroll', schedule, { passive: true });
+  window.addEventListener('resize', schedule, { passive: true });
+  schedule();
+  // A new subscriber runs on the next frame with all the others, not on the
+  // spot: each module adds while the script is still writing to the DOM, and
+  // reading layout there forced a full-page reflow per module on load.
+  return { add: f => { subs.push(f); schedule(); } };
 })();
 
 /* ══ 4b. CONTEXT ══

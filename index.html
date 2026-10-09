@@ -39,21 +39,16 @@
   <link rel="icon"
     href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0%25' stop-color='%238b7bff'/%3E%3Cstop offset='100%25' stop-color='%2322d3ee'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect x='4' y='4' width='92' height='92' rx='22' fill='%2307080c'/%3E%3Ctext x='50' y='64' text-anchor='middle' fill='url(%23g)' font-size='40' font-weight='800' font-family='Arial'%3EPN%3C/text%3E%3C/svg%3E" />
 
-  <!-- Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin />
-  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
-  <link
-    href="https://fonts.googleapis.com/css2?family=Geist:wght@300..800&family=JetBrains+Mono:wght@400;500;600&family=Instrument+Serif:ital@1&display=swap"
-    rel="stylesheet" />
+  <!-- Fonts are self-hosted (@font-face in style.css). The three faces the
+       first screen uses are fetched straight away instead of after the CSS. -->
+  <link rel="preload" href="fonts/geist-latin.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="fonts/jetbrains-mono-latin.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="fonts/instrument-serif-italic-latin.woff2" as="font" type="font/woff2" crossorigin />
 
-  <!-- Icons -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/devicons/devicon@v2.15.1/devicon.min.css" />
-
-  <!-- ?v= is bumped with every release so returning visitors never keep a stale stylesheet. -->
-  <link rel="stylesheet" href="style.css?v=10.2.0" />
+  <!-- ?v= is bumped with every release so returning visitors never keep a stale stylesheet.
+       icons.css is generated (scripts/build-icons.mjs): only the icons this page uses. -->
+  <link rel="stylesheet" href="style.css?v=10.2.1" />
+  <link rel="stylesheet" href="icons.css?v=10.2.1" />
 
   <!-- Only JS ever removes the preloader, so without it the overlay would cover
        the page forever. Reveal-on-scroll never runs either, so show everything. -->
@@ -141,9 +136,10 @@
   <!-- ═══ NAVBAR ═══ -->
   <header id="nav" class="nav">
     <nav class="nav-inner" aria-label="Primary">
-      <a href="#hero" class="logo">
+      <!-- Named explicitly: on phones the wordmark is hidden and the mark is decorative. -->
+      <a href="#hero" class="logo" aria-label="Pratyush Nandi, back to top">
         <span class="logo-mark" aria-hidden="true">PN</span>
-        <span class="logo-text">pratyush<span class="logo-dot">.</span>dev</span>
+        <span class="logo-text" aria-hidden="true">pratyush<span class="logo-dot">.</span>dev</span>
       </a>
       <ul class="n-links" id="nLinks">
         <li><a href="#about">About</a></li>
@@ -208,13 +204,14 @@
             </ul>
           </div>
 
-          <!-- No entrance fade: this paragraph is the page's LCP element, and fading it in
-               held Largest Contentful Paint back until the intro finished. -->
+          <!-- No entrance fade on the lead or the bio: they are the page's LCP element
+               (desktop and mobile respectively), and fading them in held Largest
+               Contentful Paint back until the intro finished. -->
           <p class="hero-lead">
             Building intelligent software systems, <em class="serif">from interface to infrastructure</em>.
           </p>
 
-          <p class="hero-bio" data-hero>
+          <p class="hero-bio">
             Software Developer at <strong>Eltern Segen Technologie Pvt. Ltd.</strong>, working across
             React, Node.js and Python. MCA, Adamas University.
           </p>
@@ -1364,9 +1361,9 @@
     <div class="container">
       <div class="foot-top">
         <div class="foot-brand">
-          <a href="#hero" class="logo">
+          <a href="#hero" class="logo" aria-label="Pratyush Nandi, back to top">
             <span class="logo-mark" aria-hidden="true">PN</span>
-            <span class="logo-text">Pratyush Nandi</span>
+            <span class="logo-text" aria-hidden="true">Pratyush Nandi</span>
           </a>
           <p class="foot-role">Software Developer<br /><span class="mono">AI/ML · Full-Stack · Computer Vision</span></p>
           <p class="foot-motto mono">Building intelligent systems.</p>
@@ -1411,7 +1408,7 @@
         <p class="foot-sys">
           <span>Kolkata · IST <time id="localTime">--:--</time></span>
           <span class="foot-sep" aria-hidden="true">·</span>
-          <span>v10.2.0</span>
+          <span>v10.2.1</span>
         </p>
       </div>
     </div>
@@ -1701,7 +1698,7 @@
     </div>
   </div>
 
-  <script src="script.js?v=10.2.0"></script>
+  <script src="script.js?v=10.2.1"></script>
 </body>
 
 </html>

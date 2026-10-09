@@ -38,6 +38,19 @@ for (const f of ['robots.txt', 'sitemap.xml']) {
   if (!existsSync(resolve(root, f))) missing.push(`(required) ${f}`);
 }
 
+// icons.css is generated: an icon used without re-running the generator would
+// render as an empty box, so every icon class in the page and script needs a rule.
+const icons = readFileSync(resolve(root, 'icons.css'), 'utf8');
+const used = ['index.html', 'script.js'].map(f => readFileSync(resolve(root, f), 'utf8')).join('\n');
+const iconClasses = new Set([
+  ...(used.match(/\bfa-[a-z0-9-]+/g) || []).filter(c => !['fa-spin', 'fa-fw'].includes(c)),
+  ...(used.match(/\bdevicon-[a-z0-9]+-(?:plain|original|line)(?:-wordmark)?\b/g) || [])
+]);
+for (const c of iconClasses) {
+  checked++;
+  if (!icons.includes(`.${c}{`)) missing.push(`icons.css: no rule for .${c} (run node scripts/build-icons.mjs)`);
+}
+
 if (missing.length) {
   console.error(`✗ ${missing.length} missing local asset(s):\n  ` + missing.join('\n  '));
   process.exit(1);

@@ -37,6 +37,24 @@ test('loads without JavaScript errors or broken local assets', async ({ page, ba
   await expect(page.locator('h1')).toContainText('Pratyush');
 });
 
+test('fonts and icons come from this site, and icons render', async ({ page }) => {
+  // The icon fonts and Google Fonts were ~0.5 MB and three render-blocking requests.
+  const external = [];
+  page.on('request', r => { if (/fonts\.googleapis|fonts\.gstatic|cdnjs\.cloudflare|cdn\.jsdelivr/.test(r.url())) external.push(r.url()); });
+  await open(page);
+  await page.waitForLoadState('load');
+  expect(external, 'requests to font/icon CDNs').toEqual([]);
+  const mask = await page.locator('#cmdkBtn i').evaluate(i => getComputedStyle(i).maskImage || getComputedStyle(i).webkitMaskImage);
+  expect(mask).toContain('data:image/svg+xml');
+  expect(await page.evaluate(() => document.fonts.check('16px Geist'))).toBe(true);
+});
+
+test('the logo links are named, even where the wordmark is hidden', async ({ page }) => {
+  await open(page);
+  await expect(page.locator('.nav .logo')).toHaveAccessibleName(/Pratyush Nandi/);
+  await expect(page.locator('.footer .logo')).toHaveAccessibleName(/Pratyush Nandi/);
+});
+
 test('every section linked from the nav exists', async ({ page }) => {
   await open(page);
   const hrefs = await page.locator('.n-links a').evaluateAll(as => as.map(a => a.getAttribute('href')));
