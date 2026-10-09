@@ -6,8 +6,8 @@ import { fileURLToPath } from 'node:url';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const out = resolve(root, '.lhci-site');
-const SITE = ['index.html', 'script.js', 'style.css', 'robots.txt', 'sitemap.xml',
-  'images', 'projects', 'documents', 'files'];
+const SITE = ['index.html', 'script.js', 'style.css', 'icons.css', 'robots.txt', 'sitemap.xml',
+  'fonts', 'images', 'projects', 'documents', 'files'];
 
 rmSync(out, { recursive: true, force: true });
 mkdirSync(out);
