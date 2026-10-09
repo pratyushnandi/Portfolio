@@ -157,7 +157,6 @@ PORTFOLIO/
 ├── files/               # Resume/CV PDF
 │   └── PRATYUSH NANDI_CV (NEW).pdf
 ├── images/              # Profile photo (full, 640w and avatar sizes)
-├── projects/            # Former mock-up images (no longer referenced by the page)
 ├── scripts/
 │   ├── check-assets.mjs # Fails if index.html references a missing local file
 │   └── stage-site.mjs   # Copies deployable files for the Lighthouse run
