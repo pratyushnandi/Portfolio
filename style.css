@@ -895,16 +895,6 @@ html.theme-fade, html.theme-fade *, html.theme-fade *::before, html.theme-fade *
     var(--surface) !important;
 }
 .sg-wide { display: flex; flex-direction: column; }
-.edge-log {
-  margin-top: auto; padding: 14px 16px; border-radius: 12px; display: grid; gap: 4px;
-  font-size: .72rem; line-height: 1.6; color: #c9cede;
-  background: rgba(8, 10, 16, .92); border: 1px solid rgba(255, 255, 255, .08);
-}
-.sg-wide .nodes { margin-bottom: 18px; }
-.edge-log p { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.el-ok { color: #34d399; }
-.el-acc { color: #c4a7ff; }
-.el-dim { color: #7c8397; }
 .sg-title { display: flex; align-items: center; gap: 9px; font-size: .76rem; font-weight: 500; color: var(--text-2); margin-bottom: 16px; letter-spacing: .02em; }
 .sg-title i { color: var(--accent); font-size: .8rem; }
 .nodes { display: flex; flex-wrap: wrap; gap: 8px; }
@@ -1074,27 +1064,6 @@ html.theme-fade, html.theme-fade *, html.theme-fade *::before, html.theme-fade *
 .art-keys { display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; }
 .art-keys i { aspect-ratio: 1; border-radius: 6px; background: var(--surface-2); border: 1px solid var(--line); }
 .art-keys i:nth-child(4n) { background: var(--accent); border-color: transparent; }
-
-.art-cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; width: 62%; padding: 14px; border-radius: 10px; background: var(--surface); border: 1px solid var(--line-2); box-shadow: var(--shadow-lg); }
-.art-cal-grid i { aspect-ratio: 1; border-radius: 5px; background: var(--surface-2); border: 1px solid var(--line); }
-.art-cal-grid i.on { background: var(--accent); border-color: transparent; box-shadow: 0 0 14px color-mix(in srgb, var(--accent) 70%, transparent); }
-
-.art-rps-row { display: flex; align-items: center; gap: 22px; font-size: 2.6rem; color: var(--accent); }
-.art-rps-row b { font: 500 .8rem var(--mono); color: var(--text-3); padding: 4px 9px; border-radius: 7px; border: 1px solid var(--line-2); background: var(--surface); }
-.art-rps-row i:last-child { transform: scaleX(-1); color: var(--text-2); }
-
-.art-swatches { display: flex; gap: 10px; }
-.art-swatches i {
-  width: 42px; height: 72px; border-radius: 10px; border: 1px solid var(--line-2); box-shadow: var(--shadow-md);
-  transition: transform .7s var(--ease-spring);
-}
-.art-swatches i:nth-child(1) { background: #60a5fa; }
-.art-swatches i:nth-child(2) { background: #8b7bff; transform: translateY(-10px); }
-.art-swatches i:nth-child(3) { background: #f472b6; }
-.art-swatches i:nth-child(4) { background: #34d399; transform: translateY(-10px); }
-.art-swatches i:nth-child(5) { background: #fbbf24; }
-.pj-card:hover .art-swatches i:nth-child(odd) { transform: translateY(-10px); }
-.pj-card:hover .art-swatches i:nth-child(even) { transform: translateY(0); }
 
 .proj-cta { display: flex; justify-content: center; margin-top: 48px; }
 
@@ -2818,3 +2787,36 @@ html.modal-open { overflow: hidden; }
   .se-svg { max-width: 340px; }
   .se-actions .btn { flex: 1 1 auto; }
 }
+
+/* ══════════════════════════════════════════════════════
+   v10.3 · CONTENT
+   Roles and disciplines kept apart; small builds listed, not showcased.
+══════════════════════════════════════════════════════ */
+
+/* ─── Experience: roles (git log) above, disciplines below ─── */
+.exp-main { display: grid; gap: clamp(40px, 5vw, 56px); min-width: 0; }
+.disc-list { border-top: 1px solid var(--color-border); }
+.disc-list > li {
+  display: grid; grid-template-columns: 112px minmax(0, 1fr); gap: var(--space-md);
+  padding: 18px 0; border-bottom: 1px solid var(--color-border);
+}
+.disc-date { padding-top: 2px; font-size: .72rem; letter-spacing: .04em; color: var(--color-muted); }
+.disc h4 { margin-bottom: 6px; font-size: 1rem; }
+.disc p { font-size: .9rem; line-height: 1.6; color: var(--color-text-secondary); }
+.disc .disc-tags { margin-top: var(--space-xs); font-size: .7rem; letter-spacing: .02em; color: var(--color-muted); }
+@media (max-width: 640px) {
+  .disc-list > li { grid-template-columns: minmax(0, 1fr); gap: 4px; }
+}
+
+/* ─── Projects: earlier experiments, as a quiet list ─── */
+.proj-more { margin-top: clamp(40px, 5vw, 56px); }
+.pm-list {
+  display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0 clamp(20px, 3vw, 32px);
+  border-top: 1px solid var(--color-border);
+}
+.pj-mini { display: flex; flex-direction: column; gap: var(--space-xs); padding: 20px 0; border-bottom: 1px solid var(--color-border); }
+.pj-mini .pj-cat { order: -1; }
+.pj-mini h4 { font-size: 1rem; }
+.pj-mini .pj-desc { font-size: .88rem; }
+@media (max-width: 960px) { .pm-list { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 640px) { .pm-list { grid-template-columns: minmax(0, 1fr); } }

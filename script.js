@@ -10,6 +10,10 @@ const REDUCE_MOTION = window.matchMedia('(prefers-reduced-motion: reduce)').matc
 const FINE_POINTER = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
 const $ = (s, c = document) => c.querySelector(s);
 const $$ = (s, c = document) => Array.from(c.querySelectorAll(s));
+// Every project on the page: the cards, plus the compact "earlier experiments"
+// rows (titled with h4 there). Anything that lists or counts projects uses these.
+const PROJECTS = '#projGrid .pj, .pj-mini';
+const titleOf = p => $('h3, h4', p);
 // Modal <dialog>s already make the page inert; this also stops Tab from
 // escaping to the browser chrome, so focus cycles inside the dialog.
 function trapTab(dialog) {
@@ -418,6 +422,11 @@ const Scroll = (function () {
         card.classList.add('filter-in');
       }
     });
+    // The experiment rows follow the same filter; their block hides when empty.
+    const minis = $$('.pj-mini');
+    minis.forEach(m => { m.hidden = !(f === 'all' || m.dataset.cat === f); });
+    const more = $('.proj-more');
+    if (more) more.hidden = minis.every(m => m.hidden);
   }));
   const active = btns.find(b => b.classList.contains('active'));
   moveInd(active);
@@ -769,7 +778,7 @@ const EDGES = [['user', 'frontend'], ['frontend', 'api'], ['api', 'database'], [
   ['stream', 'cv'], ['cv', 'edge'], ['edge', 'iot'], ['iot', 'world']];
 // Stack chips by technology key, so other modules can reuse their icons.
 const techNode = key => $$('.stack-group .node').find(n => $('span', n).textContent.trim() === TECH[key]);
-const projectEl = key => $$('#projGrid .pj').find(p => slug($('h3', p).textContent) === key);
+const projectEl = key => $$(PROJECTS).find(p => slug(titleOf(p).textContent) === key);
 
 /* ══ 18. SYSTEM MAP ══
    Selecting a node lights the route a request takes to reach it (every
@@ -839,10 +848,10 @@ const projectEl = key => $$('#projGrid .pj').find(p => slug($('h3', p).textConte
       const ul = el('ul', 'smi-projects');
       projects.forEach(p => {
         const li = el('li');
-        const b = el('button', 'smi-proj', $('h3', p).textContent);
+        const b = el('button', 'smi-proj', titleOf(p).textContent);
         b.type = 'button';
         b.addEventListener('click', () => {
-          const key = slug($('h3', p).textContent);
+          const key = slug(titleOf(p).textContent);
           if ($(`[data-case="${key}"]`)) Case.open(key, b);
           else p.scrollIntoView({ behavior: REDUCE_MOTION ? 'auto' : 'smooth', block: 'center' });
         });
@@ -976,10 +985,10 @@ const projectEl = key => $$('#projGrid .pj').find(p => slug($('h3', p).textConte
     while (li.firstChild) b.appendChild(li.firstChild);
     li.appendChild(b);
   });
-  const projectsUsing = n => $$('#projGrid .pj').filter(p => $$('.tags li', p).some(t => {
+  const projectsUsing = n => $$(PROJECTS).filter(p => $$('.tags li', p).some(t => {
     const tag = t.textContent.trim().toLowerCase();
     return tag === n.toLowerCase() || n.toLowerCase().startsWith(tag);
-  })).map(p => $('h3', p).textContent.trim());
+  })).map(p => titleOf(p).textContent.trim());
 
   let pinned = null;
   function show(li) {
@@ -1235,15 +1244,15 @@ const Eng = (function () {
   /* — one-time decoration: blueprint frames, tags, metadata — */
   const count = sel => $$(sel).length;
   function years() {
-    const ys = $$('.gl-date').flatMap(d => (d.textContent.match(/\d{4}/g) || []).map(Number));
+    const ys = $$('.gl-date, .disc-date').flatMap(d => (d.textContent.match(/\d{4}/g) || []).map(Number));
     return ys.length ? `${Math.min(...ys)} → ${Math.max(...ys)}` : '';
   }
   const META = {
     about: () => `section#about · ${count('#about .b-card')} modules`,
-    experience: () => `${count('.gl-item')} roles + current · ${years()}`,
+    experience: () => `${count('.gl-item')} roles + current · ${count('.disc-list > li')} disciplines · ${years()}`,
     skills: () => `${count('.stack-group .node')} technologies · ${count('.stack-group')} groups · ${count('.sm-node')} system nodes`,
     pipeline: () => `${count('.pipe-step')} stages · scroll-driven · illustrative data`,
-    projects: () => `${count('#projGrid .pj')} projects · ${count('.pj [data-case]')} case studies · ${$$('#projGrid .pj-link').filter(a => /live|play/i.test(a.textContent)).length} live demos`,
+    projects: () => `${count(PROJECTS)} projects · ${count('.pj [data-case]')} case studies · ${$$('#projGrid .pj-link, .pj-mini .pj-link').filter(a => /live|play/i.test(a.textContent)).length} live demos`,
     education: () => `${count('.edu-item')} qualifications · ${count('.cert')} certifications`,
     process: () => `${count('.proc-step')} stages · each evidenced by this site`,
     focus: () => `${count('.focus-grid li')} focus areas`,
@@ -1416,13 +1425,14 @@ const Assistant = (function () {
     stack: $$('.stack-group').map(g => ({
       group: txt($('.sg-title', g)).replace(/^\w/, c => c.toUpperCase()), items: $$('.node', g).map(n => ({ name: txt($('span', n)), icon: $('i', n).className }))
     })),
-    projects: $$('#projGrid .pj').map(p => ({
-      key: slug(txt($('h3', p))), title: txt($('h3', p)), cat: txt($('.pj-cat', p)),
+    projects: $$(PROJECTS).map(p => ({
+      key: slug(txt(titleOf(p))), title: txt(titleOf(p)), cat: txt($('.pj-cat', p)),
       tagline: txt($('.pj-tagline', p)), desc: txt($('.pj-desc', p)), tags: $$('.tags li', p).map(txt),
       links: $$('.pj-links a', p).map(a => ({ label: txt(a), href: a.href })), el: p
     })),
     current: { role: txt($('.exp-current h3')), company: txt($('.ec-co')), desc: txt($('.exp-current > p:not(.ec-co)')) },
     roles: $$('.gl-item').map(i => ({ title: txt($('h3', i)), date: txt($('.gl-date', i)), sub: txt($('.gl-sub', i)) })),
+    disciplines: $$('.disc-list > li').map(i => ({ title: txt($('h4', i)), date: txt($('.disc-date', i)), tags: txt($('.disc-tags', i)) })),
     edu: $$('.edu-item').map(i => ({ title: txt($('h4', i)), inst: txt($('.edu-inst', i)), meta: txt($('.edu-meta', i)).replace(/(\d{4}) – (\d{4})/, '$1–$2') })),
     certs: $$('.cert').map(c => ({ title: txt($('h4', c)), note: txt($('.cert-body p', c)) })),
     status: txt($('.hero-meta .status-pill')),
@@ -1508,6 +1518,7 @@ const Assistant = (function () {
       title: 'Experience',
       lead: `Currently ${KB.current.role} at ${KB.current.company}. ${KB.current.desc}`,
       rows: KB.roles.map(r => [r.title, `${r.date} · ${r.sub}`]),
+      items: KB.disciplines.map(d => `${d.title} (${d.date}): ${d.tags}`),
       actions: [{ label: 'See the full timeline', run: go('#experience') }]
     }),
     education: () => ({
@@ -1888,7 +1899,7 @@ const Assistant = (function () {
   const CONTEXT = [
     ['a[href^="mailto:"], a[href="#contact"], .soc-btn, .mail-link', "Let's talk"],
     ['.node, .sm-node, .smi-chip', 'Tech'],
-    ['#projGrid .pj', 'Explore']
+    ['#projGrid .pj, .pj-mini', 'Explore']
   ];
   let x = 0, y = 0, cx = 0, cy = 0, raf = 0, shown = false;
   function loop() {
