@@ -756,7 +756,7 @@ const SYSTEM = {
     tech: ['nodejs', 'fastify', 'express', 'rest', 'python', 'laravel'], projects: ['campus-recruitment-system', 'ambulance-management-system', 'web-calculator', 'background-changer'] },
   database: { label: 'Database', lane: 'web', tagline: 'Durable, queryable state',
     desc: 'Relational data in PostgreSQL or MySQL through Prisma, MongoDB where documents fit better, and SQLite on the device when an app works offline.',
-    tech: ['postgresql', 'mysql', 'prisma', 'mongodb', 'sqlite'], projects: ['campus-recruitment-system', 'ambulance-management-system', 'aspend'] },
+    tech: ['postgresql', 'mysql', 'prisma', 'mongodb', 'sqlite'], projects: ['ambulance-management-system', 'aspend'] },
   camera: { label: 'Camera', lane: 'vision', tagline: 'The eye of the system',
     desc: 'An IP camera at a junction or a site. It produces the frames everything else reasons about, over a protocol it already speaks.',
     tech: ['rtsp'], projects: [] },
