@@ -47,8 +47,8 @@
 
   <!-- ?v= is bumped with every release so returning visitors never keep a stale stylesheet.
        icons.css is generated (scripts/build-icons.mjs): only the icons this page uses. -->
-  <link rel="stylesheet" href="style.css?v=10.3.0" />
-  <link rel="stylesheet" href="icons.css?v=10.3.0" />
+  <link rel="stylesheet" href="style.css?v=10.4.0" />
+  <link rel="stylesheet" href="icons.css?v=10.4.0" />
 
   <!-- Only JS ever removes the preloader, so without it the overlay would cover
        the page forever. Reveal-on-scroll never runs either, so show everything. -->
@@ -358,7 +358,7 @@
           </article>
 
           <div class="b-card b-stats" data-reveal style="--i:3">
-            <div class="stat"><span class="stat-n"><span class="count" data-count="2">2</span>+</span><span class="stat-l">Years coding</span></div>
+            <div class="stat"><span class="stat-n"><span class="count" data-count="5">5</span>+</span><span class="stat-l">Years coding</span></div>
             <div class="stat"><span class="stat-n"><span class="count" data-count="10">10</span>+</span><span class="stat-l">Projects shipped</span></div>
             <div class="stat"><span class="stat-n"><span class="count" data-count="2">2</span></span><span class="stat-l">YOLOv8 models trained</span></div>
             <div class="stat"><span class="stat-n"><span class="count" data-count="5">5</span>+</span><span class="stat-l">Certifications</span></div>
@@ -613,6 +613,7 @@
             <ul class="nodes">
               <li class="node" style="--brand:#61dafb"><i class="devicon-react-original colored"></i><span>React.js</span></li>
               <li class="node" style="--brand:#a1a1aa"><i class="devicon-nextjs-plain"></i><span>Next.js</span></li>
+              <li class="node" style="--brand:#61dafb"><i class="devicon-react-original colored"></i><span>React Native</span></li>
               <li class="node" style="--brand:#e34f26"><i class="devicon-html5-plain colored"></i><span>HTML5</span></li>
               <li class="node" style="--brand:#1572b6"><i class="devicon-css3-plain colored"></i><span>CSS3</span></li>
             </ul>
@@ -636,6 +637,7 @@
               <li class="node" style="--brand:#00758f"><i class="devicon-mysql-plain colored"></i><span>MySQL</span></li>
               <li class="node" style="--brand:#5a67d8"><i class="fas fa-diamond"></i><span>Prisma</span></li>
               <li class="node" style="--brand:#47a248"><i class="devicon-mongodb-plain colored"></i><span>MongoDB</span></li>
+              <li class="node" style="--brand:#0f80cc"><i class="devicon-sqlite-plain colored"></i><span>SQLite</span></li>
             </ul>
           </div>
 
@@ -804,6 +806,7 @@
             <button type="button" class="pf" data-f="ai" aria-pressed="false">AI / ML</button>
             <button type="button" class="pf" data-f="web" aria-pressed="false">Web App</button>
             <button type="button" class="pf" data-f="fullstack" aria-pressed="false">Full-Stack</button>
+            <button type="button" class="pf" data-f="mobile" aria-pressed="false">Mobile</button>
             <span class="pf-ind" aria-hidden="true"></span>
           </div>
         </header>
@@ -911,19 +914,24 @@
             </div>
           </article>
 
-          <!-- Web Calculator -->
-          <article class="pj pj-card" data-cat="fullstack" data-reveal style="--i:2;--accent:#f59e0b" data-flow="UI → Node.js · Express backend">
-            <a class="pj-art art-calc" href="https://web-calculator-ad.netlify.app/" target="_blank" rel="noopener noreferrer" tabindex="-1" aria-hidden="true">
-              <span class="art-calc-body"><b>1,024</b><span class="art-keys"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span></span>
-            </a>
+          <!-- Aspend (private repository; everything here is from its README) -->
+          <article class="pj pj-card" data-cat="mobile" data-reveal style="--i:2;--accent:#34d399" data-flow="Expo Router screens → Zustand store → SQLite on device · CSV / XLSX / PDF export">
+            <div class="pj-art art-phone" aria-hidden="true">
+              <span class="art-phone-body">
+                <b>₹ 12,480</b>
+                <span class="ap-row"><i></i><em></em><span></span></span>
+                <span class="ap-row"><i></i><em></em><span></span></span>
+                <span class="ap-row"><i></i><em></em><span></span></span>
+                <span class="ap-fab"></span>
+              </span>
+            </div>
             <div class="pj-body">
-              <span class="pj-cat mono">Full-Stack</span>
-              <h3>Web Calculator</h3>
-              <p class="pj-desc">A full-stack calculator on Node and Express, pairing a clean, responsive UI with a robust backend.</p>
-              <ul class="tags"><li>Node.js</li><li>Express</li><li>HTML</li><li>CSS</li></ul>
-              <div class="pj-links">
-                <a href="https://web-calculator-ad.netlify.app/" target="_blank" rel="noopener noreferrer" class="pj-link">Live <i class="fas fa-arrow-up-right-from-square" aria-hidden="true"></i></a>
-              </div>
+              <span class="pj-cat mono">Mobile App · Android</span>
+              <h3>Aspend</h3>
+              <p class="pj-desc">An offline-first Android expense tracker. Quick one-handed entry, credit-card accounting that tracks
+                limits and due dates without counting bill payments twice, CSV, Excel and PDF export, and a fingerprint or
+                PIN lock. Everything stays on the device in SQLite.</p>
+              <ul class="tags"><li>React Native</li><li>Expo</li><li>TypeScript</li><li>SQLite</li><li>Zustand</li></ul>
             </div>
           </article>
 
@@ -935,6 +943,13 @@
         <section class="proj-more" aria-labelledby="projMoreTitle" data-reveal>
           <h3 class="col-title mono" id="projMoreTitle"><i class="fas fa-flask" aria-hidden="true"></i> earlier experiments</h3>
           <ul class="pm-list">
+            <li class="pj-mini" data-cat="fullstack">
+              <h4>Web Calculator</h4>
+              <span class="pj-cat mono">Full-Stack</span>
+              <p class="pj-desc">A full-stack calculator on Node and Express, pairing a clean, responsive UI with a robust backend.</p>
+              <ul class="tags"><li>Node.js</li><li>Express</li><li>HTML</li><li>CSS</li></ul>
+              <div class="pj-links"><a href="https://web-calculator-ad.netlify.app/" target="_blank" rel="noopener noreferrer" class="pj-link">Live <i class="fas fa-arrow-up-right-from-square" aria-hidden="true"></i></a></div>
+            </li>
             <li class="pj-mini" data-cat="fullstack">
               <h4>Cyber Calendar</h4>
               <span class="pj-cat mono">Full-Stack · Utility</span>
@@ -1354,7 +1369,7 @@
         <p class="foot-sys">
           <span>Kolkata · IST <time id="localTime">--:--</time></span>
           <span class="foot-sep" aria-hidden="true">·</span>
-          <span>v10.3.0</span>
+          <span>v10.4.0</span>
         </p>
       </div>
     </div>
@@ -1643,7 +1658,7 @@
     </div>
   </div>
 
-  <script src="script.js?v=10.3.0"></script>
+  <script src="script.js?v=10.4.0"></script>
 </body>
 
 </html>

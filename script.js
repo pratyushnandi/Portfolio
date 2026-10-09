@@ -702,9 +702,9 @@ const Scroll = (function () {
    project keys are the slugs of the project titles on the page. */
 const slug = s => s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 const TECH = {
-  react: 'React.js', nextjs: 'Next.js', typescript: 'TypeScript', javascript: 'JavaScript', html5: 'HTML5', css3: 'CSS3',
+  react: 'React.js', nextjs: 'Next.js', reactnative: 'React Native', typescript: 'TypeScript', javascript: 'JavaScript', html5: 'HTML5', css3: 'CSS3',
   nodejs: 'Node.js', fastify: 'Fastify', express: 'Express.js', rest: 'REST APIs', python: 'Python', laravel: 'Laravel / PHP',
-  postgresql: 'PostgreSQL', mysql: 'MySQL', prisma: 'Prisma', mongodb: 'MongoDB',
+  postgresql: 'PostgreSQL', mysql: 'MySQL', prisma: 'Prisma', mongodb: 'MongoDB', sqlite: 'SQLite',
   aiml: 'AI / ML', opencv: 'OpenCV', yolo: 'YOLO', visualai: 'Visual AI', rtsp: 'RTSP', mediamtx: 'MediaMTX',
   raspberrypi: 'Raspberry Pi', edge: 'Edge Computing', iot: 'IoT'
 };
@@ -713,14 +713,14 @@ const SYSTEM = {
     desc: 'A person in a browser. Everything downstream exists to make that moment fast and reliable.',
     tech: [], projects: [] },
   frontend: { label: 'Frontend', layer: 'client', tagline: 'Interfaces people enjoy using',
-    desc: 'Component-driven interfaces in React and Next.js, typed with TypeScript and responsive from the start.',
-    tech: ['react', 'nextjs', 'typescript', 'javascript', 'html5', 'css3'], projects: ['code-editor', 'portfolio-website', 'cyber-calendar'] },
+    desc: 'Component-driven interfaces in React and Next.js on the web and React Native on Android, typed with TypeScript.',
+    tech: ['react', 'nextjs', 'reactnative', 'typescript', 'javascript', 'html5', 'css3'], projects: ['aspend', 'code-editor', 'portfolio-website', 'cyber-calendar'] },
   api: { label: 'API', layer: 'service', tagline: 'The contract between client and system',
     desc: 'REST APIs on Node.js with Fastify or Express, plus Python where the work is data or ML.',
     tech: ['nodejs', 'fastify', 'express', 'rest', 'python', 'laravel'], projects: ['campus-recruitment-system', 'ambulance-management-system', 'web-calculator', 'background-changer'] },
   database: { label: 'Database', layer: 'service', tagline: 'Durable, queryable state',
-    desc: 'Relational data in PostgreSQL or MySQL through Prisma, and MongoDB where documents fit better.',
-    tech: ['postgresql', 'mysql', 'prisma', 'mongodb'], projects: ['campus-recruitment-system', 'ambulance-management-system'] },
+    desc: 'Relational data in PostgreSQL or MySQL through Prisma, MongoDB where documents fit better, and SQLite on the device when an app works offline.',
+    tech: ['postgresql', 'mysql', 'prisma', 'mongodb', 'sqlite'], projects: ['campus-recruitment-system', 'ambulance-management-system', 'aspend'] },
   aiml: { label: 'AI / ML', layer: 'intelligence', tagline: 'Learning from data',
     desc: 'Python machine learning that turns raw input into predictions the rest of the system can act on.',
     tech: ['python', 'aiml', 'opencv'], projects: ['detectify'] },
@@ -1443,6 +1443,7 @@ const Assistant = (function () {
     'React.js': ['react', 'reactjs'], 'Next.js': ['next', 'nextjs'], 'Node.js': ['node', 'nodejs'],
     'Express.js': ['express', 'expressjs'], 'PostgreSQL': ['postgres', 'postgresql', 'psql'], 'MongoDB': ['mongo', 'mongodb'],
     'Laravel / PHP': ['laravel', 'php'], 'REST APIs': ['rest', 'restful'], 'TypeScript': ['typescript', 'ts'],
+    'React Native': ['react native', 'expo', 'android', 'mobile'], 'SQLite': ['sqlite'],
     'JavaScript': ['javascript', 'js'], 'HTML5': ['html', 'html5'], 'CSS3': ['css', 'css3'], 'C++': ['c++', 'cpp'],
     'AI / ML': ['machine learning'], 'Raspberry Pi': ['raspberry', 'rpi'], 'Edge Computing': ['edge computing'],
     'Visual AI': ['visual ai'], 'Computer Vision': ['computer vision']
@@ -1451,7 +1452,7 @@ const Assistant = (function () {
     detectify: ['detectify', 'traffic'], 'campus-recruitment-system': ['campus', 'recruitment'],
     'code-editor': ['code editor', 'editor'], 'web-calculator': ['calculator'], 'rock-paper-scissors': ['rock paper', 'rps'],
     'cyber-calendar': ['calendar'], 'background-changer': ['background changer', 'background'], 'portfolio-website': ['portfolio website'],
-    'ambulance-management-system': ['ambulance']
+    'ambulance-management-system': ['ambulance'], aspend: ['aspend', 'expense']
   };
   const INTENTS = {
     ai: ['ai', 'ml', 'machine', 'learning', 'vision', 'model', 'models', 'detection', 'intelligent', 'inference', 'yolo', 'opencv'],

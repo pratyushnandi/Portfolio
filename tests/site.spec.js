@@ -100,7 +100,17 @@ test('project filter shows only the matching category', async ({ page }) => {
   await page.locator('.pf[data-f="all"]').click();
   expect(await visible()).toBe(total);
   await expect(page.locator('.proj-more')).toBeVisible();
-  await expect(page.locator('.pj-mini')).toHaveCount(3);
+  await expect(page.locator('.pj-mini')).toHaveCount(4);
+});
+
+test('mobile filter shows Aspend, and the system map links it', async ({ page }) => {
+  await open(page);
+  await page.locator('#projects').scrollIntoViewIfNeeded();
+  await page.locator('.pf[data-f="mobile"]').click();
+  await expect(page.locator('#projGrid .pj:not(.is-hidden) h3')).toHaveText(['Aspend']);
+  await page.locator('#sysmap').scrollIntoViewIfNeeded();
+  await page.locator('.sm-node[data-node="database"]').click();
+  await expect(page.locator('#smInspector .smi-projects')).toContainText('Aspend');
 });
 
 test('experience keeps roles and disciplines apart', async ({ page }) => {
