@@ -7,7 +7,7 @@
   <!-- Kept as a single JS-driven meta rather than two prefers-color-scheme ones:
        the toggle can override the OS, so media-matched metas would disagree with
        the theme actually on screen. -->
-  <meta name="theme-color" id="themeColor" content="#07080c" />
+  <meta name="theme-color" id="themeColor" content="#0c0d0f" />
   <script>
     (function () {
       var stored = null;
@@ -19,7 +19,7 @@
       if (light) {
         document.documentElement.setAttribute('data-theme', 'light');
         var m = document.getElementById('themeColor');
-        if (m) m.setAttribute('content', '#f6f6f3');
+        if (m) m.setAttribute('content', '#f6f3ee');
       }
       // Engineering Mode is restored before first paint so a reload never flashes.
       var eng = null;
@@ -29,15 +29,26 @@
     })();
   </script>
   <meta name="description"
-    content="Pratyush Nandi — Software Developer at Eltern Segen Technologie Pvt. Ltd. Full-stack web platforms, APIs and edge-deployed computer vision. React, Next.js, Node.js, Python. MCA @ Adamas University · Kolkata." />
+    content="Pratyush Nandi, Software Developer at Eltern Segen Technologie Pvt. Ltd. Full-stack web platforms, computer vision, Visual AI, IoT and edge systems with React, Node.js, Python and YOLO. MCA, Adamas University. Kolkata." />
   <meta name="keywords"
-    content="Pratyush Nandi, Software Developer, Full-Stack Developer, Python, TypeScript, React, Next.js, Node.js, Fastify, PostgreSQL, Prisma, YOLO, IoT, Edge Computing, Portfolio, Kolkata" />
+    content="Pratyush Nandi, Software Developer, Full-Stack Developer, Computer Vision, Visual AI, Python, TypeScript, React, Next.js, Node.js, Fastify, PostgreSQL, YOLO, OpenCV, IoT, Edge Computing, Kolkata" />
+  <meta name="author" content="Pratyush Nandi" />
+  <link rel="canonical" href="https://pratyushnandi.vercel.app/" />
+  <meta property="og:type" content="profile" />
+  <meta property="og:site_name" content="Pratyush Nandi" />
+  <meta property="og:url" content="https://pratyushnandi.vercel.app/" />
   <meta property="og:title" content="Pratyush Nandi | Software Developer" />
-  <meta property="og:description" content="Full-stack developer building fast web platforms, APIs and edge-deployed vision systems." />
+  <meta property="og:description" content="I build software that sees, thinks and acts: full-stack products, computer vision and edge systems." />
   <meta property="og:image" content="https://pratyushnandi.vercel.app/images/profile.jpg" />
-  <title>Pratyush Nandi | Software Developer</title>
+  <meta property="og:image:alt" content="Portrait of Pratyush Nandi" />
+  <meta property="og:locale" content="en_IN" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Pratyush Nandi | Software Developer" />
+  <meta name="twitter:description" content="I build software that sees, thinks and acts: full-stack products, computer vision and edge systems." />
+  <meta name="twitter:image" content="https://pratyushnandi.vercel.app/images/profile.jpg" />
+  <title>Pratyush Nandi | Software Developer · Full-Stack &amp; Computer Vision</title>
   <link rel="icon"
-    href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0%25' stop-color='%238b7bff'/%3E%3Cstop offset='100%25' stop-color='%2322d3ee'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect x='4' y='4' width='92' height='92' rx='22' fill='%2307080c'/%3E%3Ctext x='50' y='64' text-anchor='middle' fill='url(%23g)' font-size='40' font-weight='800' font-family='Arial'%3EPN%3C/text%3E%3C/svg%3E" />
+    href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0%25' stop-color='%23f0a83a'/%3E%3Cstop offset='100%25' stop-color='%23f6c56f'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect x='4' y='4' width='92' height='92' rx='22' fill='%230c0d0f'/%3E%3Ctext x='50' y='64' text-anchor='middle' fill='url(%23g)' font-size='40' font-weight='800' font-family='Arial'%3EPN%3C/text%3E%3C/svg%3E" />
 
   <!-- Fonts are self-hosted (@font-face in style.css). The three faces the
        first screen uses are fetched straight away instead of after the CSS. -->
@@ -47,8 +58,8 @@
 
   <!-- ?v= is bumped with every release so returning visitors never keep a stale stylesheet.
        icons.css is generated (scripts/build-icons.mjs): only the icons this page uses. -->
-  <link rel="stylesheet" href="style.css?v=10.4.0" />
-  <link rel="stylesheet" href="icons.css?v=10.4.0" />
+  <link rel="stylesheet" href="style.css?v=11.0.0" />
+  <link rel="stylesheet" href="icons.css?v=11.0.0" />
 
   <!-- Only JS ever removes the preloader, so without it the overlay would cover
        the page forever. Reveal-on-scroll never runs either, so show everything. -->
@@ -68,6 +79,8 @@
     "url": "https://pratyushnandi.vercel.app",
     "image": "https://pratyushnandi.vercel.app/images/profile.jpg",
     "jobTitle": "Software Developer",
+    "description": "Software developer building full-stack products, computer-vision pipelines and edge systems.",
+    "knowsAbout": ["Full-stack development", "Computer vision", "Visual AI", "Machine learning", "IoT", "Edge computing", "React", "Node.js", "Python", "YOLO", "OpenCV"],
     "worksFor": {
       "@type": "Organization",
       "name": "Eltern Segen Technologie Pvt. Ltd."
@@ -112,8 +125,8 @@
       <svg class="pl-mark" viewBox="0 0 64 64" fill="none">
         <defs>
           <linearGradient id="plg" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0" stop-color="#8b7bff" />
-            <stop offset="1" stop-color="#22d3ee" />
+            <stop offset="0" stop-color="#f0a83a" />
+            <stop offset="1" stop-color="#f6c56f" />
           </linearGradient>
         </defs>
         <rect class="pl-frame" x="2" y="2" width="60" height="60" rx="16" stroke="url(#plg)" stroke-width="2" />
@@ -129,15 +142,17 @@
         <li>identity</li><li>engineering</li><li>ai systems</li><li>projects</li><li>architecture</li><li>interface</li>
       </ol>
       <div class="pl-bar"><span id="plBar"></span></div>
-      <p class="pl-skip mono">tap or press any key to skip</p>
     </div>
+    <!-- Outside the aria-hidden box so it stays a real, announced control. Any
+         key or tap skips too; the intro never runs longer than 1.8s. -->
+    <button type="button" class="pl-skip mono" id="plSkip">Skip intro <span aria-hidden="true">→</span></button>
   </div>
 
   <!-- ═══ NAVBAR ═══ -->
   <header id="nav" class="nav">
     <nav class="nav-inner" aria-label="Primary">
       <!-- Named explicitly: on phones the wordmark is hidden and the mark is decorative. -->
-      <a href="#hero" class="logo" aria-label="Pratyush Nandi, back to top">
+      <a href="#hero" class="logo" aria-label="PN pratyush.dev: Pratyush Nandi, back to top">
         <span class="logo-mark" aria-hidden="true">PN</span>
         <span class="logo-text" aria-hidden="true">pratyush<span class="logo-dot">.</span>dev</span>
       </a>
@@ -188,37 +203,33 @@
       <div class="container hero-wrap">
         <div class="hero-copy">
           <div class="hero-meta" data-hero>
-            <span class="status-pill"><span class="pulse-dot" aria-hidden="true"></span> Available for opportunities</span>
+            <span class="status-pill"><span class="status-dot" aria-hidden="true"></span> Available for opportunities</span>
             <span class="hero-loc mono"><i class="fas fa-location-dot" aria-hidden="true"></i> Kolkata, IN</span>
           </div>
 
-          <h1 class="hero-title" id="heroTitle">
-            <span class="ht-name"><span class="ht-line"><span class="ht-word">Pratyush</span></span>
-              <span class="ht-line"><span class="ht-word">Nandi</span></span></span>
-          </h1>
+          <p class="hero-name mono"><img class="hn-avatar" src="images/profile-avatar.jpg" alt="" width="36" height="36" decoding="async" /> Pratyush Nandi <span class="hn-sep" aria-hidden="true">/</span> Software Developer</p>
 
-          <div class="hero-identity" data-hero>
-            <p class="hi-role">Software Developer</p>
-            <ul class="hi-tags mono" aria-label="Specialisms">
-              <li>AI / ML</li><li>Full-Stack</li><li>Computer Vision</li><li>Real-Time Systems</li>
-            </ul>
-          </div>
+          <!-- The headline is never hidden behind an entrance animation: it is
+               readable the moment the page paints (and it is the LCP element). -->
+          <h1 class="hero-title" id="heroTitle">I Build Software That <span class="ht-verb">Sees</span>, <span class="ht-verb">Thinks</span> &amp;&nbsp;<span class="ht-verb">Acts</span>.</h1>
 
-          <!-- No entrance fade on the lead or the bio: they are the page's LCP element
-               (desktop and mobile respectively), and fading them in held Largest
-               Contentful Paint back until the intro finished. -->
           <p class="hero-lead">
-            Building intelligent software systems, <em class="serif">from interface to infrastructure</em>.
+            Full-stack products, computer-vision pipelines and edge systems, built from the interface a person
+            uses <em class="serif">down to the device at the edge</em>.
           </p>
+
+          <ul class="hi-tags mono" aria-label="What I work on">
+            <li>Full-Stack</li><li>Computer Vision</li><li>Visual AI</li><li>IoT</li><li>Edge Systems</li>
+          </ul>
 
           <p class="hero-bio">
             Software Developer at <strong>Eltern Segen Technologie Pvt. Ltd.</strong>, working across
             React, Node.js and Python. MCA, Adamas University.
           </p>
 
-          <div class="hero-actions" data-hero>
+          <div class="hero-actions">
             <a href="#projects" class="btn btn-primary magnetic">
-              <span>View projects</span> <i class="fas fa-arrow-right" aria-hidden="true"></i>
+              <span>View selected work</span> <i class="fas fa-arrow-right" aria-hidden="true"></i>
             </a>
             <a href="#contact" class="btn btn-ghost magnetic">
               <i class="fas fa-paper-plane" aria-hidden="true"></i> <span>Let's collaborate</span>
@@ -239,66 +250,62 @@
           </div>
         </div>
 
-        <!-- Visual: one composition, the IDE window, with the profile card and
-             three stack chips orbiting it. -->
+        <!-- Visual: the headline as a system. A camera frame (sees) feeds a rule
+             (thinks) that raises an alert through an API (acts). An illustration:
+             decorative, and labelled as one. -->
         <div class="hero-visual" id="heroVisual" aria-hidden="true">
-          <div class="hv-layer hv-ide" data-depth="10">
-            <div class="ide">
-              <div class="win-bar">
-                <span class="dots"><i></i><i></i><i></i></span>
-                <span class="ide-tab active"><i class="devicon-typescript-plain"></i> developer.ts</span>
-                <span class="ide-tab"><span class="ide-tab-ico">{}</span> stack.json</span>
-              </div>
-              <div class="ide-body">
-                <ol class="ide-gutter"><li>1</li><li>2</li><li>3</li><li>4</li><li>5</li><li>6</li><li>7</li><li>8</li><li>9</li><li>10</li></ol>
-                <pre class="ide-code" id="ideCode"><code><span class="tk-k">const</span> <span class="tk-v">developer</span> <span class="tk-p">=</span> {
-  <span class="tk-a">name</span>: <span class="tk-s">"Pratyush Nandi"</span>,
-  <span class="tk-a">role</span>: <span class="tk-s">"Software Developer"</span>,
-  <span class="tk-a">company</span>: <span class="tk-s">"Eltern Segen Technologie"</span>,
-  <span class="tk-a">stack</span>: [<span class="tk-s">"TypeScript"</span>, <span class="tk-s">"React"</span>, <span class="tk-s">"Node.js"</span>, <span class="tk-s">"Python"</span>],
-  <span class="tk-a">focus</span>: [<span class="tk-s">"Full-Stack"</span>, <span class="tk-s">"Edge AI"</span>, <span class="tk-s">"IoT"</span>],
-  <span class="tk-a">available</span>: <span class="tk-b">true</span>,
-};
-
-<span class="tk-k">export default</span> <span class="tk-v">developer</span>;</code></pre>
-              </div>
-              <div class="ide-status">
-                <span><i class="fas fa-code-branch"></i> main</span>
-                <span class="ide-status-end">TypeScript · UTF-8</span>
-              </div>
+          <div class="hv-layer sta" data-depth="10">
+            <div class="sta-card sta-sees">
+              <div class="sta-h mono"><span><b>01</b> sees</span><span>frame 0142</span></div>
+              <svg class="sta-frame" viewBox="0 0 320 150">
+                <rect class="sf-road" width="320" height="150" />
+                <path class="sf-lane" d="M0 98H320" />
+                <path class="sf-stop" d="M196 62V140" />
+                <g class="sf-signal"><rect x="232" y="14" width="13" height="34" rx="3" /><circle class="on" cx="238.5" cy="22" r="3.6" /><circle cx="238.5" cy="31" r="3.6" /><circle cx="238.5" cy="40" r="3.6" /></g>
+                <g class="sf-car"><rect x="168" y="104" width="66" height="28" rx="7" /><rect class="sf-glass" x="212" y="108" width="14" height="20" rx="3" /></g>
+                <g class="sf-car sf-car-2"><rect x="34" y="68" width="62" height="26" rx="7" /><rect class="sf-glass" x="74" y="72" width="13" height="18" rx="3" /></g>
+                <g class="sf-box sf-box-1"><rect x="162" y="98" width="78" height="40" /><rect class="sf-tag" x="162" y="86" width="62" height="12" /><text x="166" y="95">car 0.94</text></g>
+                <g class="sf-box sf-box-2"><rect x="28" y="62" width="74" height="38" /><rect class="sf-tag" x="28" y="50" width="62" height="12" /><text x="32" y="59">car 0.91</text></g>
+                <g class="sf-box sf-box-3"><rect x="228" y="10" width="21" height="42" /><rect class="sf-tag" x="252" y="10" width="62" height="12" /><text x="256" y="19">signal: red</text></g>
+              </svg>
+              <p class="sta-cap mono">YOLO · OpenCV · Python</p>
+            </div>
+            <div class="sta-card sta-thinks">
+              <div class="sta-h mono"><span><b>02</b> thinks</span><span>rule</span></div>
+              <pre class="sta-code mono"><span class="tk-k">if</span> (signal <span class="tk-p">===</span> <span class="tk-s">'red'</span>
+ <span class="tk-p">&amp;&amp;</span> car.<span class="tk-a">crossed</span>(stopLine))
+  <span class="tk-a">raise</span>(<span class="tk-s">'red_light'</span>)</pre>
+              <p class="sta-cap mono">Python · Node.js</p>
+            </div>
+            <div class="sta-card sta-acts">
+              <div class="sta-h mono"><span><b>03</b> acts</span><span>api</span></div>
+              <p class="sta-req mono"><span>POST</span> /api/alerts <em>201</em></p>
+              <p class="sta-alert"><i class="fas fa-triangle-exclamation"></i> <span>Red-light violation<small class="mono">sent for human review</small></span></p>
+              <p class="sta-cap mono">APIs · dashboards · devices</p>
             </div>
           </div>
 
-          <div class="hv-layer hv-profile" data-depth="22">
-            <div class="profile-card">
-              <img src="images/profile.jpg" alt="" width="56" height="56" fetchpriority="high" decoding="async" />
-              <div>
-                <strong>Pratyush Nandi</strong>
-                <span><span class="pulse-dot"></span> Software Developer</span>
-              </div>
-            </div>
-          </div>
-
-          <div class="hv-layer hv-chip hv-chip-1" data-depth="28"><span class="tech-chip"><i class="devicon-react-original colored"></i> React</span></div>
-          <div class="hv-layer hv-chip hv-chip-2" data-depth="34"><span class="tech-chip"><i class="devicon-python-plain colored"></i> Python</span></div>
-          <div class="hv-layer hv-chip hv-chip-3" data-depth="24"><span class="tech-chip"><i class="devicon-nodejs-plain colored"></i> Node.js</span></div>
+          <span class="sta-note mono">illustration · not live data</span>
         </div>
 
-        <!-- The request path through the systems I build. Each layer opens the
-             System Map with that node selected. -->
-        <nav class="hero-system" data-hero aria-label="Request path: jump to a layer of the system map">
-          <span class="hsys-label mono"><span class="pulse-dot" aria-hidden="true"></span> request path</span>
-          <div class="hsys-rail">
-            <ol class="hsys-path">
-              <li><button type="button" data-goto-node="user"><span class="hsys-full">User</span><span class="hsys-short" aria-hidden="true">User</span></button></li>
-              <li><button type="button" data-goto-node="frontend"><span class="hsys-full">Frontend</span><span class="hsys-short" aria-hidden="true">UI</span></button></li>
-              <li><button type="button" data-goto-node="api"><span class="hsys-full">API</span><span class="hsys-short" aria-hidden="true">API</span></button></li>
-              <li><button type="button" data-goto-node="database"><span class="hsys-full">Database</span><span class="hsys-short" aria-hidden="true">DB</span></button></li>
-              <li><button type="button" data-goto-node="aiml"><span class="hsys-full">AI / ML</span><span class="hsys-short" aria-hidden="true">AI</span></button></li>
-              <li><button type="button" data-goto-node="cv"><span class="hsys-full">Computer Vision</span><span class="hsys-short" aria-hidden="true">CV</span></button></li>
-              <li><button type="button" data-goto-node="edge"><span class="hsys-full">Edge</span><span class="hsys-short" aria-hidden="true">Edge</span></button></li>
+        <!-- The two flows the system map explains. Each stop opens the map with
+             that component selected. -->
+        <nav class="hero-system" data-hero aria-label="Explore the system map">
+          <span class="hsys-label mono">explore the system</span>
+          <div class="hsys-lanes">
+            <ol class="hsys-path" aria-label="Web request path">
+              <li><button type="button" data-goto-node="browser">Browser</button></li>
+              <li><button type="button" data-goto-node="frontend">Frontend</button></li>
+              <li><button type="button" data-goto-node="api">API</button></li>
+              <li><button type="button" data-goto-node="database">Database</button></li>
             </ol>
-            <div class="hsys-track" aria-hidden="true"><span class="hsys-packet"></span></div>
+            <ol class="hsys-path" aria-label="Vision pipeline">
+              <li><button type="button" data-goto-node="camera">Camera</button></li>
+              <li><button type="button" data-goto-node="stream">RTSP</button></li>
+              <li><button type="button" data-goto-node="cv">Vision</button></li>
+              <li><button type="button" data-goto-node="edge">Edge</button></li>
+              <li><button type="button" data-goto-node="alert">Alert</button></li>
+            </ol>
           </div>
         </nav>
       </div>
@@ -322,7 +329,7 @@
               real-world devices</strong>.</p>
             <p>My work runs across <strong>front-end and back-end development</strong> and into computer vision, from
               responsive interfaces to complex web applications. Currently a <strong>Software Developer at Eltern Segen
-              Technologie Pvt. Ltd.</strong> and pursuing <strong>MCA at Adamas University</strong>.</p>
+              Technologie Pvt. Ltd.</strong>, with an <strong>MCA from Adamas University</strong> (2026).</p>
             <div class="b-intro-actions">
               <a href="files/PRATYUSH%20NANDI_CV%20(NEW).pdf" download class="btn btn-primary magnetic">
                 <i class="fas fa-download" aria-hidden="true"></i> <span>Download CV</span>
@@ -332,9 +339,8 @@
           </article>
 
           <figure class="b-card b-photo tilt" data-reveal style="--i:1">
-            <img src="images/profile.jpg" alt="Pratyush Nandi" loading="lazy" decoding="async" width="480" height="560" />
+            <img src="images/profile-640.jpg" srcset="images/profile-640.jpg 640w, images/profile.jpg 900w" sizes="(max-width: 960px) 90vw, 400px" alt="Pratyush Nandi" loading="lazy" decoding="async" width="480" height="560" />
             <figcaption>
-              <span class="pulse-dot" aria-hidden="true"></span>
               <span><strong>Pratyush Nandi</strong><br />Software Developer · Kolkata</span>
             </figcaption>
           </figure>
@@ -359,9 +365,9 @@
 
           <div class="b-card b-stats" data-reveal style="--i:3">
             <div class="stat"><span class="stat-n"><span class="count" data-count="5">5</span>+</span><span class="stat-l">Years coding</span></div>
-            <div class="stat"><span class="stat-n"><span class="count" data-count="10">10</span>+</span><span class="stat-l">Projects shipped</span></div>
+            <div class="stat"><span class="stat-n"><span class="count" data-count="10">10</span></span><span class="stat-l">Projects on this page</span></div>
             <div class="stat"><span class="stat-n"><span class="count" data-count="2">2</span></span><span class="stat-l">YOLOv8 models trained</span></div>
-            <div class="stat"><span class="stat-n"><span class="count" data-count="5">5</span>+</span><span class="stat-l">Certifications</span></div>
+            <div class="stat"><span class="stat-n"><span class="count" data-count="6">6</span></span><span class="stat-l">Certifications</span></div>
           </div>
 
           <article class="b-card b-json" data-reveal style="--i:5">
@@ -525,71 +531,74 @@
           <div class="sm-graph">
             <div class="sm-bar">
               <span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>
-              <span class="mono">system-map</span>
-              <span class="sm-hint mono">hover, focus or tap a node</span>
+              <span class="mono">system-architecture</span>
+              <div class="sm-trace" role="group" aria-label="Trace a flow">
+                <button type="button" class="sm-lane-btn mono" data-lane="web" aria-pressed="false" aria-controls="smInspector">Trace web request</button>
+                <button type="button" class="sm-lane-btn mono" data-lane="vision" aria-pressed="false" aria-controls="smInspector">Trace vision pipeline</button>
+              </div>
             </div>
             <div class="sm-canvas" id="smCanvas">
-              <svg class="sm-svg" viewBox="0 0 480 660" aria-hidden="true">
+              <svg class="sm-svg" viewBox="0 0 480 440" aria-hidden="true">
                 <defs>
                   <marker id="smArrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
                     <path class="sm-arrow" d="M0 0 8 4 0 8Z" />
                   </marker>
                 </defs>
-                <g class="sm-layers">
-                  <path d="M80 18 V 142" /><text x="72" y="84">client</text>
-                  <path d="M80 178 V 222" /><text x="72" y="204">service</text>
-                  <path d="M80 268 V 402" /><text x="72" y="339">intelligence</text>
-                  <path d="M80 438 V 562" /><text x="72" y="504">edge</text>
-                  <path d="M80 598 V 642" /><text x="72" y="624">physical</text>
+                <g class="sm-lanes">
+                  <text x="120" y="16">web request path</text>
+                  <text x="360" y="16">vision pipeline</text>
+                  <rect x="30" y="28" width="180" height="330" rx="14" />
+                  <rect x="270" y="28" width="180" height="404" rx="14" />
                 </g>
                 <g class="sm-edges">
-                  <path data-e="user-frontend" d="M170 64 V 96" marker-end="url(#smArrow)" />
-                  <path data-e="frontend-api" d="M170 144 V 176" marker-end="url(#smArrow)" />
-                  <path data-e="api-database" d="M245 200 H 372 Q 380 200 380 208 V 266" marker-end="url(#smArrow)" />
-                  <path data-e="api-aiml" d="M170 224 V 266" marker-end="url(#smArrow)" />
-                  <path data-e="aiml-cv" d="M170 314 V 356" marker-end="url(#smArrow)" />
-                  <path data-e="stream-cv" d="M305 380 H 245" marker-end="url(#smArrow)" />
-                  <path data-e="cv-edge" d="M170 404 V 436" marker-end="url(#smArrow)" />
-                  <path data-e="edge-iot" d="M170 484 V 516" marker-end="url(#smArrow)" />
-                  <path data-e="iot-world" d="M170 564 V 596" marker-end="url(#smArrow)" />
+                  <path data-e="browser-frontend" d="M120 84 V 124" marker-end="url(#smArrow)" />
+                  <path data-e="frontend-api" d="M120 174 V 214" marker-end="url(#smArrow)" />
+                  <path data-e="api-database" d="M120 264 V 304" marker-end="url(#smArrow)" />
+                  <path data-e="camera-stream" d="M360 84 V 119" marker-end="url(#smArrow)" />
+                  <path data-e="stream-cv" d="M360 169 V 204" marker-end="url(#smArrow)" />
+                  <path data-e="cv-edge" d="M360 254 V 289" marker-end="url(#smArrow)" />
+                  <path data-e="edge-alert" d="M360 339 V 374" marker-end="url(#smArrow)" />
+                  <path data-e="alert-api" d="M285 400 H 248 Q 240 400 240 392 V 248 Q 240 240 232 240 H 199" marker-end="url(#smArrow)" />
                 </g>
                 <g class="sm-flows">
-                  <path data-e="user-frontend" d="M170 64 V 96" />
-                  <path data-e="frontend-api" d="M170 144 V 176" />
-                  <path data-e="api-database" d="M245 200 H 372 Q 380 200 380 208 V 266" />
-                  <path data-e="api-aiml" d="M170 224 V 266" />
-                  <path data-e="aiml-cv" d="M170 314 V 356" />
-                  <path data-e="stream-cv" d="M305 380 H 245" />
-                  <path data-e="cv-edge" d="M170 404 V 436" />
-                  <path data-e="edge-iot" d="M170 484 V 516" />
-                  <path data-e="iot-world" d="M170 564 V 596" />
+                  <path data-e="browser-frontend" d="M120 84 V 124" />
+                  <path data-e="frontend-api" d="M120 174 V 214" />
+                  <path data-e="api-database" d="M120 264 V 304" />
+                  <path data-e="camera-stream" d="M360 84 V 119" />
+                  <path data-e="stream-cv" d="M360 169 V 204" />
+                  <path data-e="cv-edge" d="M360 254 V 289" />
+                  <path data-e="edge-alert" d="M360 339 V 374" />
+                  <path data-e="alert-api" d="M285 400 H 248 Q 240 400 240 392 V 248 Q 240 240 232 240 H 199" />
                 </g>
+                <text class="sm-bridge" x="232" y="320" transform="rotate(-90 232 320)">alerts → API</text>
               </svg>
-              <button type="button" class="sm-node" data-node="user" style="--x:170;--y:40" aria-pressed="false"><span class="sm-ico" aria-hidden="true"><i class="fas fa-user"></i></span><span class="sm-txt"><strong>User</strong><span class="mono">browser · mobile</span></span></button>
-              <button type="button" class="sm-node" data-node="frontend" style="--x:170;--y:120" aria-pressed="false"><span class="sm-ico" aria-hidden="true"><i class="fas fa-desktop"></i></span><span class="sm-txt"><strong>Frontend</strong><span class="mono">React · Next.js</span></span></button>
-              <button type="button" class="sm-node" data-node="api" style="--x:170;--y:200" aria-pressed="false"><span class="sm-ico" aria-hidden="true"><i class="fas fa-plug"></i></span><span class="sm-txt"><strong>API</strong><span class="mono">Node.js · Fastify</span></span></button>
-              <button type="button" class="sm-node" data-node="database" style="--x:380;--y:290" aria-pressed="false"><span class="sm-ico" aria-hidden="true"><i class="fas fa-database"></i></span><span class="sm-txt"><strong>Database</strong><span class="mono">PostgreSQL · Prisma</span></span></button>
-              <button type="button" class="sm-node" data-node="aiml" style="--x:170;--y:290" aria-pressed="false"><span class="sm-ico" aria-hidden="true"><i class="fas fa-brain"></i></span><span class="sm-txt"><strong>AI / ML</strong><span class="mono">Python · models</span></span></button>
-              <button type="button" class="sm-node" data-node="stream" style="--x:380;--y:380" aria-pressed="false"><span class="sm-ico" aria-hidden="true"><i class="fas fa-tower-broadcast"></i></span><span class="sm-txt"><strong>Stream</strong><span class="mono">RTSP · MediaMTX</span></span></button>
-              <button type="button" class="sm-node" data-node="cv" style="--x:170;--y:380" aria-pressed="false"><span class="sm-ico" aria-hidden="true"><i class="fas fa-eye"></i></span><span class="sm-txt"><strong>Computer Vision</strong><span class="mono">YOLO · OpenCV</span></span></button>
-              <button type="button" class="sm-node" data-node="edge" style="--x:170;--y:460" aria-pressed="false"><span class="sm-ico" aria-hidden="true"><i class="fas fa-microchip"></i></span><span class="sm-txt"><strong>Edge AI</strong><span class="mono">Raspberry Pi</span></span></button>
-              <button type="button" class="sm-node" data-node="iot" style="--x:170;--y:540" aria-pressed="false"><span class="sm-ico" aria-hidden="true"><i class="fas fa-wifi"></i></span><span class="sm-txt"><strong>IoT</strong><span class="mono">devices · sensors</span></span></button>
-              <button type="button" class="sm-node" data-node="world" style="--x:170;--y:620" aria-pressed="false"><span class="sm-ico" aria-hidden="true"><i class="fas fa-earth-asia"></i></span><span class="sm-txt"><strong>Real World</strong><span class="mono">roads · sites</span></span></button>
+              <p class="sm-lane-h mono" aria-hidden="true">web request path</p>
+              <button type="button" class="sm-node" data-node="browser" style="--x:120;--y:60" aria-pressed="false"><span class="sm-ico" aria-hidden="true"><i class="fas fa-globe"></i></span><span class="sm-txt"><strong>Browser</strong><span class="mono">laptop · phone</span></span></button>
+              <button type="button" class="sm-node" data-node="frontend" style="--x:120;--y:150" aria-pressed="false"><span class="sm-ico" aria-hidden="true"><i class="fas fa-desktop"></i></span><span class="sm-txt"><strong>Frontend</strong><span class="mono">React · Next.js</span></span></button>
+              <button type="button" class="sm-node" data-node="api" style="--x:120;--y:240" aria-pressed="false"><span class="sm-ico" aria-hidden="true"><i class="fas fa-plug"></i></span><span class="sm-txt"><strong>API</strong><span class="mono">Node.js · Fastify</span></span></button>
+              <button type="button" class="sm-node" data-node="database" style="--x:120;--y:330" aria-pressed="false"><span class="sm-ico" aria-hidden="true"><i class="fas fa-database"></i></span><span class="sm-txt"><strong>Database</strong><span class="mono">PostgreSQL · Prisma</span></span></button>
+              <p class="sm-lane-h mono" aria-hidden="true">vision pipeline</p>
+              <button type="button" class="sm-node" data-node="camera" style="--x:360;--y:60" aria-pressed="false"><span class="sm-ico" aria-hidden="true"><i class="fas fa-video"></i></span><span class="sm-txt"><strong>Camera</strong><span class="mono">IP camera · frames</span></span></button>
+              <button type="button" class="sm-node" data-node="stream" style="--x:360;--y:145" aria-pressed="false"><span class="sm-ico" aria-hidden="true"><i class="fas fa-tower-broadcast"></i></span><span class="sm-txt"><strong>RTSP stream</strong><span class="mono">RTSP · MediaMTX</span></span></button>
+              <button type="button" class="sm-node" data-node="cv" style="--x:360;--y:230" aria-pressed="false"><span class="sm-ico" aria-hidden="true"><i class="fas fa-eye"></i></span><span class="sm-txt"><strong>Computer Vision</strong><span class="mono">YOLO · OpenCV</span></span></button>
+              <button type="button" class="sm-node" data-node="edge" style="--x:360;--y:315" aria-pressed="false"><span class="sm-ico" aria-hidden="true"><i class="fas fa-microchip"></i></span><span class="sm-txt"><strong>Edge device</strong><span class="mono">Raspberry Pi · IoT</span></span></button>
+              <button type="button" class="sm-node" data-node="alert" style="--x:360;--y:400" aria-pressed="false"><span class="sm-ico" aria-hidden="true"><i class="fas fa-triangle-exclamation"></i></span><span class="sm-txt"><strong>Alert</strong><span class="mono">rules → API</span></span></button>
             </div>
           </div>
 
-          <aside class="sm-inspector" id="smInspector" aria-label="System map inspector" aria-live="polite">
+          <aside class="sm-inspector" id="smInspector" aria-label="System architecture inspector" aria-live="polite">
             <div class="smi-default">
               <span class="card-label mono">inspector</span>
-              <h3>One system, end to end</h3>
-              <p>From a person in a browser to a camera at a junction: how the technologies in my stack connect into
-                a single working system.</p>
+              <h3>Two flows, one system</h3>
+              <p>A web request travels from a browser to the database. A camera frame travels from the edge of the
+                network to an alert, and that alert comes back through the same API, so people see it where they
+                already work.</p>
               <ul class="smi-legend mono">
-                <li><span class="lg-dot"></span> node: a layer of the system</li>
-                <li><span class="lg-line"></span> edge: how data moves between them</li>
-                <li><span class="lg-flow"></span> lit path: the route a request takes to reach a node</li>
+                <li><span class="lg-dot"></span> component: what it does and what it uses</li>
+                <li><span class="lg-line"></span> arrow: how data moves between components</li>
+                <li><span class="lg-flow"></span> lit path: the route data takes to reach the selection</li>
               </ul>
-              <p class="smi-tip mono">Select a node to trace its path, see the tools behind it and where I've used them.</p>
+              <p class="smi-tip mono">Select a component, or trace a whole flow, to see its purpose, tools and projects.</p>
             </div>
           </aside>
         </div>
@@ -625,7 +634,7 @@
               <li class="node" style="--brand:#5fa04e"><i class="devicon-nodejs-plain colored"></i><span>Node.js</span></li>
               <li class="node" style="--brand:#a1a1aa"><i class="fas fa-bolt"></i><span>Fastify</span></li>
               <li class="node" style="--brand:#a1a1aa"><i class="devicon-express-original"></i><span>Express.js</span></li>
-              <li class="node" style="--brand:#22d3ee"><i class="fas fa-plug"></i><span>REST APIs</span></li>
+              <li class="node" style="--brand:#f6c56f"><i class="fas fa-plug"></i><span>REST APIs</span></li>
               <li class="node" style="--brand:#ff2d20"><i class="devicon-laravel-plain colored"></i><span>Laravel / PHP</span></li>
             </ul>
           </div>
@@ -645,14 +654,14 @@
             <h3 class="sg-title mono"><i class="fas fa-microchip" aria-hidden="true"></i> edge, iot &amp; visual ai</h3>
             <ul class="nodes">
               <li class="node" style="--brand:#c51a4a"><i class="devicon-raspberrypi-line"></i><span>Raspberry Pi</span></li>
-              <li class="node" style="--brand:#22d3ee"><i class="fas fa-video"></i><span>RTSP</span></li>
-              <li class="node" style="--brand:#8b7bff"><i class="fas fa-tower-broadcast"></i><span>MediaMTX</span></li>
+              <li class="node" style="--brand:#f6c56f"><i class="fas fa-video"></i><span>RTSP</span></li>
+              <li class="node" style="--brand:#f0a83a"><i class="fas fa-tower-broadcast"></i><span>MediaMTX</span></li>
               <li class="node" style="--brand:#00ffd1"><i class="fas fa-crosshairs"></i><span>YOLO</span></li>
               <li class="node" style="--brand:#5c3ee8"><i class="devicon-opencv-plain colored"></i><span>OpenCV</span></li>
               <li class="node" style="--brand:#10b981"><i class="fas fa-wifi"></i><span>IoT</span></li>
               <li class="node" style="--brand:#f59e0b"><i class="fas fa-network-wired"></i><span>Edge Computing</span></li>
-              <li class="node" style="--brand:#a78bfa"><i class="fas fa-eye"></i><span>Visual AI</span></li>
-              <li class="node" style="--brand:#a78bfa"><i class="fas fa-brain"></i><span>AI / ML</span></li>
+              <li class="node" style="--brand:#f0a83a"><i class="fas fa-eye"></i><span>Visual AI</span></li>
+              <li class="node" style="--brand:#f0a83a"><i class="fas fa-brain"></i><span>AI / ML</span></li>
             </ul>
           </div>
 
@@ -668,26 +677,35 @@
     </section>
 
     <!-- ════════════════════════════════════
-       AI PIPELINE (scroll-driven)
+       AI LAB · VISUAL AI PLAYGROUND
     ════════════════════════════════════ -->
-    <section id="pipeline" class="sec sec-alt pipe-sec" aria-labelledby="pipeTitle">
+    <section id="pipeline" class="sec sec-alt lab-sec" aria-labelledby="pipeTitle">
       <div class="container">
         <header class="sec-head sec-head-split" data-reveal>
           <div>
             <span class="sec-kicker mono"><span class="sk-num">04</span><span class="sk-sep" aria-hidden="true">/</span> AI Lab</span>
-            <h2 class="sec-title" id="pipeTitle">How an intelligent system <em class="serif">sees</em></h2>
+            <h2 class="sec-title" id="pipeTitle">Visual AI <em class="serif">playground</em></h2>
           </div>
-          <p class="sec-sub">Scroll to bring a vision pipeline online, one stage at a time: from a raw camera frame to an
-            action in the real world.</p>
+          <p class="sec-sub">Run a computer-vision pipeline on sample frames. Step through each stage, move the confidence
+            threshold, switch rules on and off, and see which alerts survive.</p>
         </header>
-      </div>
 
-      <div class="pipe-scroll" id="pipeScroll">
-        <div class="pipe-sticky" id="pipeSticky">
-          <div class="container pipe-grid">
+        <!-- Honest by construction: the frames are drawn, the detections are
+             pre-computed sample data, and no camera or model runs. The threshold
+             filter and the rules are real code, evaluated in the browser. -->
+        <div class="lab" id="lab" data-reveal>
+          <div class="lab-top">
+            <div class="lab-scenes" role="group" aria-label="Sample frame">
+              <button type="button" class="lab-scene" data-scene="junction" aria-pressed="true">Junction · red light</button>
+              <button type="button" class="lab-scene" data-scene="helmet" aria-pressed="false">Two-wheelers · helmets</button>
+              <button type="button" class="lab-scene" data-scene="green" aria-pressed="false">Junction · green light</button>
+            </div>
+            <p class="lab-sim"><span class="lab-sim-k mono">simulated</span> Sample frames with pre-computed detections. No camera
+              or model runs here; the threshold and the rules do, in your browser.</p>
+          </div>
 
-            <!-- Illustration only: no camera, no live data, nothing about the visitor. -->
-            <figure class="cv-frame" id="cvFrame" aria-labelledby="cvCap">
+          <div class="lab-grid">
+            <figure class="cv-frame" id="cvFrame" aria-describedby="cvCap">
               <svg class="cv-svg" viewBox="0 0 640 400" aria-hidden="true">
                 <defs>
                   <filter id="cvNoise" x="0" y="0" width="100%" height="100%">
@@ -695,96 +713,131 @@
                     <feColorMatrix values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 .55 0" />
                   </filter>
                   <linearGradient id="cvScanGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0" stop-color="#22d3ee" stop-opacity="0" />
-                    <stop offset=".85" stop-color="#22d3ee" stop-opacity=".22" />
-                    <stop offset="1" stop-color="#22d3ee" stop-opacity=".7" />
+                    <stop offset="0" stop-color="#f6c56f" stop-opacity="0" />
+                    <stop offset=".85" stop-color="#f6c56f" stop-opacity=".2" />
+                    <stop offset="1" stop-color="#f6c56f" stop-opacity=".65" />
                   </linearGradient>
                   <pattern id="cvPatch" width="40" height="40" patternUnits="userSpaceOnUse">
                     <path d="M40 0H0V40" fill="none" class="cv-patch-line" />
                   </pattern>
+                  <g id="cvJunctionBg">
+                    <rect class="cv-asphalt" width="640" height="400" />
+                    <rect class="cv-walk" x="0" y="0" width="250" height="140" />
+                    <rect class="cv-walk" x="390" y="0" width="250" height="140" />
+                    <rect class="cv-walk" x="0" y="260" width="250" height="140" />
+                    <rect class="cv-walk" x="390" y="260" width="250" height="140" />
+                    <path class="cv-lane" d="M0 200H226M414 200H640M320 0V106M320 294V400" />
+                    <g class="cv-zebra">
+                      <path d="M258 114v20M274 114v20M290 114v20M306 114v20M322 114v20M338 114v20M354 114v20M370 114v20" />
+                      <path d="M258 266v20M274 266v20M290 266v20M306 266v20M322 266v20M338 266v20M354 266v20M370 266v20" />
+                      <path d="M228 148h18M228 164h18M228 180h18M228 196h18M228 212h18M228 228h18M228 244h18" />
+                      <path d="M394 148h18M394 164h18M394 180h18M394 196h18M394 212h18M394 228h18M394 244h18" />
+                    </g>
+                    <path class="cv-stop" d="M252 106H318" />
+                  </g>
                 </defs>
-                <g class="cv-scene">
-                  <rect class="cv-asphalt" width="640" height="400" />
-                  <rect class="cv-walk" x="0" y="0" width="250" height="140" />
-                  <rect class="cv-walk" x="390" y="0" width="250" height="140" />
-                  <rect class="cv-walk" x="0" y="260" width="250" height="140" />
-                  <rect class="cv-walk" x="390" y="260" width="250" height="140" />
-                  <path class="cv-lane" d="M0 200H226M414 200H640M320 0V106M320 294V400" />
-                  <g class="cv-zebra">
-                    <path d="M258 114v20M274 114v20M290 114v20M306 114v20M322 114v20M338 114v20M354 114v20M370 114v20" />
-                    <path d="M258 266v20M274 266v20M290 266v20M306 266v20M322 266v20M338 266v20M354 266v20M370 266v20" />
-                    <path d="M228 148h18M228 164h18M228 180h18M228 196h18M228 212h18M228 228h18M228 244h18" />
-                    <path d="M394 148h18M394 164h18M394 180h18M394 196h18M394 212h18M394 228h18M394 244h18" />
-                  </g>
-                  <path class="cv-stop" d="M252 106H318" />
-                  <g class="cv-signal">
-                    <rect x="218" y="64" width="16" height="40" rx="4" />
-                    <circle class="red" cx="226" cy="74" r="4.5" />
-                    <circle cx="226" cy="84" r="4.5" />
-                    <circle cx="226" cy="94" r="4.5" />
-                  </g>
-                  <g class="cv-obj">
-                    <rect x="66" y="152" width="74" height="36" rx="8" />
-                    <rect class="glass" x="114" y="157" width="16" height="26" rx="4" />
-                  </g>
-                  <g class="cv-obj violator">
-                    <rect x="266" y="150" width="38" height="70" rx="9" />
-                    <rect class="glass" x="271" y="196" width="28" height="15" rx="4" />
-                  </g>
-                  <g class="cv-obj">
-                    <rect x="470" y="212" width="76" height="36" rx="8" />
-                    <rect class="glass" x="478" y="217" width="16" height="26" rx="4" />
-                  </g>
-                  <g class="cv-obj">
-                    <rect x="338" y="30" width="16" height="44" rx="6" />
-                    <circle class="head" cx="346" cy="54" r="7" />
-                  </g>
+
+                <g class="cv-scene on" data-scene="junction">
+                  <use href="#cvJunctionBg" />
+                  <ellipse class="cv-puddle" cx="301" cy="246" rx="16" ry="9" />
+                  <g class="cv-signal"><rect x="218" y="64" width="16" height="40" rx="4" /><circle class="red" cx="226" cy="74" r="4.5" /><circle cx="226" cy="84" r="4.5" /><circle cx="226" cy="94" r="4.5" /></g>
+                  <g class="cv-obj"><rect x="66" y="152" width="74" height="36" rx="8" /><rect class="glass" x="114" y="157" width="16" height="26" rx="4" /></g>
+                  <g class="cv-obj violator"><rect x="266" y="150" width="38" height="70" rx="9" /><rect class="glass" x="271" y="196" width="28" height="15" rx="4" /></g>
+                  <g class="cv-obj"><rect x="470" y="212" width="76" height="36" rx="8" /><rect class="glass" x="478" y="217" width="16" height="26" rx="4" /></g>
+                  <g class="cv-obj"><rect x="338" y="30" width="16" height="44" rx="6" /><circle class="head" cx="346" cy="54" r="7" /></g>
                   <circle class="cv-ped" cx="182" cy="312" r="6" />
                   <circle class="cv-ped" cx="566" cy="94" r="6" />
                   <circle class="cv-ped" cx="590" cy="320" r="6" />
                 </g>
+
+                <g class="cv-scene" data-scene="green">
+                  <use href="#cvJunctionBg" />
+                  <g class="cv-signal"><rect x="218" y="64" width="16" height="40" rx="4" /><circle cx="226" cy="74" r="4.5" /><circle cx="226" cy="84" r="4.5" /><circle class="green" cx="226" cy="94" r="4.5" /></g>
+                  <g class="cv-obj"><rect x="66" y="152" width="74" height="36" rx="8" /><rect class="glass" x="114" y="157" width="16" height="26" rx="4" /></g>
+                  <g class="cv-obj"><rect x="266" y="190" width="38" height="70" rx="9" /><rect class="glass" x="271" y="236" width="28" height="15" rx="4" /></g>
+                  <g class="cv-obj"><rect x="470" y="212" width="76" height="36" rx="8" /><rect class="glass" x="478" y="217" width="16" height="26" rx="4" /></g>
+                  <circle class="cv-ped" cx="182" cy="312" r="6" />
+                  <circle class="cv-ped" cx="566" cy="94" r="6" />
+                </g>
+
+                <g class="cv-scene" data-scene="helmet">
+                  <rect class="cv-asphalt" width="640" height="400" />
+                  <rect class="cv-walk" x="0" y="0" width="640" height="110" />
+                  <rect class="cv-walk" x="0" y="350" width="640" height="50" />
+                  <path class="cv-lane" d="M0 312H640" />
+                  <rect class="cv-pole" x="54" y="18" width="8" height="92" />
+                  <g class="cv-obj"><rect x="572" y="150" width="90" height="40" rx="8" /><rect class="glass" x="580" y="156" width="18" height="28" rx="4" /></g>
+                  <g class="cv-bike">
+                    <circle class="wheel" cx="140" cy="276" r="16" /><circle class="wheel" cx="230" cy="276" r="16" />
+                    <rect x="128" y="240" width="112" height="26" rx="10" />
+                    <rect class="torso" x="168" y="182" width="34" height="62" rx="12" />
+                    <circle class="helmet" cx="184" cy="166" r="14" /><rect class="visor" x="186" y="160" width="12" height="8" rx="3" />
+                  </g>
+                  <g class="cv-bike">
+                    <circle class="wheel" cx="400" cy="280" r="16" /><circle class="wheel" cx="490" cy="280" r="16" />
+                    <rect x="388" y="244" width="112" height="26" rx="10" />
+                    <rect class="torso" x="428" y="186" width="34" height="62" rx="12" />
+                    <circle class="head" cx="444" cy="172" r="12" />
+                  </g>
+                </g>
+
                 <rect class="cv-noise" width="640" height="400" filter="url(#cvNoise)" />
                 <rect class="cv-patches" width="640" height="400" fill="url(#cvPatch)" />
                 <rect class="cv-scan" x="0" y="0" width="640" height="60" fill="url(#cvScanGrad)" />
-                <g class="cv-dets">
-                  <g class="det" style="--d:0s"><rect x="60" y="146" width="86" height="48" /><rect class="tag" x="60" y="132" width="66" height="14" /><text x="64" y="142">car 0.96</text></g>
-                  <g class="det det-hit" style="--d:.12s"><rect x="260" y="144" width="50" height="82" /><rect class="tag" x="260" y="130" width="66" height="14" /><text x="264" y="140">car 0.94</text></g>
-                  <g class="det" style="--d:.24s"><rect x="464" y="206" width="88" height="48" /><rect class="tag" x="464" y="192" width="66" height="14" /><text x="468" y="202">car 0.91</text></g>
-                  <g class="det" style="--d:.36s"><rect x="332" y="24" width="28" height="56" /><rect class="tag" x="332" y="10" width="84" height="14" /><text x="336" y="20">rider 0.88</text></g>
-                  <g class="det det-signal" style="--d:.48s"><rect x="212" y="58" width="28" height="52" /><rect class="tag" x="152" y="44" width="88" height="14" /><text x="156" y="54">signal: red</text></g>
-                </g>
-                <g class="cv-verdict">
-                  <rect x="260" y="226" width="150" height="16" />
-                  <text x="265" y="237">red-light violation</text>
-                </g>
+                <g class="cv-zones" id="cvZones"></g>
+                <g class="cv-dets" id="cvDets"></g>
               </svg>
-              <div class="cv-hud cv-hud-tl mono" aria-hidden="true"><span class="rec"></span> CAM-01 · RTSP</div>
-              <div class="cv-hud cv-hud-tr mono" aria-hidden="true">illustration</div>
-              <div class="cv-model mono" aria-hidden="true"><i class="fas fa-crosshairs"></i> detector loaded</div>
+              <div class="cv-hud cv-hud-tl mono" aria-hidden="true"><span id="cvSceneName">SAMPLE · junction</span></div>
+              <div class="cv-hud cv-hud-tr mono" aria-hidden="true">simulated</div>
+              <div class="cv-model mono" aria-hidden="true"><i class="fas fa-crosshairs"></i> detector ready</div>
               <div class="cv-hud cv-hud-bl mono" aria-hidden="true">
-                <span>AI INFERENCE</span>
-                <span>CONFIDENCE <b id="cvConf">—</b></span>
-                <span>STATUS <b id="cvStatus">idle</b> <i class="cv-led"></i></span>
+                <span>STAGE <b id="cvStage">idle</b></span>
+                <span>DETECTIONS <b id="cvCount">—</b></span>
               </div>
-              <div class="cv-alert" aria-hidden="true">
-                <i class="fas fa-triangle-exclamation"></i>
-                <div><strong>Red-light violation</strong><span class="mono">alert sent for human review</span></div>
+              <div class="cv-alert" id="cvAlert" aria-hidden="true">
+                <i class="fas fa-triangle-exclamation cv-bad-ico"></i><i class="fas fa-circle-check cv-ok-ico"></i>
+                <div><strong id="cvAlertTitle">Alert</strong><span class="mono" id="cvAlertSub">sent for human review</span></div>
               </div>
-              <div class="cv-call mono" aria-hidden="true"><span class="cc-det">5 detections · 92.2%</span><span class="cc-verdict">red-light violation</span></div>
-              <figcaption id="cvCap" class="sr-only">Illustration of a computer-vision pipeline analysing a road junction: detecting vehicles, flagging a red-light violation and raising an alert. Not live data.</figcaption>
+              <figcaption id="cvCap" class="sr-only">A drawn sample frame for a computer-vision pipeline demonstration. The detections are simulated, not live data.</figcaption>
             </figure>
 
-            <div class="pipe-side">
-              <div class="pipe-rail" aria-hidden="true"><span class="pipe-fill"></span><span class="pipe-dot"></span></div>
-              <ol class="pipe" id="pipe">
-                <li class="pipe-step" data-status="receiving"><span class="ps-node" aria-hidden="true"></span><div class="ps-body"><button type="button" class="ps-head" aria-expanded="false"><span class="ps-name mono">INPUT</span><span class="ps-label">Camera frame</span></button><div class="ps-more"><p>A frame arrives from a live camera feed, streamed over RTSP.</p></div></div></li>
-                <li class="pipe-step" data-status="decoding"><span class="ps-node" aria-hidden="true"></span><div class="ps-body"><button type="button" class="ps-head" aria-expanded="false"><span class="ps-name mono">DATA</span><span class="ps-label">Decode &amp; prepare</span></button><div class="ps-more"><p>The frame is decoded and split into the grid of values a model can read.</p></div></div></li>
-                <li class="pipe-step" data-status="filtering"><span class="ps-node" aria-hidden="true"></span><div class="ps-body"><button type="button" class="ps-head" aria-expanded="false"><span class="ps-name mono">PROCESSING</span><span class="ps-label">OpenCV</span></button><div class="ps-more"><p>OpenCV cleans the signal and brings out shapes and edges.</p></div></div></li>
-                <li class="pipe-step" data-status="model ready"><span class="ps-node" aria-hidden="true"></span><div class="ps-body"><button type="button" class="ps-head" aria-expanded="false"><span class="ps-name mono">MODEL</span><span class="ps-label">Detector loaded</span></button><div class="ps-more"><p>A detection model, such as YOLO, reads the whole frame in a single pass.</p></div></div></li>
-                <li class="pipe-step" data-status="inferring" data-conf="92.2%"><span class="ps-node" aria-hidden="true"></span><div class="ps-body"><button type="button" class="ps-head" aria-expanded="false"><span class="ps-name mono">INFERENCE</span><span class="ps-label">Objects found</span></button><div class="ps-more"><p>It returns every object it finds, each with a box and a confidence score.</p></div></div></li>
-                <li class="pipe-step" data-status="deciding" data-conf="92.2%"><span class="ps-node" aria-hidden="true"></span><div class="ps-body"><button type="button" class="ps-head" aria-expanded="false"><span class="ps-name mono">DECISION</span><span class="ps-label">Rules applied</span></button><div class="ps-more"><p>Rules turn detections into meaning: this car crossed the stop line on red.</p></div></div></li>
-                <li class="pipe-step" data-status="alert sent" data-conf="92.2%"><span class="ps-node" aria-hidden="true"></span><div class="ps-body"><button type="button" class="ps-head" aria-expanded="false"><span class="ps-name mono">ACTION</span><span class="ps-label">Alert raised</span></button><div class="ps-more"><p>An alert goes to a person to review. The same loop drives Detectify.</p><button type="button" class="ps-link" data-case="detectify" data-case-link>Open the Detectify case study <i class="fas fa-arrow-right" aria-hidden="true"></i></button></div></div></li>
-              </ol>
+            <div class="lab-side">
+              <div class="pipe-side">
+                <div class="pipe-rail" aria-hidden="true"><span class="pipe-fill"></span></div>
+                <ol class="pipe" id="pipe">
+                  <li class="pipe-step"><span class="ps-node" aria-hidden="true"></span><div class="ps-body"><button type="button" class="ps-head" aria-expanded="false"><span class="ps-name mono">INPUT</span><span class="ps-label">Sample frame</span></button><div class="ps-more"><p>A frame arrives. In a deployment it would come from a camera over RTSP; here it is a drawn sample.</p></div></div></li>
+                  <li class="pipe-step"><span class="ps-node" aria-hidden="true"></span><div class="ps-body"><button type="button" class="ps-head" aria-expanded="false"><span class="ps-name mono">DATA</span><span class="ps-label">Decode &amp; tile</span></button><div class="ps-more"><p>The frame is decoded and resized into the grid of values a detector reads.</p></div></div></li>
+                  <li class="pipe-step"><span class="ps-node" aria-hidden="true"></span><div class="ps-body"><button type="button" class="ps-head" aria-expanded="false"><span class="ps-name mono">PROCESSING</span><span class="ps-label">OpenCV</span></button><div class="ps-more"><p>Pre-processing evens out light and noise so shapes and edges stand out.</p></div></div></li>
+                  <li class="pipe-step"><span class="ps-node" aria-hidden="true"></span><div class="ps-body"><button type="button" class="ps-head" aria-expanded="false"><span class="ps-name mono">MODEL</span><span class="ps-label">Detector</span></button><div class="ps-more"><p>A single-pass detector, such as YOLO, reads the whole frame at once.</p></div></div></li>
+                  <li class="pipe-step"><span class="ps-node" aria-hidden="true"></span><div class="ps-body"><button type="button" class="ps-head" aria-expanded="false"><span class="ps-name mono">INFERENCE</span><span class="ps-label">Boxes &amp; confidence</span></button><div class="ps-more"><p>Each object comes back as a box, a class and a confidence score. The threshold decides which ones count.</p></div></div></li>
+                  <li class="pipe-step"><span class="ps-node" aria-hidden="true"></span><div class="ps-body"><button type="button" class="ps-head" aria-expanded="false"><span class="ps-name mono">DECISION</span><span class="ps-label">Rules</span></button><div class="ps-more"><p>Rules turn detections into meaning: a car past the stop line on red, a rider without a helmet.</p></div></div></li>
+                  <li class="pipe-step"><span class="ps-node" aria-hidden="true"></span><div class="ps-body"><button type="button" class="ps-head" aria-expanded="false"><span class="ps-name mono">ACTION</span><span class="ps-label">Alert</span></button><div class="ps-more"><p>Anything that breaks a rule becomes an alert for a person to review.</p><button type="button" class="ps-link" data-case="detectify" data-case-link>See the real models in the Detectify case study <i class="fas fa-arrow-right" aria-hidden="true"></i></button></div></div></li>
+                </ol>
+              </div>
+              <div class="lab-run">
+                <button type="button" class="btn btn-sm btn-primary" id="labRun"><i class="fas fa-play" aria-hidden="true"></i> <span>Run pipeline</span></button>
+                <button type="button" class="lab-step" id="labPrev" aria-label="Previous stage"><i class="fas fa-chevron-left" aria-hidden="true"></i></button>
+                <button type="button" class="lab-step" id="labNext" aria-label="Next stage"><i class="fas fa-chevron-right" aria-hidden="true"></i></button>
+                <span class="lab-pos mono" id="labPos">stage 0 / 7</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="lab-controls">
+            <div class="lab-ctl">
+              <div class="lab-ctl-h"><label for="labThr">Confidence threshold</label> <output class="mono" id="labThrOut" for="labThr">0.50</output></div>
+              <input type="range" id="labThr" min="0.2" max="0.95" step="0.05" value="0.5" aria-describedby="labThrHint" />
+              <p class="lab-hint" id="labThrHint">Detections below the threshold are dropped before any rule sees them.</p>
+            </div>
+            <fieldset class="lab-ctl lab-rules">
+              <legend class="lab-ctl-h">Rules</legend>
+              <label><input type="checkbox" data-rule="red_light" checked /> <span><strong>Red light</strong> a vehicle past the stop line while the signal is red</span></label>
+              <label><input type="checkbox" data-rule="no_helmet" checked /> <span><strong>Helmet</strong> a rider detected without a helmet</span></label>
+            </fieldset>
+            <div class="lab-ctl lab-out">
+              <span class="lab-ctl-h">Event log</span>
+              <ol class="lab-log mono" id="labLog"></ol>
+              <p class="lab-status" id="labStatus" role="status"></p>
             </div>
           </div>
         </div>
@@ -811,55 +864,94 @@
           </div>
         </header>
 
+        <!-- data-cat is a space-separated list, so a project can sit in two filters. -->
         <div class="proj-grid" id="projGrid">
 
-          <!-- DETECTIFY — Featured -->
-          <article class="pj pj-feature" data-cat="ai" data-reveal data-flow="live camera feed → Python · OpenCV → ML detection → violation alert">
-            <div class="pj-media">
-              <img src="projects/detectify.jpg" alt="Detectify traffic monitoring interface" loading="lazy" decoding="async" />
-              <div class="pj-hud" aria-hidden="true">
-                <span class="bbox b1"><em>vehicle 0.94</em></span>
-                <span class="bbox b2"><em>signal: red</em></span>
-                <span class="bbox b3"><em>no_helmet 0.88</em></span>
-                <span class="scanline"></span>
-              </div>
-              <span class="pj-badge mono"><i class="fas fa-star" aria-hidden="true"></i> Featured</span>
+          <!-- DETECTIFY — Featured. The visual is the real evaluation data from the
+               repository's notebooks, not a mock-up of a product screen. -->
+          <article class="pj pj-feature" data-cat="ai" data-reveal data-flow="camera frame → Python · OpenCV → YOLOv8 detection → rule → violation alert">
+            <div class="pj-media pj-media-art">
+              <figure class="art-eval" aria-labelledby="evalCap">
+                <figcaption class="ae-h mono" id="evalCap"><span>YOLOv8 · recorded evaluation</span><span>mAP50</span></figcaption>
+                <ul class="ae-rows">
+                  <li style="--v:.989"><span>Helmet violation <em class="mono">validation</em></span><b class="mono">0.989</b><i aria-hidden="true"></i></li>
+                  <li style="--v:.886"><span>Red-light violation <em class="mono">test</em></span><b class="mono">0.886</b><i aria-hidden="true"></i></li>
+                  <li style="--v:.870"><span>Vehicles &amp; traffic lights <em class="mono">validation</em></span><b class="mono">0.870</b><i aria-hidden="true"></i></li>
+                  <li style="--v:.625" class="ae-weak"><span>Helmet violation <em class="mono">held-out test</em></span><b class="mono">0.625</b><i aria-hidden="true"></i></li>
+                </ul>
+                <p class="ae-note mono">From the notebooks in the public repository</p>
+              </figure>
+              <span class="pj-badge mono"><i class="fas fa-star" aria-hidden="true"></i> Case study</span>
             </div>
             <div class="pj-body">
               <span class="pj-cat mono">AI / ML · Computer Vision</span>
               <h3>Detectify</h3>
-              <p class="pj-tagline">Intelligent Traffic Signal Detection &amp; Violation Alert System</p>
-              <p class="pj-desc">AI-powered real-time traffic monitoring. Detects red-light jumping, speeding and no-helmet
-                violations using ML models on live camera feeds, reducing human error in enforcement.</p>
-              <ul class="tags"><li>Python</li><li>ML</li><li>OpenCV</li><li>Computer Vision</li></ul>
+              <p class="pj-tagline">Traffic Signal Detection &amp; Violation Alert System</p>
+              <p class="pj-desc">YOLOv8 models that find vehicles, traffic-signal state, stop-line crossings and riders without
+                helmets: the detection core of a system designed to raise traffic-violation alerts automatically. Trained
+                and evaluated in Google Colab.</p>
+              <ul class="tags"><li>Python</li><li>YOLOv8</li><li>OpenCV</li><li>Computer Vision</li></ul>
               <div class="pj-links">
-                <button type="button" class="btn btn-sm btn-primary" data-case="detectify" aria-haspopup="dialog"><span>Case study</span> <i class="fas fa-arrow-right" aria-hidden="true"></i></button>
+                <button type="button" class="btn btn-sm btn-primary" data-case="detectify" aria-haspopup="dialog"><span>Read the case study</span> <i class="fas fa-arrow-right" aria-hidden="true"></i></button>
                 <a href="https://github.com/pratyushnandi/DETECTIFY" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-ghost"><i class="fab fa-github" aria-hidden="true"></i> Source code</a>
               </div>
             </div>
           </article>
 
-          <!-- CAMPUS RECRUITMENT — Featured -->
-          <article class="pj pj-feature pj-flip" data-cat="web" data-reveal data-flow="browser → Laravel (PHP) → MySQL · notifications · admin dashboard">
-            <div class="pj-media">
-              <img src="projects/recruitment.jpg" alt="Campus Recruitment System dashboard" loading="lazy" decoding="async" />
-              <span class="pj-badge mono"><i class="fas fa-star" aria-hidden="true"></i> Featured</span>
+          <!-- ASPEND — Featured. Private repository: everything here comes from its
+               code, README and commit history. -->
+          <article class="pj pj-feature pj-flip" data-cat="mobile" data-reveal data-flow="Expo Router screens → Zustand store → repositories → SQLite on device · CSV / XLSX / PDF export">
+            <div class="pj-media pj-media-art art-phone-stage" aria-hidden="true">
+              <span class="art-phone-body">
+                <span class="ap-top mono"><span>This month</span><span>UPI · Cash · Card</span></span>
+                <b>₹ 12,480</b>
+                <span class="ap-row"><i></i><em></em><span></span></span>
+                <span class="ap-row"><i></i><em></em><span></span></span>
+                <span class="ap-row"><i></i><em></em><span></span></span>
+                <span class="ap-card mono"><span>Card · outstanding</span><span>limit − spent + paid</span></span>
+                <span class="ap-fab"></span>
+              </span>
+              <span class="pj-badge mono"><i class="fas fa-star" aria-hidden="true"></i> Case study</span>
+            </div>
+            <div class="pj-body">
+              <span class="pj-cat mono">Mobile App · Android</span>
+              <h3>Aspend</h3>
+              <p class="pj-tagline">Offline-first expense tracker for Android</p>
+              <p class="pj-desc">Quick one-handed entry, credit-card accounting that tracks limits and due dates without counting
+                bill payments twice, CSV, Excel and PDF export, and a fingerprint or PIN lock. Data lives on the device in
+                SQLite, with optional Google Drive backup.</p>
+              <ul class="tags"><li>React Native</li><li>Expo</li><li>TypeScript</li><li>SQLite</li><li>Zustand</li></ul>
+              <div class="pj-links">
+                <button type="button" class="btn btn-sm btn-primary" data-case="aspend" aria-haspopup="dialog"><span>Read the case study</span> <i class="fas fa-arrow-right" aria-hidden="true"></i></button>
+                <span class="pj-private mono"><i class="fas fa-lock" aria-hidden="true"></i> Private repository</span>
+              </div>
+            </div>
+          </article>
+
+          <!-- CAMPUS RECRUITMENT -->
+          <article class="pj pj-card" data-cat="web fullstack" data-reveal data-flow="browser → Laravel (PHP) → MySQL · notifications · admin dashboard">
+            <div class="pj-art art-board" aria-hidden="true">
+              <span class="art-kanban">
+                <span><b>applied</b><i></i><i></i><i></i></span>
+                <span><b>shortlisted</b><i></i><i></i></span>
+                <span><b>offer</b><i class="on"></i></span>
+              </span>
             </div>
             <div class="pj-body">
               <span class="pj-cat mono">Web App · Full-Stack</span>
               <h3>Campus Recruitment System</h3>
-              <p class="pj-tagline">Full-Stack Campus Recruitment Management Platform</p>
-              <p class="pj-desc">A dynamic web platform built with PHP &amp; Laravel. Companies post jobs; students register,
-                apply and track applications, with real-time notifications and admin dashboards.</p>
+              <p class="pj-tagline">Campus recruitment, from posting to offer</p>
+              <p class="pj-desc">A PHP and Laravel platform: companies post jobs and review eligible students; students register,
+                upload resumes, apply and track each application with real-time notifications; admins oversee both.</p>
               <ul class="tags"><li>PHP</li><li>Laravel</li><li>MySQL</li><li>HTML/CSS</li></ul>
               <div class="pj-links">
-                <button type="button" class="btn btn-sm btn-primary" data-case="campus-recruitment-system" aria-haspopup="dialog"><span>Case study</span> <i class="fas fa-arrow-right" aria-hidden="true"></i></button>
+                <button type="button" class="btn btn-sm btn-ghost" data-case="campus-recruitment-system" aria-haspopup="dialog"><span>Case study</span> <i class="fas fa-arrow-right" aria-hidden="true"></i></button>
               </div>
             </div>
           </article>
 
           <!-- Ambulance Management System (from the CV; no public repo or demo) -->
-          <article class="pj pj-card pj-wide" data-cat="web" data-reveal style="--accent:#f43f5e" data-flow="search &amp; book → PHP → MySQL · availability, drivers, requests, trips · live booking status">
+          <article class="pj pj-card" data-cat="web fullstack" data-reveal style="--i:1" data-flow="search &amp; book → PHP → MySQL · availability, drivers, requests, trips · live booking status">
             <div class="pj-art art-ambulance" aria-hidden="true">
               <span class="art-dispatch">
                 <b>dispatch</b>
@@ -871,102 +963,65 @@
             <div class="pj-body">
               <span class="pj-cat mono">Web App · Full-Stack</span>
               <h3>Ambulance Management System</h3>
-              <p class="pj-desc">A real-time web-based platform designed to simplify and streamline emergency ambulance services.
-                Users can quickly search and book available ambulances, provide patient and pickup details, and track
-                booking status. The system also manages ambulance availability, driver information, emergency requests
-                and trip details through a centralized management interface, enabling faster, more reliable and organized
-                emergency transportation.</p>
+              <p class="pj-tagline">Emergency booking and dispatch, in one place</p>
+              <p class="pj-desc">Users search and book available ambulances, give patient and pickup details and follow the booking
+                status. Behind it, one interface manages ambulance availability, drivers, emergency requests and trips.</p>
               <ul class="tags"><li>PHP</li><li>MySQL</li><li>JavaScript</li><li>Bootstrap</li><li>HTML</li><li>CSS</li></ul>
-            </div>
-          </article>
-
-          <!-- Code Editor -->
-          <article class="pj pj-card" data-cat="fullstack" data-reveal style="--accent:#8b7bff" data-flow="editor (HTML · CSS · JS) → live preview">
-            <a class="pj-art art-editor" href="https://pratyushnandi.github.io/Code_EDITOR/" target="_blank" rel="noopener noreferrer" tabindex="-1" aria-hidden="true">
-              <span class="art-split"><span class="art-code"><i></i><i></i><i></i><i></i><i></i></span><span class="art-preview"><b></b><i></i><i></i></span></span>
-            </a>
-            <div class="pj-body">
-              <span class="pj-cat mono">Full-Stack · Tool</span>
-              <h3>Code Editor</h3>
-              <p class="pj-desc">A real-time code editor for building with HTML, CSS and JS, with an instant live preview in the browser.</p>
-              <ul class="tags"><li>HTML</li><li>CSS</li><li>JS</li></ul>
-              <div class="pj-links">
-                <a href="https://pratyushnandi.github.io/Code_EDITOR/" target="_blank" rel="noopener noreferrer" class="pj-link">Live <i class="fas fa-arrow-up-right-from-square" aria-hidden="true"></i></a>
-                <a href="https://github.com/pratyushnandi/Code_EDITOR" target="_blank" rel="noopener noreferrer" class="pj-link">Source <i class="fab fa-github" aria-hidden="true"></i></a>
-              </div>
-            </div>
-          </article>
-
-          <!-- Portfolio Website -->
-          <article class="pj pj-card" data-cat="web" data-reveal style="--i:1;--accent:#22d3ee" data-flow="static site → EmailJS contact form">
-            <a class="pj-art art-portfolio" href="https://portfolio-website-ab1.netlify.app/" target="_blank" rel="noopener noreferrer" tabindex="-1" aria-hidden="true">
-              <span class="art-site"><b></b><i></i><i></i><span class="art-cards"><i></i><i></i><i></i></span></span>
-            </a>
-            <div class="pj-body">
-              <span class="pj-cat mono">Web App</span>
-              <h3>Portfolio Website</h3>
-              <p class="pj-desc">Responsive portfolio built with HTML, CSS and JS, featuring neon animations, AOS effects, an EmailJS contact form and dynamic sections.</p>
-              <ul class="tags"><li>HTML</li><li>CSS</li><li>JS</li></ul>
-              <div class="pj-links">
-                <a href="https://portfolio-website-ab1.netlify.app/" target="_blank" rel="noopener noreferrer" class="pj-link">Live <i class="fas fa-arrow-up-right-from-square" aria-hidden="true"></i></a>
-                <a href="https://github.com/pratyushnandi/Portfolio" target="_blank" rel="noopener noreferrer" class="pj-link">Source <i class="fab fa-github" aria-hidden="true"></i></a>
-              </div>
-            </div>
-          </article>
-
-          <!-- Aspend (private repository; everything here is from its README) -->
-          <article class="pj pj-card" data-cat="mobile" data-reveal style="--i:2;--accent:#34d399" data-flow="Expo Router screens → Zustand store → SQLite on device · CSV / XLSX / PDF export">
-            <div class="pj-art art-phone" aria-hidden="true">
-              <span class="art-phone-body">
-                <b>₹ 12,480</b>
-                <span class="ap-row"><i></i><em></em><span></span></span>
-                <span class="ap-row"><i></i><em></em><span></span></span>
-                <span class="ap-row"><i></i><em></em><span></span></span>
-                <span class="ap-fab"></span>
-              </span>
-            </div>
-            <div class="pj-body">
-              <span class="pj-cat mono">Mobile App · Android</span>
-              <h3>Aspend</h3>
-              <p class="pj-desc">An offline-first Android expense tracker. Quick one-handed entry, credit-card accounting that tracks
-                limits and due dates without counting bill payments twice, CSV, Excel and PDF export, and a fingerprint or
-                PIN lock. Everything stays on the device in SQLite.</p>
-              <ul class="tags"><li>React Native</li><li>Expo</li><li>TypeScript</li><li>SQLite</li><li>Zustand</li></ul>
             </div>
           </article>
 
         </div>
 
-        <!-- Small early builds: listed, not showcased, so the cards above carry the
+        <!-- Small builds: listed, not showcased, so the work above carries the
              weight. Same data shape as a card (title, .pj-desc, .tags, .pj-link) so
              the filter, the assistant and the system map read them the same way. -->
         <section class="proj-more" aria-labelledby="projMoreTitle" data-reveal>
-          <h3 class="col-title mono" id="projMoreTitle"><i class="fas fa-flask" aria-hidden="true"></i> earlier experiments</h3>
+          <h3 class="col-title mono" id="projMoreTitle"><i class="fas fa-flask" aria-hidden="true"></i> smaller builds &amp; experiments</h3>
           <ul class="pm-list">
+            <li class="pj-mini" data-cat="fullstack">
+              <h4>Code Editor</h4>
+              <span class="pj-cat mono">Tool</span>
+              <p class="pj-desc">A real-time code editor for HTML, CSS and JS with an instant live preview in the browser.</p>
+              <ul class="tags"><li>HTML</li><li>CSS</li><li>JS</li></ul>
+              <div class="pj-links">
+                <a href="https://pratyushnandi.github.io/Code_EDITOR/" target="_blank" rel="noopener noreferrer" class="pj-link">Live <i class="fas fa-arrow-up-right-from-square" aria-hidden="true"></i></a>
+                <a href="https://github.com/pratyushnandi/Code_EDITOR" target="_blank" rel="noopener noreferrer" class="pj-link">Source <i class="fab fa-github" aria-hidden="true"></i></a>
+              </div>
+            </li>
+            <li class="pj-mini" data-cat="web">
+              <h4>Portfolio Website</h4>
+              <span class="pj-cat mono">Web App</span>
+              <p class="pj-desc">An earlier portfolio in HTML, CSS and JS with animations, AOS effects and an EmailJS contact form.</p>
+              <ul class="tags"><li>HTML</li><li>CSS</li><li>JS</li></ul>
+              <div class="pj-links">
+                <a href="https://portfolio-website-ab1.netlify.app/" target="_blank" rel="noopener noreferrer" class="pj-link">Live <i class="fas fa-arrow-up-right-from-square" aria-hidden="true"></i></a>
+                <a href="https://github.com/pratyushnandi/Portfolio" target="_blank" rel="noopener noreferrer" class="pj-link">Source <i class="fab fa-github" aria-hidden="true"></i></a>
+              </div>
+            </li>
             <li class="pj-mini" data-cat="fullstack">
               <h4>Web Calculator</h4>
               <span class="pj-cat mono">Full-Stack</span>
-              <p class="pj-desc">A full-stack calculator on Node and Express, pairing a clean, responsive UI with a robust backend.</p>
+              <p class="pj-desc">A calculator on Node and Express, pairing a responsive UI with server-side logic.</p>
               <ul class="tags"><li>Node.js</li><li>Express</li><li>HTML</li><li>CSS</li></ul>
               <div class="pj-links"><a href="https://web-calculator-ad.netlify.app/" target="_blank" rel="noopener noreferrer" class="pj-link">Live <i class="fas fa-arrow-up-right-from-square" aria-hidden="true"></i></a></div>
             </li>
             <li class="pj-mini" data-cat="fullstack">
               <h4>Cyber Calendar</h4>
-              <span class="pj-cat mono">Full-Stack · Utility</span>
-              <p class="pj-desc">A calendar in JS, HTML and CSS with a futuristic cyber theme, smooth transitions and event management.</p>
+              <span class="pj-cat mono">Utility</span>
+              <p class="pj-desc">A calendar in JS, HTML and CSS with a futuristic theme, smooth transitions and event management.</p>
               <ul class="tags"><li>JavaScript</li><li>HTML</li><li>CSS</li></ul>
               <div class="pj-links"><a href="https://cyber-calender-ab.netlify.app/" target="_blank" rel="noopener noreferrer" class="pj-link">Live <i class="fas fa-arrow-up-right-from-square" aria-hidden="true"></i></a></div>
             </li>
             <li class="pj-mini" data-cat="fullstack">
               <h4>Rock Paper Scissors</h4>
-              <span class="pj-cat mono">Full-Stack · Game</span>
-              <p class="pj-desc">A Rock Paper Scissors game in JS, HTML and CSS with smooth animations and an AI opponent.</p>
+              <span class="pj-cat mono">Game</span>
+              <p class="pj-desc">A Rock Paper Scissors game in JS, HTML and CSS with smooth animations and a computer opponent.</p>
               <ul class="tags"><li>JavaScript</li><li>HTML</li><li>CSS</li></ul>
               <div class="pj-links"><a href="https://playfull-game.netlify.app/" target="_blank" rel="noopener noreferrer" class="pj-link">Play <i class="fas fa-arrow-up-right-from-square" aria-hidden="true"></i></a></div>
             </li>
             <li class="pj-mini" data-cat="fullstack">
               <h4>Background Changer</h4>
-              <span class="pj-cat mono">Full-Stack · Utility</span>
+              <span class="pj-cat mono">Utility</span>
               <p class="pj-desc">A background changer on Node and Express with a dynamic colour palette and smooth transitions.</p>
               <ul class="tags"><li>Node.js</li><li>Express</li><li>HTML</li><li>CSS</li></ul>
               <div class="pj-links"><a href="https://background-change12.netlify.app/" target="_blank" rel="noopener noreferrer" class="pj-link">Live <i class="fas fa-arrow-up-right-from-square" aria-hidden="true"></i></a></div>
@@ -1062,16 +1117,16 @@
             <h3 class="col-title mono"><i class="fas fa-graduation-cap" aria-hidden="true"></i> education</h3>
             <ol class="edu-list">
               <li class="edu-item" data-reveal>
-                <span class="edu-badge" style="--c1:#8b7bff;--c2:#6d5df6">MCA</span>
+                <span class="edu-badge" style="--c1:#f0a83a;--c2:#e0952a">MCA</span>
                 <div class="edu-body">
                   <h4>Master of Computer Applications</h4>
                   <p class="edu-inst">Adamas University</p>
                   <div class="edu-meta mono"><span>2024 – 2026</span><span class="edu-grade">CGPA 7.80</span></div>
                 </div>
-                <a class="doc-btn" href="documents/mca-provisional-certificate.pdf" data-doc-title="MCA PROVISIONAL GRADE CARD" target="_blank" rel="noopener noreferrer" aria-label="View MCA grade cards"><i class="fas fa-eye" aria-hidden="true"></i><span>View</span></a>
+                <a class="doc-btn" href="documents/mca-provisional-certificate.pdf" data-doc-title="MCA PROVISIONAL CERTIFICATE" target="_blank" rel="noopener noreferrer" aria-label="View MCA provisional certificate"><i class="fas fa-eye" aria-hidden="true"></i><span>View</span></a>
               </li>
               <li class="edu-item" data-reveal style="--i:1">
-                <span class="edu-badge" style="--c1:#22d3ee;--c2:#0891b2">BCA</span>
+                <span class="edu-badge" style="--c1:#f6c56f;--c2:#b9822f">BCA</span>
                 <div class="edu-body">
                   <h4>Bachelor of Computer Application</h4>
                   <p class="edu-inst">Techno India (Hooghly) – MAKAUT</p>
@@ -1222,7 +1277,7 @@
                 <span>Start a conversation</span> <i class="fas fa-arrow-right" aria-hidden="true"></i>
               </button>
             </div>
-            <form id="contactForm" novalidate>
+            <form id="contactForm" novalidate aria-busy="false">
               <div class="form-bar">
                 <span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>
                 <span class="mono">new_message</span>
@@ -1270,14 +1325,17 @@
                 </div>
                 <div class="f-grp">
                   <label for="cfMessage">Message</label>
-                  <textarea id="cfMessage" name="message" rows="5" placeholder="Tell me a little about the project or role…" required></textarea>
+                  <textarea id="cfMessage" name="message" rows="5" placeholder="Tell me a little about the project or role…" required minlength="10" maxlength="4000"></textarea>
                 </div>
+                <!-- Spam trap: hidden from people, filled by bots, checked before sending. -->
+                <input type="checkbox" name="botcheck" class="f-hp" tabindex="-1" hidden />
+
                 <div class="f-foot">
                   <button type="submit" class="btn btn-primary cf-btn" id="cfBtn">
                     <span id="cfTxt"><span>Send message</span> <i class="fas fa-paper-plane" aria-hidden="true"></i></span>
                     <span id="cfLoad" hidden><i class="fas fa-circle-notch fa-spin" aria-hidden="true"></i> Sending…</span>
                   </button>
-                  <span class="f-hint mono">Usually replies within 24h</span>
+                  <span class="f-hint mono">Replies by email</span>
                 </div>
                 <p id="cfStatus" class="cf-status" aria-live="polite"></p>
               </div>
@@ -1322,7 +1380,7 @@
     <div class="container">
       <div class="foot-top">
         <div class="foot-brand">
-          <a href="#hero" class="logo" aria-label="Pratyush Nandi, back to top">
+          <a href="#hero" class="logo" aria-label="PN Pratyush Nandi, back to top">
             <span class="logo-mark" aria-hidden="true">PN</span>
             <span class="logo-text" aria-hidden="true">Pratyush Nandi</span>
           </a>
@@ -1369,7 +1427,7 @@
         <p class="foot-sys">
           <span>Kolkata · IST <time id="localTime">--:--</time></span>
           <span class="foot-sep" aria-hidden="true">·</span>
-          <span>v10.4.0</span>
+          <span>v11.0.0</span>
         </p>
       </div>
     </div>
@@ -1383,31 +1441,31 @@
   <aside class="eng-panel" id="engPanel" aria-label="Engineering mode">
     <div class="ep-head">
       <span class="ep-title mono"><span class="eng-led on" aria-hidden="true"></span> ENGINEERING MODE</span>
-      <span class="ep-sum mono" id="epSum" aria-hidden="true">8/8 layers ready</span>
+      <span class="ep-sum mono" id="epSum" aria-hidden="true">8 layers mapped</span>
       <div class="ep-actions">
         <button type="button" id="epMin" aria-expanded="true" aria-controls="epBody" aria-label="Collapse system panel"><i class="fas fa-minus" aria-hidden="true"></i></button>
         <button type="button" id="epClose" aria-label="Exit engineering mode"><i class="fas fa-xmark" aria-hidden="true"></i></button>
       </div>
     </div>
     <div class="ep-body" id="epBody">
-      <p class="ep-sec mono">SYSTEM OVERVIEW</p>
+      <p class="ep-sec mono">STACK LAYERS</p>
       <ul class="ep-list mono">
-        <li><span class="ep-dot"></span>Portfolio Core<span class="ep-state" data-state="ONLINE"></span></li>
-        <li><span class="ep-dot"></span>Frontend<span class="ep-state" data-state="ONLINE"></span></li>
-        <li><span class="ep-dot"></span>Backend<span class="ep-state" data-state="ONLINE"></span></li>
-        <li><span class="ep-dot"></span>Database<span class="ep-state" data-state="CONNECTED"></span></li>
-        <li><span class="ep-dot"></span>AI / ML<span class="ep-state" data-state="READY"></span></li>
-        <li><span class="ep-dot"></span>Computer Vision<span class="ep-state" data-state="READY"></span></li>
-        <li><span class="ep-dot"></span>Edge / IoT<span class="ep-state" data-state="READY"></span></li>
-        <li><span class="ep-dot"></span>Real-Time Systems<span class="ep-state" data-state="READY"></span></li>
+        <li><span class="ep-dot"></span>This site<span class="ep-state" data-state="STATIC"></span></li>
+        <li><span class="ep-dot"></span>Frontend<span class="ep-state" data-state="IN STACK"></span></li>
+        <li><span class="ep-dot"></span>Backend<span class="ep-state" data-state="IN STACK"></span></li>
+        <li><span class="ep-dot"></span>Database<span class="ep-state" data-state="IN STACK"></span></li>
+        <li><span class="ep-dot"></span>AI / ML<span class="ep-state" data-state="IN STACK"></span></li>
+        <li><span class="ep-dot"></span>Computer Vision<span class="ep-state" data-state="IN STACK"></span></li>
+        <li><span class="ep-dot"></span>Edge / IoT<span class="ep-state" data-state="IN STACK"></span></li>
+        <li><span class="ep-dot"></span>Real-Time Systems<span class="ep-state" data-state="IN STACK"></span></li>
       </ul>
       <details class="ep-group" open>
-        <summary class="ep-sec mono">ARCHITECTURE</summary>
+        <summary class="ep-sec mono">THIS PAGE</summary>
         <ul class="ep-list ep-status mono">
-          <li>Architecture<span class="ep-state" data-state="STABLE"></span></li>
-          <li>Interfaces<span class="ep-state" data-state="ACTIVE"></span></li>
-          <li>AI Pipeline<span class="ep-state" data-state="READY"></span></li>
-          <li>Deployment<span class="ep-state" data-state="READY"></span></li>
+          <li>Hosting<span class="ep-state" data-state="VERCEL"></span></li>
+          <li>Backend<span class="ep-state" data-state="NONE"></span></li>
+          <li>AI Lab<span class="ep-state" data-state="SIMULATED"></span></li>
+          <li>Contact form<span class="ep-state" data-state="WEB3FORMS"></span></li>
         </ul>
       </details>
       <details class="ep-group" open>
@@ -1421,7 +1479,7 @@
         </dl>
       </details>
       <button type="button" class="ep-arch" id="epArch"><i class="fas fa-diagram-project" aria-hidden="true"></i> View architecture</button>
-      <p class="ep-note mono">Status is a representation of the stack, not live telemetry.</p>
+      <p class="ep-note mono">Layers describe the stack I build with. Nothing here is live telemetry.</p>
     </div>
   </aside>
 
@@ -1457,9 +1515,9 @@
   </dialog>
 
   <!-- ═══ CASE STUDIES ═══
-       Every statement here comes from the project descriptions on this page or
-       the public repository. No outcome metrics are published, so there is no
-       "Result" section rather than an invented one. -->
+       Every statement comes from a source: the project's repository (public, or
+       private and read directly), its recorded runs, or the CV. Results are only
+       those measured; what is designed but not built is labelled as scope. -->
   <dialog class="case" id="caseDlg" aria-labelledby="caseTitle">
     <div class="case-inner">
       <div class="case-bar">
@@ -1475,62 +1533,80 @@
     <div class="cs-head">
       <span class="pj-cat mono">case study · AI / ML · computer vision</span>
       <h2 id="caseTitle">Detectify</h2>
-      <p class="cs-tagline">Intelligent Traffic Signal Detection &amp; Violation Alert System</p>
-      <ul class="tags"><li>Python</li><li>ML</li><li>OpenCV</li><li>Computer Vision</li></ul>
+      <p class="cs-tagline">Traffic Signal Detection &amp; Violation Alert System</p>
+      <ul class="tags"><li>Python</li><li>YOLOv8</li><li>OpenCV</li><li>Computer Vision</li></ul>
+      <dl class="cs-facts">
+        <div><dt class="mono">role</dt><dd>Sole contributor</dd></div>
+        <div><dt class="mono">built</dt><dd>2 YOLOv8 notebooks</dd></div>
+        <div><dt class="mono">evidence</dt><dd>Public repository</dd></div>
+      </dl>
     </div>
     <section class="cs-sec">
       <h3 class="mono">problem</h3>
-      <div><p>Traffic enforcement depends on people watching junctions, and people miss things. Red-light jumping,
-        speeding and riding without a helmet are hard to catch consistently by eye.</p></div>
+      <div><p>Traffic enforcement depends on people watching junctions, and people miss things. Red-light jumping and riding
+        without a helmet are hard to catch consistently by eye. Detectify is meant for the teams who review those
+        violations: the system flags, a person decides.</p></div>
+    </section>
+    <section class="cs-sec">
+      <h3 class="mono">my contribution</h3>
+      <div><p>Sole contributor to the public repository. I built its two model notebooks: helmet-violation detection, and
+        traffic-light, vehicle and red-light-violation detection, each trained and evaluated with Ultralytics YOLOv8 in
+        Google Colab.</p></div>
     </section>
     <section class="cs-sec">
       <h3 class="mono">architecture</h3>
       <div>
-        <p>Live camera feeds pass through a Python and OpenCV pipeline into ML models that look for violations.
-          A detected violation becomes an alert.</p>
-        <ol class="cs-flow">
-          <li style="--i:0"><span class="cf-ico" aria-hidden="true"><i class="fas fa-video"></i></span><strong>Camera feed</strong><span class="mono">live video</span></li>
-          <li style="--i:1"><span class="cf-ico" aria-hidden="true"><i class="devicon-opencv-plain"></i></span><strong>Python + OpenCV</strong><span class="mono">frame processing</span></li>
-          <li style="--i:2"><span class="cf-ico" aria-hidden="true"><i class="fas fa-brain"></i></span><strong>YOLOv8 models</strong><span class="mono">violation detection</span></li>
-          <li style="--i:3"><span class="cf-ico" aria-hidden="true"><i class="fas fa-triangle-exclamation"></i></span><strong>Alert</strong><span class="mono">for enforcement</span></li>
+        <p>The system is designed as one pipeline: frames from a camera are pre-processed, YOLOv8 models detect what is in
+          them, rules decide whether a violation happened, and a violation becomes an alert. The models are the part in
+          the repository.</p>
+        <ol class="cs-flow cs-flow-5">
+          <li style="--i:0"><span class="cf-ico" aria-hidden="true"><i class="fas fa-video"></i></span><strong>Camera frame</strong><span class="mono">design</span></li>
+          <li style="--i:1"><span class="cf-ico" aria-hidden="true"><i class="devicon-opencv-plain"></i></span><strong>Python + OpenCV</strong><span class="mono">pre-processing</span></li>
+          <li style="--i:2" class="cf-built"><span class="cf-ico" aria-hidden="true"><i class="fas fa-brain"></i></span><strong>YOLOv8 models</strong><span class="mono">in the repository</span></li>
+          <li style="--i:3"><span class="cf-ico" aria-hidden="true"><i class="fas fa-scale-balanced"></i></span><strong>Rules</strong><span class="mono">red light · helmet</span></li>
+          <li style="--i:4"><span class="cf-ico" aria-hidden="true"><i class="fas fa-triangle-exclamation"></i></span><strong>Alert</strong><span class="mono">design</span></li>
         </ol>
+        <p class="cs-note mono">Want to see the stages run? The Visual AI playground walks a sample frame through the same pipeline.</p>
+      </div>
+    </section>
+    <section class="cs-sec">
+      <h3 class="mono">scope</h3>
+      <div>
+        <ul class="cs-scope">
+          <li class="is-built"><span class="mono">in the repository</span> Helmet-violation detection; vehicle, traffic-light and red-light-violation detection; their training and evaluation runs.</li>
+          <li><span class="mono">designed, not published</span> Live camera ingestion, speeding detection, alert delivery and an operator interface. These are part of the project brief, but they are not in the public repository.</li>
+        </ul>
       </div>
     </section>
     <section class="cs-sec">
       <h3 class="mono">technology</h3>
       <dl class="cs-tech">
-        <div><dt>Python</dt><dd>The pipeline and the models.</dd></div>
-        <div><dt>OpenCV</dt><dd>Reading and processing video frames.</dd></div>
-        <div><dt>YOLOv8 · Ultralytics</dt><dd>The detection models: one for helmet violations, others for vehicles, traffic lights and red-light violations.</dd></div>
-        <div><dt>ML · Computer Vision</dt><dd>Detecting vehicles, riders and signal state in each frame.</dd></div>
-        <div><dt>Jupyter Notebook · Google Colab</dt><dd>Where the models are trained and evaluated: the repository's primary language.</dd></div>
+        <div><dt>YOLOv8 · Ultralytics</dt><dd>Single-pass detection, fast enough for video: one model for helmets, one for vehicles, traffic lights and red-light violations.</dd></div>
+        <div><dt>Python</dt><dd>Training, evaluation and the glue between stages.</dd></div>
+        <div><dt>OpenCV</dt><dd>Reading and preparing frames before they reach a model.</dd></div>
+        <div><dt>Jupyter · Google Colab</dt><dd>Where the models are trained and evaluated, on a GPU.</dd></div>
       </dl>
     </section>
     <section class="cs-sec">
       <h3 class="mono">challenge</h3>
-      <div><p>Each violation needs a different kind of evidence from the same live footage: the state of the signal
-        for red-light jumping, how a vehicle moves over time for speeding, and detail about the rider for helmets,
-        all without a person watching.</p></div>
-    </section>
-    <section class="cs-sec">
-      <h3 class="mono">solution</h3>
-      <div><p>One pipeline instead of three tools. Frames from the camera feed are processed and passed to YOLOv8
-        detection models that look for vehicles, signal states, helmets and stop-line crossings, and anything that
-        breaks a rule is raised as an alert.</p></div>
+      <div><p>Each violation needs different evidence from the same footage: the state of the signal and the position of a
+        vehicle for red-light jumping, and detail about a rider's head for helmets. A small, distant object such as a
+        helmet is much harder to detect reliably than a car.</p></div>
     </section>
     <section class="cs-sec">
       <h3 class="mono">engineering</h3>
       <ul class="cs-points">
-        <li><strong>Live, not recorded.</strong> It works on camera feeds as they stream, so a violation is flagged while it happens instead of being found later in footage.</li>
-        <li><strong>One system, three violations.</strong> Red-light jumping, speeding and no-helmet riding are covered by the same pipeline instead of three separate tools.</li>
-        <li><strong>Alerts, not raw detections.</strong> The output is a violation alert, so people review what matters rather than every detected object.</li>
+        <li><strong>Detect objects, decide with rules.</strong> The models find things (a car, a red light, a bare head); a separate rule step turns them into a violation, so the logic stays readable and testable.</li>
+        <li><strong>Two focused models.</strong> Helmet detection and traffic-scene detection are trained separately, so each dataset can grow without retraining the other.</li>
+        <li><strong>Alerts, not raw detections.</strong> The output is meant to be a violation for a person to review, not a stream of boxes.</li>
+        <li><strong>Measure on held-out data.</strong> The helmet model is evaluated on a test set it never saw in training, which is what exposed its weakness.</li>
       </ul>
     </section>
     <section class="cs-sec">
       <h3 class="mono">result</h3>
       <div>
-        <p>Evaluation runs recorded in the repository's notebooks. Known limitation: on the small held-out helmet
-          test set, recall drops to 0.52, so more varied helmet data is the clear next step.</p>
+        <p>Evaluation runs recorded in the repository's notebooks. Known limitation: on the small held-out helmet test set,
+          recall drops to 0.52, so more varied helmet data is the clear next step.</p>
         <section class="cs-table-wrap" aria-label="Detectify evaluation results" tabindex="0">
           <table class="cs-metrics">
             <caption class="sr-only">Detectify model evaluation results</caption>
@@ -1545,19 +1621,94 @@
             </tbody>
           </table>
         </section>
-        <p class="cs-note mono">Inference took about 4–6 ms per 640 × 640 image during validation on Google Colab.</p>
+        <p class="cs-note mono">Inference took about 4–6 ms per 640 × 640 image during validation on Google Colab. That is a model benchmark on a GPU, not an end-to-end latency for a deployed system.</p>
       </div>
     </section>
     <section class="cs-sec">
-      <h3 class="mono">my contribution</h3>
-      <div><p>Sole contributor to the public repository. It holds the two model notebooks I built: helmet-violation
-        detection, and traffic-light, vehicle and red-light-violation detection, each trained and evaluated with
-        Ultralytics YOLOv8.</p></div>
+      <h3 class="mono">next</h3>
+      <div><p>More varied helmet data to lift held-out recall, then the stages that are designed but not published: live
+        stream ingestion and alert delivery.</p></div>
     </section>
     <div class="cs-foot">
-      <p class="mono">Results above are from the repository's recorded evaluation runs.</p>
+      <p class="mono">Everything above comes from the public repository and its recorded runs.</p>
       <div class="cs-actions">
         <a href="https://github.com/pratyushnandi/DETECTIFY" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-ghost"><i class="fab fa-github" aria-hidden="true"></i> Source code</a>
+        <a href="#contact" class="btn btn-sm btn-primary" data-close-case><span>Ask me about it</span> <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
+      </div>
+    </div>
+  </template>
+
+  <template id="case-aspend">
+    <div class="cs-head">
+      <span class="pj-cat mono">case study · mobile · android</span>
+      <h2 id="caseTitle">Aspend</h2>
+      <p class="cs-tagline">Offline-first expense tracker for Android</p>
+      <ul class="tags"><li>React Native</li><li>Expo</li><li>TypeScript</li><li>SQLite</li><li>Zustand</li></ul>
+      <dl class="cs-facts">
+        <div><dt class="mono">role</dt><dd>Design &amp; development</dd></div>
+        <div><dt class="mono">builds</dt><dd>v1.0.0 → v1.0.5</dd></div>
+        <div><dt class="mono">evidence</dt><dd>Private repository</dd></div>
+      </dl>
+    </div>
+    <section class="cs-sec">
+      <h3 class="mono">problem</h3>
+      <div><p>Aspend is for someone who pays with a mix of UPI, cash and credit cards and wants an honest monthly total,
+        quickly, on their phone, without an account or a network connection. Credit cards are the hard part: a card
+        purchase is spending, but paying the card's bill later is not new spending.</p></div>
+    </section>
+    <section class="cs-sec">
+      <h3 class="mono">my contribution</h3>
+      <div><p>I designed and built the app: the data model, the credit-card ledger, the screens, exports, app lock, Google
+        Drive backup and the release pipeline. 21 of the repository's 23 commits are mine.</p></div>
+    </section>
+    <section class="cs-sec">
+      <h3 class="mono">architecture</h3>
+      <div>
+        <p>Screens never touch SQL. They read and write through a Zustand store, which calls one repository per table
+          (expenses, cards, card payments, categories, settings), and only repositories run expo-sqlite queries. The money
+          logic, exports, security and backup are plain services, so they can be unit-tested without a device.</p>
+        <ol class="cs-flow">
+          <li style="--i:0"><span class="cf-ico" aria-hidden="true"><i class="fas fa-mobile-screen"></i></span><strong>Screens</strong><span class="mono">Expo Router tabs</span></li>
+          <li style="--i:1"><span class="cf-ico" aria-hidden="true"><i class="fas fa-layer-group"></i></span><strong>Zustand store</strong><span class="mono">app state</span></li>
+          <li style="--i:2"><span class="cf-ico" aria-hidden="true"><i class="fas fa-table-list"></i></span><strong>Repositories</strong><span class="mono">one per table</span></li>
+          <li style="--i:3"><span class="cf-ico" aria-hidden="true"><i class="devicon-sqlite-plain"></i></span><strong>SQLite</strong><span class="mono">on the device</span></li>
+        </ol>
+      </div>
+    </section>
+    <section class="cs-sec">
+      <h3 class="mono">technology</h3>
+      <dl class="cs-tech">
+        <div><dt>React Native · Expo</dt><dd>One TypeScript codebase for the Android app, with Expo Router for screens and tabs.</dd></div>
+        <div><dt>expo-sqlite</dt><dd>A single local database file, indexed by date, payment method, category and card.</dd></div>
+        <div><dt>Zustand</dt><dd>A small store between the screens and the data layer.</dd></div>
+        <div><dt>Local authentication</dt><dd>Fingerprint or face unlock, and a 4-digit PIN kept in secure storage.</dd></div>
+        <div><dt>Exports</dt><dd>CSV, Excel and PDF reports sent through the Android share sheet.</dd></div>
+        <div><dt>Google Drive API</dt><dd>Optional backup and restore, signed in with OAuth 2.0.</dd></div>
+        <div><dt>GitHub Actions</dt><dd>Pushing a version tag builds the APK and publishes a release.</dd></div>
+      </dl>
+    </section>
+    <section class="cs-sec">
+      <h3 class="mono">challenge</h3>
+      <div><p>If a credit-card bill payment is recorded as an expense, every card purchase is counted twice: once when it is
+        made and again when the bill is paid. The app also has to know how much of each card's limit is still available.</p></div>
+    </section>
+    <section class="cs-sec">
+      <h3 class="mono">engineering</h3>
+      <ul class="cs-points">
+        <li><strong>Payments are not expenses.</strong> Card purchases are expenses; bill payments live in their own table. A card's outstanding balance is purchases minus payments, never below zero, and available credit is the limit minus that balance.</li>
+        <li><strong>Offline first.</strong> All data sits in one SQLite file on the device, with no account and no server. Backup is the user's explicit choice: a JSON snapshot or Google Drive.</li>
+        <li><strong>A lock that resists guessing.</strong> After five wrong PINs the app locks, and the lockout grows with each further failure.</li>
+        <li><strong>Tested where money is calculated.</strong> Unit tests cover totals, daily trends across month and leap-year boundaries, card-ledger edge cases and the PIN lockout.</li>
+      </ul>
+    </section>
+    <section class="cs-sec">
+      <h3 class="mono">result</h3>
+      <div><p>A working Android app, released as builds v1.0.0 to v1.0.5, with automated APK releases from version tags. No
+        download or usage numbers are published here.</p></div>
+    </section>
+    <div class="cs-foot">
+      <p class="mono">The repository is private. Everything above comes from its code, README, tests and commit history.</p>
+      <div class="cs-actions">
         <a href="#contact" class="btn btn-sm btn-primary" data-close-case><span>Ask me about it</span> <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
       </div>
     </div>
@@ -1658,7 +1809,7 @@
     </div>
   </div>
 
-  <script src="script.js?v=10.4.0"></script>
+  <script src="script.js?v=11.0.0"></script>
 </body>
 
 </html>
