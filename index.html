@@ -47,8 +47,8 @@
 
   <!-- ?v= is bumped with every release so returning visitors never keep a stale stylesheet.
        icons.css is generated (scripts/build-icons.mjs): only the icons this page uses. -->
-  <link rel="stylesheet" href="style.css?v=10.2.1" />
-  <link rel="stylesheet" href="icons.css?v=10.2.1" />
+  <link rel="stylesheet" href="style.css?v=10.3.0" />
+  <link rel="stylesheet" href="icons.css?v=10.3.0" />
 
   <!-- Only JS ever removes the preloader, so without it the overlay would cover
        the page forever. Reveal-on-scroll never runs either, so show everything. -->
@@ -360,7 +360,7 @@
           <div class="b-card b-stats" data-reveal style="--i:3">
             <div class="stat"><span class="stat-n"><span class="count" data-count="2">2</span>+</span><span class="stat-l">Years coding</span></div>
             <div class="stat"><span class="stat-n"><span class="count" data-count="10">10</span>+</span><span class="stat-l">Projects shipped</span></div>
-            <div class="stat"><span class="stat-n"><span class="count" data-count="7">7</span></span><span class="stat-l">Roles &amp; positions</span></div>
+            <div class="stat"><span class="stat-n"><span class="count" data-count="2">2</span></span><span class="stat-l">YOLOv8 models trained</span></div>
             <div class="stat"><span class="stat-n"><span class="count" data-count="5">5</span>+</span><span class="stat-l">Certifications</span></div>
           </div>
 
@@ -388,7 +388,7 @@
           <header class="sec-head" data-reveal>
             <span class="sec-kicker mono"><span class="sk-num">02</span><span class="sk-sep" aria-hidden="true">/</span> Experience</span>
             <h2 class="sec-title" id="expTitle">My <em class="serif">journey</em></h2>
-            <p class="sec-sub">Roles, disciplines and leadership, read like a commit history, newest on top.</p>
+            <p class="sec-sub">Roles and leadership, read like a commit history, newest on top. Below them, the disciplines my stack grew through.</p>
           </header>
 
           <article class="exp-current" data-reveal style="--i:1">
@@ -404,6 +404,7 @@
           </article>
         </div>
 
+        <div class="exp-main">
         <div class="gitlog-wrap" id="gitlog">
         <div class="gl-rail" aria-hidden="true"><span class="gl-fill"></span></div>
         <ol class="gitlog">
@@ -425,7 +426,7 @@
           </li>
 
           <li class="gl-item" data-reveal>
-            <span class="gl-node" aria-hidden="true"></span>
+            <span class="gl-node root" aria-hidden="true"></span>
             <div class="gl-meta mono"><span class="gl-hash">a3f9c21</span><span class="gl-date">2025</span></div>
             <article class="gl-card">
               <div class="gl-head">
@@ -441,96 +442,65 @@
               <ul class="tags"><li>Leadership</li><li>Mentoring</li><li>Git</li><li>Open Source</li></ul>
             </article>
           </li>
-
-          <li class="gl-item" data-reveal>
-            <span class="gl-node" aria-hidden="true"></span>
-            <div class="gl-meta mono"><span class="gl-hash">7be41d0</span><span class="gl-date">2024 – 2025</span></div>
-            <article class="gl-card">
-              <div class="gl-head">
-                <span class="gl-icon" aria-hidden="true"><i class="devicon-react-original"></i></span>
-                <div>
-                  <h3>React Developer</h3>
-                  <p class="gl-sub">React / Frontend</p>
-                </div>
-              </div>
-              <p>Built dynamic, responsive user interfaces with React. Implemented reusable components, managed state
-                with hooks and the Context API, and optimised rendering performance. Worked with backend teams to
-                integrate APIs and real-time data flow for a seamless experience across devices.</p>
-              <ul class="tags"><li>React</li><li>Hooks</li><li>Context API</li><li>Redux</li></ul>
-            </article>
-          </li>
-
-          <li class="gl-item" data-reveal>
-            <span class="gl-node" aria-hidden="true"></span>
-            <div class="gl-meta mono"><span class="gl-hash">e02c7aa</span><span class="gl-date">2024 – 2025</span></div>
-            <article class="gl-card">
-              <div class="gl-head">
-                <span class="gl-icon" aria-hidden="true"><i class="fas fa-server"></i></span>
-                <div>
-                  <h3>Backend Developer</h3>
-                  <p class="gl-sub">Backend</p>
-                </div>
-              </div>
-              <p>Designed and implemented server-side logic with Python and Node.js, working with relational and
-                non-relational databases with a focus on performance, scalability and reliability. Partnered with
-                frontend developers to integrate APIs and keep data flowing smoothly end to end.</p>
-              <ul class="tags"><li>Node.js</li><li>Express</li><li>MongoDB</li><li>APIs</li></ul>
-            </article>
-          </li>
-
-          <li class="gl-item" data-reveal>
-            <span class="gl-node" aria-hidden="true"></span>
-            <div class="gl-meta mono"><span class="gl-hash">5d18b3e</span><span class="gl-date">2023 – 2026</span></div>
-            <article class="gl-card">
-              <div class="gl-head">
-                <span class="gl-icon" aria-hidden="true"><i class="fab fa-python"></i></span>
-                <div>
-                  <h3>Python Developer</h3>
-                  <p class="gl-sub">Backend / ML</p>
-                </div>
-              </div>
-              <p>Developed efficient, focused applications in Python across back-end development and machine learning,
-                with hands-on work in frameworks, APIs and databases. Prioritised clean, maintainable code, performance
-                and debugging, and collaborated with developers to ship reliable, user-friendly software.</p>
-              <ul class="tags"><li>Python</li><li>ML</li><li>Flask</li><li>APIs</li></ul>
-            </article>
-          </li>
-
-          <li class="gl-item" data-reveal>
-            <span class="gl-node" aria-hidden="true"></span>
-            <div class="gl-meta mono"><span class="gl-hash">c9a0f57</span><span class="gl-date">2021 – 2026</span></div>
-            <article class="gl-card">
-              <div class="gl-head">
-                <span class="gl-icon" aria-hidden="true"><i class="fas fa-layer-group"></i></span>
-                <div>
-                  <h3>Frontend Developer</h3>
-                  <p class="gl-sub">Frontend</p>
-                </div>
-              </div>
-              <p>Developed interactive, responsive web interfaces using HTML, CSS and JavaScript. Built UX-driven
-                components and worked with backend services and the design team to deliver scalable front-end
-                features.</p>
-              <ul class="tags"><li>HTML5</li><li>CSS3</li><li>JS</li><li>React</li></ul>
-            </article>
-          </li>
-
-          <li class="gl-item" data-reveal>
-            <span class="gl-node root" aria-hidden="true"></span>
-            <div class="gl-meta mono"><span class="gl-hash">1f0e2b4</span><span class="gl-date">2021 – 2024</span></div>
-            <article class="gl-card">
-              <div class="gl-head">
-                <span class="gl-icon" aria-hidden="true"><i class="fab fa-html5"></i></span>
-                <div>
-                  <h3>HTML Developer</h3>
-                  <p class="gl-sub">Front-End</p>
-                </div>
-              </div>
-              <p>Built efficient, focused applications with HTML, with exposure to databases and API testing. Wrote clean,
-                maintainable code and focused on performance, debugging and continuously improving the user experience.</p>
-              <ul class="tags"><li>HTML5</li><li>CSS3</li><li>APIs</li></ul>
-            </article>
-          </li>
         </ol>
+        </div>
+
+        <!-- Disciplines, not positions: how the stack grew, newest first. Kept apart
+             from the roles above so neither reads as the other. -->
+        <section class="disc" aria-labelledby="discTitle" data-reveal>
+          <h3 class="col-title mono" id="discTitle"><i class="fas fa-layer-group" aria-hidden="true"></i> disciplines · how the stack grew</h3>
+          <ol class="disc-list">
+            <li>
+              <span class="disc-date mono">2024 – 2025</span>
+              <div>
+                <h4>React</h4>
+                <p>Built dynamic, responsive user interfaces with React. Implemented reusable components, managed state
+                  with hooks and the Context API, and optimised rendering performance. Worked with backend teams to
+                  integrate APIs and real-time data flow for a seamless experience across devices.</p>
+                <p class="disc-tags mono">React · Hooks · Context API · Redux</p>
+              </div>
+            </li>
+            <li>
+              <span class="disc-date mono">2024 – 2025</span>
+              <div>
+                <h4>Backend</h4>
+                <p>Designed and implemented server-side logic with Python and Node.js, working with relational and
+                  non-relational databases with a focus on performance, scalability and reliability. Partnered with
+                  frontend developers to integrate APIs and keep data flowing smoothly end to end.</p>
+                <p class="disc-tags mono">Node.js · Express · MongoDB · APIs</p>
+              </div>
+            </li>
+            <li>
+              <span class="disc-date mono">2023 – 2026</span>
+              <div>
+                <h4>Python &amp; ML</h4>
+                <p>Developed efficient, focused applications in Python across back-end development and machine learning,
+                  with hands-on work in frameworks, APIs and databases. Prioritised clean, maintainable code, performance
+                  and debugging, and collaborated with developers to ship reliable, user-friendly software.</p>
+                <p class="disc-tags mono">Python · ML · Flask · APIs</p>
+              </div>
+            </li>
+            <li>
+              <span class="disc-date mono">2021 – 2026</span>
+              <div>
+                <h4>Frontend</h4>
+                <p>Developed interactive, responsive web interfaces using HTML, CSS and JavaScript. Built UX-driven
+                  components and worked with backend services and the design team to deliver scalable front-end
+                  features.</p>
+                <p class="disc-tags mono">HTML5 · CSS3 · JS · React</p>
+              </div>
+            </li>
+            <li>
+              <span class="disc-date mono">2021 – 2024</span>
+              <div>
+                <h4>HTML</h4>
+                <p>Built efficient, focused applications with HTML, with exposure to databases and API testing. Wrote clean,
+                  maintainable code and focused on performance, debugging and continuously improving the user experience.</p>
+                <p class="disc-tags mono">HTML5 · CSS3 · APIs</p>
+              </div>
+            </li>
+          </ol>
+        </section>
         </div>
       </div>
     </section>
@@ -682,11 +652,6 @@
               <li class="node" style="--brand:#a78bfa"><i class="fas fa-eye"></i><span>Visual AI</span></li>
               <li class="node" style="--brand:#a78bfa"><i class="fas fa-brain"></i><span>AI / ML</span></li>
             </ul>
-            <div class="edge-log mono" aria-hidden="true">
-              <p><span class="el-ok">●</span> rtsp://cam-01:8554/live <span class="el-dim">→ mediamtx · stream online</span></p>
-              <p><span class="el-acc">yolo</span> frame 1842 <span class="el-dim">·</span> 14 objects <span class="el-dim">·</span> <span class="el-ok">23 ms</span></p>
-              <p><span class="el-acc">edge</span> rpi-node-01 <span class="el-dim">·</span> POST /api/events <span class="el-ok">201</span></p>
-            </div>
           </div>
 
           <div class="stack-group" data-reveal style="--i:5">
@@ -886,7 +851,6 @@
               <ul class="tags"><li>PHP</li><li>Laravel</li><li>MySQL</li><li>HTML/CSS</li></ul>
               <div class="pj-links">
                 <button type="button" class="btn btn-sm btn-primary" data-case="campus-recruitment-system" aria-haspopup="dialog"><span>Case study</span> <i class="fas fa-arrow-right" aria-hidden="true"></i></button>
-                <a href="https://github.com/pratyushnandi" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-ghost"><i class="fab fa-github" aria-hidden="true"></i> GitHub</a>
               </div>
             </div>
           </article>
@@ -963,55 +927,37 @@
             </div>
           </article>
 
-          <!-- Cyber Calendar -->
-          <article class="pj pj-card" data-cat="fullstack" data-reveal style="--accent:#10b981" data-flow="client-side JS · event management">
-            <a class="pj-art art-cal" href="https://cyber-calender-ab.netlify.app/" target="_blank" rel="noopener noreferrer" tabindex="-1" aria-hidden="true">
-              <span class="art-cal-grid"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i class="on"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
-            </a>
-            <div class="pj-body">
+        </div>
+
+        <!-- Small early builds: listed, not showcased, so the cards above carry the
+             weight. Same data shape as a card (title, .pj-desc, .tags, .pj-link) so
+             the filter, the assistant and the system map read them the same way. -->
+        <section class="proj-more" aria-labelledby="projMoreTitle" data-reveal>
+          <h3 class="col-title mono" id="projMoreTitle"><i class="fas fa-flask" aria-hidden="true"></i> earlier experiments</h3>
+          <ul class="pm-list">
+            <li class="pj-mini" data-cat="fullstack">
+              <h4>Cyber Calendar</h4>
               <span class="pj-cat mono">Full-Stack · Utility</span>
-              <h3>Cyber Calendar</h3>
               <p class="pj-desc">A calendar in JS, HTML and CSS with a futuristic cyber theme, smooth transitions and event management.</p>
               <ul class="tags"><li>JavaScript</li><li>HTML</li><li>CSS</li></ul>
-              <div class="pj-links">
-                <a href="https://cyber-calender-ab.netlify.app/" target="_blank" rel="noopener noreferrer" class="pj-link">Live <i class="fas fa-arrow-up-right-from-square" aria-hidden="true"></i></a>
-              </div>
-            </div>
-          </article>
-
-          <!-- Rock Paper Scissors -->
-          <article class="pj pj-card" data-cat="fullstack" data-reveal style="--i:1;--accent:#f472b6" data-flow="client-side JS · AI opponent logic">
-            <a class="pj-art art-rps" href="https://playfull-game.netlify.app/" target="_blank" rel="noopener noreferrer" tabindex="-1" aria-hidden="true">
-              <span class="art-rps-row"><i class="fas fa-hand-back-fist"></i><b>vs</b><i class="fas fa-hand"></i></span>
-            </a>
-            <div class="pj-body">
+              <div class="pj-links"><a href="https://cyber-calender-ab.netlify.app/" target="_blank" rel="noopener noreferrer" class="pj-link">Live <i class="fas fa-arrow-up-right-from-square" aria-hidden="true"></i></a></div>
+            </li>
+            <li class="pj-mini" data-cat="fullstack">
+              <h4>Rock Paper Scissors</h4>
               <span class="pj-cat mono">Full-Stack · Game</span>
-              <h3>Rock Paper Scissors</h3>
               <p class="pj-desc">A Rock Paper Scissors game in JS, HTML and CSS with smooth animations and an AI opponent.</p>
               <ul class="tags"><li>JavaScript</li><li>HTML</li><li>CSS</li></ul>
-              <div class="pj-links">
-                <a href="https://playfull-game.netlify.app/" target="_blank" rel="noopener noreferrer" class="pj-link">Play <i class="fas fa-arrow-up-right-from-square" aria-hidden="true"></i></a>
-              </div>
-            </div>
-          </article>
-
-          <!-- Background Changer -->
-          <article class="pj pj-card" data-cat="fullstack" data-reveal style="--i:2;--accent:#60a5fa" data-flow="UI → Node.js · Express backend">
-            <a class="pj-art art-bg" href="https://background-change12.netlify.app/" target="_blank" rel="noopener noreferrer" tabindex="-1" aria-hidden="true">
-              <span class="art-swatches"><i></i><i></i><i></i><i></i><i></i></span>
-            </a>
-            <div class="pj-body">
+              <div class="pj-links"><a href="https://playfull-game.netlify.app/" target="_blank" rel="noopener noreferrer" class="pj-link">Play <i class="fas fa-arrow-up-right-from-square" aria-hidden="true"></i></a></div>
+            </li>
+            <li class="pj-mini" data-cat="fullstack">
+              <h4>Background Changer</h4>
               <span class="pj-cat mono">Full-Stack · Utility</span>
-              <h3>Background Changer</h3>
               <p class="pj-desc">A background changer on Node and Express with a dynamic colour palette and smooth transitions.</p>
               <ul class="tags"><li>Node.js</li><li>Express</li><li>HTML</li><li>CSS</li></ul>
-              <div class="pj-links">
-                <a href="https://background-change12.netlify.app/" target="_blank" rel="noopener noreferrer" class="pj-link">Live <i class="fas fa-arrow-up-right-from-square" aria-hidden="true"></i></a>
-              </div>
-            </div>
-          </article>
-
-        </div>
+              <div class="pj-links"><a href="https://background-change12.netlify.app/" target="_blank" rel="noopener noreferrer" class="pj-link">Live <i class="fas fa-arrow-up-right-from-square" aria-hidden="true"></i></a></div>
+            </li>
+          </ul>
+        </section>
 
         <div class="proj-cta" data-reveal>
           <a href="https://github.com/pratyushnandi" target="_blank" rel="noopener noreferrer" class="btn btn-ghost magnetic">
@@ -1408,7 +1354,7 @@
         <p class="foot-sys">
           <span>Kolkata · IST <time id="localTime">--:--</time></span>
           <span class="foot-sep" aria-hidden="true">·</span>
-          <span>v10.2.1</span>
+          <span>v10.3.0</span>
         </p>
       </div>
     </div>
@@ -1660,9 +1606,8 @@
         postings, eligibility review, resume upload, applications and real-time status tracking.</p></div>
     </section>
     <div class="cs-foot">
-      <p class="mono">Usage metrics aren't published here.</p>
+      <p class="mono">The source isn't in a public repository, and usage metrics aren't published here.</p>
       <div class="cs-actions">
-        <a href="https://github.com/pratyushnandi" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-ghost"><i class="fab fa-github" aria-hidden="true"></i> GitHub</a>
         <a href="#contact" class="btn btn-sm btn-primary" data-close-case><span>Ask me about it</span> <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
       </div>
     </div>
@@ -1698,7 +1643,7 @@
     </div>
   </div>
 
-  <script src="script.js?v=10.2.1"></script>
+  <script src="script.js?v=10.3.0"></script>
 </body>
 
 </html>

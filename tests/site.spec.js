@@ -95,8 +95,23 @@ test('project filter shows only the matching category', async ({ page }) => {
   await page.locator('.pf[data-f="ai"]').click();
   await expect(page.locator('.pf[data-f="ai"]')).toHaveAttribute('aria-pressed', 'true');
   expect(await visible()).toBe(await page.locator('#projGrid .pj[data-cat="ai"]').count());
+  // The experiments list follows the filter and hides when nothing in it matches.
+  await expect(page.locator('.proj-more')).toBeHidden();
   await page.locator('.pf[data-f="all"]').click();
   expect(await visible()).toBe(total);
+  await expect(page.locator('.proj-more')).toBeVisible();
+  await expect(page.locator('.pj-mini')).toHaveCount(3);
+});
+
+test('experience keeps roles and disciplines apart', async ({ page }) => {
+  await open(page);
+  // Positions in the git log; how the stack grew in its own list, nothing dropped.
+  await expect(page.locator('.gl-item h3')).toHaveText(['Intern', 'Student Developer Club, Tech Lead']);
+  await expect(page.locator('.disc-list > li h4')).toHaveText(['React', 'Backend', 'Python & ML', 'Frontend', 'HTML']);
+  await page.locator('#cmdkBtn').click();
+  await page.locator('#cmdkInput').fill('What is your experience?');
+  await page.keyboard.press('Enter');
+  await expect(page.locator('#cmdkAnswer')).toContainText('Python & ML (2023 – 2026)');
 });
 
 test('certificate viewer opens and closes with Escape', async ({ page, isMobile }) => {
@@ -118,7 +133,7 @@ test('engineering mode switches on, boots its panel and persists', async ({ page
   await expect(page.locator('#engToggle')).toHaveAttribute('aria-pressed', 'true');
   await expect(page.locator('.ep-list li.up')).toHaveCount(12, { timeout: 5000 });
   // Section metadata is counted from the page, not hard-coded.
-  await expect(page.locator('#projects .eng-meta')).toContainText(`${await page.locator('#projGrid .pj').count()} projects`);
+  await expect(page.locator('#projects .eng-meta')).toContainText(`${await page.locator('#projGrid .pj, .pj-mini').count()} projects`);
   await page.reload();
   await expect(html).toHaveAttribute('data-mode', 'eng');
   await page.locator('#engToggle').click();
