@@ -14,6 +14,11 @@ const $$ = (s, c = document) => Array.from(c.querySelectorAll(s));
 // rows (titled with h4 there). Anything that lists or counts projects uses these.
 const PROJECTS = '#projGrid .pj, .pj-mini';
 const titleOf = p => $('h3, h4', p);
+// The six chapters of the page, and which chapter each section belongs to.
+const CHAPTERS = [['hero', '01', 'Identity'], ['thinking', '02', 'Thinking'], ['projects', '03', 'Building'],
+  ['pipeline', '04', 'Intelligence'], ['experience', '05', 'Experience'], ['contact', '06', 'Connection']];
+const CHAPTER_OF = { hero: 'hero', about: 'hero', thinking: 'thinking', process: 'thinking', skills: 'thinking',
+  projects: 'projects', pipeline: 'pipeline', focus: 'pipeline', experience: 'experience', education: 'experience', contact: 'contact' };
 // Modal <dialog>s already make the page inert; this also stops Tab from
 // escaping to the browser chrome, so focus cycles inside the dialog.
 function trapTab(dialog) {
@@ -31,6 +36,22 @@ function trapTab(dialog) {
 // opens a case study…). The session layer (§25) records it for this tab only.
 const inspect = (kind, key, label) =>
   window.dispatchEvent(new CustomEvent('pn:inspect', { detail: { kind, key, label } }));
+// Small, polite confirmation that an action completed (copy, theme, mode…).
+const ack = (function () {
+  let box = null, t = 0;
+  return text => {
+    if (!box) {
+      box = document.createElement('div');
+      box.className = 'ack';
+      box.setAttribute('role', 'status');
+      document.body.appendChild(box);
+    }
+    box.textContent = text;
+    box.classList.add('on');
+    clearTimeout(t);
+    t = setTimeout(() => box.classList.remove('on'), 2200);
+  };
+})();
 
 /* ══ 1. BOOT ══
    The full sequence (subsystems coming up one by one) plays once per browser:
@@ -249,6 +270,7 @@ const Scroll = (function () {
    position only; nothing about the visitor is inferred or stored. */
 (function () {
   const secs = $$('main > section[id]');
+  const label = $('#navChapter');
   let cur = null;
   Scroll.add(() => {
     let a = 'hero';
@@ -257,52 +279,174 @@ const Scroll = (function () {
     if (a === cur) return;
     cur = a;
     root.dataset.context = a;
+    const ch = CHAPTERS.find(c => c[0] === CHAPTER_OF[a]);
+    if (label && ch) label.innerHTML = `<b>${ch[1]}</b> ${ch[2]}`;
     window.dispatchEvent(new CustomEvent('pn:context', { detail: { context: a } }));
   });
 })();
 
-/* ══ 5. HERO ══ */
+/* ══ 5. HERO · THE PN DIGITAL UNIVERSE ══
+   Four engineering domains around the PN mark. Hover (mouse) previews a
+   domain; click, tap, Enter or Space selects it: its pathways light up, its
+   technical objects come forward and the panel explains it, with the projects
+   that show it. "Inspect" moves the field towards the domain and reveals the
+   detail on every object. Esc steps back out. The field leans gently with
+   the pointer on desktop only, never under reduced motion, and only while
+   the hero is on screen. Phones get a 2 × 2 domain grid instead of the field. */
 (function () {
   const hero = $('#hero');
   if (!hero) return;
-
-  // Stagger order for the entrance.
   $$('[data-hero]', hero).forEach((el, i) => el.style.setProperty('--hi', i));
-  $$('.hv-layer', hero).forEach((el, i) => el.style.setProperty('--vi', i));
-
-  // The sees → thinks → acts signal loops in CSS; it pauses while the hero is off screen.
+  // Looping CSS (pathway pulses) pauses while the hero is off screen.
   new IntersectionObserver(([e]) => hero.classList.toggle('paused', !e.isIntersecting)).observe(hero);
 
-  // Explore the system: each stop opens the system map with that component selected.
-  $$('[data-goto-node]', hero).forEach(b => b.addEventListener('click', () => {
-    window.dispatchEvent(new CustomEvent('pn:select-node', { detail: { node: b.dataset.gotoNode, from: b } }));
-  }));
+  const uv = $('#universe');
+  if (!uv) return;
+  const stage = $('.uv-stage', uv), field = $('.uv-field', uv), panel = $('#uvPanel');
+  const domains = $$('.uv-domain', uv);
+  const lines = $$('[data-l]', uv), objects = $$('.uv-objects li', uv);
+  const idle = panel.innerHTML;
+  // What each domain is made of. Projects are listed only where a project on
+  // this page shows the domain; IoT & Edge is honest about being a focus area.
+  const DOMAINS = {
+    sw: { label: 'Software Engineering', journey: 'product',
+      line: 'Products people use: interfaces, APIs and data, typed, tested and shipped.',
+      tech: ['React', 'React Native', 'TypeScript', 'Node.js', 'Express', 'MySQL', 'SQLite'],
+      projects: ['campus-recruitment-system', 'aspend', 'ambulance-management-system', 'codeex-space'],
+      inspect: [['interfaces', 'React on the web, React Native on Android'], ['apis', 'REST on Node.js and Express, with JWT roles'], ['data', 'MySQL, SQLite on the device, a JSON store behind one module']] },
+    ai: { label: 'Artificial Intelligence', journey: 'vision',
+      line: 'Models trained on labelled data, and measured on data they never saw.',
+      tech: ['Python', 'YOLOv8', 'Ultralytics', 'Google Colab'],
+      projects: ['detectify'],
+      inspect: [['training', 'YOLOv8 on labelled frames, in Colab'], ['evaluation', 'precision, recall and mAP on held-out sets'], ['candour', 'weak held-out recall (0.52) is reported, not hidden']] },
+    cv: { label: 'Computer Vision', journey: 'vision',
+      line: 'Turning frames into boxes, classes and confidence, and those into decisions.',
+      tech: ['YOLO', 'OpenCV', 'RTSP'],
+      projects: ['detectify'],
+      inspect: [['detection', 'helmets, plates, vehicles, signal state'], ['rules', 'detections become events, such as a red-light violation'], ['streams', 'RTSP from IP cameras: designed, not yet public']] },
+    iot: { label: 'IoT & Edge Systems', journey: 'connected', focus: true,
+      line: 'Inference next to the camera, so events travel over the network instead of video.',
+      tech: ['Raspberry Pi', 'IoT', 'MediaMTX', 'REST APIs'],
+      projects: [],
+      inspect: [['edge', 'models on a Raspberry Pi at the site'], ['transport', 'events posted to the same API as the web app'], ['status', 'a current focus area, not yet in a public project']] }
+  };
+  // Which links light for each domain: its spoke, its two ring neighbours, its satellites.
+  const LIT = { sw: ['core-sw', 'sw-ai', 'iot-sw', 'sw'], ai: ['core-ai', 'sw-ai', 'ai-cv', 'ai'],
+    cv: ['core-cv', 'ai-cv', 'cv-iot', 'cv'], iot: ['core-iot', 'cv-iot', 'iot-sw', 'iot'] };
 
-  /* Pointer parallax + spotlight (desktop only) */
+  const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
+  let pinned = null, shown = null;
+
+  function render(k) {
+    const d = DOMAINS[k];
+    const w = el('div', 'uvp-node');
+    const head = el('div', 'uvp-head');
+    head.append(el('span', 'uvp-n mono', $(`[data-d="${k}"] .mono`, uv).textContent), el('h3', null, d.label));
+    w.append(head, el('p', 'uvp-line', d.line));
+    const tech = el('ul', 'uvp-tech mono');
+    d.tech.forEach(t => tech.appendChild(el('li', null, t)));
+    w.appendChild(tech);
+    if (uv.classList.contains('inspect')) {
+      const dl = el('dl', 'uvp-inspect');
+      d.inspect.forEach(([k2, v]) => { const r = el('div'); r.append(el('dt', 'mono', k2), el('dd', null, v)); dl.appendChild(r); });
+      w.appendChild(dl);
+    }
+    const foot = el('div', 'uvp-foot');
+    const found = d.projects.map(projectEl).filter(Boolean);
+    if (found.length) {
+      foot.appendChild(el('span', 'uvp-k mono', 'seen in'));
+      found.forEach(p => {
+        const key = slug(titleOf(p).textContent);
+        const b = el('button', 'uvp-proj', titleOf(p).textContent);
+        b.type = 'button';
+        b.addEventListener('click', () => {
+          if ($(`.pj [data-case="${key}"]`)) Case.open(key, b);
+          else p.scrollIntoView({ behavior: REDUCE_MOTION ? 'auto' : 'smooth', block: 'center' });
+        });
+        foot.appendChild(b);
+      });
+    } else {
+      foot.appendChild(el('span', 'uvp-k mono', 'focus area'));
+      foot.appendChild(el('span', 'uvp-none', 'No public project shows this yet.'));
+    }
+    w.appendChild(foot);
+    const acts = el('div', 'uvp-acts');
+    const ins = el('button', 'uvp-btn mono', uv.classList.contains('inspect') ? 'Close inspection' : 'Inspect');
+    ins.type = 'button';
+    ins.setAttribute('aria-pressed', uv.classList.contains('inspect') ? 'true' : 'false');
+    ins.addEventListener('click', () => setInspect(!uv.classList.contains('inspect')));
+    const walk = el('button', 'uvp-btn mono', `Walk journey ${{ product: 'A', vision: 'B', connected: 'C' }[d.journey]}`);
+    walk.type = 'button';
+    walk.addEventListener('click', () => window.dispatchEvent(new CustomEvent('pn:dna-open', { detail: { journey: d.journey } })));
+    acts.append(ins, walk);
+    w.appendChild(acts);
+    panel.replaceChildren(w);
+  }
+  function show(k) {
+    if (k === shown) return;
+    shown = k;
+    uv.classList.toggle('has-sel', !!k);
+    uv.dataset.sel = k || '';
+    domains.forEach(b => b.classList.toggle('on', b.dataset.d === k));
+    lines.forEach(l => l.classList.toggle('lit', !!k && LIT[k].includes(l.dataset.l)));
+    objects.forEach(o => o.classList.toggle('on', o.dataset.d === k));
+    if (k) render(k); else panel.innerHTML = idle;
+  }
+  function setInspect(on) {
+    if (on && !pinned) return;
+    uv.classList.toggle('inspect', on);
+    if (on) {
+      const b = domains.find(x => x.dataset.d === pinned);
+      uv.style.setProperty('--fx', b.style.getPropertyValue('--x'));
+      uv.style.setProperty('--fy', b.style.getPropertyValue('--y'));
+      inspect('layer', 'uv-' + pinned + '-inspect', DOMAINS[pinned].label + ', inspected');
+    }
+    shown = undefined; show(pinned);
+    // The panel was rebuilt: keep focus on its inspect toggle, inside the universe.
+    const t = $('.uvp-btn', panel);
+    if (t) t.focus({ preventScroll: true });
+  }
+  function pin(k) {
+    pinned = pinned === k ? null : k;
+    if (!pinned) uv.classList.remove('inspect');
+    domains.forEach(b => b.setAttribute('aria-pressed', b.dataset.d === pinned ? 'true' : 'false'));
+    shown = undefined; show(pinned);
+    if (pinned) inspect('layer', 'uv-' + pinned, DOMAINS[pinned].label);
+  }
+  const narrow = window.matchMedia('(max-width: 760px)');
+  domains.forEach((b, i) => {
+    b.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse' && !narrow.matches) show(b.dataset.d); });
+    b.addEventListener('click', () => pin(b.dataset.d));
+    b.addEventListener('keydown', e => {
+      if (!['ArrowRight', 'ArrowDown', 'ArrowLeft', 'ArrowUp'].includes(e.key)) return;
+      e.preventDefault();
+      domains[(i + (e.key === 'ArrowRight' || e.key === 'ArrowDown' ? 1 : -1) + domains.length) % domains.length].focus();
+    });
+  });
+  stage.addEventListener('pointerleave', e => { if (e.pointerType === 'mouse') show(pinned); });
+  uv.addEventListener('keydown', e => {
+    if (e.key !== 'Escape') return;
+    if (uv.classList.contains('inspect')) { setInspect(false); return; }
+    if (pinned) { const b = domains.find(x => x.dataset.d === pinned); pin(pinned); if (b) b.focus(); }
+  });
+
+  // Depth: the field leans towards the pointer, a few degrees at most.
   if (FINE_POINTER && !REDUCE_MOTION) {
-    const layers = $$('.hv-layer', hero);
-    let raf = 0, lx = 0, ly = 0;
-    hero.addEventListener('pointermove', e => {
-      lx = e.clientX; ly = e.clientY;
+    let raf = 0, px = 0, py = 0;
+    stage.addEventListener('pointermove', e => {
+      px = e.clientX; py = e.clientY;
       if (raf) return;
       raf = requestAnimationFrame(() => {
         raf = 0;
-        const r = hero.getBoundingClientRect();
-        const nx = (lx - r.left) / r.width - .5, ny = (ly - r.top) / r.height - .5;
-        hero.style.setProperty('--hx', ((nx + .5) * 100).toFixed(1) + '%');
-        hero.style.setProperty('--hy', ((ny + .5) * 100).toFixed(1) + '%');
-        layers.forEach(l => {
-          const d = +l.dataset.depth || 10;
-          l.style.setProperty('--px', (-nx * d).toFixed(1) + 'px');
-          l.style.setProperty('--py', (-ny * d).toFixed(1) + 'px');
-        });
+        const r = stage.getBoundingClientRect();
+        const nx = (px - r.left) / r.width - .5, ny = (py - r.top) / r.height - .5;
+        field.style.setProperty('--ry', (nx * 7).toFixed(2) + 'deg');
+        field.style.setProperty('--rx', (-ny * 7).toFixed(2) + 'deg');
       });
     }, { passive: true });
-    hero.addEventListener('pointerleave', () => layers.forEach(l => { l.style.setProperty('--px', '0px'); l.style.setProperty('--py', '0px'); }));
+    stage.addEventListener('pointerleave', () => { field.style.setProperty('--ry', '0deg'); field.style.setProperty('--rx', '0deg'); });
   }
 })();
-
-/* ══ 6. (removed) The decorative hero canvas gave way to the request-path band. ══ */
 
 /* ══ 7. SCROLL REVEAL ══ */
 (function () {
@@ -446,8 +590,8 @@ const Scroll = (function () {
   $$('.magnetic').forEach(btn => {
     btn.addEventListener('pointermove', e => {
       const r = btn.getBoundingClientRect();
-      btn.style.setProperty('--bx', ((e.clientX - r.left - r.width / 2) * .22).toFixed(1) + 'px');
-      btn.style.setProperty('--by', ((e.clientY - r.top - r.height / 2) * .3).toFixed(1) + 'px');
+      btn.style.setProperty('--bx', ((e.clientX - r.left - r.width / 2) * .08).toFixed(1) + 'px');
+      btn.style.setProperty('--by', ((e.clientY - r.top - r.height / 2) * .1).toFixed(1) + 'px');
     });
     btn.addEventListener('pointerleave', () => { btn.style.setProperty('--bx', '0px'); btn.style.setProperty('--by', '0px'); });
   });
@@ -481,6 +625,7 @@ const Scroll = (function () {
       ta.remove();
     }
     label.textContent = ok ? 'Copied to clipboard' : 'Press Ctrl+C to copy';
+    if (ok) ack('Email copied: pratyushnandi100@gmail.com');
     btn.classList.toggle('copied', ok);
     clearTimeout(t);
     t = setTimeout(() => { label.textContent = 'Copy email'; btn.classList.remove('copied'); }, 2200);
@@ -732,412 +877,419 @@ const Scroll = (function () {
 })();
 
 /* ══ SHARED KNOWLEDGE ══
-   One source for the system map, the case studies, the command palette and
-   the assistant. Technologies are only ones listed in the Stack section;
-   project keys are the slugs of the project titles on the page. A component
-   lists a project only when that project's own evidence shows the layer. */
+   One source for the universe, the DNA explorer, the capability
+   constellation, the command palette and the assistant. Project keys are the
+   slugs of the project titles on the page. A project is linked to a stage or
+   a technology only when that project's own evidence shows it. */
 const slug = s => s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
-const TECH = {
-  react: 'React.js', nextjs: 'Next.js', reactnative: 'React Native', typescript: 'TypeScript', javascript: 'JavaScript', html5: 'HTML5', css3: 'CSS3',
-  nodejs: 'Node.js', fastify: 'Fastify', express: 'Express.js', rest: 'REST APIs', python: 'Python', laravel: 'Laravel / PHP',
-  postgresql: 'PostgreSQL', mysql: 'MySQL', prisma: 'Prisma', mongodb: 'MongoDB', sqlite: 'SQLite',
-  aiml: 'AI / ML', opencv: 'OpenCV', yolo: 'YOLO', visualai: 'Visual AI', rtsp: 'RTSP', mediamtx: 'MediaMTX',
-  raspberrypi: 'Raspberry Pi', edge: 'Edge Computing', iot: 'IoT'
-};
-const SYSTEM = {
-  browser: { label: 'Browser', lane: 'web', tagline: 'Where every request begins',
-    desc: 'A person on a laptop or a phone. Everything downstream exists to make that moment fast, accessible and reliable.',
-    tech: [], projects: [] },
-  frontend: { label: 'Frontend', lane: 'web', tagline: 'Interfaces people enjoy using',
-    desc: 'Component-driven interfaces in React and Next.js on the web and React Native on Android, typed with TypeScript.',
-    tech: ['react', 'nextjs', 'reactnative', 'typescript', 'javascript', 'html5', 'css3'], projects: ['aspend', 'code-editor', 'portfolio-website', 'cyber-calendar'] },
-  api: { label: 'API', lane: 'web', tagline: 'The contract between client and system',
-    desc: 'REST APIs on Node.js with Fastify or Express, plus Python where the work is data or ML. Alerts from the vision pipeline arrive here too, so they land where people already work.',
-    tech: ['nodejs', 'fastify', 'express', 'rest', 'python', 'laravel'], projects: ['campus-recruitment-system', 'ambulance-management-system', 'web-calculator', 'background-changer'] },
-  database: { label: 'Database', lane: 'web', tagline: 'Durable, queryable state',
-    desc: 'Relational data in PostgreSQL or MySQL through Prisma, MongoDB where documents fit better, and SQLite on the device when an app works offline.',
-    tech: ['postgresql', 'mysql', 'prisma', 'mongodb', 'sqlite'], projects: ['ambulance-management-system', 'aspend'] },
-  camera: { label: 'Camera', lane: 'vision', tagline: 'The eye of the system',
-    desc: 'An IP camera at a junction or a site. It produces the frames everything else reasons about, over a protocol it already speaks.',
-    tech: ['rtsp'], projects: [] },
-  stream: { label: 'RTSP stream', lane: 'vision', tagline: 'Live video, delivered',
-    desc: 'Camera feeds over RTSP, routed through MediaMTX so a model and a dashboard can read the same stream.',
-    tech: ['rtsp', 'mediamtx'], projects: [] },
-  cv: { label: 'Computer Vision', lane: 'vision', tagline: 'Seeing what is in each frame',
-    desc: 'Python machine learning on images: YOLO detects objects in a single pass and OpenCV prepares each frame before it reaches the model.',
-    tech: ['yolo', 'opencv', 'python', 'aiml', 'visualai'], projects: ['detectify'] },
-  edge: { label: 'Edge device', lane: 'vision', tagline: 'Inference next to the camera',
-    desc: 'Models deployed on a Raspberry Pi so detection happens on site instead of in a distant data centre, alongside other connected devices.',
-    tech: ['raspberrypi', 'edge', 'iot', 'yolo'], projects: [] },
-  alert: { label: 'Alert', lane: 'vision', tagline: 'Detections become decisions',
-    desc: 'Rules turn detections into events, such as a car past the stop line on red. The event posts to the API and reaches a person to review: the system flags, a human decides.',
-    tech: ['rest', 'nodejs'], projects: [] }
-};
-// The two flows the map explains. Order is the order data travels.
-const LANES = {
-  web: { label: 'Web request path', nodes: ['browser', 'frontend', 'api', 'database'],
-    desc: 'What happens when someone uses a web app I build: the browser renders the interface, the interface calls a typed API, and the API reads and writes durable data.' },
-  vision: { label: 'Vision pipeline', nodes: ['camera', 'stream', 'cv', 'edge', 'alert'],
-    desc: 'How a camera frame becomes an action: the stream is read next to the camera, a detector finds objects, rules decide what matters, and only an alert travels on, back through the same API.' }
-};
-// Engineering decisions: why each tool earns its place in the stack. This is
-// reasoning about the tools, not a claim about how a specific project was built.
-const WHY = {
-  frontend: [
-    ['Why React + Next.js?', 'Components keep large interfaces maintainable; Next.js adds routing and server rendering when a page has to be fast on first load.'],
-    ['Why TypeScript?', 'Types catch contract mismatches with the API at build time instead of in production.']
-  ],
-  api: [
-    ['Why Fastify?', 'Low per-request overhead and built-in schema validation, so every endpoint checks what comes in and goes out.'],
-    ['Why REST?', 'Plain HTTP resources that browsers, devices and scripts can all call without special clients.']
-  ],
-  database: [
-    ['Why PostgreSQL?', 'Relational integrity, joins and transactions for data that has to stay consistent.'],
-    ['Why Prisma?', 'A typed client and versioned migrations, so schema changes are reviewed like code.']
-  ],
-  stream: [
-    ['Why RTSP?', 'It is the protocol IP cameras already speak, so feeds arrive without custom firmware.'],
-    ['Why MediaMTX?', 'One camera connection, re-served to many readers: a model and a dashboard share a feed instead of each opening the camera.']
-  ],
-  cv: [
-    ['Why YOLO?', 'A single-pass detector, fast enough to keep up with live video.'],
-    ['Why OpenCV?', 'Proven frame decoding and preprocessing before anything reaches the model.'],
-    ['Why Python?', 'The machine-learning ecosystem lives there, and a model can sit behind the same API as everything else.']
-  ],
-  edge: [
-    ['Why process at the edge?', 'Frames are analysed next to the camera: lower latency, far less bandwidth, and raw video never has to leave the site.']
-  ],
-  alert: [
-    ['Why report through the API?', 'Devices post events to the same API as the web app, so everything lands in one place people can see.'],
-    ['Why a human in the loop?', 'A detector can be wrong. An alert asks a person to confirm instead of acting on its own.']
-  ]
-};
-Object.entries(WHY).forEach(([k, w]) => { SYSTEM[k].why = w; });
-// First parent listed = the primary path; any other parent is a side input.
-const EDGES = [['browser', 'frontend'], ['frontend', 'api'], ['api', 'database'],
-  ['camera', 'stream'], ['stream', 'cv'], ['cv', 'edge'], ['edge', 'alert'], ['alert', 'api']];
-// Stack chips by technology key, so other modules can reuse their icons.
-const techNode = key => $$('.stack-group .node').find(n => $('span', n).textContent.trim() === TECH[key]);
 const projectEl = key => $$(PROJECTS).find(p => slug(titleOf(p).textContent) === key);
 
-/* ══ 18. SYSTEM ARCHITECTURE EXPLORER ══
-   Two flows: a web request (Browser → Frontend → API → Database) and a vision
-   pipeline (Camera → RTSP → Computer Vision → Edge → Alert), joined where
-   alerts post back to the API. Selecting a component lights the route data
-   takes to reach it plus what it feeds next, and fills the inspector with its
-   purpose, inputs and outputs, tools, decisions and projects. "Trace" lights a
-   whole flow and explains it step by step. Hover previews; click or tap pins. */
+// Engineering DNA. status: built (a project on this page shows it), partial,
+// or concept (architecture I design for, not yet in a public project).
+const DNA = {
+  product: { letter: 'A', label: 'Digital Product Engineering', stages: [
+    { id: 'interface', label: 'Interface', status: 'built',
+      does: 'What a person sees and touches: screens, forms, state and accessibility.',
+      tech: ['React', 'Next.js', 'React Native', 'TypeScript', 'HTML / CSS'],
+      trade: ['Server rendering gives a faster first paint; client rendering keeps hosting simple.', 'Native (React Native) reaches device storage and biometrics; the web reaches everyone through one URL.'],
+      demo: [['aspend', 'React Native screens on Android'], ['codeex-space', 'editor tabs and a live preview'], ['campus-recruitment-system', 'separate views for three roles']] },
+    { id: 'logic', label: 'Application Logic', status: 'built',
+      does: 'The rules of the product: eligibility, money, and how things move from one state to the next.',
+      tech: ['TypeScript', 'JavaScript', 'Node.js', 'Python'],
+      trade: ['Pure functions and services can be unit-tested without a UI or a database.', 'Rules on the server are one source of truth; rules in the client answer instantly.'],
+      demo: [['campus-recruitment-system', 'eligibility engine and application stages'], ['aspend', 'the credit-card ledger']] },
+    { id: 'api', label: 'API', status: 'built', sys: 'api',
+      does: 'The contract between clients and the system: what can be asked, by whom, and what comes back.',
+      tech: ['Node.js', 'Express', 'Fastify', 'REST', 'JWT'],
+      trade: ['REST is callable from anything, but chattier than a single tailored query for complex screens.', 'Stateless tokens scale without session storage; revoking them early needs extra work.'],
+      demo: [['campus-recruitment-system', 'Express REST API with JWT roles']] },
+    { id: 'database', label: 'Database', status: 'built', sys: 'database',
+      does: 'Durable, queryable state that outlives any request.',
+      tech: ['PostgreSQL', 'MySQL', 'Prisma', 'MongoDB', 'SQLite'],
+      trade: ['Relational tables bring integrity and joins; documents bring flexible shapes.', 'SQLite on the device makes an app work offline; a server database lets people share data.'],
+      demo: [['aspend', 'SQLite on the device'], ['ambulance-management-system', 'MySQL'], ['campus-recruitment-system', 'a JSON store behind one module']] },
+    { id: 'deploy', label: 'Deployment', status: 'built',
+      does: 'Shipping safely and repeatably, then checking what people actually received.',
+      tech: ['Git', 'GitHub Actions', 'Vercel', 'Playwright', 'Lighthouse'],
+      trade: ['Static hosting is fast and cheap, but runs no server code.', 'Automated gates catch regressions before people do, at the cost of slower merges.'],
+      demo: [['portfolio', 'this site: CI, browser tests, Lighthouse budgets, post-deploy smoke tests']] }
+  ] },
+  vision: { letter: 'B', label: 'Visual Intelligence', stages: [
+    { id: 'camera', label: 'Camera Input', status: 'concept', sys: 'camera',
+      does: 'An IP camera produces the frames everything else reasons about.',
+      tech: ['IP cameras', 'RTSP'],
+      trade: ['Higher resolution and frame rate see more, but cost bandwidth and compute.', 'Camera placement matters as much as the model.'], demo: [] },
+    { id: 'stream', label: 'RTSP Stream', status: 'concept', sys: 'stream',
+      does: 'Frames travel as a live stream, re-served to whoever needs them.',
+      tech: ['RTSP', 'MediaMTX'],
+      trade: ['One relay serving many readers beats every consumer opening the camera.', 'TCP is reliable; UDP is faster but drops frames.'], demo: [] },
+    { id: 'video', label: 'Video Processing', status: 'concept',
+      does: 'Frames are decoded, resized and normalised before a model sees them.',
+      tech: ['OpenCV', 'Python'],
+      trade: ['Processing every frame is thorough; sampling frames saves compute.', 'Detectify relies on Ultralytics\' built-in pre-processing; a standalone stage is designed, not published.'], demo: [] },
+    { id: 'inference', label: 'AI Inference', status: 'built', sys: 'cv',
+      does: 'A trained model runs on each frame and returns what it found.',
+      tech: ['YOLOv8', 'Ultralytics', 'Python'],
+      trade: ['Bigger models are more accurate but slower; edge devices favour small ones.', 'The confidence threshold trades misses for false alarms.'],
+      demo: [['detectify', 'two trained YOLOv8 models, run on unseen test images']] },
+    { id: 'detection', label: 'Detection', status: 'built',
+      does: 'Boxes, classes and confidence scores: helmets, plates, vehicles and signal state.',
+      tech: ['YOLOv8', 'OpenCV'],
+      trade: ['A detector can be confidently wrong: the real output in the observatory reads red lights as yellow.'],
+      demo: [['detectify', 'real outputs shown in the observatory']] },
+    { id: 'event', label: 'Event', status: 'partial', sys: 'alert',
+      does: 'Rules turn detections into an event a person should see, such as a red-light violation.',
+      tech: ['Python', 'Node.js', 'REST'],
+      trade: ['Rules are explainable and easy to change; a trained classifier catches subtler cases but is harder to audit.'],
+      demo: [['detectify', 'a red-light-violation model (test mAP50 0.886); event delivery is designed, not published']] }
+  ] },
+  connected: { letter: 'C', label: 'Connected Intelligence', stages: [
+    { id: 'device', label: 'IoT Device', status: 'concept',
+      does: 'Sensors and cameras in the field, producing readings and frames.',
+      tech: ['Raspberry Pi', 'IoT'],
+      trade: ['Cheap, small devices are easy to deploy and hard to maintain at scale.'], demo: [] },
+    { id: 'edge', label: 'Edge Processing', status: 'concept', sys: 'edge',
+      does: 'Inference on the device itself, next to the sensor.',
+      tech: ['Raspberry Pi', 'YOLO', 'OpenCV'],
+      trade: ['Lower latency and far less bandwidth, and raw video never leaves the site; the price is smaller models.'], demo: [] },
+    { id: 'comms', label: 'Communication', status: 'concept',
+      does: 'Events, not raw data, travel from the device to the system.',
+      tech: ['REST', 'Node.js'],
+      trade: ['Posting events to the same API as the web app keeps everything in one place; very chatty devices may need a message queue.'], demo: [] },
+    { id: 'monitoring', label: 'Monitoring', status: 'concept',
+      does: 'Knowing that every device is alive and every event arrived.',
+      tech: ['Node.js', 'PostgreSQL'],
+      trade: ['Health checks and stored events make silent failures visible, at the cost of more data to keep.'], demo: [] },
+    { id: 'dashboard', label: 'Intelligent Dashboard', status: 'concept',
+      does: 'One place where people see events, act on alerts and spot trends.',
+      tech: ['React', 'Next.js', 'TypeScript'],
+      trade: ['A dashboard is a product interface: it needs the same care as journey A.'], demo: [] }
+  ] }
+};
+// Where the journeys touch: the "base pairs" of the DNA.
+const RUNGS = [['vision.event', 'product.api', 'events post to the API'], ['connected.edge', 'vision.inference', 'the same models, run on site'],
+  ['connected.dashboard', 'product.interface', 'a dashboard is a product interface'], ['connected.monitoring', 'product.database', 'telemetry is stored like any other data']];
+// Engineering decisions behind the tools, for the assistant's "Why X?".
+const WHY = [
+  ['Why React + Next.js?', 'Components keep large interfaces maintainable; Next.js adds routing and server rendering when a page has to be fast on first load.'],
+  ['Why TypeScript?', 'Types catch contract mismatches with the API at build time instead of in production.'],
+  ['Why Fastify?', 'Low per-request overhead and built-in schema validation, so every endpoint checks what comes in and goes out.'],
+  ['Why REST?', 'Plain HTTP resources that browsers, devices and scripts can all call without special clients.'],
+  ['Why PostgreSQL?', 'Relational integrity, joins and transactions for data that has to stay consistent.'],
+  ['Why Prisma?', 'A typed client and versioned migrations, so schema changes are reviewed like code.'],
+  ['Why Python?', 'The machine-learning ecosystem lives there, and a model can sit behind the same API as everything else.'],
+  ['Why RTSP?', 'It is the protocol IP cameras already speak, so feeds arrive without custom firmware.'],
+  ['Why MediaMTX?', 'One camera connection, re-served to many readers: a model and a dashboard share a feed instead of each opening the camera.'],
+  ['Why YOLO?', 'A single-pass detector, fast enough to keep up with live video.'],
+  ['Why OpenCV?', 'Proven frame decoding and preprocessing before anything reaches the model.'],
+  ['Why process at the edge?', 'Frames are analysed next to the camera: lower latency, far less bandwidth, and raw video never has to leave the site.']
+];
+// Capability constellation: technology → disciplines → projects.
+const DISC = {
+  frontend: 'Frontend Engineering', backend: 'Backend & API Engineering', data: 'Data Architecture', vision: 'Computer Vision & AI',
+  video: 'Real-Time Video Systems', edge: 'Edge Computing & Devices', foundations: 'Foundations & Tooling'
+};
+const PROJ = {
+  detectify: 'Detectify', aspend: 'Aspend', 'campus-recruitment-system': 'Campus Recruitment System',
+  'ambulance-management-system': 'Ambulance Management System', 'codeex-space': 'CodeEx Space', portfolio: 'This portfolio'
+};
+const CAP = {
+  react: { d: ['frontend'], p: [], note: 'Component interfaces on the web.' },
+  nextjs: { d: ['frontend'], p: [], note: 'Routing and server rendering on top of React.' },
+  reactnative: { d: ['frontend'], p: ['aspend'], note: 'Aspend\'s Android screens.' },
+  typescript: { d: ['frontend'], p: ['aspend'], note: 'Aspend is written in TypeScript end to end.' },
+  javascript: { d: ['frontend', 'backend'], p: ['campus-recruitment-system', 'ambulance-management-system', 'codeex-space', 'portfolio'], note: 'Browser code and Node.js services.' },
+  html5: { d: ['frontend'], p: ['campus-recruitment-system', 'ambulance-management-system', 'codeex-space', 'portfolio'], note: 'Semantic, accessible markup and styling.' },
+  nodejs: { d: ['backend'], p: ['campus-recruitment-system'], note: 'The Campus Recruitment server.' },
+  express: { d: ['backend'], p: ['campus-recruitment-system'], note: 'Campus Recruitment\'s REST API and static hosting.' },
+  fastify: { d: ['backend'], p: [], note: 'Schema-validated APIs with low overhead.' },
+  rest: { d: ['backend'], p: ['campus-recruitment-system'], note: 'Resource APIs any client can call.' },
+  php: { d: ['backend'], p: ['ambulance-management-system'], note: 'PHP powers the Ambulance Management System; Laravel is in my stack.' },
+  postgresql: { d: ['data'], p: [], note: 'Relational data with integrity and transactions.' },
+  prisma: { d: ['data'], p: [], note: 'A typed client and versioned migrations.' },
+  mysql: { d: ['data'], p: ['ambulance-management-system'], note: 'The Ambulance Management System\'s database.' },
+  mongodb: { d: ['data'], p: [], note: 'Documents where the shape varies.' },
+  sqlite: { d: ['data'], p: ['aspend'], note: 'Aspend keeps everything on the device in SQLite.' },
+  python: { d: ['vision'], p: ['detectify'], note: 'Training and evaluating Detectify\'s models.' },
+  yolo: { d: ['vision'], p: ['detectify'], note: 'Detectify\'s two YOLOv8 models.' },
+  opencv: { d: ['vision'], p: ['detectify'], note: 'Frame handling in the vision pipeline.' },
+  rtsp: { d: ['video'], p: [], note: 'The protocol IP cameras speak.' },
+  mediamtx: { d: ['video'], p: [], note: 'One camera connection, many readers.' },
+  raspberrypi: { d: ['edge'], p: [], note: 'Inference next to the camera.' },
+  iot: { d: ['edge'], p: [], note: 'Devices that sense and report.' },
+  cpp: { d: ['foundations'], p: [], note: 'Programming foundations.' },
+  git: { d: ['foundations'], p: ['detectify', 'codeex-space', 'portfolio'], note: 'Version control on every public repository.' }
+};
+const capName = k => { const b = $(`.cst-tech [data-t="${k}"]`); return b ? b.textContent.trim() : k; };
+
+/* ══ 18. ENGINEERING DNA ══
+   Overview: three strands, joined by rungs where the journeys touch. Choosing
+   a journey (or any stage) opens detail mode: the strand straightens and
+   takes the space, its pathway fills up to the selected stage, and the detail
+   panel explains the stage. ← → walk stages; Esc or "All journeys" goes back. */
 (function () {
-  const map = $('#sysmap');
-  if (!map) return;
-  const canvas = $('#smCanvas');
-  const insp = $('#smInspector');
-  const nodes = $$('.sm-node', map);
-  const laneBtns = $$('.sm-lane-btn', map);
-  const edgeEls = $$('.sm-edges path, .sm-flows path', map);
-  const stackGrid = $('.stack-grid');
-  const defaultView = insp.innerHTML;
-  let pinned = null, shown = null, lane = null;
+  const dna = $('#dna');
+  if (!dna) return;
+  const strands = $$('.dna-strand', dna), wrap = $('#dnaStrands'), detail = $('#dnaDetail'), back = $('#dnaBack'), svg = $('#dnaRungs');
+  const NS = 'http://www.w3.org/2000/svg';
+  const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
+  const btnOf = (j, s) => $(`.dna-strand[data-j="${j}"] [data-s="${s}"]`, dna);
+  let J = null, S = null;
 
-  const parents = k => EDGES.filter(([, to]) => to === k).map(([from]) => from);
-  const children = k => EDGES.filter(([from]) => from === k).map(([, to]) => to);
-  // The route to a component follows primary parents only, so the alert
-  // bridge into the API doesn't light the whole vision pipeline.
-  function ancestors(k, acc = new Set()) {
-    const p = parents(k)[0];
-    if (p && !acc.has(p)) { acc.add(p); ancestors(p, acc); }
-    return acc;
-  }
-  const names = keys => keys.map(a => SYSTEM[a].label).join(', ');
+  // Status lives in the markup too, so it never relies on colour alone.
+  Object.entries(DNA).forEach(([j, jr]) => jr.stages.forEach(st => {
+    const b = btnOf(j, st.id);
+    if (!b) return;
+    b.dataset.status = st.status;
+    b.setAttribute('aria-describedby', 'dnaDetail');
+    b.appendChild(el('span', 'sr-only', `, ${st.status === 'built' ? 'built' : st.status === 'partial' ? 'partly built' : 'concept'}`));
+  }));
 
-  function el(tag, cls, text) {
-    const e = document.createElement(tag);
-    if (cls) e.className = cls;
-    if (text != null) e.textContent = text;
-    return e;
+  function rungs() {
+    svg.replaceChildren();
+    if (J || innerWidth < 961) return;
+    const box = wrap.getBoundingClientRect();
+    svg.setAttribute('viewBox', `0 0 ${box.width} ${box.height}`);
+    RUNGS.forEach(([a, b, note]) => {
+      const [ja, sa] = a.split('.'), [jb, sb] = b.split('.');
+      const ea = btnOf(ja, sa), eb = btnOf(jb, sb);
+      if (!ea || !eb) return;
+      const ra = ea.getBoundingClientRect(), rb = eb.getBoundingClientRect();
+      const x1 = ra.left + ra.width / 2 - box.left, y1 = (ra.top < rb.top ? ra.bottom : ra.top) - box.top;
+      const x2 = rb.left + rb.width / 2 - box.left, y2 = (ra.top < rb.top ? rb.top : rb.bottom) - box.top;
+      const my = (y1 + y2) / 2;
+      const path = document.createElementNS(NS, 'path');
+      path.setAttribute('d', `M${x1} ${y1} C${x1} ${my} ${x2} ${my} ${x2} ${y2}`);
+      path.dataset.a = a; path.dataset.b = b;
+      const t = document.createElementNS(NS, 'title'); t.textContent = note; path.appendChild(t);
+      svg.appendChild(path);
+    });
   }
-  function chip(key) {
-    const c = el('li', 'smi-chip');
-    const src = techNode(key);
-    if (src) c.appendChild($('i', src).cloneNode(true));
-    c.appendChild(el('span', null, TECH[key]));
-    return c;
+  // Hovering or focusing a stage in overview lights the rungs it is part of.
+  function touch(key) {
+    $$('path', svg).forEach(p => p.classList.toggle('lit', !!key && (p.dataset.a === key || p.dataset.b === key)));
   }
-  function projectList(keys, wrap) {
-    const projects = keys.map(projectEl).filter(Boolean);
-    wrap.appendChild(el('h4', 'mono', 'seen in'));
-    if (!projects.length) {
-      // Honest about it: the layer is in the stack, but no public project here shows it yet.
-      const p = el('p', 'smi-none', 'No project on this page shows this layer yet. It is one of my current focus areas. ');
-      const a = el('a', null, 'See current focus');
-      a.href = '#focus';
-      p.appendChild(a);
-      wrap.appendChild(p);
-      return;
-    }
-    const ul = el('ul', 'smi-projects');
-    projects.forEach(p => {
-      const li = el('li');
-      const b = el('button', 'smi-proj', titleOf(p).textContent);
-      b.type = 'button';
+
+  function render() {
+    const jr = DNA[J], i = jr.stages.findIndex(s => s.id === S), st = jr.stages[i];
+    const w = el('div', 'dd-wrap');
+    const head = el('div', 'dd-head');
+    head.append(el('span', 'dd-n mono', `${jr.letter}.${i + 1}`), el('h3', null, st.label),
+      el('span', `st st-${st.status} mono`, st.status === 'partial' ? 'partly built' : st.status));
+    w.appendChild(head);
+    w.appendChild(el('p', 'dd-does', st.does));
+    const grid = el('div', 'dd-grid');
+    const col = (title, node) => { const c = el('div', 'dd-col'); c.append(el('h4', 'mono', title), node); grid.appendChild(c); };
+    const tech = el('ul', 'dd-tech mono'); st.tech.forEach(t => tech.appendChild(el('li', null, t)));
+    col('technologies', tech);
+    const tr = el('ul', 'dd-trade'); st.trade.forEach(t => tr.appendChild(el('li', null, t)));
+    col('trade-offs', tr);
+    const demo = el('div', 'dd-demo');
+    if (st.demo.length) st.demo.forEach(([key, note]) => {
+      const b = el('button', 'dd-proj'); b.type = 'button';
+      b.append(el('strong', null, PROJ[key]), el('span', null, note));
       b.addEventListener('click', () => {
-        const key = slug(titleOf(p).textContent);
-        if ($(`[data-case="${key}"]`)) Case.open(key, b);
-        else p.scrollIntoView({ behavior: REDUCE_MOTION ? 'auto' : 'smooth', block: 'center' });
+        if (key === 'portfolio') { const t = $('#process'); if (t) t.scrollIntoView({ behavior: REDUCE_MOTION ? 'auto' : 'smooth' }); return; }
+        if ($(`.pj [data-case="${key}"]`)) Case.open(key, b);
+        else { const p = projectEl(key); if (p) p.scrollIntoView({ behavior: REDUCE_MOTION ? 'auto' : 'smooth', block: 'center' }); }
       });
-      li.appendChild(b); ul.appendChild(li);
+      demo.appendChild(b);
     });
-    wrap.appendChild(ul);
+    else demo.appendChild(el('p', 'dd-none', 'Not in a public project yet. This is architecture I design for, and one of my current focus areas.'));
+    col('demonstrated by', demo);
+    w.appendChild(grid);
+    const nav = el('div', 'dd-nav');
+    const step = (d, label) => {
+      const b = el('button', 'dd-step mono', label); b.type = 'button';
+      const k = jr.stages[i + d];
+      b.disabled = !k;
+      if (k) b.addEventListener('click', () => { open(J, k.id); btnOf(J, k.id).focus(); });
+      return b;
+    };
+    nav.append(step(-1, '← previous stage'), step(1, 'next stage →'));
+    w.appendChild(nav);
+    detail.replaceChildren(w);
   }
-  function render(k) {
-    const d = SYSTEM[k];
-    const wrap = el('div', 'smi-node');
-    wrap.appendChild(el('span', 'card-label mono', LANES[d.lane].label.toLowerCase()));
-    wrap.appendChild(el('h3', null, d.label));
-    wrap.appendChild(el('p', 'smi-tagline', d.tagline));
-    wrap.appendChild(el('p', null, d.desc));
-    // Inputs and outputs: what this component receives and where its data goes.
-    const io = el('dl', 'smi-io mono');
-    const row = (dt, dd) => { const r = el('div'); r.append(el('dt', null, dt), el('dd', null, dd)); io.appendChild(r); };
-    row('receives', parents(k).length ? names(parents(k)) : 'a person');
-    row('sends to', children(k).length ? names(children(k)) : 'stored, for later reads');
-    wrap.appendChild(io);
-    const path = [k];
-    for (let p = parents(k)[0]; p; p = parents(p)[0]) path.unshift(p);
-    wrap.appendChild(el('p', 'smi-route mono', path.map(a => SYSTEM[a].label).join(' → ')));
-    if (d.tech.length) {
-      wrap.appendChild(el('h4', 'mono', 'technologies'));
-      const ul = el('ul', 'smi-chips');
-      d.tech.forEach(t => ul.appendChild(chip(t)));
-      wrap.appendChild(ul);
-    }
-    if (d.why) {
-      wrap.appendChild(el('h4', 'mono', 'engineering decisions'));
-      const dl = el('dl', 'smi-why');
-      d.why.forEach(([q, a]) => { const r = el('div'); r.append(el('dt', null, q), el('dd', null, a)); dl.appendChild(r); });
-      wrap.appendChild(dl);
-    }
-    if (k !== 'browser') projectList(d.projects, wrap);
-    insp.replaceChildren(wrap);
-  }
-  function renderLane(l) {
-    const L = LANES[l];
-    const wrap = el('div', 'smi-node smi-lane');
-    wrap.appendChild(el('span', 'card-label mono', 'flow'));
-    wrap.appendChild(el('h3', null, L.label));
-    wrap.appendChild(el('p', null, L.desc));
-    const ol = el('ol', 'smi-steps');
-    L.nodes.forEach((k, i) => {
-      const li = el('li');
-      const b = el('button', 'smi-step');
-      b.type = 'button';
-      b.append(el('span', 'mono', String(i + 1).padStart(2, '0')), el('strong', null, SYSTEM[k].label), el('span', null, SYSTEM[k].tagline));
-      b.addEventListener('click', () => { pin(k); const n = nodes.find(x => x.dataset.node === k); if (n) n.focus(); });
-      li.appendChild(b); ol.appendChild(li);
+
+  function open(j, s) {
+    const first = !J || J !== j;
+    J = j; S = s || DNA[j].stages[0].id;
+    dna.classList.add('detail');
+    dna.dataset.j = J;
+    back.hidden = false;
+    detail.hidden = false;
+    strands.forEach(st => {
+      const on = st.dataset.j === J;
+      st.classList.toggle('on', on);
+      $('.ds-go', st).setAttribute('aria-expanded', on ? 'true' : 'false');
     });
-    wrap.appendChild(ol);
-    projectList([...new Set(L.nodes.flatMap(k => SYSTEM[k].projects))], wrap);
-    insp.replaceChildren(wrap);
+    const idx = DNA[J].stages.findIndex(x => x.id === S);
+    $$('.ds-stages button', dna).forEach(b => {
+      const mine = b.closest('.dna-strand').dataset.j === J;
+      const k = DNA[J].stages.findIndex(x => x.id === b.dataset.s);
+      b.setAttribute('aria-pressed', mine && b.dataset.s === S ? 'true' : 'false');
+      b.classList.toggle('passed', mine && k <= idx);
+    });
+    const strand = strands.find(x => x.dataset.j === J);
+    // The pathway fills up to the selected stage; on opening it runs from the start.
+    const target = ((idx + 1) / DNA[J].stages.length).toFixed(3);
+    if (first && !REDUCE_MOTION) { strand.style.setProperty('--p', '0'); void strand.offsetWidth; }
+    strand.style.setProperty('--p', target);
+    svg.replaceChildren();
+    render();
+    inspect('layer', `${J}.${S}`, `${DNA[J].label}: ${DNA[J].stages[idx].label}`);
+  }
+  function close() {
+    if (!J) return;
+    const was = J;
+    J = S = null;
+    dna.classList.remove('detail');
+    delete dna.dataset.j;
+    back.hidden = true; detail.hidden = true;
+    strands.forEach(st => { st.classList.remove('on'); $('.ds-go', st).setAttribute('aria-expanded', 'false'); });
+    $$('.ds-stages button', dna).forEach(b => { b.setAttribute('aria-pressed', 'false'); b.classList.remove('passed'); });
+    requestAnimationFrame(rungs);
+    const g = $(`.dna-strand[data-j="${was}"] .ds-go`, dna);
+    if (g) g.focus();
   }
 
-  function light(lit, isEdgeLit) {
-    map.classList.add('has-focus');
-    nodes.forEach(n => n.classList.toggle('lit', lit.has(n.dataset.node)));
-    edgeEls.forEach(e => { const [a, b] = e.dataset.e.split('-'); e.classList.toggle('lit', isEdgeLit(a, b)); });
-  }
-  function clearLight() {
-    map.classList.remove('has-focus');
-    nodes.forEach(n => n.classList.remove('active', 'lit'));
-    edgeEls.forEach(e => e.classList.remove('lit'));
-    stackGrid && stackGrid.classList.remove('sm-focus');
-    $$('.node.sm-hit').forEach(n => n.classList.remove('sm-hit'));
-  }
-  function hitTech(keys) {
-    $$('.node.sm-hit').forEach(n => n.classList.remove('sm-hit'));
-    keys.forEach(t => { const n = techNode(t); if (n) n.classList.add('sm-hit'); });
-    stackGrid && stackGrid.classList.toggle('sm-focus', keys.length > 0);
-  }
-  function show(k) {
-    if (k === shown) return;
-    shown = k;
-    if (!k) {
-      clearLight();
-      if (lane) showLane(lane); else insp.innerHTML = defaultView;
-      return;
-    }
-    const anc = ancestors(k);
-    const side = parents(k).slice(1);
-    const lit = new Set([...anc, k, ...children(k), ...side]);
-    light(lit, (a, b) => lit.has(a) && lit.has(b) && (b === k || a === k || anc.has(b)));
-    nodes.forEach(n => n.classList.toggle('active', n.dataset.node === k));
-    hitTech(SYSTEM[k].tech);
-    render(k);
-  }
-  function showLane(l) {
-    const set = new Set(LANES[l].nodes);
-    light(set, (a, b) => set.has(a) && set.has(b));
-    nodes.forEach(n => n.classList.remove('active'));
-    hitTech([...new Set(LANES[l].nodes.flatMap(k => SYSTEM[k].tech))]);
-    renderLane(l);
-  }
-  function setLane(l) {
-    lane = lane === l ? null : l;
-    laneBtns.forEach(b => b.setAttribute('aria-pressed', b.dataset.lane === lane ? 'true' : 'false'));
-    if (lane) {
-      pinned = null; shown = null;
-      nodes.forEach(n => n.setAttribute('aria-pressed', 'false'));
-      place();
-      showLane(lane);
-      inspect('layer', 'lane-' + lane, LANES[lane].label);
-    } else { shown = undefined; show(null); }
-  }
-  laneBtns.forEach(b => b.addEventListener('click', () => setLane(b.dataset.lane)));
-
-  // Screen readers hear what a component is for, not only its name.
-  nodes.forEach(n => {
-    // A real space between the name and its subtitle ("Database PostgreSQL…").
-    const strong = $('strong', n);
-    if (strong) strong.after(document.createTextNode(' '));
-    n.appendChild(el('span', 'sr-only', `, ${SYSTEM[n.dataset.node].tagline}`));
-    n.setAttribute('aria-controls', 'smInspector');
-  });
-
-  // Phones get a linear list (CSS) and the inspector opens inline under the
-  // selected component, like an accordion. Wider screens keep it beside the graph.
-  const narrow = window.matchMedia('(max-width: 640px)');
-  const home = insp.parentNode;
-  function place() {
-    const n = pinned && nodes.find(x => x.dataset.node === pinned);
-    if (narrow.matches && n) { n.after(insp); insp.classList.add('inline'); }
-    else if (insp.parentNode !== home) { home.appendChild(insp); insp.classList.remove('inline'); }
-  }
-  narrow.addEventListener('change', place);
-
-  function pin(k) {
-    pinned = pinned === k ? null : k;
-    if (pinned && lane) { lane = null; laneBtns.forEach(b => b.setAttribute('aria-pressed', 'false')); }
-    nodes.forEach(n => n.setAttribute('aria-pressed', n.dataset.node === pinned ? 'true' : 'false'));
-    shown = undefined;
-    show(pinned);
-    place();
-    if (pinned) inspect('layer', pinned, SYSTEM[pinned].label);
-  }
-  nodes.forEach(n => {
-    const k = n.dataset.node;
-    // Hover previews belong to the side-by-side graph; in the phone list the
-    // layout shifts under the pointer as details open, so selection is click-only.
-    n.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse' && !narrow.matches) show(k); });
-    n.addEventListener('focus', () => { if (!narrow.matches) show(k); });
-    n.addEventListener('click', () => {
-      pin(k);
-      if (pinned && !narrow.matches && innerWidth < 960) {
-        const r = insp.getBoundingClientRect();
-        if (r.top > innerHeight - 120) insp.scrollIntoView({ behavior: REDUCE_MOTION ? 'auto' : 'smooth', block: 'nearest' });
-      }
+  strands.forEach(st => {
+    const j = st.dataset.j;
+    $('.ds-go', st).addEventListener('click', () => (J === j ? close() : open(j)));
+    $$('.ds-stages button', st).forEach((b, i, all) => {
+      b.addEventListener('click', () => open(j, b.dataset.s));
+      b.addEventListener('pointerenter', () => { if (!J) touch(`${j}.${b.dataset.s}`); });
+      b.addEventListener('pointerleave', () => touch(null));
+      b.addEventListener('focus', () => { if (!J) touch(`${j}.${b.dataset.s}`); });
+      b.addEventListener('blur', () => touch(null));
+      b.addEventListener('keydown', e => {
+        if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+        e.preventDefault();
+        const n = all[i + (e.key === 'ArrowRight' ? 1 : -1)];
+        if (n) { n.focus(); if (J === j) open(j, n.dataset.s); }
+      });
     });
   });
-  canvas.addEventListener('pointerleave', e => { if (e.pointerType === 'mouse' && !narrow.matches) show(pinned); });
-  canvas.addEventListener('focusout', e => { if (!canvas.contains(e.relatedTarget)) show(pinned); });
-  // Arrow keys walk the components in flow order; Escape clears the selection.
-  canvas.addEventListener('keydown', e => {
-    const i = nodes.indexOf(document.activeElement);
-    if (i < 0 || !['ArrowDown', 'ArrowUp', 'ArrowRight', 'ArrowLeft'].includes(e.key)) return;
-    e.preventDefault();
-    const d = e.key === 'ArrowDown' || e.key === 'ArrowRight' ? 1 : -1;
-    nodes[(i + d + nodes.length) % nodes.length].focus();
-  });
-  map.addEventListener('keydown', e => {
-    if (e.key !== 'Escape' || !(pinned || shown || lane)) return;
-    const was = pinned, wasLane = lane;
-    pinned = null; lane = null;
-    nodes.forEach(n => n.setAttribute('aria-pressed', 'false'));
-    laneBtns.forEach(b => b.setAttribute('aria-pressed', 'false'));
-    shown = undefined; show(null); place();
-    if (was) { const n = nodes.find(x => x.dataset.node === was); if (n) n.focus(); }
-    else if (wasLane) { const b = laneBtns.find(x => x.dataset.lane === wasLane); if (b) b.focus(); }
-  });
+  back.addEventListener('click', close);
+  dna.addEventListener('keydown', e => { if (e.key === 'Escape' && J) { e.stopPropagation(); close(); } });
 
-  // Data only flows while the map is on screen.
-  if (!REDUCE_MOTION) new IntersectionObserver(([e]) => map.classList.toggle('live', e.isIntersecting)).observe(map);
+  // Rungs follow the layout.
+  if ('ResizeObserver' in window) new ResizeObserver(() => { if (!J) rungs(); }).observe(wrap);
+  if (document.fonts) document.fonts.ready.then(rungs);
 
-  // Deep links (hero, assistant, palette): select a component and go to it.
-  window.addEventListener('pn:select-node', e => {
-    const k = e.detail && e.detail.node;
-    const n = nodes.find(x => x.dataset.node === k);
-    if (!n) return;
-    if (pinned !== k) pin(k);
-    (narrow.matches ? n : map).scrollIntoView({ behavior: REDUCE_MOTION ? 'auto' : 'smooth', block: narrow.matches ? 'start' : 'center' });
-    setTimeout(() => n.focus({ preventScroll: true }), REDUCE_MOTION ? 0 : 650);
-  });
+  // Deep links from the universe, the palette and the assistant.
+  const SYS = {};
+  Object.entries(DNA).forEach(([j, jr]) => jr.stages.forEach(st => { if (st.sys) SYS[st.sys] = [j, st.id]; }));
+  Object.assign(SYS, { frontend: ['product', 'interface'], browser: ['product', 'interface'] });
+  const go = (j, s) => {
+    open(j, s);
+    dna.scrollIntoView({ behavior: REDUCE_MOTION ? 'auto' : 'smooth', block: 'start' });
+    setTimeout(() => { const b = btnOf(J, S); if (b) b.focus({ preventScroll: true }); }, REDUCE_MOTION ? 0 : 650);
+  };
+  window.addEventListener('pn:dna-open', e => go(e.detail.journey, e.detail.stage));
+  window.addEventListener('pn:select-node', e => { const m = SYS[e.detail && e.detail.node]; if (m) go(m[0], m[1]); });
 })();
 
-/* ══ 18b. TECHNOLOGY NODES ══
-   Every chip is a toggle button. Hover previews (mouse only); tap, click,
-   Enter or Space pins; tap again or Escape clears. The selected technology
-   lights its system layers on the map, its neighbours in the grid, and a
-   plain-text readout says where it fits and which projects use it. */
+/* ══ 18b. CAPABILITY CONSTELLATION ══
+   Technologies, disciplines and projects in three columns. Selecting any of
+   them lights what it connects to and draws the lines between them; the
+   readout says, in words, where it is used. On narrow screens the columns
+   stack, the lines step aside, and the readout sticks to the top. */
 (function () {
-  const grid = $('.stack-grid');
-  const readout = $('#techReadout');
-  if (!grid || !readout) return;
-  const items = $$('.node', grid);
-  const label = $('span', readout);
-  const idle = label.textContent;
-  const name = li => $('span', li).textContent.trim();
-  items.forEach(li => {
-    const b = document.createElement('button');
-    b.type = 'button'; b.className = 'node-btn'; b.setAttribute('aria-pressed', 'false');
-    while (li.firstChild) b.appendChild(li.firstChild);
-    li.appendChild(b);
-  });
-  const projectsUsing = n => $$(PROJECTS).filter(p => $$('.tags li', p).some(t => {
-    const tag = t.textContent.trim().toLowerCase();
-    return tag === n.toLowerCase() || n.toLowerCase().startsWith(tag);
-  })).map(p => titleOf(p).textContent.trim());
+  const cst = $('#cst');
+  if (!cst) return;
+  const svg = $('#cstLines'), read = $('#cstRead');
+  const idle = read.innerHTML;
+  const NS = 'http://www.w3.org/2000/svg';
+  const tb = k => $(`[data-t="${k}"]`, cst), db = k => $(`[data-dc="${k}"]`, cst), pb = k => $(`[data-p="${k}"]`, cst);
+  const all = $$('.cst-list button', cst);
+  all.forEach(b => b.setAttribute('aria-pressed', 'false'));
+  const projectsOf = d => [...new Set(Object.values(CAP).filter(c => c.d.includes(d)).flatMap(c => c.p))];
+  const techOf = d => Object.keys(CAP).filter(k => CAP[k].d.includes(d));
+  let sel = null, links = [];
 
-  let pinned = null;
-  function show(li) {
-    if (!li) {
-      grid.classList.remove('tech-focus');
-      items.forEach(x => x.classList.remove('tech-on', 'tech-rel'));
-      $$('.sm-node.tech-layer').forEach(n => n.classList.remove('tech-layer'));
-      label.textContent = idle;
-      return;
-    }
-    const n = name(li);
-    const key = Object.keys(TECH).find(k => TECH[k] === n);
-    const layers = key ? Object.entries(SYSTEM).filter(([, s]) => s.tech.includes(key)) : [];
-    const near = new Set(layers.flatMap(([, s]) => s.tech).map(t => TECH[t]));
-    grid.classList.add('tech-focus');
-    items.forEach(x => {
-      x.classList.toggle('tech-on', x === li);
-      x.classList.toggle('tech-rel', x !== li && near.has(name(x)));
+  function draw() {
+    svg.replaceChildren();
+    if (!links.length || innerWidth < 961) return;
+    const box = cst.getBoundingClientRect();
+    svg.setAttribute('viewBox', `0 0 ${box.width} ${box.height}`);
+    links.forEach(([a, b]) => {
+      if (!a || !b) return;
+      const ra = a.getBoundingClientRect(), rb = b.getBoundingClientRect();
+      const x1 = ra.right - box.left, y1 = ra.top + ra.height / 2 - box.top;
+      const x2 = rb.left - box.left, y2 = rb.top + rb.height / 2 - box.top;
+      const mx = (x1 + x2) / 2;
+      const p = document.createElementNS(NS, 'path');
+      p.setAttribute('d', `M${x1} ${y1} C${mx} ${y1} ${mx} ${y2} ${x2} ${y2}`);
+      p.setAttribute('pathLength', '1');
+      svg.appendChild(p);
     });
-    $$('.sm-node').forEach(sn => sn.classList.toggle('tech-layer', layers.some(([k]) => k === sn.dataset.node)));
-    const group = $('.sg-title', li.closest('.stack-group')).textContent.trim();
-    const used = projectsUsing(n);
-    label.textContent = `${n} · ` +
-      (layers.length ? `layer: ${layers.map(([, s]) => s.label).join(', ')}` : `group: ${group}`) +
-      (used.length ? ` · used in ${used.join(', ')}` : '');
   }
-  function pin(li) {
-    pinned = pinned === li ? null : li;
-    items.forEach(x => $('.node-btn', x).setAttribute('aria-pressed', x === pinned ? 'true' : 'false'));
-    show(pinned);
-    if (pinned) inspect('tech', name(pinned), name(pinned));
+  const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
+  function readout(title, line, projects, note) {
+    const w = el('div');
+    w.append(el('span', 'card-label mono', 'readout'), el('h3', null, title), el('p', null, line));
+    if (projects.length) {
+      const ul = el('ul', 'cst-used');
+      projects.forEach(k => {
+        const li = el('li');
+        const b = el('button', null, PROJ[k]); b.type = 'button';
+        b.addEventListener('click', () => {
+          if (k === 'portfolio') { const t = $('#process'); if (t) t.scrollIntoView({ behavior: REDUCE_MOTION ? 'auto' : 'smooth' }); return; }
+          if ($(`.pj [data-case="${k}"]`)) Case.open(k, b);
+          else { const p = projectEl(k); if (p) p.scrollIntoView({ behavior: REDUCE_MOTION ? 'auto' : 'smooth', block: 'center' }); }
+        });
+        li.appendChild(b); ul.appendChild(li);
+      });
+      w.appendChild(ul);
+    } else w.appendChild(el('p', 'cst-none', note || 'Not in a project on this page yet.'));
+    read.replaceChildren(w);
   }
-  items.forEach(li => {
-    const b = $('.node-btn', li);
-    b.addEventListener('click', () => pin(li));
-    li.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') show(li); });
-    li.addEventListener('pointerleave', e => { if (e.pointerType === 'mouse') show(pinned); });
+  function select(kind, key) {
+    const same = sel && sel[0] === kind && sel[1] === key;
+    sel = same ? null : [kind, key];
+    cst.classList.toggle('has-sel', !!sel);
+    all.forEach(b => { b.classList.remove('on', 'rel'); b.setAttribute('aria-pressed', 'false'); });
+    links = [];
+    if (!sel) { read.innerHTML = idle; draw(); return; }
+    const mark = (b, cls) => { if (b) b.classList.add(cls); };
+    if (kind === 't') {
+      const c = CAP[key], b = tb(key);
+      mark(b, 'on'); b.setAttribute('aria-pressed', 'true');
+      c.d.forEach(d => { mark(db(d), 'rel'); links.push([b, db(d)]); c.p.forEach(p => links.push([db(d), pb(p)])); });
+      c.p.forEach(p => mark(pb(p), 'rel'));
+      readout(capName(key), `${c.note} Discipline: ${c.d.map(d => DISC[d]).join(', ')}.`, c.p);
+      inspect('tech', key, capName(key));
+    } else if (kind === 'd') {
+      const b = db(key), techs = techOf(key), ps = projectsOf(key);
+      mark(b, 'on'); b.setAttribute('aria-pressed', 'true');
+      techs.forEach(t => { mark(tb(t), 'rel'); links.push([tb(t), b]); });
+      ps.forEach(p => { mark(pb(p), 'rel'); links.push([b, pb(p)]); });
+      readout(DISC[key], `${techs.map(capName).join(', ')}.`, ps, 'No project on this page shows this discipline yet. It is one of my current focus areas.');
+      inspect('tech', 'disc-' + key, DISC[key]);
+    } else {
+      const b = pb(key), techs = Object.keys(CAP).filter(t => CAP[t].p.includes(key));
+      const ds = [...new Set(techs.flatMap(t => CAP[t].d))];
+      mark(b, 'on'); b.setAttribute('aria-pressed', 'true');
+      techs.forEach(t => mark(tb(t), 'rel'));
+      ds.forEach(d => { mark(db(d), 'rel'); links.push([db(d), b]); techs.filter(t => CAP[t].d.includes(d)).forEach(t => links.push([tb(t), db(d)])); });
+      readout(PROJ[key], `Built with ${techs.map(capName).join(', ')}.`, key === 'portfolio' ? [] : [key], 'This site: HTML, CSS and JavaScript, tested with Playwright and Lighthouse on every change.');
+    }
+    draw();
+  }
+  $$('[data-t]', cst).forEach(b => b.addEventListener('click', () => select('t', b.dataset.t)));
+  $$('[data-dc]', cst).forEach(b => b.addEventListener('click', () => select('d', b.dataset.dc)));
+  $$('[data-p]', cst).forEach(b => b.addEventListener('click', () => select('p', b.dataset.p)));
+  cst.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && sel) { const b = sel[0] === 't' ? tb(sel[1]) : sel[0] === 'd' ? db(sel[1]) : pb(sel[1]); select(sel[0], sel[1]); if (b) b.focus(); }
   });
-  grid.addEventListener('keydown', e => {
-    if (e.key === 'Escape' && pinned) { const b = $('.node-btn', pinned); pin(pinned); b.focus(); }
-  });
+  if ('ResizeObserver' in window) new ResizeObserver(draw).observe(cst);
 })();
 
-/* ══ 19. VISUAL AI PLAYGROUND ══
+/* ══ 19. VISUAL INTELLIGENCE OBSERVATORY ══
+   Real output first: a slider compares a frame as it went into Detectify's
+   vehicle model with what came out. Then the rule lab below.
+   ── Rule lab ──
    Three drawn sample frames, each with a fixed list of detections (class,
    confidence, box). Nothing is inferred here and the page says so. What is
    real is everything after the model: the confidence threshold filters the
@@ -1146,6 +1298,14 @@ const projectEl = key => $$(PROJECTS).find(p => slug(titleOf(p).textContent) ===
    that trips the red-light rule; raise it and a real violation is missed.
    Stages are stepped with buttons (Run, ‹ ›, or a stage itself); the run plays
    once when the lab first comes into view, never under reduced motion. */
+(function () {
+  const cmp = $('#obsCompare'), split = $('#obsSplit');
+  if (cmp && split) {
+    const set = () => cmp.style.setProperty('--split', split.value + '%');
+    split.addEventListener('input', set); set();
+  }
+})();
+
 (function () {
   const lab = $('#lab');
   if (!lab) return;
@@ -1162,7 +1322,8 @@ const projectEl = key => $$(PROJECTS).find(p => slug(titleOf(p).textContent) ===
   const hud = { name: $('#cvSceneName'), stage: $('#cvStage'), count: $('#cvCount') };
   const alertEl = $('#cvAlert'), alertTitle = $('#cvAlertTitle'), alertSub = $('#cvAlertSub');
   const NS = 'http://www.w3.org/2000/svg';
-  const STAGES = ['input', 'data', 'processing', 'model', 'inference', 'decision', 'action'];
+  const STAGES = ['camera', 'stream', 'model', 'detection', 'event', 'alert'];
+  const timeline = $$('#labTimeline li');
   const VEHICLES = ['car', 'motorcycle'];
   const JUNCTION_ZONE = { x: 252, y: 108, w: 66, h: 186 };   // the controlled lane, past the stop line
 
@@ -1262,24 +1423,33 @@ const projectEl = key => $$(PROJECTS).find(p => slug(titleOf(p).textContent) ===
       svg('text', { x: z.x + 4, y: z.y + z.h - 6, class: 'zone-lbl' }, zonesEl).textContent = 'rule zone';
     }
   }
+  // Simulated wall-clock timestamps: the run's start plus a small, illustrative
+  // offset per stage. Labelled as simulated wherever they appear.
+  const OFFSETS = [0, 8, 21, 27, 29, 31];
+  let base = Date.now();
+  const stamp = i => {
+    const d = new Date(base + OFFSETS[i]);
+    const p = (n, w = 2) => String(n).padStart(w, '0');
+    return `${p(d.getHours())}:${p(d.getMinutes())}:${p(d.getSeconds())}.${p(d.getMilliseconds(), 3)}`;
+  };
   function logLines(ev) {
     const s = ev.s, lines = [];
-    if (stage >= 1) lines.push(['', `frame ${s.frame} · ${s.name}`]);
-    if (stage >= 2) lines.push(['', 'decoded 640×400 · tiled for the model']);
-    if (stage >= 3) lines.push(['', 'pre-processed · denoise, normalise']);
-    if (stage >= 4) lines.push(['', 'detector ready · sample detections']);
-    if (stage >= 5) lines.push(['', `${s.dets.length} detections · ${ev.kept.length} at ≥ ${t().toFixed(2)}`]);
-    if (stage >= 6) ev.results.forEach(r => lines.push(r.hits
-      ? ['bad', `rule ${r.k} → ALERT · ${r.hits.map(label).join(', ')} ${r.why}`]
-      : [r.note === 'off' ? 'off' : 'ok', `rule ${r.k} → ${r.note}`]));
-    if (stage >= 7) lines.push(ev.alerts.length
-      ? ['bad', `action → POST /api/alerts (simulated) · ${ev.alerts.length} for human review`]
-      : ['ok', 'action → no alert raised']);
+    const at = (i, k, text) => lines.push([k, `${stamp(i)}  ${text}`]);
+    if (stage >= 1) at(0, '', `camera · frame ${s.frame} · ${s.name}`);
+    if (stage >= 2) at(1, '', 'stream · rtsp://cam-01/main (sample, not a live feed)');
+    if (stage >= 3) at(2, '', 'model · detector ready · pre-computed detections');
+    if (stage >= 4) at(3, '', `detection · ${s.dets.length} found · ${ev.kept.length} at ≥ ${t().toFixed(2)}`);
+    if (stage >= 5) ev.results.forEach(r => (r.hits
+      ? at(4, 'bad', `event · ${r.k} → ${r.hits.map(label).join(', ')} ${r.why}`)
+      : at(4, r.note === 'off' ? 'off' : 'ok', `event · ${r.k} → ${r.note}`)));
+    if (stage >= 6) (ev.alerts.length
+      ? at(5, 'bad', `alert · POST /api/alerts (simulated) · ${ev.alerts.length} for human review`)
+      : at(5, 'ok', 'alert · none raised'));
     return lines;
   }
   // What the threshold just did, in words: a false alarm, a miss, or neither.
   function explain(ev) {
-    if (stage < 5) return 'Detections below the threshold are dropped before any rule sees them.';
+    if (stage < 4) return 'Detections below the threshold are dropped before any rule sees them.';
     const fp = ev.alerts.find(a => a.det.fp);
     if (fp) return `False alarm: at ${t().toFixed(2)} the detector's "${fp.det.cls}" is really ${fp.det.fp}. Low thresholds trade misses for false alarms.`;
     const all = evaluate(0).alerts.filter(a => !a.det.fp);
@@ -1290,19 +1460,26 @@ const projectEl = key => $$(PROJECTS).find(p => slug(titleOf(p).textContent) ===
     return 'Detections below the threshold are dropped before any rule sees them.';
   }
 
+  // Six pipeline stages drive the frame's seven visual states.
+  const FRAME = [0, 1, 2, 4, 5, 6, 7];
   function draw() {
     const ev = evaluate(t());
-    for (let i = 1; i <= N; i++) frame.classList.toggle('s' + i, stage >= i);
+    for (let i = 1; i <= 7; i++) frame.classList.toggle('s' + i, FRAME[stage] >= i);
     drawBoxes(ev);
     hud.name.textContent = 'SAMPLE · ' + ev.s.name;
     hud.stage.textContent = stage ? STAGES[stage - 1] : 'idle';
-    hud.count.textContent = stage >= 5 ? `${ev.kept.length} / ${ev.s.dets.length}` : '—';
+    hud.count.textContent = stage >= 4 ? `${ev.kept.length} / ${ev.s.dets.length}` : '—';
     const ok = !ev.alerts.length;
     alertEl.classList.toggle('is-ok', ok);
     alertTitle.textContent = ok ? 'No violation' : ev.alerts[0].title + (ev.alerts.length > 1 ? ` +${ev.alerts.length - 1} more` : '');
     alertSub.textContent = ok ? 'every active rule passed' : 'sent for human review · simulated';
     logEl.replaceChildren(...logLines(ev).map(([k, text]) => { const li = document.createElement('li'); if (k) li.className = k; li.textContent = text; return li; }));
     logEl.scrollTop = logEl.scrollHeight;
+    timeline.forEach((li, i) => {
+      li.classList.toggle('on', i < stage);
+      li.classList.toggle('now', i === stage - 1);
+      $('time', li).textContent = i < stage ? stamp(i) : '--:--:--.---';
+    });
     hint.textContent = explain(ev);
     hint.classList.toggle('warn', /^(False alarm|Missed)/.test(hint.textContent));
     return ev;
@@ -1335,6 +1512,7 @@ const projectEl = key => $$(PROJECTS).find(p => slug(titleOf(p).textContent) ===
     stop();
     if (byUser) userRan = true;
     $('span', runBtn).textContent = 'Run again';
+    base = Date.now();
     if (REDUCE_MOTION) { setStage(N); return; }
     lab.classList.add('running');
     runBtn.disabled = true;
@@ -1357,7 +1535,7 @@ const projectEl = key => $$(PROJECTS).find(p => slug(titleOf(p).textContent) ===
 
   // Controls give an answer at once: if the run hasn't reached the boxes yet,
   // jump to the end so the effect of the change is visible.
-  const changed = () => { stop(); if (stage < N) setStage(N, { quiet: true }); announce(draw()); };
+  const changed = () => { stop(); base = Date.now(); if (stage < N) setStage(N, { quiet: true }); announce(draw()); };
   thr.addEventListener('input', () => { thrOut.value = t().toFixed(2); thrOut.textContent = t().toFixed(2); changed(); });
   rules.forEach(r => r.addEventListener('change', changed));
   $$('.lab-scene', lab).forEach(b => b.addEventListener('click', () => {
@@ -1479,7 +1657,8 @@ const Eng = (function () {
   const META = {
     about: () => `section#about · ${count('#about .b-card')} modules`,
     experience: () => `${count('.gl-item')} roles + current · ${count('.disc-list > li')} disciplines · ${years()}`,
-    skills: () => `${count('.stack-group .node')} technologies · ${count('.stack-group')} groups · ${count('.sm-node')} system nodes`,
+    thinking: () => `${count('.dna-strand')} journeys · ${count('.ds-stages button')} stages · built / partly built / concept`,
+    skills: () => `${count('.cst-tech button')} technologies · ${count('.cst-disc button')} disciplines · ${count('.cst-proj button')} projects`,
     pipeline: () => `${count('.pipe-step')} stages · ${count('.lab-scene')} sample frames · simulated detections, real rules`,
     projects: () => `${count(PROJECTS)} projects · ${count('.pj [data-case]')} case studies · ${$$('#projGrid .pj-link, .pj-mini .pj-link').filter(a => /live|play/i.test(a.textContent)).length} live demos`,
     education: () => `${count('.edu-item')} qualifications · ${count('.cert')} certifications`,
@@ -1491,7 +1670,7 @@ const Eng = (function () {
     ['.hero-title', 'h1 · Geist 650 · sees / thinks / acts'],
     ['.b-intro', 'about/intro.md'], ['.b-photo', 'about/photo.jpg'], ['.b-now', 'about/now'],
     ['.b-stats', 'about/stats'], ['.b-json', 'about/profile.json'],
-    ['.hero-system', 'two flows · select a component'], ['.hero-visual', 'illustration · not live data'],
+    ['.hero-chapters', 'six chapters'], ['.universe', 'pn universe · 4 domains'],
     ['.exp-current', 'HEAD → current role'],
     ['.form-shell', 'POST api.web3forms.com'], ['.mail-card', 'mailto:']
   ];
@@ -1521,7 +1700,8 @@ const Eng = (function () {
     $$('.stack-group').forEach(g => frame(g, `${$$('.node', g).length} nodes`));
     $$('#projGrid .pj').forEach(p => {
       frame(p, 'project/' + $('h3', p).textContent.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''));
-      if (p.dataset.flow) $('.pj-body', p).insertBefore(collapsible('eng-flow', p.dataset.flow), $('.pj-links', p));
+      const body = $('.pj-body, .w-body', p);
+      if (p.dataset.flow && body) body.insertBefore(collapsible('eng-flow', p.dataset.flow), $('.pj-links', body));
     });
     Object.entries(META).forEach(([id, fn]) => {
       const head = $(`#${id} .sec-head`);
@@ -1651,8 +1831,12 @@ const Eng = (function () {
 const Assistant = (function () {
   const txt = el => (el ? el.textContent.replace(/\s+/g, ' ').trim() : '');
   const KB = {
-    stack: $$('.stack-group').map(g => ({
-      group: txt($('.sg-title', g)).replace(/^\w/, c => c.toUpperCase()), items: $$('.node', g).map(n => ({ name: txt($('span', n)), icon: $('i', n).className }))
+    // Grouped by each technology's primary discipline, from the constellation.
+    stack: Object.entries(DISC).map(([d, group]) => ({
+      group, items: Object.keys(CAP).filter(k => CAP[k].d[0] === d).map(k => {
+        const i = $(`.cst-tech [data-t="${k}"] i`);
+        return { key: k, name: capName(k), icon: i ? i.className : 'fas fa-circle' };
+      })
     })),
     projects: $$(PROJECTS).map(p => ({
       key: slug(txt(titleOf(p))), title: txt(titleOf(p)), cat: txt($('.pj-cat', p)),
@@ -1671,21 +1855,20 @@ const Assistant = (function () {
   const ALIAS = {
     'React.js': ['react', 'reactjs'], 'Next.js': ['next', 'nextjs'], 'Node.js': ['node', 'nodejs'],
     'Express.js': ['express', 'expressjs'], 'PostgreSQL': ['postgres', 'postgresql', 'psql'], 'MongoDB': ['mongo', 'mongodb'],
-    'Laravel / PHP': ['laravel', 'php'], 'REST APIs': ['rest', 'restful'], 'TypeScript': ['typescript', 'ts'],
+    'PHP · Laravel': ['laravel', 'php'], 'REST APIs': ['rest', 'restful'], 'TypeScript': ['typescript', 'ts'],
     'React Native': ['react native', 'expo', 'android', 'mobile'], 'SQLite': ['sqlite'],
-    'JavaScript': ['javascript', 'js'], 'HTML5': ['html', 'html5'], 'CSS3': ['css', 'css3'], 'C++': ['c++', 'cpp'],
-    'AI / ML': ['machine learning'], 'Raspberry Pi': ['raspberry', 'rpi'], 'Edge Computing': ['edge computing'],
-    'Visual AI': ['visual ai'], 'Computer Vision': ['computer vision']
+    'JavaScript': ['javascript', 'js'], 'HTML5 · CSS3': ['html', 'html5', 'css', 'css3'], 'Java · C · C++': ['java', 'c++', 'cpp'],
+    'Raspberry Pi': ['raspberry', 'rpi', 'raspberry pi'], 'Git · GitHub': ['git', 'github'], 'IoT': ['iot']
   };
   const PROJECT_ALIAS = {
     detectify: ['detectify', 'traffic'], 'campus-recruitment-system': ['campus', 'recruitment'],
-    'code-editor': ['code editor', 'editor'], 'web-calculator': ['calculator'], 'rock-paper-scissors': ['rock paper', 'rps'],
+    'codeex-space': ['codeex', 'code editor', 'editor'], 'web-calculator': ['calculator'], 'rock-paper-scissors': ['rock paper', 'rps'],
     'cyber-calendar': ['calendar'], 'background-changer': ['background changer', 'background'], 'portfolio-website': ['portfolio website'],
     'ambulance-management-system': ['ambulance'], aspend: ['aspend', 'expense']
   };
   const INTENTS = {
     ai: ['ai', 'ml', 'machine', 'learning', 'vision', 'model', 'models', 'detection', 'intelligent', 'inference', 'yolo', 'opencv'],
-    systems: ['system', 'systems', 'architecture', 'kind', 'end-to-end', 'pipeline', 'iot', 'edge', 'build'],
+    systems: ['system', 'systems', 'architecture', 'kind', 'end-to-end', 'pipeline', 'iot', 'edge', 'build', 'think', 'thinking', 'journey', 'journeys', 'dna', 'approach'],
     stack: ['stack', 'technologies', 'technology', 'tech', 'tools', 'languages', 'language', 'skills', 'frameworks', 'use'],
     projects: ['project', 'projects', 'built', 'showcase', 'apps', 'portfolio', 'demos', 'show'],
     experience: ['experience', 'job', 'role', 'roles', 'career', 'worked', 'company', 'current', 'currently', 'position', 'eltern'],
@@ -1719,23 +1902,22 @@ const Assistant = (function () {
       title: 'My development stack',
       lead: `${allTech.length} technologies across ${KB.stack.length} areas, from the browser to the edge.`,
       rows: KB.stack.map(g => [g.group, g.items.map(i => i.name).join(', ')]),
-      actions: [{ label: 'Explore the system map', run: go('#sysmap') }, { label: 'See the tech stack', run: go('#skills') }]
+      actions: [{ label: 'Explore the capability constellation', run: go('#skills') }, { label: 'Walk the engineering DNA', run: go('#thinking') }]
     }),
     ai: () => ({
       title: 'AI / ML work',
       lead: 'Computer vision is the focus: models that watch live video and turn what they see into decisions.',
-      rows: ['cv', 'edge', 'alert'].map(k => [SYSTEM[k].label, SYSTEM[k].desc]),
-      chips: ['python', 'aiml', 'opencv', 'yolo', 'visualai', 'rtsp', 'mediamtx', 'raspberrypi', 'edge', 'iot']
-        .map(k => allTech.find(t => t.name === TECH[k])).filter(Boolean),
+      rows: DNA.vision.stages.map(st => [st.label + (st.status === 'built' ? '' : ` (${st.status === 'partial' ? 'partly built' : 'concept'})`), st.does]),
+      chips: ['python', 'yolo', 'opencv', 'rtsp', 'mediamtx', 'raspberrypi', 'iot'].map(k => allTech.find(t => t.key === k)).filter(Boolean),
       items: KB.projects.filter(p => p.el.dataset.cat === 'ai').map(p => `${p.title}: ${p.desc}`),
-      actions: [{ label: 'Try the Visual AI playground', run: go('#lab') }, { label: 'Open the Detectify case study', run: () => Case.open('detectify') }]
+      actions: [{ label: 'Open the observatory', run: go('#pipeline') }, { label: 'Open the Detectify case study', run: () => Case.open('detectify') }]
     }),
     systems: () => ({
       title: 'The systems I build',
       lead: 'End to end: interfaces, APIs and databases, plus vision pipelines that run on edge devices.',
-      rows: Object.values(SYSTEM).filter(s => s.tech.length).map(s => [s.label, s.tagline]),
-      items: Object.values(LANES).map(l => `${l.label}: ${l.nodes.map(k => SYSTEM[k].label).join(' → ')}`),
-      actions: [{ label: 'Explore the system map', run: go('#sysmap') }]
+      rows: Object.values(DNA).map(j => [j.label, j.stages.map(st => st.label).join(' → ')]),
+      items: RUNGS.map(([, , note]) => `Where they meet: ${note}.`),
+      actions: [{ label: 'Walk the engineering DNA', run: go('#thinking') }, { label: 'Open the PN universe', run: go('#universe') }]
     }),
     projects: () => ({
       title: 'Projects',
@@ -1764,7 +1946,7 @@ const Assistant = (function () {
     }),
     contact: () => ({
       title: 'Get in touch',
-      lead: `${KB.status}. Open to freelance, full-time roles and collaborations.`,
+      lead: `${KB.status}. Every channel below is real, and the form sends to my inbox.`,
       rows: [['Email', 'pratyushnandi100@gmail.com'], ['Phone', '+91 7890706472'], ['Location', KB.location],
         ['GitHub', 'github.com/pratyushnandi'], ['LinkedIn', 'linkedin.com/in/pratyushnandi']],
       actions: [{ label: 'Copy email', run: () => $('#copyEmail').click() }, { label: 'Open the contact form', run: () => window.dispatchEvent(new Event('pn:open-form')) }]
@@ -1783,28 +1965,31 @@ const Assistant = (function () {
     }),
     tech: list => {
       const t = list[0];
-      const key = Object.keys(TECH).find(k => TECH[k] === t.name);
-      const layers = key ? Object.values(SYSTEM).filter(s => s.tech.includes(key)).map(s => s.label) : [];
-      const names = (ALIAS[t.name] || []).concat(t.name.toLowerCase());
-      const used = KB.projects.filter(p => p.tags.some(tag => names.some(n => tag.toLowerCase().includes(n.split(' ')[0]))));
-      const stem = t.name.toLowerCase().split(/[ .]/)[0];
-      const why = Object.values(SYSTEM).flatMap(s => s.why || []).filter(([wq]) => wq.toLowerCase().includes(stem));
+      const c = CAP[t.key] || { d: [], p: [] };
+      const stem = t.name.toLowerCase().split(/[ .·]/)[0];
+      const why = WHY.filter(([wq]) => wq.toLowerCase().includes(stem));
       return {
         title: t.name,
         lead: `Yes. ${t.name} is in my stack, under ${t.group}.` + (list.length > 1 ? ` (Also matched: ${list.slice(1).map(x => x.name).join(', ')}.)` : ''),
-        rows: [].concat(layers.length ? [['System layer', layers.join(', ')]] : [],
-          used.length ? [['Used in', used.map(p => p.title).join(', ')]] : [['Used in', 'No project on this page lists it yet.']],
-          why.map(([wq, wa]) => [wq, wa])),
-        actions: [{ label: 'See the tech stack', run: go('#skills') }]
+        rows: [['Discipline', c.d.map(d => DISC[d]).join(', ')],
+          ['Used in', c.p.length ? c.p.map(k => PROJ[k]).join(', ') : 'No project on this page uses it yet.']].concat(why),
+        actions: [{ label: 'Show it in the constellation', run: () => {
+          const b = $(`.cst-tech [data-t="${t.key}"]`);
+          go('#skills')();
+          if (b && b.getAttribute('aria-pressed') !== 'true') setTimeout(() => b.click(), REDUCE_MOTION ? 0 : 450);
+        } }]
       };
     },
-    layers: (keys, title, lead) => ({
+    stageRows: (j, ids, title, lead) => ({
       title, lead,
-      rows: keys.flatMap(k => [[SYSTEM[k].label, SYSTEM[k].tech.map(t => TECH[t]).join(', ')]].concat(SYSTEM[k].why || [])),
-      actions: [{ label: 'Open it on the system map', run: () => window.dispatchEvent(new CustomEvent('pn:select-node', { detail: { node: keys[0] } })) }]
+      rows: ids.flatMap(id => {
+        const st = DNA[j].stages.find(x => x.id === id);
+        return [[st.label, st.tech.join(', ')]].concat(st.trade.map(x => ['Trade-off', x]));
+      }),
+      actions: [{ label: 'Open it in the engineering DNA', run: () => window.dispatchEvent(new CustomEvent('pn:dna-open', { detail: { journey: j, stage: ids[0] } })) }]
     }),
-    backend: () => A.layers(['api', 'database'], 'Backend & data', 'APIs on Node.js and Fastify over relational data, with the reasoning behind each choice.'),
-    frontend: () => A.layers(['frontend'], 'Frontend', 'Component-driven interfaces in React and Next.js.'),
+    backend: () => A.stageRows('product', ['api', 'database'], 'Backend & data', 'APIs on Node.js over relational and on-device data, with the trade-offs behind each choice.'),
+    frontend: () => A.stageRows('product', ['interface'], 'Frontend', 'Component-driven interfaces on the web and on Android.'),
     projectsWith: (needles, title) => {
       const hits = KB.projects.filter(p => p.tags.some(tag => needles.some(n => tag.toLowerCase().includes(n))));
       return hits.length ? {
@@ -1872,7 +2057,7 @@ const Assistant = (function () {
   // Questions that fit the section the visitor is reading: plain scroll
   // position, nothing inferred about the visitor.
   const BY_CONTEXT = {
-    hero: 'What kind of systems do you build?', about: 'What technologies do you use?',
+    hero: 'What kind of systems do you build?', thinking: 'How do you approach a system?', about: 'What technologies do you use?',
     experience: 'What is your experience?', skills: 'What backend technologies are used?',
     pipeline: 'What AI/ML work do you do?', projects: 'What projects involve computer vision?',
     process: 'How is this portfolio built?', education: 'What certifications do you have?',
@@ -1901,40 +2086,48 @@ const Assistant = (function () {
   $('#cmdkBtn').setAttribute('aria-label', FINE_POINTER ? `${isMac ? '⌘ K' : 'Ctrl K'} — command palette` : 'Search and commands');
 
   const scrollTo = sel => () => { const t = $(sel); if (t) t.scrollIntoView({ behavior: REDUCE_MOTION ? 'auto' : 'smooth', block: 'start' }); };
+  // Every command has a dotted id (shown, and searchable: "explore." lists the
+  // places, "open." the things that open). ack: what to confirm once it ran.
   const NAV = [
-    ['About', '#about', 'fa-user', 'who bio'], ['Experience', '#experience', 'fa-code-branch', 'work roles journey timeline'],
-    ['Tech stack', '#skills', 'fa-layer-group', 'skills technologies'], ['System architecture', '#sysmap', 'fa-diagram-project', 'map nodes system flow camera browser api'],
-    ['Visual AI playground', '#lab', 'fa-eye', 'ai lab pipeline ml computer vision yolo demo threshold'], ['Projects', '#projects', 'fa-folder-open', 'work portfolio'],
-    ['How I build', '#process', 'fa-gears', 'process engineering deploy testing systems'],
-    ['Education', '#education', 'fa-graduation-cap', 'degree certifications'],
-    ['Current focus', '#focus', 'fa-crosshairs', 'now focus areas'], ['Contact', '#contact', 'fa-paper-plane', 'email hire message'],
-    ['Your exploration', '#sessEnd', 'fa-route', 'session complete trace route restart clear']
+    ['explore.universe', 'The PN universe', '#universe', 'fa-circle-nodes', 'domains software ai vision iot identity'],
+    ['explore.about', 'About', '#about', 'fa-user', 'who bio'],
+    ['explore.architecture', 'Engineering DNA', '#thinking', 'fa-diagram-project', 'architecture system journeys thinking map'],
+    ['explore.process', 'How I build', '#process', 'fa-gears', 'process engineering deploy testing systems'],
+    ['explore.capabilities', 'Capability constellation', '#skills', 'fa-layer-group', 'skills stack technologies tech'],
+    ['explore.projects', 'Projects', '#projects', 'fa-folder-open', 'work worlds case studies portfolio'],
+    ['explore.ai-lab', 'Visual intelligence observatory', '#pipeline', 'fa-eye', 'ai lab pipeline ml computer vision yolo detection threshold'],
+    ['explore.focus', 'Current focus', '#focus', 'fa-crosshairs', 'now focus areas'],
+    ['explore.experience', 'Experience', '#experience', 'fa-code-branch', 'work roles journey timeline'],
+    ['explore.education', 'Education', '#education', 'fa-graduation-cap', 'degree certifications'],
+    ['contact.connect', 'Contact', '#contact', 'fa-paper-plane', 'email hire message portal'],
+    ['explore.session', 'Your exploration', '#sessEnd', 'fa-route', 'session complete trace route restart clear']
   ];
   // "Suggested here": the commands that fit the section being read.
   const HERE = {
-    hero: ['System architecture', 'Turn on Engineering Mode'], about: ['Download resume', 'Experience'],
-    experience: ['Projects', 'Download resume'], skills: ['System architecture', 'Visual AI playground'],
+    hero: ['Engineering DNA', 'Turn on Engineering Mode'], about: ['Download resume', 'Experience'],
+    thinking: ['Capability constellation', 'Projects'], skills: ['Engineering DNA', 'Visual intelligence observatory'],
+    experience: ['Projects', 'Download resume'], process: ['Open GitHub', 'Engineering DNA'],
     pipeline: ['Detectify case study', 'AI / ML projects'], projects: ['Detectify case study', 'Aspend case study'],
-    process: ['Open GitHub', 'System architecture'], education: ['Download resume', 'Current focus'],
-    focus: ['Contact', 'Download resume'], contact: ['Copy email address', 'Start a conversation', 'Send an email']
+    education: ['Download resume', 'Current focus'], focus: ['Contact', 'Download resume'],
+    contact: ['Copy email address', 'Start a conversation', 'Send an email']
   };
   function commands() {
     const light = root.getAttribute('data-theme') === 'light';
     const eng = Eng.isOn();
     return [].concat(
-      NAV.map(([label, sel, icon, kw]) => ({ group: 'Navigate', label, icon, kw, run: scrollTo(sel) })),
-      [{ group: 'Navigate', label: 'AI / ML projects', icon: 'fa-brain', kw: 'filter detectify', run: () => { const b = $('.pf[data-f="ai"]'); if (b) b.click(); scrollTo('#projects')(); } }],
+      NAV.map(([id, label, sel, icon, kw]) => ({ group: 'Navigate', id, label, icon, kw, run: scrollTo(sel) })),
+      [{ group: 'Navigate', id: 'filter.ai-projects', label: 'AI / ML projects', icon: 'fa-brain', kw: 'filter detectify', run: () => { const b = $('.pf[data-f="ai"]'); if (b) b.click(); scrollTo('#projects')(); } }],
       [
-        { group: 'Actions', label: eng ? 'Turn off Engineering Mode' : 'Turn on Engineering Mode', icon: 'fa-microchip', kw: 'engineering mode eng system blueprint', run: () => Eng.toggle() },
-        { group: 'Actions', label: light ? 'Switch to dark theme' : 'Switch to light theme', icon: light ? 'fa-moon' : 'fa-sun', kw: 'toggle theme dark light mode', run: () => $('#themeToggle').click() },
-        { group: 'Actions', label: 'Copy email address', icon: 'fa-copy', kw: 'email mail clipboard', run: () => $('#copyEmail').click() },
-        { group: 'Actions', label: 'Download resume', icon: 'fa-file-arrow-down', kw: 'cv pdf', run: () => $('.n-resume').click() },
-        { group: 'Actions', label: 'Send an email', icon: 'fa-envelope', kw: 'mail contact', run: () => { location.href = 'mailto:pratyushnandi100@gmail.com'; } },
-        { group: 'Actions', label: 'Start a conversation', icon: 'fa-paper-plane', kw: 'contact form message hire', run: () => window.dispatchEvent(new Event('pn:open-form')) },
-        { group: 'Actions', label: 'Open GitHub', icon: 'fa-github', brand: true, kw: 'code repositories', run: () => window.open('https://github.com/pratyushnandi', '_blank', 'noopener') },
-        { group: 'Actions', label: 'Open LinkedIn', icon: 'fa-linkedin-in', brand: true, kw: 'profile', run: () => window.open('https://www.linkedin.com/in/pratyushnandi/', '_blank', 'noopener') }
+        { group: 'Actions', id: 'mode.engineering', label: eng ? 'Turn off Engineering Mode' : 'Turn on Engineering Mode', icon: 'fa-microchip', kw: 'engineering mode eng system blueprint', run: () => Eng.toggle(), ack: () => (Eng.isOn() ? 'Engineering mode on' : 'Engineering mode off') },
+        { group: 'Actions', id: 'theme.toggle', label: light ? 'Switch to dark theme' : 'Switch to light theme', icon: light ? 'fa-moon' : 'fa-sun', kw: 'toggle theme dark light mode', run: () => $('#themeToggle').click(), ack: () => (root.getAttribute('data-theme') === 'light' ? 'Light theme' : 'Dark theme') },
+        { group: 'Actions', id: 'contact.copy-email', label: 'Copy email address', icon: 'fa-copy', kw: 'email mail clipboard', run: () => $('#copyEmail').click() },
+        { group: 'Actions', id: 'open.resume', label: 'Download resume', icon: 'fa-file-arrow-down', kw: 'cv pdf', run: () => $('.n-resume').click(), ack: () => 'Resume download started' },
+        { group: 'Actions', id: 'contact.email', label: 'Send an email', icon: 'fa-envelope', kw: 'mail contact', run: () => { location.href = 'mailto:pratyushnandi100@gmail.com'; }, ack: () => 'Opening your email app' },
+        { group: 'Actions', id: 'contact.form', label: 'Start a conversation', icon: 'fa-paper-plane', kw: 'contact form message hire', run: () => window.dispatchEvent(new Event('pn:open-form')) },
+        { group: 'Actions', id: 'open.github', label: 'Open GitHub', icon: 'fa-github', brand: true, kw: 'code repositories', run: () => window.open('https://github.com/pratyushnandi', '_blank', 'noopener'), ack: () => 'GitHub opened in a new tab' },
+        { group: 'Actions', id: 'open.linkedin', label: 'Open LinkedIn', icon: 'fa-linkedin-in', brand: true, kw: 'profile', run: () => window.open('https://www.linkedin.com/in/pratyushnandi/', '_blank', 'noopener'), ack: () => 'LinkedIn opened in a new tab' }
       ],
-      Case.keys.map(k => ({ group: 'Case studies', label: `${$('#case-' + k).content.querySelector('h2').textContent} case study`, icon: 'fa-book-open', kw: 'case study project', run: () => Case.open(k) }))
+      Case.keys.map(k => ({ group: 'Case studies', id: 'open.case.' + k, label: `${$('#case-' + k).content.querySelector('h2').textContent} case study`, icon: 'fa-book-open', kw: 'case study project', run: () => Case.open(k) }))
     );
   }
 
@@ -1957,13 +2150,13 @@ const Assistant = (function () {
     // Rank like a real launcher: label prefix, then a word in the label, then keywords only.
     const rank = c => {
       const label = c.label.toLowerCase();
-      if (label.startsWith(q)) return 0;
+      if (label.startsWith(q) || (c.id && c.id.startsWith(q))) return 0;
       if (words.every(w => label.split(/[\s/]+/).some(t => t.startsWith(w)))) return 1;
       if (words.every(w => label.includes(w))) return 2;
       return 3;
     };
     const hits = commands()
-      .filter(c => words.every(w => (c.label + ' ' + c.kw + ' ' + c.group).toLowerCase().includes(w)))
+      .filter(c => words.every(w => (c.label + ' ' + (c.id || '') + ' ' + c.kw + ' ' + c.group).toLowerCase().includes(w)))
       .map((c, i) => ({ c, r: rank(c), i }))
       .sort((a, b) => a.r - b.r || a.i - b.i)
       .map(x => ({ ...x.c, group: x.r < 3 ? x.c.group : 'Related' }));
@@ -1989,6 +2182,7 @@ const Assistant = (function () {
       lab.textContent = c.label;
       li.append(ico, lab);
       if (c.ask) { const t = document.createElement('span'); t.className = 'cmdk-tag mono'; t.textContent = 'ask'; li.appendChild(t); }
+      else if (c.id) { const t = document.createElement('span'); t.className = 'cmdk-id mono'; t.setAttribute('aria-hidden', 'true'); t.textContent = c.id; li.appendChild(t); }
       li.addEventListener('click', () => run(i));
       li.addEventListener('pointermove', () => setActive(i));
       list.appendChild(li);
@@ -2011,9 +2205,11 @@ const Assistant = (function () {
     if (!c) return;
     if (c.ask) { c.run(); return; }
     close();
-    // Let the dialog release the page before scrolling or opening another dialog.
-    setTimeout(c.run, 30);
+    // Let the dialog release the page before scrolling or opening another dialog,
+    // then confirm what happened.
+    setTimeout(() => { c.run(); if (c.ack) setTimeout(() => ack(c.ack()), 60); }, 30);
   }
+
 
   function showAnswer(q) {
     mode = 'answer';
@@ -2118,39 +2314,42 @@ const Assistant = (function () {
   $$('[data-ask]').forEach(b => b.addEventListener('click', () => open({ ask: true })));
 })();
 
-/* ══ 24. CONTEXTUAL CURSOR ══
-   The native pointer stays; a small label joins it only over things worth
-   naming. Desktop pointers only, never under reduced motion, and the rAF loop
-   stops as soon as the label has caught up. */
+/* ══ 24. PN CURSOR ══
+   The native pointer always stays (it is the fallback and the precise one).
+   On desktop mice a small PN node follows it, and over things worth naming it
+   opens into a ring with a word. Never on touch, never under reduced motion,
+   hidden over text fields and dialogs, and the rAF loop stops once caught up. */
 (function () {
   const cur = $('.ctx-cursor');
   if (!cur || !FINE_POINTER || REDUCE_MOTION) return;
   const label = $('.cc-label', cur);
   const CONTEXT = [
-    ['a[href^="mailto:"], a[href="#contact"], .soc-btn, .mail-link', "Let's talk"],
-    ['.node, .sm-node, .smi-chip', 'Tech'],
+    ['a[href^="mailto:"], a[href="#contact"], .pa, .copy-btn', "Let's talk"],
+    ['.uv-domain', 'Domain'],
+    ['.ds-stages button, .ds-go', 'Trace'],
+    ['.cst-list button', 'Connect'],
     ['#projGrid .pj, .pj-mini', 'Explore']
   ];
-  let x = 0, y = 0, cx = 0, cy = 0, raf = 0, shown = false;
+  let x = 0, y = 0, cx = 0, cy = 0, raf = 0;
   function loop() {
-    cx += (x - cx) * .22; cy += (y - cy) * .22;
+    cx += (x - cx) * .28; cy += (y - cy) * .28;
     cur.style.transform = `translate3d(${cx.toFixed(1)}px, ${cy.toFixed(1)}px, 0)`;
     raf = Math.abs(x - cx) + Math.abs(y - cy) > .3 ? requestAnimationFrame(loop) : 0;
   }
   document.addEventListener('pointermove', e => {
     if (e.pointerType !== 'mouse') return;
-    x = e.clientX + 16; y = e.clientY + 18;
-    if (!shown) { cx = x; cy = y; }
+    x = e.clientX; y = e.clientY;
+    if (!cur.classList.contains('live')) { cx = x; cy = y; }
+    const t = e.target.closest ? e.target : null;
+    const quiet = !t || document.querySelector('dialog[open]') || t.closest('input, textarea, select, [contenteditable]');
     let text = '';
-    if (!document.querySelector('dialog[open]')) {
-      for (const [sel, t] of CONTEXT) { if (e.target.closest && e.target.closest(sel)) { text = t; break; } }
-    }
-    if (text) { if (label.textContent !== text) label.textContent = text; }
-    shown = !!text;
-    cur.classList.toggle('on', shown);
-    if (shown && !raf) raf = requestAnimationFrame(loop);
+    if (!quiet) for (const [sel, word] of CONTEXT) { if (t.closest(sel)) { text = word; break; } }
+    if (text && label.textContent !== text) label.textContent = text;
+    cur.classList.toggle('live', !quiet);
+    cur.classList.toggle('on', !!text);
+    if (!raf) raf = requestAnimationFrame(loop);
   }, { passive: true });
-  document.documentElement.addEventListener('pointerleave', () => { shown = false; cur.classList.remove('on'); });
+  document.documentElement.addEventListener('pointerleave', () => cur.classList.remove('live', 'on'));
 })();
 
 /* ══ 25. SESSION ══
@@ -2160,13 +2359,10 @@ const Assistant = (function () {
    in sessionStorage for this tab only and holds section ids and things opened
    on this page: nothing about the visitor, nothing sent anywhere. */
 (function () {
-  const MODULES = [
-    ['about', 'About'], ['experience', 'Experience'], ['skills', 'Technology'], ['pipeline', 'AI Lab'],
-    ['projects', 'Projects'], ['process', 'Process'], ['education', 'Education'], ['focus', 'Focus'], ['contact', 'Contact']
-  ].filter(([id]) => document.getElementById(id)).map(([id, label]) => ({ id, label }));
+  const MODULES = CHAPTERS.filter(([id]) => document.getElementById(id)).map(([id, n, label]) => ({ id, n, label }));
   const labelOf = id => (MODULES.find(m => m.id === id) || {}).label;
   // Which section a deeper look belongs to on the trace.
-  const HOME = { layer: 'skills', tech: 'skills', pipeline: 'pipeline', case: 'projects' };
+  const HOME = { layer: 'thinking', tech: 'thinking', pipeline: 'pipeline', case: 'projects' };
   const KIND = { layer: 'layer', tech: 'tech', pipeline: 'ai lab', case: 'project', eng: 'mode', hidden: 'found' };
 
   /* — store — */
@@ -2216,7 +2412,8 @@ const Assistant = (function () {
   // A section counts as explored once the visitor stays in it, not when a
   // nav jump merely scrolls through it.
   let current = 'hero', dwell = 0;
-  function onContext(id) {
+  function onContext(section) {
+    const id = CHAPTER_OF[section] || section;
     current = id;
     paintRail();
     clearTimeout(dwell);
@@ -2250,7 +2447,7 @@ const Assistant = (function () {
   rail.className = 'srail';
   rail.setAttribute('aria-hidden', 'true');
   rail.innerHTML = '<span class="srail-track"><span class="srail-fill"></span></span>' +
-    MODULES.map(m => `<a href="#${m.id}" tabindex="-1" data-m="${m.id}"><span class="srail-lbl mono">${m.label}</span><i></i></a>`).join('');
+    MODULES.map(m => `<a href="#${m.id}" tabindex="-1" data-m="${m.id}"><span class="srail-lbl mono">${m.n} ${m.label}</span><i></i></a>`).join('');
   document.body.appendChild(rail);
   const railLinks = $$('a', rail);
   function paintRail() {
@@ -2394,7 +2591,174 @@ const Assistant = (function () {
   onContext(root.dataset.context || 'hero');
 })();
 
+/* ══ 26. LIVING CODE CANVAS ══
+   One quiet drawing behind the page, made of the same 28 points throughout.
+   Each chapter gives them a new arrangement: an emerging system (identity),
+   architectural pathways (thinking, building), a device network (capabilities,
+   experience), detection regions (intelligence), and finally the PN monogram
+   (connection). Points glide between arrangements over ~1.2s, then the canvas
+   stops drawing entirely until the next change. Reduced motion jumps straight
+   to each arrangement. Decorative: hidden from assistive tech. */
+(function () {
+  const host = $('.backdrop');
+  if (!host || !document.createElement('canvas').getContext) return;
+  const cv = document.createElement('canvas');
+  cv.className = 'bd-canvas';
+  cv.setAttribute('aria-hidden', 'true');
+  host.appendChild(cv);
+  const ctx = cv.getContext('2d');
+  const N = 28;
+  const STATE_OF = { hero: 'emerge', about: 'emerge', thinking: 'architecture', process: 'architecture', skills: 'network',
+    projects: 'architecture', pipeline: 'detection', focus: 'detection', experience: 'network', education: 'network', contact: 'resolve' };
+  let W = 0, H = 0, dpr = 1, state = null, from = null, to = null, t0 = 0, raf = 0, pts = [];
+
+  // Arrangements, in viewport fractions. Each returns { p: [[x, y]…N], e: [[i, j, style]…], l: [[i, text]…] }.
+  const ring = (cx, cy, r, i, n, turn = 0) => [cx + Math.cos(i / n * Math.PI * 2 + turn) * r * H / W, cy + Math.sin(i / n * Math.PI * 2 + turn) * r];
+  const SHAPES = {
+    emerge() {
+      const p = [], e = [];
+      // A loose frame around the page, still finding its connections.
+      for (let i = 0; i < N; i++) {
+        const side = i % 4, f = (Math.floor(i / 4) + .5) / 7;
+        p.push(side === 0 ? [.02 + f * .02, .1 + f * .8] : side === 1 ? [.96 + f * .02, .08 + f * .84] : side === 2 ? [.04 + f * .1, .94] : [.86 + f * .1, .05]);
+      }
+      for (let i = 0; i < 20; i += 4) e.push([i, i + 4, 'solid'], [i + 1, i + 5, 'solid']);
+      return { p, e, l: [[4, 'init()'], [9, '0x01'], [17, 'connect']] };
+    },
+    architecture() {
+      const cols = [.025, .09, .91, .975], p = [], e = [];
+      for (let i = 0; i < N; i++) p.push([cols[i % 4], .12 + Math.floor(i / 4) * .12]);
+      for (let i = 0; i < N - 4; i++) { if (i % 4 === 0 || i % 4 === 2) e.push([i, i + 4, 'solid']); if (i % 8 === 0 || i % 8 === 2) e.push([i, i + 1, 'orth']); }
+      return { p, e, l: [[0, 'client'], [9, 'api'], [18, 'db'], [27, 'deploy']] };
+    },
+    network() {
+      const hubs = [[.04, .3], [.96, .26], [.95, .78], [.05, .74]], p = [], e = [];
+      for (let i = 0; i < N; i++) {
+        const h = hubs[i % 4], k = Math.floor(i / 4);
+        p.push(k === 0 ? h : ring(h[0], h[1], .07, k, 6, i));
+        if (k > 0) e.push([i % 4, i, 'solid']);
+      }
+      e.push([0, 1, 'dash'], [1, 2, 'dash'], [2, 3, 'dash'], [3, 0, 'dash']);
+      return { p, e, l: [[0, 'edge-01'], [1, 'gateway'], [2, 'sensor'], [3, 'api']] };
+    },
+    detection() {
+      const boxes = [[.01, .18, .07, .16], [.92, .14, .07, .2], [.925, .6, .065, .15], [.015, .62, .075, .18]], p = [], e = [];
+      boxes.forEach(([x, y, w, h], b) => {
+        p.push([x, y], [x + w, y], [x + w, y + h], [x, y + h]);
+        const k = b * 4;
+        e.push([k, k + 1, 'solid'], [k + 1, k + 2, 'solid'], [k + 2, k + 3, 'solid'], [k + 3, k, 'solid']);
+      });
+      for (let i = 16; i < N; i++) { const b = boxes[i % 4]; p.push([b[0] + b[2] * ((i * 37 % 10) / 10), b[1] + b[3] * ((i * 53 % 10) / 10)]); }
+      return { p, e, l: [[0, 'car 0.94'], [4, 'person 0.62'], [8, 'signal: red'], [12, 'plate 0.56']] };
+    },
+    resolve() {
+      // The PN monogram: its 8 vertices, then the remaining points along its strokes.
+      const V = [[9, 39], [9, 24], [9, 9], [24, 9], [24, 24], [24, 39], [39, 39], [39, 9]];
+      const E = [[0, 1], [1, 2], [2, 3], [3, 4], [4, 5], [4, 1], [3, 6], [6, 7]];
+      const s = Math.min(.34, .3 * W / H), ox = .93 - s / 2 * H / W, oy = .68 - s / 2;
+      const map = ([x, y]) => [ox + (x / 48) * s * H / W, oy + (y / 48) * s];
+      const p = V.map(map);
+      let k = 0;
+      while (p.length < N) { const [a, b] = E[k % E.length], f = (Math.floor(k / E.length) + 1) / 4; p.push(map([V[a][0] + (V[b][0] - V[a][0]) * f, V[a][1] + (V[b][1] - V[a][1]) * f])); k++; }
+      return { p, e: E.map(([a, b]) => [a, b, 'mark']), l: [[7, 'PN']], sig: 7 };
+    }
+  };
+
+  function size() {
+    dpr = Math.min(2, window.devicePixelRatio || 1);
+    W = innerWidth; H = innerHeight;
+    cv.width = W * dpr; cv.height = H * dpr;
+    cv.style.width = W + 'px'; cv.style.height = H + 'px';
+  }
+  const ease = t => (t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+  function colours() {
+    const cs = getComputedStyle(root);
+    return { line: cs.getPropertyValue('--silver').trim() || '#b8bcc4', accent: cs.getPropertyValue('--accent').trim() || '#c8f03c', text: cs.getPropertyValue('--text-3').trim() || '#8f8b81' };
+  }
+  function edges(shape, alpha, c) {
+    shape.e.forEach(([i, j, style]) => {
+      const a = pts[i], b = pts[j];
+      if (!a || !b) return;
+      ctx.globalAlpha = alpha * (style === 'mark' ? .4 : style === 'dash' ? .16 : .2);
+      ctx.strokeStyle = style === 'mark' ? c.accent : c.line;
+      ctx.setLineDash(style === 'dash' ? [4, 6] : []);
+      ctx.lineWidth = style === 'mark' ? 1.6 : 1;
+      ctx.beginPath(); ctx.moveTo(a[0] * W, a[1] * H);
+      if (style === 'orth') ctx.lineTo(b[0] * W, a[1] * H);
+      ctx.lineTo(b[0] * W, b[1] * H); ctx.stroke();
+    });
+    ctx.setLineDash([]);
+    ctx.globalAlpha = alpha * .3; ctx.fillStyle = c.text; ctx.font = '10px "JetBrains Mono", ui-monospace, monospace';
+    // Labels only where the margins can hold them.
+    if (W >= 1100) shape.l.forEach(([i, text]) => { const p = pts[i]; if (p) ctx.fillText(text, p[0] * W + 8, p[1] * H - 8); });
+  }
+  function draw(k) {
+    const c = colours();
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, W, H);
+    // Edges of the old arrangement fade out in the first half, the new ones in the second.
+    if (from && k < .5) edges(from, 1 - k * 2, c);
+    if (to) edges(to, k < .5 ? 0 : (k - .5) * 2, c);
+    pts.forEach((p, i) => {
+      const sig = to && to.sig === i;
+      ctx.globalAlpha = sig ? .7 : .28;
+      ctx.fillStyle = sig ? c.accent : c.line;
+      ctx.beginPath(); ctx.arc(p[0] * W, p[1] * H, sig ? 3.2 : 1.6, 0, Math.PI * 2); ctx.fill();
+    });
+    ctx.globalAlpha = 1;
+  }
+  function go(name, instant) {
+    if (!SHAPES[name]) return;
+    const next = SHAPES[name]();
+    const start = pts.length ? pts.map(p => p.slice()) : next.p.map(p => p.slice());
+    from = to; to = next; state = name;
+    cancelAnimationFrame(raf);
+    if (instant || REDUCE_MOTION || !from) { pts = next.p.map(p => p.slice()); from = null; draw(1); return; }
+    t0 = performance.now();
+    const step = now => {
+      const k = Math.min(1, (now - t0) / 1200), e = ease(k);
+      pts = start.map((p, i) => [p[0] + (next.p[i][0] - p[0]) * e, p[1] + (next.p[i][1] - p[1]) * e]);
+      draw(k);
+      raf = k < 1 ? requestAnimationFrame(step) : 0;
+      if (!raf) from = null;
+    };
+    raf = requestAnimationFrame(step);
+  }
+
+  size();
+  go(STATE_OF[root.dataset.context || 'hero'] || 'emerge', true);
+  window.addEventListener('pn:context', e => { const s = STATE_OF[e.detail.context]; if (s && s !== state) go(s); });
+  window.addEventListener('pn:themechange', () => draw(1));
+  let rt = 0;
+  window.addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => { size(); go(state, true); }, 150); }, { passive: true });
+})();
+
+/* ══ 27. SMALL RESPONSES ══
+   The contact portal's lines light towards the channel being pointed at or
+   focused; project imagery shifts a few pixels with the pointer (desktop). */
+(function () {
+  const mark = $('.portal-mark');
+  $$('.pa-row').forEach(row => {
+    const on = () => { if (mark) mark.dataset.pa = row.dataset.pa; };
+    const off = () => { if (mark) delete mark.dataset.pa; };
+    row.addEventListener('pointerenter', on); row.addEventListener('pointerleave', off);
+    row.addEventListener('focusin', on); row.addEventListener('focusout', off);
+  });
+  if (!FINE_POINTER || REDUCE_MOTION) return;
+  $$('.world').forEach(w => {
+    const media = $$('.w-visual img, .as-phone, .cp-check, .am-flow', w);
+    if (!media.length) return;
+    w.addEventListener('pointermove', e => {
+      const r = w.getBoundingClientRect();
+      const x = (e.clientX - r.left) / r.width - .5, y = (e.clientY - r.top) / r.height - .5;
+      media.forEach(m => m.style.setProperty('--dx', (x * -8).toFixed(1) + 'px'));
+      media.forEach(m => m.style.setProperty('--dy', (y * -6).toFixed(1) + 'px'));
+    }, { passive: true });
+    w.addEventListener('pointerleave', () => media.forEach(m => { m.style.setProperty('--dx', '0px'); m.style.setProperty('--dy', '0px'); }));
+  });
+})();
+
 /* ══ CONSOLE ══ */
-console.log('%cPratyush Nandi%c  Software Developer', 'font:700 14px system-ui;color:#f0a83a', 'font:12px system-ui;color:#8a90a2');
-console.log('%cLike what you see? → pratyushnandi100@gmail.com', 'font:12px ui-monospace,monospace;color:#f6c56f');
+console.log('%cPratyush Nandi%c  Software Developer', 'font:700 14px system-ui;color:#c8f03c', 'font:12px system-ui;color:#8a90a2');
+console.log('%cLike what you see? → pratyushnandi100@gmail.com', 'font:12px ui-monospace,monospace;color:#e2ff7a');
 console.log('%cNot everything is in the navigation. Ctrl K, then: ls -a', 'font:12px ui-monospace,monospace;color:#8a90a2');
