@@ -47,8 +47,7 @@
   <meta name="twitter:description" content="I build software that sees, thinks and acts: full-stack products, computer vision and edge systems." />
   <meta name="twitter:image" content="https://pratyushnandi.vercel.app/images/profile.jpg" />
   <title>Pratyush Nandi | Software Developer · Full-Stack &amp; Computer Vision</title>
-  <link rel="icon"
-    href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0%25' stop-color='%23f0a83a'/%3E%3Cstop offset='100%25' stop-color='%23f6c56f'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect x='4' y='4' width='92' height='92' rx='22' fill='%230c0d0f'/%3E%3Ctext x='50' y='64' text-anchor='middle' fill='url(%23g)' font-size='40' font-weight='800' font-family='Arial'%3EPN%3C/text%3E%3C/svg%3E" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect width='48' height='48' rx='11' fill='%23090a09'/%3E%3Cg fill='none' stroke='%23ece8dc' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M10 38V10H24V38M24 24H10M24 10L38 38V10'/%3E%3C/g%3E%3Ccircle cx='38' cy='10' r='4.2' fill='%23c8f03c'/%3E%3C/svg%3E" />
 
   <!-- Fonts are self-hosted (@font-face in style.css). The three faces the
        first screen uses are fetched straight away instead of after the CSS. -->
@@ -58,8 +57,8 @@
 
   <!-- ?v= is bumped with every release so returning visitors never keep a stale stylesheet.
        icons.css is generated (scripts/build-icons.mjs): only the icons this page uses. -->
-  <link rel="stylesheet" href="style.css?v=11.0.0" />
-  <link rel="stylesheet" href="icons.css?v=11.0.0" />
+  <link rel="stylesheet" href="style.css?v=12.0.0" />
+  <link rel="stylesheet" href="icons.css?v=12.0.0" />
 
   <!-- Only JS ever removes the preloader, so without it the overlay would cover
        the page forever. Reveal-on-scroll never runs either, so show everything. -->
@@ -106,6 +105,9 @@
 </head>
 
 <body>
+  <!-- PN//SIGNATURE monogram: a P and an N sharing one stem, every vertex a node,
+       one node carrying the signal. Reused by the nav, intro, universe and portal. -->
+  <svg class="sprite" width="0" height="0" aria-hidden="true" focusable="false"><symbol id="pnMark" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path class="pn-s" d="M9 39V9H24V39" /><path class="pn-s" d="M24 24H9" /><path class="pn-s" d="M24 9L39 39V9" /></g><g class="pn-n" fill="var(--pn-node, #090a09)" stroke="currentColor" stroke-width="1.6"><circle cx="9" cy="39" r="2.4" /><circle cx="9" cy="9" r="2.4" /><circle cx="9" cy="24" r="2.4" /><circle cx="24" cy="9" r="2.4" /><circle cx="24" cy="39" r="2.4" /><circle cx="39" cy="39" r="2.4" /></g><circle class="pn-core" cx="24" cy="24" r="1.9" fill="currentColor" /><circle class="pn-sig" cx="39" cy="9" r="3.2" fill="var(--pn-accent, #c8f03c)" /></symbol></svg>
   <a class="skip-link" href="#main">Skip to content</a>
 
   <!-- Ambient page backdrop: static grid + two soft light sources. No animation
@@ -122,17 +124,7 @@
   <div id="preloader" aria-busy="true">
     <p class="sr-only" role="status">Loading portfolio…</p>
     <div class="pl-box" aria-hidden="true">
-      <svg class="pl-mark" viewBox="0 0 64 64" fill="none">
-        <defs>
-          <linearGradient id="plg" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0" stop-color="#f0a83a" />
-            <stop offset="1" stop-color="#f6c56f" />
-          </linearGradient>
-        </defs>
-        <rect class="pl-frame" x="2" y="2" width="60" height="60" rx="16" stroke="url(#plg)" stroke-width="2" />
-        <path class="pl-glyph" d="M22 24 14 32l8 8M42 24l8 8-8 8M35 20l-6 24" stroke="url(#plg)" stroke-width="3"
-          stroke-linecap="round" stroke-linejoin="round" />
-      </svg>
+      <svg class="pl-mark" viewBox="0 0 48 48" fill="none"><g fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path class="pn-s pl-draw" d="M9 39V9H24V39" /><path class="pn-s pl-draw" d="M24 24H9" /><path class="pn-s pl-draw" d="M24 9L39 39V9" /></g><g class="pn-n" fill="var(--pn-node, #090a09)" stroke="currentColor" stroke-width="1.6"><circle cx="9" cy="39" r="2.4" /><circle cx="9" cy="9" r="2.4" /><circle cx="9" cy="24" r="2.4" /><circle cx="24" cy="9" r="2.4" /><circle cx="24" cy="39" r="2.4" /><circle cx="39" cy="39" r="2.4" /></g><circle class="pn-core" cx="24" cy="24" r="1.9" fill="currentColor" /><circle class="pn-sig" cx="39" cy="9" r="3.2" fill="var(--pn-accent, #c8f03c)" /></svg>
       <div class="pl-text">
         <span class="pl-name">Pratyush Nandi</span>
         <span class="pl-cmd"><span class="pl-prompt">$</span> <span id="plCmd">boot --session</span></span>
@@ -152,17 +144,18 @@
   <header id="nav" class="nav">
     <nav class="nav-inner" aria-label="Primary">
       <!-- Named explicitly: on phones the wordmark is hidden and the mark is decorative. -->
-      <a href="#hero" class="logo" aria-label="PN pratyush.dev: Pratyush Nandi, back to top">
-        <span class="logo-mark" aria-hidden="true">PN</span>
-        <span class="logo-text" aria-hidden="true">pratyush<span class="logo-dot">.</span>dev</span>
+      <a href="#hero" class="logo" aria-label="PN//Nandi: Pratyush Nandi, back to top">
+        <span class="logo-mark" aria-hidden="true"><svg viewBox="0 0 48 48"><use href="#pnMark" /></svg></span>
+        <span class="logo-text" aria-hidden="true">PN<span class="logo-dot">//</span>Nandi</span>
       </a>
+      <span class="nav-chapter mono" id="navChapter" aria-hidden="true"><b>01</b> Identity</span>
       <ul class="n-links" id="nLinks">
         <li><a href="#about">About</a></li>
-        <li><a href="#experience">Experience</a></li>
+        <li><a href="#thinking">Thinking</a></li>
         <li><a href="#skills">Stack</a></li>
-        <li><a href="#pipeline">AI Lab</a></li>
         <li><a href="#projects">Projects</a></li>
-        <li><a href="#education">Education</a></li>
+        <li><a href="#pipeline">AI Lab</a></li>
+        <li><a href="#experience">Experience</a></li>
         <li><a href="#contact">Contact</a></li>
         <li class="n-indicator" aria-hidden="true"></li>
       </ul>
@@ -193,13 +186,10 @@
   </header>
 
   <main id="main">
-
     <!-- ════════════════════════════════════
-       HERO
+       CHAPTER 01 · IDENTITY
     ════════════════════════════════════ -->
-    <section id="hero" class="hero" aria-labelledby="heroTitle">
-      <div class="hero-spot" aria-hidden="true"></div>
-
+    <section id="hero" class="hero" aria-labelledby="heroTitle" data-chapter="01">
       <div class="container hero-wrap">
         <div class="hero-copy">
           <div class="hero-meta" data-hero>
@@ -209,18 +199,13 @@
 
           <p class="hero-name mono"><img class="hn-avatar" src="images/profile-avatar.jpg" alt="" width="36" height="36" decoding="async" /> Pratyush Nandi <span class="hn-sep" aria-hidden="true">/</span> Software Developer</p>
 
-          <!-- The headline is never hidden behind an entrance animation: it is
-               readable the moment the page paints (and it is the LCP element). -->
+          <!-- Readable the moment the page paints (and the LCP element). -->
           <h1 class="hero-title" id="heroTitle">I Build Software That <span class="ht-verb">Sees</span>, <span class="ht-verb">Thinks</span> &amp;&nbsp;<span class="ht-verb">Acts</span>.</h1>
 
           <p class="hero-lead">
             Full-stack products, computer-vision pipelines and edge systems, built from the interface a person
             uses <em class="serif">down to the device at the edge</em>.
           </p>
-
-          <ul class="hi-tags mono" aria-label="What I work on">
-            <li>Full-Stack</li><li>Computer Vision</li><li>Visual AI</li><li>IoT</li><li>Edge Systems</li>
-          </ul>
 
           <p class="hero-bio">
             Software Developer at <strong>Eltern Segen Technologie Pvt. Ltd.</strong>, working across
@@ -250,70 +235,91 @@
           </div>
         </div>
 
-        <!-- Visual: the headline as a system. A camera frame (sees) feeds a rule
-             (thinks) that raises an alert through an API (acts). An illustration:
-             decorative, and labelled as one. -->
-        <div class="hero-visual" id="heroVisual" aria-hidden="true">
-          <div class="hv-layer sta" data-depth="10">
-            <div class="sta-card sta-sees">
-              <div class="sta-h mono"><span><b>01</b> sees</span><span>frame 0142</span></div>
-              <svg class="sta-frame" viewBox="0 0 320 150">
-                <rect class="sf-road" width="320" height="150" />
-                <path class="sf-lane" d="M0 98H320" />
-                <path class="sf-stop" d="M196 62V140" />
-                <g class="sf-signal"><rect x="232" y="14" width="13" height="34" rx="3" /><circle class="on" cx="238.5" cy="22" r="3.6" /><circle cx="238.5" cy="31" r="3.6" /><circle cx="238.5" cy="40" r="3.6" /></g>
-                <g class="sf-car"><rect x="168" y="104" width="66" height="28" rx="7" /><rect class="sf-glass" x="212" y="108" width="14" height="20" rx="3" /></g>
-                <g class="sf-car sf-car-2"><rect x="34" y="68" width="62" height="26" rx="7" /><rect class="sf-glass" x="74" y="72" width="13" height="18" rx="3" /></g>
-                <g class="sf-box sf-box-1"><rect x="162" y="98" width="78" height="40" /><rect class="sf-tag" x="162" y="86" width="62" height="12" /><text x="166" y="95">car 0.94</text></g>
-                <g class="sf-box sf-box-2"><rect x="28" y="62" width="74" height="38" /><rect class="sf-tag" x="28" y="50" width="62" height="12" /><text x="32" y="59">car 0.91</text></g>
-                <g class="sf-box sf-box-3"><rect x="228" y="10" width="21" height="42" /><rect class="sf-tag" x="252" y="10" width="62" height="12" /><text x="256" y="19">signal: red</text></g>
+        <!-- ═══ THE PN DIGITAL UNIVERSE ═══
+             Four engineering domains around the PN mark. Domains are buttons; the
+             field (orbits, links, objects) is drawn in SVG and is decorative.
+             script.js §5 owns selection, pathways, inspection and pointer depth. -->
+        <div class="universe" id="universe" data-hero>
+          <div class="uv-stage">
+            <div class="uv-field" aria-hidden="true">
+              <svg class="uv-plane" viewBox="0 0 600 600">
+                <ellipse class="uv-orbit" cx="300" cy="300" rx="250" ry="250" />
+                <ellipse class="uv-orbit o2" cx="300" cy="300" rx="178" ry="178" />
+                <ellipse class="uv-orbit o3" cx="300" cy="300" rx="96" ry="96" />
+                <path class="uv-axis" d="M300 30V570M30 300H570" />
+                <g class="uv-stars">
+                  <circle cx="92" cy="300" r="1.2" /><circle cx="300" cy="52" r="1.2" /><circle cx="512" cy="300" r="1.2" /><circle cx="300" cy="548" r="1.2" />
+                  <circle cx="174" cy="146" r="1" /><circle cx="428" cy="148" r="1" /><circle cx="430" cy="452" r="1" /><circle cx="170" cy="452" r="1" />
+                  <circle cx="246" cy="128" r=".9" /><circle cx="470" cy="256" r=".9" /><circle cx="356" cy="472" r=".9" /><circle cx="128" cy="352" r=".9" />
+                </g>
               </svg>
-              <p class="sta-cap mono">YOLO · OpenCV · Python</p>
+              <svg class="uv-links" viewBox="0 0 600 600">
+                <g class="uv-spokes">
+                  <path data-l="core-sw" d="M300 300L150 172" /><path data-l="core-ai" d="M300 300L452 150" />
+                  <path data-l="core-cv" d="M300 300L462 440" /><path data-l="core-iot" d="M300 300L146 448" />
+                </g>
+                <g class="uv-ring">
+                  <path data-l="sw-ai" d="M150 172Q300 96 452 150" /><path data-l="ai-cv" d="M452 150Q540 300 462 440" />
+                  <path data-l="cv-iot" d="M462 440Q300 520 146 448" /><path data-l="iot-sw" d="M146 448Q64 300 150 172" />
+                </g>
+                <g class="uv-sats">
+                  <path data-l="sw" d="M150 172L78 122M150 172L232 94M150 172L72 250" />
+                  <path data-l="ai" d="M452 150L378 86M452 150L528 106M452 150L538 224" />
+                  <path data-l="cv" d="M462 440L538 392M462 440L522 514M462 440L392 528" />
+                  <path data-l="iot" d="M146 448L72 392M146 448L84 514M146 448L228 528" />
+                </g>
+                <g class="uv-pulses">
+                  <circle data-l="sw-ai" r="2.6" /><circle data-l="ai-cv" r="2.6" /><circle data-l="cv-iot" r="2.6" /><circle data-l="iot-sw" r="2.6" />
+                </g>
+              </svg>
+              <!-- Technical objects: what each domain is made of. -->
+              <ul class="uv-objects">
+                <li data-d="sw" style="--x:78;--y:122"><span class="uv-glyph">&lt;/&gt;</span><b>React</b><em>interfaces · components</em></li>
+                <li data-d="sw" style="--x:232;--y:94"><span class="uv-glyph">{ }</span><b>Node.js</b><em>REST APIs · Express</em></li>
+                <li data-d="sw" style="--x:72;--y:250"><span class="uv-glyph">sql</span><b>SQL</b><em>MySQL · SQLite · PostgreSQL</em></li>
+                <li data-d="ai" style="--x:378;--y:86"><span class="uv-glyph">py</span><b>Python</b><em>training · evaluation</em></li>
+                <li data-d="ai" style="--x:528;--y:106"><span class="uv-glyph">nn</span><b>Models</b><em>YOLOv8 · Ultralytics</em></li>
+                <li data-d="ai" style="--x:538;--y:224"><span class="uv-glyph">df</span><b>Data</b><em>labelled frames · metrics</em></li>
+                <li data-d="cv" style="--x:538;--y:392"><span class="uv-glyph">[ ]</span><b>Detection</b><em>boxes · classes · scores</em></li>
+                <li data-d="cv" style="--x:522;--y:514"><span class="uv-glyph">cv</span><b>OpenCV</b><em>frames · pre-processing</em></li>
+                <li data-d="cv" style="--x:392;--y:528"><span class="uv-glyph">cam</span><b>Camera</b><em>RTSP streams</em></li>
+                <li data-d="iot" style="--x:72;--y:392"><span class="uv-glyph">pi</span><b>Raspberry Pi</b><em>inference on site</em></li>
+                <li data-d="iot" style="--x:84;--y:514"><span class="uv-glyph">io</span><b>Devices</b><em>sensors · cameras</em></li>
+                <li data-d="iot" style="--x:228;--y:528"><span class="uv-glyph">evt</span><b>Events</b><em>to the same API</em></li>
+              </ul>
+              <span class="uv-core"><svg viewBox="0 0 48 48"><use href="#pnMark" /></svg></span>
             </div>
-            <div class="sta-card sta-thinks">
-              <div class="sta-h mono"><span><b>02</b> thinks</span><span>rule</span></div>
-              <pre class="sta-code mono"><span class="tk-k">if</span> (signal <span class="tk-p">===</span> <span class="tk-s">'red'</span>
- <span class="tk-p">&amp;&amp;</span> car.<span class="tk-a">crossed</span>(stopLine))
-  <span class="tk-a">raise</span>(<span class="tk-s">'red_light'</span>)</pre>
-              <p class="sta-cap mono">Python · Node.js</p>
-            </div>
-            <div class="sta-card sta-acts">
-              <div class="sta-h mono"><span><b>03</b> acts</span><span>api</span></div>
-              <p class="sta-req mono"><span>POST</span> /api/alerts <em>201</em></p>
-              <p class="sta-alert"><i class="fas fa-triangle-exclamation"></i> <span>Red-light violation<small class="mono">sent for human review</small></span></p>
-              <p class="sta-cap mono">APIs · dashboards · devices</p>
+
+            <div class="uv-domains" role="group" aria-label="Engineering domains">
+              <button type="button" class="uv-domain" data-d="sw" style="--x:150;--y:172" aria-pressed="false" aria-controls="uvPanel"><span class="mono">01</span> <strong>Software Engineering</strong></button>
+              <button type="button" class="uv-domain" data-d="ai" style="--x:452;--y:150" aria-pressed="false" aria-controls="uvPanel"><span class="mono">02</span> <strong>Artificial Intelligence</strong></button>
+              <button type="button" class="uv-domain" data-d="cv" style="--x:462;--y:440" aria-pressed="false" aria-controls="uvPanel"><span class="mono">03</span> <strong>Computer Vision</strong></button>
+              <button type="button" class="uv-domain" data-d="iot" style="--x:146;--y:448" aria-pressed="false" aria-controls="uvPanel"><span class="mono">04</span> <strong>IoT &amp; Edge Systems</strong></button>
             </div>
           </div>
 
-          <span class="sta-note mono">illustration · not live data</span>
+          <div class="uv-panel" id="uvPanel" aria-live="polite">
+            <div class="uvp-default">
+              <span class="card-label mono">pn · universe</span>
+              <p class="uvp-lead">Four domains, one system. Select one to see what it is made of and where I've built it.</p>
+            </div>
+          </div>
         </div>
 
-        <!-- The two flows the system map explains. Each stop opens the map with
-             that component selected. -->
-        <nav class="hero-system" data-hero aria-label="Explore the system map">
-          <span class="hsys-label mono">explore the system</span>
-          <div class="hsys-lanes">
-            <ol class="hsys-path" aria-label="Web request path">
-              <li><button type="button" data-goto-node="browser">Browser</button></li>
-              <li><button type="button" data-goto-node="frontend">Frontend</button></li>
-              <li><button type="button" data-goto-node="api">API</button></li>
-              <li><button type="button" data-goto-node="database">Database</button></li>
-            </ol>
-            <ol class="hsys-path" aria-label="Vision pipeline">
-              <li><button type="button" data-goto-node="camera">Camera</button></li>
-              <li><button type="button" data-goto-node="stream">RTSP</button></li>
-              <li><button type="button" data-goto-node="cv">Vision</button></li>
-              <li><button type="button" data-goto-node="edge">Edge</button></li>
-              <li><button type="button" data-goto-node="alert">Alert</button></li>
-            </ol>
-          </div>
+        <!-- The story, in six chapters. Every chapter is one click away. -->
+        <nav class="hero-chapters" data-hero aria-label="Chapters">
+          <ol>
+            <li><a href="#hero"><span class="mono">01</span> Identity</a></li>
+            <li><a href="#thinking"><span class="mono">02</span> Thinking</a></li>
+            <li><a href="#projects"><span class="mono">03</span> Building</a></li>
+            <li><a href="#pipeline"><span class="mono">04</span> Intelligence</a></li>
+            <li><a href="#experience"><span class="mono">05</span> Experience</a></li>
+            <li><a href="#contact"><span class="mono">06</span> Connection</a></li>
+          </ol>
         </nav>
       </div>
     </section>
 
-    <!-- ════════════════════════════════════
-       ABOUT
-    ════════════════════════════════════ -->
     <section id="about" class="sec" aria-labelledby="aboutTitle">
       <div class="container">
         <header class="sec-head" data-reveal>
@@ -386,13 +392,739 @@
     </section>
 
     <!-- ════════════════════════════════════
-       EXPERIENCE
+       CHAPTER 02 · THINKING — ENGINEERING DNA
+       Three journeys through a system. Stage copy lives in script.js (DNA) so
+       the explorer, the palette and the assistant share one source; the lists
+       below are the no-JS reading of the same structure.
     ════════════════════════════════════ -->
-    <section id="experience" class="sec sec-alt" aria-labelledby="expTitle">
+    <section id="thinking" class="sec sec-alt" aria-labelledby="dnaTitle" data-chapter="02">
+      <div class="container">
+        <div class="chapter" data-reveal>
+          <span class="ch-num mono">02</span>
+          <span class="ch-name">Thinking</span>
+          <span class="ch-rule" aria-hidden="true"></span>
+          <p class="ch-lede">How I approach a system: as connected engineering problems, not a list of tools.</p>
+        </div>
+        <header class="sec-head sec-head-split" data-reveal>
+          <div>
+            <span class="sec-kicker mono"><span class="sk-num">02</span><span class="sk-sep" aria-hidden="true">/</span> Engineering DNA</span>
+            <h2 class="sec-title" id="dnaTitle">Three journeys, <em class="serif">one way of thinking</em></h2>
+          </div>
+          <p class="sec-sub">Pick a journey to walk its pathway. Every stage says what it does, the tools that fit, the trade-offs,
+            and whether a project on this page actually shows it.</p>
+        </header>
+
+        <div class="dna" id="dna" data-reveal>
+          <div class="dna-bar">
+            <span class="dna-legend mono">
+              <span class="st st-built">built</span> in a project here
+              <span class="st st-partial">partly built</span>
+              <span class="st st-concept">concept</span> architecture I design for, not yet in a public project
+            </span>
+            <button type="button" class="dna-back mono" id="dnaBack" hidden><i class="fas fa-arrow-left" aria-hidden="true"></i> All journeys</button>
+          </div>
+
+          <div class="dna-strands" id="dnaStrands">
+            <svg class="dna-rungs" id="dnaRungs" aria-hidden="true"></svg>
+
+            <article class="dna-strand" data-j="product">
+              <header class="ds-head">
+                <span class="ds-letter mono">A</span>
+                <div><h3>Digital Product Engineering</h3><p>From what a person sees to how it ships.</p></div>
+                <button type="button" class="ds-go" aria-expanded="false" aria-controls="dnaDetail">Explore journey A</button>
+              </header>
+              <ol class="ds-stages">
+                <li><button type="button" data-s="interface">Interface</button></li>
+                <li><button type="button" data-s="logic">Application Logic</button></li>
+                <li><button type="button" data-s="api">API</button></li>
+                <li><button type="button" data-s="database">Database</button></li>
+                <li><button type="button" data-s="deploy">Deployment</button></li>
+              </ol>
+            </article>
+
+            <article class="dna-strand" data-j="vision">
+              <header class="ds-head">
+                <span class="ds-letter mono">B</span>
+                <div><h3>Visual Intelligence</h3><p>From a camera frame to an event someone acts on.</p></div>
+                <button type="button" class="ds-go" aria-expanded="false" aria-controls="dnaDetail">Explore journey B</button>
+              </header>
+              <ol class="ds-stages">
+                <li><button type="button" data-s="camera">Camera Input</button></li>
+                <li><button type="button" data-s="stream">RTSP Stream</button></li>
+                <li><button type="button" data-s="video">Video Processing</button></li>
+                <li><button type="button" data-s="inference">AI Inference</button></li>
+                <li><button type="button" data-s="detection">Detection</button></li>
+                <li><button type="button" data-s="event">Event</button></li>
+              </ol>
+            </article>
+
+            <article class="dna-strand" data-j="connected">
+              <header class="ds-head">
+                <span class="ds-letter mono">C</span>
+                <div><h3>Connected Intelligence</h3><p>From a device in the field to a dashboard that makes sense of it.</p></div>
+                <button type="button" class="ds-go" aria-expanded="false" aria-controls="dnaDetail">Explore journey C</button>
+              </header>
+              <ol class="ds-stages">
+                <li><button type="button" data-s="device">IoT Device</button></li>
+                <li><button type="button" data-s="edge">Edge Processing</button></li>
+                <li><button type="button" data-s="comms">Communication</button></li>
+                <li><button type="button" data-s="monitoring">Monitoring</button></li>
+                <li><button type="button" data-s="dashboard">Intelligent Dashboard</button></li>
+              </ol>
+            </article>
+          </div>
+
+          <div class="dna-detail" id="dnaDetail" aria-live="polite" hidden></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="process" class="sec" aria-labelledby="processTitle">
+      <div class="container proc-wrap">
+        <div class="proc-aside">
+          <header class="sec-head" data-reveal>
+            <span class="sec-kicker mono"><span class="sk-num">02</span><span class="sk-sep" aria-hidden="true">/</span> Process</span>
+            <h2 class="sec-title" id="processTitle">Not just interfaces. <em class="serif">Systems.</em></h2>
+            <p class="sec-sub">The loop every project goes through, from idea to optimisation, shown on the one system you
+              can inspect right now: this portfolio.</p>
+          </header>
+          <p class="proc-now mono" aria-hidden="true"><span class="pn-num" id="procNum">01</span><span class="pn-of">/ 08</span><span class="pn-name" id="procName">Idea</span></p>
+        </div>
+
+        <div class="proc-list">
+          <div class="proc-rail" aria-hidden="true"><span class="proc-fill"></span></div>
+          <ol class="proc" id="proc">
+            <li class="proc-step">
+              <span class="pr-n mono" aria-hidden="true">01</span>
+              <div><h3>Idea</h3><p>Start from the problem and the people who have it, then decide what the system must do.</p>
+                <p class="proc-proof"><span class="mono">here</span> A portfolio that reads like an engineering product and is honest about every claim it makes.</p></div>
+            </li>
+            <li class="proc-step">
+              <span class="pr-n mono" aria-hidden="true">02</span>
+              <div><h3>Architecture</h3><p>Choose the simplest structure that holds, and draw the system before writing it.</p>
+                <p class="proc-proof"><span class="mono">here</span> Plain HTML, CSS and JavaScript: no framework, no build step, one design system.</p></div>
+            </li>
+            <li class="proc-step">
+              <span class="pr-n mono" aria-hidden="true">03</span>
+              <div><h3>Development</h3><p>Small, reviewable changes, with one source of truth for anything shared.</p>
+                <p class="proc-proof"><span class="mono">here</span> One knowledge model drives the system map, the command palette and the assistant.</p></div>
+            </li>
+            <li class="proc-step">
+              <span class="pr-n mono" aria-hidden="true">04</span>
+              <div><h3>Integration</h3><p>Connect external services behind clear contracts, and plan for them failing.</p>
+                <p class="proc-proof"><span class="mono">here</span> The contact form posts to Web3Forms; if that fails, a prefilled email link takes over.</p></div>
+            </li>
+            <li class="proc-step">
+              <span class="pr-n mono" aria-hidden="true">05</span>
+              <div><h3>Testing</h3><p>Automate whatever a person would otherwise have to check by hand.</p>
+                <p class="proc-proof"><span class="mono">here</span> Playwright end-to-end tests on desktop and mobile, plus HTML, CSS and JavaScript linting.</p></div>
+            </li>
+            <li class="proc-step">
+              <span class="pr-n mono" aria-hidden="true">06</span>
+              <div><h3>Deployment</h3><p>Every change passes review and an automated gate before it ships.</p>
+                <p class="proc-proof"><span class="mono">here</span> Pull requests run CI; Vercel deploys previews and production, and GitHub Pages mirrors it.</p></div>
+            </li>
+            <li class="proc-step">
+              <span class="pr-n mono" aria-hidden="true">07</span>
+              <div><h3>Monitoring</h3><p>Check what people actually receive, after it ships, not only before.</p>
+                <p class="proc-proof"><span class="mono">here</span> Every deployment triggers a smoke test against the live URL.</p></div>
+            </li>
+            <li class="proc-step">
+              <span class="pr-n mono" aria-hidden="true">08</span>
+              <div><h3>Optimisation</h3><p>Measure first, then improve what the numbers point at.</p>
+                <p class="proc-proof"><span class="mono">here</span> Lighthouse budgets in CI, with accessibility at 100 and zero main-thread blocking.</p></div>
+            </li>
+          </ol>
+          <p class="proc-loop mono"><span aria-hidden="true">Think → Build → Test → Deploy → Improve ↺</span><span class="sr-only">The loop: think, build, test, deploy, improve, then repeat.</span></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════
+       CAPABILITY CONSTELLATION
+       Technologies → disciplines → projects. Mapping lives in script.js (CAP);
+       a project is linked only when its own evidence shows the technology.
+    ════════════════════════════════════ -->
+    <section id="skills" class="sec sec-alt" aria-labelledby="skillsTitle">
+      <div class="container">
+        <header class="sec-head sec-head-split" data-reveal>
+          <div>
+            <span class="sec-kicker mono"><span class="sk-num">02</span><span class="sk-sep" aria-hidden="true">/</span> Capabilities</span>
+            <h2 class="sec-title" id="skillsTitle">A <em class="serif">constellation</em>, not a skills list</h2>
+          </div>
+          <p class="sec-sub">Select a technology, a discipline or a project. The lines show how they connect, and the readout
+            says where it is used. No percentages: just context.</p>
+        </header>
+
+        <div class="cst" id="cst" data-reveal>
+          <svg class="cst-lines" id="cstLines" aria-hidden="true"></svg>
+          <div class="cst-col">
+            <h3 class="cst-h mono">technologies</h3>
+            <ul class="cst-list cst-tech">
+              <li><button type="button" data-t="react"><i class="devicon-react-original colored" aria-hidden="true"></i>React.js</button></li>
+              <li><button type="button" data-t="nextjs"><i class="devicon-nextjs-plain" aria-hidden="true"></i>Next.js</button></li>
+              <li><button type="button" data-t="reactnative"><i class="devicon-react-original colored" aria-hidden="true"></i>React Native</button></li>
+              <li><button type="button" data-t="typescript"><i class="devicon-typescript-plain colored" aria-hidden="true"></i>TypeScript</button></li>
+              <li><button type="button" data-t="javascript"><i class="devicon-javascript-plain colored" aria-hidden="true"></i>JavaScript</button></li>
+              <li><button type="button" data-t="html5"><i class="devicon-html5-plain colored" aria-hidden="true"></i>HTML5 · CSS3</button></li>
+              <li><button type="button" data-t="nodejs"><i class="devicon-nodejs-plain colored" aria-hidden="true"></i>Node.js</button></li>
+              <li><button type="button" data-t="express"><i class="devicon-express-original" aria-hidden="true"></i>Express.js</button></li>
+              <li><button type="button" data-t="fastify"><i class="fas fa-bolt" aria-hidden="true"></i>Fastify</button></li>
+              <li><button type="button" data-t="rest"><i class="fas fa-plug" aria-hidden="true"></i>REST APIs</button></li>
+              <li><button type="button" data-t="php"><i class="devicon-laravel-plain colored" aria-hidden="true"></i>PHP · Laravel</button></li>
+              <li><button type="button" data-t="postgresql"><i class="devicon-postgresql-plain colored" aria-hidden="true"></i>PostgreSQL</button></li>
+              <li><button type="button" data-t="prisma"><i class="fas fa-diamond" aria-hidden="true"></i>Prisma</button></li>
+              <li><button type="button" data-t="mysql"><i class="devicon-mysql-plain colored" aria-hidden="true"></i>MySQL</button></li>
+              <li><button type="button" data-t="mongodb"><i class="devicon-mongodb-plain colored" aria-hidden="true"></i>MongoDB</button></li>
+              <li><button type="button" data-t="sqlite"><i class="devicon-sqlite-plain colored" aria-hidden="true"></i>SQLite</button></li>
+              <li><button type="button" data-t="python"><i class="devicon-python-plain colored" aria-hidden="true"></i>Python</button></li>
+              <li><button type="button" data-t="yolo"><i class="fas fa-crosshairs" aria-hidden="true"></i>YOLO</button></li>
+              <li><button type="button" data-t="opencv"><i class="devicon-opencv-plain colored" aria-hidden="true"></i>OpenCV</button></li>
+              <li><button type="button" data-t="rtsp"><i class="fas fa-video" aria-hidden="true"></i>RTSP</button></li>
+              <li><button type="button" data-t="mediamtx"><i class="fas fa-tower-broadcast" aria-hidden="true"></i>MediaMTX</button></li>
+              <li><button type="button" data-t="raspberrypi"><i class="devicon-raspberrypi-line" aria-hidden="true"></i>Raspberry Pi</button></li>
+              <li><button type="button" data-t="iot"><i class="fas fa-wifi" aria-hidden="true"></i>IoT</button></li>
+              <li><button type="button" data-t="cpp"><i class="devicon-cplusplus-plain colored" aria-hidden="true"></i>Java · C · C++</button></li>
+              <li><button type="button" data-t="git"><i class="devicon-git-plain colored" aria-hidden="true"></i>Git · GitHub</button></li>
+            </ul>
+          </div>
+          <div class="cst-col cst-col-mid">
+            <h3 class="cst-h mono">disciplines</h3>
+            <ul class="cst-list cst-disc">
+              <li><button type="button" data-dc="frontend"><strong>Frontend Engineering</strong><span>Interfaces on the web and on Android</span></button></li>
+              <li><button type="button" data-dc="backend"><strong>Backend &amp; API Engineering</strong><span>Contracts, rules and services</span></button></li>
+              <li><button type="button" data-dc="data"><strong>Data Architecture</strong><span>Durable, queryable state</span></button></li>
+              <li><button type="button" data-dc="vision"><strong>Computer Vision &amp; AI</strong><span>Models that see</span></button></li>
+              <li><button type="button" data-dc="video"><strong>Real-Time Video Systems</strong><span>Streams from cameras</span></button></li>
+              <li><button type="button" data-dc="edge"><strong>Edge Computing &amp; Devices</strong><span>Inference next to the sensor</span></button></li>
+              <li><button type="button" data-dc="foundations"><strong>Foundations &amp; Tooling</strong><span>Languages and version control</span></button></li>
+            </ul>
+          </div>
+          <div class="cst-col">
+            <h3 class="cst-h mono">projects</h3>
+            <ul class="cst-list cst-proj">
+              <li><button type="button" data-p="detectify"><strong>Detectify</strong><span>computer vision</span></button></li>
+              <li><button type="button" data-p="aspend"><strong>Aspend</strong><span>android · at Eltern Segen</span></button></li>
+              <li><button type="button" data-p="campus-recruitment-system"><strong>Campus Recruitment</strong><span>web · full-stack</span></button></li>
+              <li><button type="button" data-p="ambulance-management-system"><strong>Ambulance Management</strong><span>web · full-stack</span></button></li>
+              <li><button type="button" data-p="codeex-space"><strong>CodeEx Space</strong><span>browser code editor</span></button></li>
+              <li><button type="button" data-p="portfolio"><strong>This portfolio</strong><span>tested, measured, deployed</span></button></li>
+            </ul>
+          </div>
+          <div class="cst-read" id="cstRead" aria-live="polite">
+            <span class="card-label mono">readout</span>
+            <p>Select anything to trace its connections.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════
+       CHAPTER 03 · BUILDING — PROJECT WORLDS
+       Each flagship project gets its own visual world. Images are real (model
+       output, live screenshots); anything drawn is labelled as an illustration.
+    ════════════════════════════════════ -->
+    <section id="projects" class="sec" aria-labelledby="projTitle" data-chapter="03">
+      <div class="container">
+        <div class="chapter" data-reveal>
+          <span class="ch-num mono">03</span>
+          <span class="ch-name">Building</span>
+          <span class="ch-rule" aria-hidden="true"></span>
+          <p class="ch-lede">The strongest work, each in its own world, with the evidence behind it.</p>
+        </div>
+        <header class="sec-head sec-head-split" data-reveal>
+          <div>
+            <span class="sec-kicker mono"><span class="sk-num">03</span><span class="sk-sep" aria-hidden="true">/</span> Projects</span>
+            <h2 class="sec-title" id="projTitle">Project <em class="serif">worlds</em></h2>
+          </div>
+          <div class="pf-row" role="group" aria-label="Filter projects">
+            <button type="button" class="pf active" data-f="all" aria-pressed="true">All</button>
+            <button type="button" class="pf" data-f="ai" aria-pressed="false">AI / ML</button>
+            <button type="button" class="pf" data-f="web" aria-pressed="false">Web App</button>
+            <button type="button" class="pf" data-f="fullstack" aria-pressed="false">Full-Stack</button>
+            <button type="button" class="pf" data-f="mobile" aria-pressed="false">Mobile</button>
+            <span class="pf-ind" aria-hidden="true"></span>
+          </div>
+        </header>
+
+        <!-- data-cat is a space-separated list, so a project can sit in two filters. -->
+        <div class="proj-grid worlds" id="projGrid">
+
+          <!-- ── DETECTIFY · visual intelligence ── -->
+          <article class="pj world w-detectify" data-cat="ai" data-reveal data-flow="image → YOLOv8 helmet model + vehicle model → boxes · classes · confidence → violation rule">
+            <div class="w-visual">
+              <figure class="w-shot vf">
+                <img src="images/work/detectify-crossing-helmet.jpg" width="900" height="610" loading="lazy" decoding="async"
+                  alt="Real output of Detectify's helmet model on a busy crossing: boxes labelled WithHelmet 0.44, WithoutHelmet 0.75 and Plate 0.56 and 0.33." />
+                <span class="vf-c vf-tl" aria-hidden="true"></span><span class="vf-c vf-tr" aria-hidden="true"></span>
+                <span class="vf-c vf-bl" aria-hidden="true"></span><span class="vf-c vf-br" aria-hidden="true"></span>
+                <figcaption><span class="mono">real output · helmet model · Detectify notebook</span>
+                  Mistakes included: the 0.75 <em>WithoutHelmet</em> box covers a rider who is wearing one.</figcaption>
+              </figure>
+              <ol class="w-events mono" aria-label="What the model returned for this frame">
+                <li><b>WithHelmet</b> 0.44</li><li class="hit"><b>WithoutHelmet</b> 0.75</li><li><b>Plate</b> 0.56</li><li><b>Plate</b> 0.33</li>
+              </ol>
+            </div>
+            <div class="w-body">
+              <span class="pj-cat mono">AI / ML · Computer Vision</span>
+              <h3>Detectify</h3>
+              <p class="pj-tagline">Traffic Signal Detection &amp; Violation Alert System</p>
+              <p class="pj-desc">Enforcement depends on people watching junctions, and people miss things. Detectify trains YOLOv8
+                models to find vehicles, traffic-signal state, stop-line crossings and riders without helmets: the detection
+                core of a system designed to flag violations for a person to review.</p>
+              <dl class="w-facts">
+                <div><dt class="mono">my part</dt><dd>Sole contributor: both model notebooks, trained and evaluated in Colab</dd></div>
+                <div><dt class="mono">decision</dt><dd>Two focused models instead of one, so each dataset grows on its own</dd></div>
+              </dl>
+              <ul class="w-metrics" aria-label="Recorded evaluation, mAP50">
+                <li style="--v:.989"><span>Helmet · validation</span><b class="mono">0.989</b><i aria-hidden="true"></i></li>
+                <li style="--v:.886"><span>Red light · test</span><b class="mono">0.886</b><i aria-hidden="true"></i></li>
+                <li style="--v:.625" class="weak"><span>Helmet · held-out</span><b class="mono">0.625</b><i aria-hidden="true"></i></li>
+              </ul>
+              <ul class="tags"><li>Python</li><li>YOLOv8</li><li>OpenCV</li><li>Computer Vision</li></ul>
+              <div class="pj-links">
+                <button type="button" class="btn btn-sm btn-primary" data-case="detectify" aria-haspopup="dialog"><span>Read the case study</span> <i class="fas fa-arrow-right" aria-hidden="true"></i></button>
+                <a href="https://github.com/pratyushnandi/DETECTIFY" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-ghost"><i class="fab fa-github" aria-hidden="true"></i> Source code</a>
+              </div>
+            </div>
+          </article>
+
+          <!-- ── ASPEND · a financial product ── -->
+          <article class="pj world w-aspend" data-cat="mobile" data-reveal data-flow="Expo Router screens → Zustand store → repositories → SQLite on device · CSV / XLSX / PDF export">
+            <div class="w-visual" aria-hidden="true">
+              <div class="as-phone">
+                <span class="as-top mono"><span>October</span><span>UPI · Cash · Card</span></span>
+                <b class="as-total mono">₹ 12,480</b>
+                <span class="as-bars"><i style="--h:.42"></i><i style="--h:.7"></i><i style="--h:.35"></i><i style="--h:.88"></i><i style="--h:.5"></i><i style="--h:.62"></i><i style="--h:.3"></i></span>
+                <span class="as-row"><em>Groceries</em><span class="mono">UPI</span><b class="mono">₹ 640</b></span>
+                <span class="as-row"><em>Fuel</em><span class="mono">Card</span><b class="mono">₹ 2,000</b></span>
+                <span class="as-row"><em>Lunch</em><span class="mono">Cash</span><b class="mono">₹ 180</b></span>
+                <span class="as-fab"></span>
+              </div>
+              <div class="as-ledger">
+                <span class="as-lh mono">the card rule</span>
+                <span class="as-flow"><b>Card purchase</b><span class="mono">spending +₹2,000</span><span class="mono">balance +₹2,000</span></span>
+                <span class="as-flow pay"><b>Bill payment</b><span class="mono">spending ±0</span><span class="mono">balance −₹2,000</span></span>
+                <span class="as-note mono">illustration · sample figures</span>
+              </div>
+            </div>
+            <div class="w-body">
+              <span class="pj-cat mono">Mobile App · Android · at Eltern Segen</span>
+              <h3>Aspend</h3>
+              <p class="pj-tagline">Offline-first expense tracker for Android</p>
+              <p class="pj-desc">For someone who pays with UPI, cash and credit cards and wants an honest monthly total. Quick
+                one-handed entry, credit-card accounting that never counts a bill payment as new spending, CSV, Excel and PDF
+                export, and a fingerprint or PIN lock. Data lives on the device in SQLite, with optional Google Drive backup.</p>
+              <dl class="w-facts">
+                <div><dt class="mono">my part</dt><dd>Designed and developed the app, as part of my role at Eltern Segen Technologie</dd></div>
+                <div><dt class="mono">decision</dt><dd>Bill payments live in their own table, so totals stay honest</dd></div>
+              </dl>
+              <ul class="tags"><li>React Native</li><li>Expo</li><li>TypeScript</li><li>SQLite</li><li>Zustand</li></ul>
+              <div class="pj-links">
+                <button type="button" class="btn btn-sm btn-primary" data-case="aspend" aria-haspopup="dialog"><span>Read the case study</span> <i class="fas fa-arrow-right" aria-hidden="true"></i></button>
+                <span class="pj-private mono"><i class="fas fa-lock" aria-hidden="true"></i> Built at Eltern Segen Technologie · private</span>
+              </div>
+            </div>
+          </article>
+
+          <!-- ── CAMPUS RECRUITMENT · a placement pipeline ── -->
+          <article class="pj world w-campus" data-cat="web fullstack" data-reveal data-flow="browser (HTML · JS) → Express REST API · JWT roles → JSON store · resume files · CSV export">
+            <div class="w-visual" aria-hidden="true">
+              <div class="cp-check">
+                <span class="cp-h mono">eligibility · drive 07</span>
+                <span class="cp-rule ok"><span>CGPA 8.10</span><span class="mono">needs 7.0+</span></span>
+                <span class="cp-rule ok"><span>Active backlogs 0</span><span class="mono">max 1</span></span>
+                <span class="cp-rule ok"><span>Branch CSE</span><span class="mono">CSE · IT</span></span>
+                <span class="cp-verdict mono">eligible · can apply</span>
+              </div>
+              <ol class="cp-stages mono">
+                <li class="done">applied</li><li class="done">shortlisted</li><li class="now">interview</li><li>offered</li>
+              </ol>
+              <span class="w-ill mono">illustration · sample student</span>
+            </div>
+            <div class="w-body">
+              <span class="pj-cat mono">Web App · Full-Stack</span>
+              <h3>Campus Recruitment System</h3>
+              <p class="pj-tagline">Campus placement, from posting to offer</p>
+              <p class="pj-desc">A placement portal on Node.js and Express with three roles. Students see whether they qualify for
+                each drive before applying and follow every application through its stages; recruiters post drives and move
+                candidates along; the placement office approves postings, verifies companies and exports the register.</p>
+              <dl class="w-facts">
+                <div><dt class="mono">decision</dt><dd>Resumes are visible only to their owner, admins, or recruiters the student applied to</dd></div>
+                <div><dt class="mono">decision</dt><dd>Storage sits behind one module, so a real database replaces one file</dd></div>
+              </dl>
+              <ul class="tags"><li>Node.js</li><li>Express</li><li>JWT</li><li>JavaScript</li><li>HTML/CSS</li></ul>
+              <div class="pj-links">
+                <button type="button" class="btn btn-sm btn-primary" data-case="campus-recruitment-system" aria-haspopup="dialog"><span>Read the case study</span> <i class="fas fa-arrow-right" aria-hidden="true"></i></button>
+              </div>
+            </div>
+          </article>
+
+          <!-- ── AMBULANCE · dispatch workflow (from the CV; no public repo or demo) ── -->
+          <article class="pj world w-ambulance" data-cat="web fullstack" data-reveal data-flow="search &amp; book → PHP → MySQL · availability, drivers, requests, trips · booking status">
+            <div class="w-visual" aria-hidden="true">
+              <ol class="am-flow mono">
+                <li class="done"><b>request</b><span>patient · pickup</span></li>
+                <li class="done"><b>assign</b><span>available unit</span></li>
+                <li class="now"><b>en route</b><span>status shared</span></li>
+                <li><b>completed</b><span>trip logged</span></li>
+              </ol>
+              <span class="art-dispatch">
+                <b>dispatch</b>
+                <span class="ad-row"><i class="on"></i><em>AMB-01</em><span>en route</span></span>
+                <span class="ad-row"><i class="busy"></i><em>AMB-02</em><span>on call</span></span>
+                <span class="ad-row"><i></i><em>AMB-03</em><span>available</span></span>
+              </span>
+              <span class="w-ill mono">illustration · workflow</span>
+            </div>
+            <div class="w-body">
+              <span class="pj-cat mono">Web App · Full-Stack</span>
+              <h3>Ambulance Management System</h3>
+              <p class="pj-tagline">Emergency booking and dispatch, in one place</p>
+              <p class="pj-desc">In an emergency, booking an ambulance should take seconds. Users search and book available
+                ambulances, give patient and pickup details and follow the booking status; one interface manages
+                availability, drivers, emergency requests and trips.</p>
+              <ul class="tags"><li>PHP</li><li>MySQL</li><li>JavaScript</li><li>Bootstrap</li><li>HTML</li><li>CSS</li></ul>
+              <p class="pj-private mono"><i class="fas fa-lock" aria-hidden="true"></i> No public repository or demo</p>
+            </div>
+          </article>
+
+          <!-- ── CODEEX SPACE · a developer tool (live demo, public source) ── -->
+          <article class="pj world w-codeex" data-cat="web" data-reveal data-flow="Ace editors (HTML · CSS · JS) → srcdoc → preview iframe · tests appended · JSON save">
+            <div class="w-visual">
+              <figure class="w-browser">
+                <span class="wb-bar" aria-hidden="true"><i></i><i></i><i></i><span class="mono">pratyushnandi.github.io/Code_EDITOR</span></span>
+                <img src="images/work/codeex-space.jpg" width="1200" height="633" loading="lazy" decoding="async"
+                  alt="Screenshot of the live CodeEx Space editor: task and validation-test panels, HTML, CSS and JavaScript tabs, and a timestamped output log." />
+                <figcaption class="mono">real screenshot · live demo</figcaption>
+              </figure>
+              <pre class="cx-code mono" aria-hidden="true"><span class="tk-k">function</span> <span class="tk-a">runWeb</span>(withTests) {
+  preview.<span class="tk-a">srcdoc</span> = <span class="tk-a">buildWebSrcdoc</span>(withTests);
+}</pre>
+            </div>
+            <div class="w-body">
+              <span class="pj-cat mono">Web App · Developer Tool</span>
+              <h3>CodeEx Space</h3>
+              <p class="pj-tagline">A browser code lab for HTML, CSS and JavaScript</p>
+              <p class="pj-desc">A zero-setup place to write a web page against a task. Three editor tabs, a live preview, a
+                <em>run with tests</em> mode that appends validation code to the student's script, and projects saved
+                locally or exported as JSON. <kbd>Ctrl</kbd> + <kbd>Enter</kbd> runs; <kbd>Ctrl</kbd> + <kbd>S</kbd> saves.</p>
+              <dl class="w-facts">
+                <div><dt class="mono">my part</dt><dd>Sole author of the public repository</dd></div>
+                <div><dt class="mono">decision</dt><dd>The preview is rebuilt through <code>srcdoc</code>, so nothing needs a server</dd></div>
+              </dl>
+              <ul class="tags"><li>JavaScript</li><li>Ace editor</li><li>HTML</li><li>CSS</li></ul>
+              <div class="pj-links">
+                <button type="button" class="btn btn-sm btn-ghost" data-case="codeex-space" aria-haspopup="dialog"><span>Case study</span> <i class="fas fa-arrow-right" aria-hidden="true"></i></button>
+                <a href="https://pratyushnandi.github.io/Code_EDITOR/" target="_blank" rel="noopener noreferrer" class="pj-link">Live <i class="fas fa-arrow-up-right-from-square" aria-hidden="true"></i></a>
+                <a href="https://github.com/pratyushnandi/Code_EDITOR" target="_blank" rel="noopener noreferrer" class="pj-link">Source <i class="fab fa-github" aria-hidden="true"></i></a>
+              </div>
+            </div>
+          </article>
+
+        </div>
+
+        <!-- Small builds: listed, not showcased. Same data shape as a world
+             (title, .pj-desc, .tags, .pj-link) so the filter and assistant read them. -->
+        <section class="proj-more" aria-labelledby="projMoreTitle" data-reveal>
+          <h3 class="col-title mono" id="projMoreTitle"><i class="fas fa-flask" aria-hidden="true"></i> smaller builds &amp; experiments</h3>
+          <ul class="pm-list">
+            <li class="pj-mini" data-cat="web">
+              <h4>Portfolio Website</h4>
+              <span class="pj-cat mono">Web App</span>
+              <p class="pj-desc">An earlier portfolio in HTML, CSS and JS with animations, AOS effects and an EmailJS contact form.</p>
+              <ul class="tags"><li>HTML</li><li>CSS</li><li>JS</li></ul>
+              <div class="pj-links">
+                <a href="https://portfolio-website-ab1.netlify.app/" target="_blank" rel="noopener noreferrer" class="pj-link">Live <i class="fas fa-arrow-up-right-from-square" aria-hidden="true"></i></a>
+                <a href="https://github.com/pratyushnandi/Portfolio" target="_blank" rel="noopener noreferrer" class="pj-link">Source <i class="fab fa-github" aria-hidden="true"></i></a>
+              </div>
+            </li>
+            <li class="pj-mini" data-cat="fullstack">
+              <h4>Web Calculator</h4>
+              <span class="pj-cat mono">Full-Stack</span>
+              <p class="pj-desc">A calculator on Node and Express, pairing a responsive UI with server-side logic.</p>
+              <ul class="tags"><li>Node.js</li><li>Express</li><li>HTML</li><li>CSS</li></ul>
+              <div class="pj-links"><a href="https://web-calculator-ad.netlify.app/" target="_blank" rel="noopener noreferrer" class="pj-link">Live <i class="fas fa-arrow-up-right-from-square" aria-hidden="true"></i></a></div>
+            </li>
+            <li class="pj-mini" data-cat="fullstack">
+              <h4>Cyber Calendar</h4>
+              <span class="pj-cat mono">Utility</span>
+              <p class="pj-desc">A calendar in JS, HTML and CSS with a futuristic theme, smooth transitions and event management.</p>
+              <ul class="tags"><li>JavaScript</li><li>HTML</li><li>CSS</li></ul>
+              <div class="pj-links"><a href="https://cyber-calender-ab.netlify.app/" target="_blank" rel="noopener noreferrer" class="pj-link">Live <i class="fas fa-arrow-up-right-from-square" aria-hidden="true"></i></a></div>
+            </li>
+            <li class="pj-mini" data-cat="fullstack">
+              <h4>Rock Paper Scissors</h4>
+              <span class="pj-cat mono">Game</span>
+              <p class="pj-desc">A Rock Paper Scissors game in JS, HTML and CSS with smooth animations and a computer opponent.</p>
+              <ul class="tags"><li>JavaScript</li><li>HTML</li><li>CSS</li></ul>
+              <div class="pj-links"><a href="https://playfull-game.netlify.app/" target="_blank" rel="noopener noreferrer" class="pj-link">Play <i class="fas fa-arrow-up-right-from-square" aria-hidden="true"></i></a></div>
+            </li>
+            <li class="pj-mini" data-cat="fullstack">
+              <h4>Background Changer</h4>
+              <span class="pj-cat mono">Utility</span>
+              <p class="pj-desc">A background changer on Node and Express with a dynamic colour palette and smooth transitions.</p>
+              <ul class="tags"><li>Node.js</li><li>Express</li><li>HTML</li><li>CSS</li></ul>
+              <div class="pj-links"><a href="https://background-change12.netlify.app/" target="_blank" rel="noopener noreferrer" class="pj-link">Live <i class="fas fa-arrow-up-right-from-square" aria-hidden="true"></i></a></div>
+            </li>
+          </ul>
+        </section>
+
+        <div class="proj-cta" data-reveal>
+          <a href="https://github.com/pratyushnandi" target="_blank" rel="noopener noreferrer" class="btn btn-ghost magnetic">
+            <i class="fab fa-github" aria-hidden="true"></i> <span>More on GitHub</span> <i class="fas fa-arrow-right" aria-hidden="true"></i>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <section id="pipeline" class="sec sec-alt lab-sec" aria-labelledby="pipeTitle" data-chapter="04">
+      <div class="container">
+        <div class="chapter" data-reveal>
+          <span class="ch-num mono">04</span>
+          <span class="ch-name">Intelligence</span>
+          <span class="ch-rule" aria-hidden="true"></span>
+          <p class="ch-lede">Computer vision and edge thinking, shown with real output where it exists and labelled simulation where it does not.</p>
+        </div>
+        <header class="sec-head sec-head-split" data-reveal>
+          <div>
+            <span class="sec-kicker mono"><span class="sk-num">04</span><span class="sk-sep" aria-hidden="true">/</span> Observatory</span>
+            <h2 class="sec-title" id="pipeTitle">Visual intelligence <em class="serif">observatory</em></h2>
+          </div>
+          <p class="sec-sub">First, what a real model returned. Then a rule lab where you set the threshold and the rules,
+            and watch a frame travel from camera to alert.</p>
+        </header>
+
+        <div class="obs-real" data-reveal>
+          <div class="obs-compare" id="obsCompare">
+            <img class="oc-raw" src="images/work/detectify-junction-raw.jpg" width="780" height="438" loading="lazy" decoding="async"
+              alt="A junction frame as it went into the model: a motorcyclist waiting at red lights while cars cross." />
+            <div class="oc-out"><img src="images/work/detectify-junction-vehicle.jpg" width="780" height="438" loading="lazy" decoding="async"
+              alt="The same frame after Detectify's vehicle model: motobike 0.70, car 0.36, and the red signals labelled yellow_light 0.47." /></div>
+            <span class="oc-handle" aria-hidden="true"></span>
+            <span class="oc-tag oc-l mono" aria-hidden="true">input</span><span class="oc-tag oc-r mono" aria-hidden="true">model output</span>
+            <label class="sr-only" for="obsSplit">Compare the input frame with the model output</label>
+            <input type="range" id="obsSplit" class="oc-range" min="0" max="100" value="50" />
+          </div>
+          <div class="obs-read">
+            <span class="obs-badge mono">real · Detectify notebook</span>
+            <h3>What the model actually returned</h3>
+            <ol class="obs-dets mono">
+              <li><span>motobike</span><b>0.70</b></li>
+              <li><span>car</span><b>0.36</b></li>
+              <li class="warn"><span>yellow_light</span><b>0.47</b><em>the lights are red</em></li>
+            </ol>
+            <p>Detectify's vehicle model, on a frame it never saw in training. It finds the motorbike with confidence, but reads the
+              red signals as yellow. A red-light rule fed by this output would stay silent: a miss caused by classification,
+              not by the threshold. That is the kind of failure the rule lab below lets you explore.</p>
+            <p class="obs-note mono">Input side: the helmet model's pass over the same frame, which found nothing, so nothing is drawn.</p>
+          </div>
+        </div>
+
+        <h3 class="obs-h" data-reveal><span class="mono">simulated</span> Rule lab: camera → stream → model → detection → event → alert</h3>
+
+        <!-- Honest by construction: the frames are drawn, the detections are
+             pre-computed sample data, and no camera or model runs. The threshold
+             filter and the rules are real code, evaluated in the browser. -->
+        <div class="lab" id="lab" data-reveal>
+          <div class="lab-top">
+            <div class="lab-scenes" role="group" aria-label="Sample frame">
+              <button type="button" class="lab-scene" data-scene="junction" aria-pressed="true">Junction · red light</button>
+              <button type="button" class="lab-scene" data-scene="helmet" aria-pressed="false">Two-wheelers · helmets</button>
+              <button type="button" class="lab-scene" data-scene="green" aria-pressed="false">Junction · green light</button>
+            </div>
+            <p class="lab-sim"><span class="lab-sim-k mono">simulated</span> Sample frames with pre-computed detections. No camera
+              or model runs here; the threshold and the rules do, in your browser.</p>
+          </div>
+
+          <div class="lab-grid">
+            <div class="lab-main">
+            <figure class="cv-frame" id="cvFrame" aria-describedby="cvCap">
+              <svg class="cv-svg" viewBox="0 0 640 400" aria-hidden="true">
+                <defs>
+                  <filter id="cvNoise" x="0" y="0" width="100%" height="100%">
+                    <feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" stitchTiles="stitch" />
+                    <feColorMatrix values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 .55 0" />
+                  </filter>
+                  <linearGradient id="cvScanGrad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0" stop-color="#e2ff7a" stop-opacity="0" />
+                    <stop offset=".85" stop-color="#e2ff7a" stop-opacity=".2" />
+                    <stop offset="1" stop-color="#e2ff7a" stop-opacity=".65" />
+                  </linearGradient>
+                  <pattern id="cvPatch" width="40" height="40" patternUnits="userSpaceOnUse">
+                    <path d="M40 0H0V40" fill="none" class="cv-patch-line" />
+                  </pattern>
+                  <g id="cvJunctionBg">
+                    <rect class="cv-asphalt" width="640" height="400" />
+                    <rect class="cv-walk" x="0" y="0" width="250" height="140" />
+                    <rect class="cv-walk" x="390" y="0" width="250" height="140" />
+                    <rect class="cv-walk" x="0" y="260" width="250" height="140" />
+                    <rect class="cv-walk" x="390" y="260" width="250" height="140" />
+                    <path class="cv-lane" d="M0 200H226M414 200H640M320 0V106M320 294V400" />
+                    <g class="cv-zebra">
+                      <path d="M258 114v20M274 114v20M290 114v20M306 114v20M322 114v20M338 114v20M354 114v20M370 114v20" />
+                      <path d="M258 266v20M274 266v20M290 266v20M306 266v20M322 266v20M338 266v20M354 266v20M370 266v20" />
+                      <path d="M228 148h18M228 164h18M228 180h18M228 196h18M228 212h18M228 228h18M228 244h18" />
+                      <path d="M394 148h18M394 164h18M394 180h18M394 196h18M394 212h18M394 228h18M394 244h18" />
+                    </g>
+                    <path class="cv-stop" d="M252 106H318" />
+                  </g>
+                </defs>
+
+                <g class="cv-scene on" data-scene="junction">
+                  <use href="#cvJunctionBg" />
+                  <ellipse class="cv-puddle" cx="301" cy="246" rx="16" ry="9" />
+                  <g class="cv-signal"><rect x="218" y="64" width="16" height="40" rx="4" /><circle class="red" cx="226" cy="74" r="4.5" /><circle cx="226" cy="84" r="4.5" /><circle cx="226" cy="94" r="4.5" /></g>
+                  <g class="cv-obj"><rect x="66" y="152" width="74" height="36" rx="8" /><rect class="glass" x="114" y="157" width="16" height="26" rx="4" /></g>
+                  <g class="cv-obj violator"><rect x="266" y="150" width="38" height="70" rx="9" /><rect class="glass" x="271" y="196" width="28" height="15" rx="4" /></g>
+                  <g class="cv-obj"><rect x="470" y="212" width="76" height="36" rx="8" /><rect class="glass" x="478" y="217" width="16" height="26" rx="4" /></g>
+                  <g class="cv-obj"><rect x="338" y="30" width="16" height="44" rx="6" /><circle class="head" cx="346" cy="54" r="7" /></g>
+                  <circle class="cv-ped" cx="182" cy="312" r="6" />
+                  <circle class="cv-ped" cx="566" cy="94" r="6" />
+                  <circle class="cv-ped" cx="590" cy="320" r="6" />
+                </g>
+
+                <g class="cv-scene" data-scene="green">
+                  <use href="#cvJunctionBg" />
+                  <g class="cv-signal"><rect x="218" y="64" width="16" height="40" rx="4" /><circle cx="226" cy="74" r="4.5" /><circle cx="226" cy="84" r="4.5" /><circle class="green" cx="226" cy="94" r="4.5" /></g>
+                  <g class="cv-obj"><rect x="66" y="152" width="74" height="36" rx="8" /><rect class="glass" x="114" y="157" width="16" height="26" rx="4" /></g>
+                  <g class="cv-obj"><rect x="266" y="190" width="38" height="70" rx="9" /><rect class="glass" x="271" y="236" width="28" height="15" rx="4" /></g>
+                  <g class="cv-obj"><rect x="470" y="212" width="76" height="36" rx="8" /><rect class="glass" x="478" y="217" width="16" height="26" rx="4" /></g>
+                  <circle class="cv-ped" cx="182" cy="312" r="6" />
+                  <circle class="cv-ped" cx="566" cy="94" r="6" />
+                </g>
+
+                <g class="cv-scene" data-scene="helmet">
+                  <rect class="cv-asphalt" width="640" height="400" />
+                  <rect class="cv-walk" x="0" y="0" width="640" height="110" />
+                  <rect class="cv-walk" x="0" y="350" width="640" height="50" />
+                  <path class="cv-lane" d="M0 312H640" />
+                  <rect class="cv-pole" x="54" y="18" width="8" height="92" />
+                  <g class="cv-obj"><rect x="572" y="150" width="90" height="40" rx="8" /><rect class="glass" x="580" y="156" width="18" height="28" rx="4" /></g>
+                  <g class="cv-bike">
+                    <circle class="wheel" cx="140" cy="276" r="16" /><circle class="wheel" cx="230" cy="276" r="16" />
+                    <rect x="128" y="240" width="112" height="26" rx="10" />
+                    <rect class="torso" x="168" y="182" width="34" height="62" rx="12" />
+                    <circle class="helmet" cx="184" cy="166" r="14" /><rect class="visor" x="186" y="160" width="12" height="8" rx="3" />
+                  </g>
+                  <g class="cv-bike">
+                    <circle class="wheel" cx="400" cy="280" r="16" /><circle class="wheel" cx="490" cy="280" r="16" />
+                    <rect x="388" y="244" width="112" height="26" rx="10" />
+                    <rect class="torso" x="428" y="186" width="34" height="62" rx="12" />
+                    <circle class="head" cx="444" cy="172" r="12" />
+                  </g>
+                </g>
+
+                <rect class="cv-noise" width="640" height="400" filter="url(#cvNoise)" />
+                <rect class="cv-patches" width="640" height="400" fill="url(#cvPatch)" />
+                <rect class="cv-scan" x="0" y="0" width="640" height="60" fill="url(#cvScanGrad)" />
+                <g class="cv-zones" id="cvZones"></g>
+                <g class="cv-dets" id="cvDets"></g>
+              </svg>
+              <div class="cv-hud cv-hud-tl mono" aria-hidden="true"><span id="cvSceneName">SAMPLE · junction</span></div>
+              <div class="cv-hud cv-hud-tr mono" aria-hidden="true">simulated</div>
+              <div class="cv-model mono" aria-hidden="true"><i class="fas fa-crosshairs"></i> detector ready</div>
+              <div class="cv-hud cv-hud-bl mono" aria-hidden="true">
+                <span>STAGE <b id="cvStage">idle</b></span>
+                <span>DETECTIONS <b id="cvCount">—</b></span>
+              </div>
+              <div class="cv-alert" id="cvAlert" aria-hidden="true">
+                <i class="fas fa-triangle-exclamation cv-bad-ico"></i><i class="fas fa-circle-check cv-ok-ico"></i>
+                <div><strong id="cvAlertTitle">Alert</strong><span class="mono" id="cvAlertSub">sent for human review</span></div>
+              </div>
+              <figcaption id="cvCap" class="sr-only">A drawn sample frame for a computer-vision pipeline demonstration. The detections are simulated, not live data.</figcaption>
+            </figure>
+            <ol class="lab-timeline mono" id="labTimeline" aria-label="Event timeline, simulated">
+              <li><b>camera</b><time>--:--:--.---</time></li><li><b>stream</b><time>--:--:--.---</time></li>
+              <li><b>model</b><time>--:--:--.---</time></li><li><b>detection</b><time>--:--:--.---</time></li>
+              <li><b>event</b><time>--:--:--.---</time></li><li><b>alert</b><time>--:--:--.---</time></li>
+            </ol>
+            </div>
+
+            <div class="lab-side">
+              <div class="pipe-side">
+                <div class="pipe-rail" aria-hidden="true"><span class="pipe-fill"></span></div>
+                <ol class="pipe" id="pipe">
+                  <li class="pipe-step"><span class="ps-node" aria-hidden="true"></span><div class="ps-body"><button type="button" class="ps-head" aria-expanded="false"><span class="ps-name mono">CAMERA</span><span class="ps-label">Frame captured</span></button><div class="ps-more"><p>A frame arrives. In a deployment it would come from an IP camera; here it is a drawn sample.</p></div></div></li>
+                  <li class="pipe-step"><span class="ps-node" aria-hidden="true"></span><div class="ps-body"><button type="button" class="ps-head" aria-expanded="false"><span class="ps-name mono">STREAM</span><span class="ps-label">RTSP delivery</span></button><div class="ps-more"><p>Frames travel as a stream. A relay such as MediaMTX lets a model and a dashboard read the same feed.</p></div></div></li>
+                  <li class="pipe-step"><span class="ps-node" aria-hidden="true"></span><div class="ps-body"><button type="button" class="ps-head" aria-expanded="false"><span class="ps-name mono">MODEL</span><span class="ps-label">Detector</span></button><div class="ps-more"><p>A single-pass detector, such as YOLO, reads the whole frame at once, after pre-processing.</p></div></div></li>
+                  <li class="pipe-step"><span class="ps-node" aria-hidden="true"></span><div class="ps-body"><button type="button" class="ps-head" aria-expanded="false"><span class="ps-name mono">DETECTION</span><span class="ps-label">Boxes &amp; confidence</span></button><div class="ps-more"><p>Each object comes back as a box, a class and a confidence score. The threshold decides which ones count.</p></div></div></li>
+                  <li class="pipe-step"><span class="ps-node" aria-hidden="true"></span><div class="ps-body"><button type="button" class="ps-head" aria-expanded="false"><span class="ps-name mono">EVENT</span><span class="ps-label">Rules</span></button><div class="ps-more"><p>Rules turn detections into an event: a car past the stop line on red, a rider without a helmet.</p></div></div></li>
+                  <li class="pipe-step"><span class="ps-node" aria-hidden="true"></span><div class="ps-body"><button type="button" class="ps-head" aria-expanded="false"><span class="ps-name mono">ALERT</span><span class="ps-label">Human review</span></button><div class="ps-more"><p>Anything that breaks a rule becomes an alert for a person to review.</p><button type="button" class="ps-link" data-case="detectify" data-case-link>See the real models in the Detectify case study <i class="fas fa-arrow-right" aria-hidden="true"></i></button></div></div></li>
+                </ol>
+              </div>
+              <div class="lab-run">
+                <button type="button" class="btn btn-sm btn-primary" id="labRun"><i class="fas fa-play" aria-hidden="true"></i> <span>Run pipeline</span></button>
+                <button type="button" class="lab-step" id="labPrev" aria-label="Previous stage"><i class="fas fa-chevron-left" aria-hidden="true"></i></button>
+                <button type="button" class="lab-step" id="labNext" aria-label="Next stage"><i class="fas fa-chevron-right" aria-hidden="true"></i></button>
+                <span class="lab-pos mono" id="labPos">stage 0 / 6</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="lab-controls">
+            <div class="lab-ctl">
+              <div class="lab-ctl-h"><label for="labThr">Confidence threshold</label> <output class="mono" id="labThrOut" for="labThr">0.50</output></div>
+              <input type="range" id="labThr" min="0.2" max="0.95" step="0.05" value="0.5" aria-describedby="labThrHint" />
+              <p class="lab-hint" id="labThrHint">Detections below the threshold are dropped before any rule sees them.</p>
+            </div>
+            <fieldset class="lab-ctl lab-rules">
+              <legend class="lab-ctl-h">Rules</legend>
+              <label><input type="checkbox" data-rule="red_light" checked /> <span><strong>Red light</strong> a vehicle past the stop line while the signal is red</span></label>
+              <label><input type="checkbox" data-rule="no_helmet" checked /> <span><strong>Helmet</strong> a rider detected without a helmet</span></label>
+            </fieldset>
+            <div class="lab-ctl lab-out">
+              <span class="lab-ctl-h">Event log</span>
+              <ol class="lab-log mono" id="labLog"></ol>
+              <p class="lab-status" id="labStatus" role="status"></p>
+            </div>
+          </div>
+        </div>
+
+        <div class="obs-explain" data-reveal>
+          <div><span class="mono">inference</span><p>Running a trained model on a new frame to get boxes, classes and confidence scores.
+            Training happens once, on labelled data; inference happens on every frame.</p></div>
+          <div><span class="mono">edge processing</span><p>Running that inference on a device next to the camera, such as a Raspberry Pi,
+            so events travel over the network instead of video: lower latency and bandwidth, at the cost of smaller models.</p></div>
+          <div><span class="mono">what is real here</span><p>The comparison above is real model output from Detectify. The rule lab uses drawn
+            frames and pre-computed detections; its threshold, rules, log and alerts run live in your browser.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="focus" class="sec focus-sec" aria-labelledby="focusTitle">
+      <div class="container">
+        <header class="sec-head sec-head-split" data-reveal>
+          <div>
+            <span class="sec-kicker mono"><span class="sk-num">04</span><span class="sk-sep" aria-hidden="true">/</span> Focus</span>
+            <h2 class="sec-title" id="focusTitle">Building intelligent <em class="serif">software systems</em>.</h2>
+          </div>
+          <p class="sec-sub">Currently a Software Developer at Eltern Segen Technologie Pvt. Ltd. These are the areas
+            getting most of my attention.</p>
+        </header>
+        <ol class="focus-grid">
+          <li data-reveal><span class="fg-n mono">01</span><strong>AI / Computer Vision</strong><span>YOLO, OpenCV and Python on live video.</span></li>
+          <li data-reveal style="--i:1"><span class="fg-n mono">02</span><strong>Full-Stack Architecture</strong><span>React, Next.js, Node.js and Fastify, end to end.</span></li>
+          <li data-reveal style="--i:2"><span class="fg-n mono">03</span><strong>Real-Time Systems</strong><span>Camera streams over RTSP, routed through MediaMTX.</span></li>
+          <li data-reveal style="--i:3"><span class="fg-n mono">04</span><strong>IoT &amp; Edge Computing</strong><span>Inference on Raspberry Pi, next to the camera.</span></li>
+          <li data-reveal style="--i:4"><span class="fg-n mono">05</span><strong>Backend &amp; Data</strong><span>REST APIs over PostgreSQL and Prisma.</span></li>
+        </ol>
+      </div>
+    </section>
+
+    <section id="experience" class="sec sec-alt" aria-labelledby="expTitle" data-chapter="05">
+      <div class="container">
+        <div class="chapter" data-reveal>
+          <span class="ch-num mono">05</span>
+          <span class="ch-name">Experience</span>
+          <span class="ch-rule" aria-hidden="true"></span>
+          <p class="ch-lede">Verified roles and education, newest first.</p>
+        </div>
+      </div>
       <div class="container exp-wrap">
         <div class="exp-aside">
           <header class="sec-head" data-reveal>
-            <span class="sec-kicker mono"><span class="sk-num">02</span><span class="sk-sep" aria-hidden="true">/</span> Experience</span>
+            <span class="sec-kicker mono"><span class="sk-num">05</span><span class="sk-sep" aria-hidden="true">/</span> Experience</span>
             <h2 class="sec-title" id="expTitle">My <em class="serif">journey</em></h2>
             <p class="sec-sub">Roles and leadership, read like a commit history, newest on top. Below them, the disciplines my stack grew through.</p>
           </header>
@@ -511,605 +1243,10 @@
       </div>
     </section>
 
-    <!-- ════════════════════════════════════
-       TECH STACK
-    ════════════════════════════════════ -->
-    <section id="skills" class="sec" aria-labelledby="skillsTitle">
-      <div class="container">
-        <header class="sec-head sec-head-split" data-reveal>
-          <div>
-            <span class="sec-kicker mono"><span class="sk-num">03</span><span class="sk-sep" aria-hidden="true">/</span> Technology</span>
-            <h2 class="sec-title" id="skillsTitle">The <em class="serif">stack</em> I build with</h2>
-          </div>
-          <p class="sec-sub">From the browser to the database to a camera on the edge, the tools I reach for to take a
-            product from idea to production.</p>
-        </header>
-
-        <!-- System map: how the stack connects. Node copy lives in script.js (SYSTEM)
-             so the map, the command palette and the assistant share one source. -->
-        <div class="sysmap" id="sysmap" data-reveal>
-          <div class="sm-graph">
-            <div class="sm-bar">
-              <span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>
-              <span class="mono">system-architecture</span>
-              <div class="sm-trace" role="group" aria-label="Trace a flow">
-                <button type="button" class="sm-lane-btn mono" data-lane="web" aria-pressed="false" aria-controls="smInspector">Trace web request</button>
-                <button type="button" class="sm-lane-btn mono" data-lane="vision" aria-pressed="false" aria-controls="smInspector">Trace vision pipeline</button>
-              </div>
-            </div>
-            <div class="sm-canvas" id="smCanvas">
-              <svg class="sm-svg" viewBox="0 0 480 440" aria-hidden="true">
-                <defs>
-                  <marker id="smArrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
-                    <path class="sm-arrow" d="M0 0 8 4 0 8Z" />
-                  </marker>
-                </defs>
-                <g class="sm-lanes">
-                  <text x="120" y="16">web request path</text>
-                  <text x="360" y="16">vision pipeline</text>
-                  <rect x="30" y="28" width="180" height="330" rx="14" />
-                  <rect x="270" y="28" width="180" height="404" rx="14" />
-                </g>
-                <g class="sm-edges">
-                  <path data-e="browser-frontend" d="M120 84 V 124" marker-end="url(#smArrow)" />
-                  <path data-e="frontend-api" d="M120 174 V 214" marker-end="url(#smArrow)" />
-                  <path data-e="api-database" d="M120 264 V 304" marker-end="url(#smArrow)" />
-                  <path data-e="camera-stream" d="M360 84 V 119" marker-end="url(#smArrow)" />
-                  <path data-e="stream-cv" d="M360 169 V 204" marker-end="url(#smArrow)" />
-                  <path data-e="cv-edge" d="M360 254 V 289" marker-end="url(#smArrow)" />
-                  <path data-e="edge-alert" d="M360 339 V 374" marker-end="url(#smArrow)" />
-                  <path data-e="alert-api" d="M285 400 H 248 Q 240 400 240 392 V 248 Q 240 240 232 240 H 199" marker-end="url(#smArrow)" />
-                </g>
-                <g class="sm-flows">
-                  <path data-e="browser-frontend" d="M120 84 V 124" />
-                  <path data-e="frontend-api" d="M120 174 V 214" />
-                  <path data-e="api-database" d="M120 264 V 304" />
-                  <path data-e="camera-stream" d="M360 84 V 119" />
-                  <path data-e="stream-cv" d="M360 169 V 204" />
-                  <path data-e="cv-edge" d="M360 254 V 289" />
-                  <path data-e="edge-alert" d="M360 339 V 374" />
-                  <path data-e="alert-api" d="M285 400 H 248 Q 240 400 240 392 V 248 Q 240 240 232 240 H 199" />
-                </g>
-                <text class="sm-bridge" x="232" y="320" transform="rotate(-90 232 320)">alerts → API</text>
-              </svg>
-              <p class="sm-lane-h mono" aria-hidden="true">web request path</p>
-              <button type="button" class="sm-node" data-node="browser" style="--x:120;--y:60" aria-pressed="false"><span class="sm-ico" aria-hidden="true"><i class="fas fa-globe"></i></span><span class="sm-txt"><strong>Browser</strong><span class="mono">laptop · phone</span></span></button>
-              <button type="button" class="sm-node" data-node="frontend" style="--x:120;--y:150" aria-pressed="false"><span class="sm-ico" aria-hidden="true"><i class="fas fa-desktop"></i></span><span class="sm-txt"><strong>Frontend</strong><span class="mono">React · Next.js</span></span></button>
-              <button type="button" class="sm-node" data-node="api" style="--x:120;--y:240" aria-pressed="false"><span class="sm-ico" aria-hidden="true"><i class="fas fa-plug"></i></span><span class="sm-txt"><strong>API</strong><span class="mono">Node.js · Fastify</span></span></button>
-              <button type="button" class="sm-node" data-node="database" style="--x:120;--y:330" aria-pressed="false"><span class="sm-ico" aria-hidden="true"><i class="fas fa-database"></i></span><span class="sm-txt"><strong>Database</strong><span class="mono">PostgreSQL · Prisma</span></span></button>
-              <p class="sm-lane-h mono" aria-hidden="true">vision pipeline</p>
-              <button type="button" class="sm-node" data-node="camera" style="--x:360;--y:60" aria-pressed="false"><span class="sm-ico" aria-hidden="true"><i class="fas fa-video"></i></span><span class="sm-txt"><strong>Camera</strong><span class="mono">IP camera · frames</span></span></button>
-              <button type="button" class="sm-node" data-node="stream" style="--x:360;--y:145" aria-pressed="false"><span class="sm-ico" aria-hidden="true"><i class="fas fa-tower-broadcast"></i></span><span class="sm-txt"><strong>RTSP stream</strong><span class="mono">RTSP · MediaMTX</span></span></button>
-              <button type="button" class="sm-node" data-node="cv" style="--x:360;--y:230" aria-pressed="false"><span class="sm-ico" aria-hidden="true"><i class="fas fa-eye"></i></span><span class="sm-txt"><strong>Computer Vision</strong><span class="mono">YOLO · OpenCV</span></span></button>
-              <button type="button" class="sm-node" data-node="edge" style="--x:360;--y:315" aria-pressed="false"><span class="sm-ico" aria-hidden="true"><i class="fas fa-microchip"></i></span><span class="sm-txt"><strong>Edge device</strong><span class="mono">Raspberry Pi · IoT</span></span></button>
-              <button type="button" class="sm-node" data-node="alert" style="--x:360;--y:400" aria-pressed="false"><span class="sm-ico" aria-hidden="true"><i class="fas fa-triangle-exclamation"></i></span><span class="sm-txt"><strong>Alert</strong><span class="mono">rules → API</span></span></button>
-            </div>
-          </div>
-
-          <aside class="sm-inspector" id="smInspector" aria-label="System architecture inspector" aria-live="polite">
-            <div class="smi-default">
-              <span class="card-label mono">inspector</span>
-              <h3>Two flows, one system</h3>
-              <p>A web request travels from a browser to the database. A camera frame travels from the edge of the
-                network to an alert, and that alert comes back through the same API, so people see it where they
-                already work.</p>
-              <ul class="smi-legend mono">
-                <li><span class="lg-dot"></span> component: what it does and what it uses</li>
-                <li><span class="lg-line"></span> arrow: how data moves between components</li>
-                <li><span class="lg-flow"></span> lit path: the route data takes to reach the selection</li>
-              </ul>
-              <p class="smi-tip mono">Select a component, or trace a whole flow, to see its purpose, tools and projects.</p>
-            </div>
-          </aside>
-        </div>
-
-        <p class="tech-readout mono" id="techReadout" aria-live="polite"><i class="fas fa-hand-pointer" aria-hidden="true"></i> <span>Select a technology to see where it fits in the system and which projects use it.</span></p>
-        <div class="stack-grid">
-          <div class="stack-group" data-reveal>
-            <h3 class="sg-title mono"><i class="fas fa-code" aria-hidden="true"></i> languages</h3>
-            <ul class="nodes">
-              <li class="node" style="--brand:#3776ab"><i class="devicon-python-plain colored"></i><span>Python</span></li>
-              <li class="node" style="--brand:#f7df1e"><i class="devicon-javascript-plain colored"></i><span>JavaScript</span></li>
-              <li class="node" style="--brand:#3178c6"><i class="devicon-typescript-plain colored"></i><span>TypeScript</span></li>
-              <li class="node" style="--brand:#e76f00"><i class="devicon-java-plain colored"></i><span>Java</span></li>
-              <li class="node" style="--brand:#659ad2"><i class="devicon-c-plain colored"></i><span>C</span></li>
-              <li class="node" style="--brand:#00599c"><i class="devicon-cplusplus-plain colored"></i><span>C++</span></li>
-            </ul>
-          </div>
-
-          <div class="stack-group" data-reveal style="--i:1">
-            <h3 class="sg-title mono"><i class="fas fa-desktop" aria-hidden="true"></i> frontend</h3>
-            <ul class="nodes">
-              <li class="node" style="--brand:#61dafb"><i class="devicon-react-original colored"></i><span>React.js</span></li>
-              <li class="node" style="--brand:#a1a1aa"><i class="devicon-nextjs-plain"></i><span>Next.js</span></li>
-              <li class="node" style="--brand:#61dafb"><i class="devicon-react-original colored"></i><span>React Native</span></li>
-              <li class="node" style="--brand:#e34f26"><i class="devicon-html5-plain colored"></i><span>HTML5</span></li>
-              <li class="node" style="--brand:#1572b6"><i class="devicon-css3-plain colored"></i><span>CSS3</span></li>
-            </ul>
-          </div>
-
-          <div class="stack-group" data-reveal style="--i:2">
-            <h3 class="sg-title mono"><i class="fas fa-server" aria-hidden="true"></i> backend &amp; apis</h3>
-            <ul class="nodes">
-              <li class="node" style="--brand:#5fa04e"><i class="devicon-nodejs-plain colored"></i><span>Node.js</span></li>
-              <li class="node" style="--brand:#a1a1aa"><i class="fas fa-bolt"></i><span>Fastify</span></li>
-              <li class="node" style="--brand:#a1a1aa"><i class="devicon-express-original"></i><span>Express.js</span></li>
-              <li class="node" style="--brand:#f6c56f"><i class="fas fa-plug"></i><span>REST APIs</span></li>
-              <li class="node" style="--brand:#ff2d20"><i class="devicon-laravel-plain colored"></i><span>Laravel / PHP</span></li>
-            </ul>
-          </div>
-
-          <div class="stack-group" data-reveal style="--i:3">
-            <h3 class="sg-title mono"><i class="fas fa-database" aria-hidden="true"></i> data</h3>
-            <ul class="nodes">
-              <li class="node" style="--brand:#4169e1"><i class="devicon-postgresql-plain colored"></i><span>PostgreSQL</span></li>
-              <li class="node" style="--brand:#00758f"><i class="devicon-mysql-plain colored"></i><span>MySQL</span></li>
-              <li class="node" style="--brand:#5a67d8"><i class="fas fa-diamond"></i><span>Prisma</span></li>
-              <li class="node" style="--brand:#47a248"><i class="devicon-mongodb-plain colored"></i><span>MongoDB</span></li>
-              <li class="node" style="--brand:#0f80cc"><i class="devicon-sqlite-plain colored"></i><span>SQLite</span></li>
-            </ul>
-          </div>
-
-          <div class="stack-group sg-wide" data-reveal style="--i:4">
-            <h3 class="sg-title mono"><i class="fas fa-microchip" aria-hidden="true"></i> edge, iot &amp; visual ai</h3>
-            <ul class="nodes">
-              <li class="node" style="--brand:#c51a4a"><i class="devicon-raspberrypi-line"></i><span>Raspberry Pi</span></li>
-              <li class="node" style="--brand:#f6c56f"><i class="fas fa-video"></i><span>RTSP</span></li>
-              <li class="node" style="--brand:#f0a83a"><i class="fas fa-tower-broadcast"></i><span>MediaMTX</span></li>
-              <li class="node" style="--brand:#00ffd1"><i class="fas fa-crosshairs"></i><span>YOLO</span></li>
-              <li class="node" style="--brand:#5c3ee8"><i class="devicon-opencv-plain colored"></i><span>OpenCV</span></li>
-              <li class="node" style="--brand:#10b981"><i class="fas fa-wifi"></i><span>IoT</span></li>
-              <li class="node" style="--brand:#f59e0b"><i class="fas fa-network-wired"></i><span>Edge Computing</span></li>
-              <li class="node" style="--brand:#f0a83a"><i class="fas fa-eye"></i><span>Visual AI</span></li>
-              <li class="node" style="--brand:#f0a83a"><i class="fas fa-brain"></i><span>AI / ML</span></li>
-            </ul>
-          </div>
-
-          <div class="stack-group" data-reveal style="--i:5">
-            <h3 class="sg-title mono"><i class="fas fa-toolbox" aria-hidden="true"></i> tools</h3>
-            <ul class="nodes">
-              <li class="node" style="--brand:#f05032"><i class="devicon-git-plain colored"></i><span>Git</span></li>
-              <li class="node" style="--brand:#a1a1aa"><i class="devicon-github-original"></i><span>GitHub</span></li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ════════════════════════════════════
-       AI LAB · VISUAL AI PLAYGROUND
-    ════════════════════════════════════ -->
-    <section id="pipeline" class="sec sec-alt lab-sec" aria-labelledby="pipeTitle">
-      <div class="container">
-        <header class="sec-head sec-head-split" data-reveal>
-          <div>
-            <span class="sec-kicker mono"><span class="sk-num">04</span><span class="sk-sep" aria-hidden="true">/</span> AI Lab</span>
-            <h2 class="sec-title" id="pipeTitle">Visual AI <em class="serif">playground</em></h2>
-          </div>
-          <p class="sec-sub">Run a computer-vision pipeline on sample frames. Step through each stage, move the confidence
-            threshold, switch rules on and off, and see which alerts survive.</p>
-        </header>
-
-        <!-- Honest by construction: the frames are drawn, the detections are
-             pre-computed sample data, and no camera or model runs. The threshold
-             filter and the rules are real code, evaluated in the browser. -->
-        <div class="lab" id="lab" data-reveal>
-          <div class="lab-top">
-            <div class="lab-scenes" role="group" aria-label="Sample frame">
-              <button type="button" class="lab-scene" data-scene="junction" aria-pressed="true">Junction · red light</button>
-              <button type="button" class="lab-scene" data-scene="helmet" aria-pressed="false">Two-wheelers · helmets</button>
-              <button type="button" class="lab-scene" data-scene="green" aria-pressed="false">Junction · green light</button>
-            </div>
-            <p class="lab-sim"><span class="lab-sim-k mono">simulated</span> Sample frames with pre-computed detections. No camera
-              or model runs here; the threshold and the rules do, in your browser.</p>
-          </div>
-
-          <div class="lab-grid">
-            <figure class="cv-frame" id="cvFrame" aria-describedby="cvCap">
-              <svg class="cv-svg" viewBox="0 0 640 400" aria-hidden="true">
-                <defs>
-                  <filter id="cvNoise" x="0" y="0" width="100%" height="100%">
-                    <feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" stitchTiles="stitch" />
-                    <feColorMatrix values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 .55 0" />
-                  </filter>
-                  <linearGradient id="cvScanGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0" stop-color="#f6c56f" stop-opacity="0" />
-                    <stop offset=".85" stop-color="#f6c56f" stop-opacity=".2" />
-                    <stop offset="1" stop-color="#f6c56f" stop-opacity=".65" />
-                  </linearGradient>
-                  <pattern id="cvPatch" width="40" height="40" patternUnits="userSpaceOnUse">
-                    <path d="M40 0H0V40" fill="none" class="cv-patch-line" />
-                  </pattern>
-                  <g id="cvJunctionBg">
-                    <rect class="cv-asphalt" width="640" height="400" />
-                    <rect class="cv-walk" x="0" y="0" width="250" height="140" />
-                    <rect class="cv-walk" x="390" y="0" width="250" height="140" />
-                    <rect class="cv-walk" x="0" y="260" width="250" height="140" />
-                    <rect class="cv-walk" x="390" y="260" width="250" height="140" />
-                    <path class="cv-lane" d="M0 200H226M414 200H640M320 0V106M320 294V400" />
-                    <g class="cv-zebra">
-                      <path d="M258 114v20M274 114v20M290 114v20M306 114v20M322 114v20M338 114v20M354 114v20M370 114v20" />
-                      <path d="M258 266v20M274 266v20M290 266v20M306 266v20M322 266v20M338 266v20M354 266v20M370 266v20" />
-                      <path d="M228 148h18M228 164h18M228 180h18M228 196h18M228 212h18M228 228h18M228 244h18" />
-                      <path d="M394 148h18M394 164h18M394 180h18M394 196h18M394 212h18M394 228h18M394 244h18" />
-                    </g>
-                    <path class="cv-stop" d="M252 106H318" />
-                  </g>
-                </defs>
-
-                <g class="cv-scene on" data-scene="junction">
-                  <use href="#cvJunctionBg" />
-                  <ellipse class="cv-puddle" cx="301" cy="246" rx="16" ry="9" />
-                  <g class="cv-signal"><rect x="218" y="64" width="16" height="40" rx="4" /><circle class="red" cx="226" cy="74" r="4.5" /><circle cx="226" cy="84" r="4.5" /><circle cx="226" cy="94" r="4.5" /></g>
-                  <g class="cv-obj"><rect x="66" y="152" width="74" height="36" rx="8" /><rect class="glass" x="114" y="157" width="16" height="26" rx="4" /></g>
-                  <g class="cv-obj violator"><rect x="266" y="150" width="38" height="70" rx="9" /><rect class="glass" x="271" y="196" width="28" height="15" rx="4" /></g>
-                  <g class="cv-obj"><rect x="470" y="212" width="76" height="36" rx="8" /><rect class="glass" x="478" y="217" width="16" height="26" rx="4" /></g>
-                  <g class="cv-obj"><rect x="338" y="30" width="16" height="44" rx="6" /><circle class="head" cx="346" cy="54" r="7" /></g>
-                  <circle class="cv-ped" cx="182" cy="312" r="6" />
-                  <circle class="cv-ped" cx="566" cy="94" r="6" />
-                  <circle class="cv-ped" cx="590" cy="320" r="6" />
-                </g>
-
-                <g class="cv-scene" data-scene="green">
-                  <use href="#cvJunctionBg" />
-                  <g class="cv-signal"><rect x="218" y="64" width="16" height="40" rx="4" /><circle cx="226" cy="74" r="4.5" /><circle cx="226" cy="84" r="4.5" /><circle class="green" cx="226" cy="94" r="4.5" /></g>
-                  <g class="cv-obj"><rect x="66" y="152" width="74" height="36" rx="8" /><rect class="glass" x="114" y="157" width="16" height="26" rx="4" /></g>
-                  <g class="cv-obj"><rect x="266" y="190" width="38" height="70" rx="9" /><rect class="glass" x="271" y="236" width="28" height="15" rx="4" /></g>
-                  <g class="cv-obj"><rect x="470" y="212" width="76" height="36" rx="8" /><rect class="glass" x="478" y="217" width="16" height="26" rx="4" /></g>
-                  <circle class="cv-ped" cx="182" cy="312" r="6" />
-                  <circle class="cv-ped" cx="566" cy="94" r="6" />
-                </g>
-
-                <g class="cv-scene" data-scene="helmet">
-                  <rect class="cv-asphalt" width="640" height="400" />
-                  <rect class="cv-walk" x="0" y="0" width="640" height="110" />
-                  <rect class="cv-walk" x="0" y="350" width="640" height="50" />
-                  <path class="cv-lane" d="M0 312H640" />
-                  <rect class="cv-pole" x="54" y="18" width="8" height="92" />
-                  <g class="cv-obj"><rect x="572" y="150" width="90" height="40" rx="8" /><rect class="glass" x="580" y="156" width="18" height="28" rx="4" /></g>
-                  <g class="cv-bike">
-                    <circle class="wheel" cx="140" cy="276" r="16" /><circle class="wheel" cx="230" cy="276" r="16" />
-                    <rect x="128" y="240" width="112" height="26" rx="10" />
-                    <rect class="torso" x="168" y="182" width="34" height="62" rx="12" />
-                    <circle class="helmet" cx="184" cy="166" r="14" /><rect class="visor" x="186" y="160" width="12" height="8" rx="3" />
-                  </g>
-                  <g class="cv-bike">
-                    <circle class="wheel" cx="400" cy="280" r="16" /><circle class="wheel" cx="490" cy="280" r="16" />
-                    <rect x="388" y="244" width="112" height="26" rx="10" />
-                    <rect class="torso" x="428" y="186" width="34" height="62" rx="12" />
-                    <circle class="head" cx="444" cy="172" r="12" />
-                  </g>
-                </g>
-
-                <rect class="cv-noise" width="640" height="400" filter="url(#cvNoise)" />
-                <rect class="cv-patches" width="640" height="400" fill="url(#cvPatch)" />
-                <rect class="cv-scan" x="0" y="0" width="640" height="60" fill="url(#cvScanGrad)" />
-                <g class="cv-zones" id="cvZones"></g>
-                <g class="cv-dets" id="cvDets"></g>
-              </svg>
-              <div class="cv-hud cv-hud-tl mono" aria-hidden="true"><span id="cvSceneName">SAMPLE · junction</span></div>
-              <div class="cv-hud cv-hud-tr mono" aria-hidden="true">simulated</div>
-              <div class="cv-model mono" aria-hidden="true"><i class="fas fa-crosshairs"></i> detector ready</div>
-              <div class="cv-hud cv-hud-bl mono" aria-hidden="true">
-                <span>STAGE <b id="cvStage">idle</b></span>
-                <span>DETECTIONS <b id="cvCount">—</b></span>
-              </div>
-              <div class="cv-alert" id="cvAlert" aria-hidden="true">
-                <i class="fas fa-triangle-exclamation cv-bad-ico"></i><i class="fas fa-circle-check cv-ok-ico"></i>
-                <div><strong id="cvAlertTitle">Alert</strong><span class="mono" id="cvAlertSub">sent for human review</span></div>
-              </div>
-              <figcaption id="cvCap" class="sr-only">A drawn sample frame for a computer-vision pipeline demonstration. The detections are simulated, not live data.</figcaption>
-            </figure>
-
-            <div class="lab-side">
-              <div class="pipe-side">
-                <div class="pipe-rail" aria-hidden="true"><span class="pipe-fill"></span></div>
-                <ol class="pipe" id="pipe">
-                  <li class="pipe-step"><span class="ps-node" aria-hidden="true"></span><div class="ps-body"><button type="button" class="ps-head" aria-expanded="false"><span class="ps-name mono">INPUT</span><span class="ps-label">Sample frame</span></button><div class="ps-more"><p>A frame arrives. In a deployment it would come from a camera over RTSP; here it is a drawn sample.</p></div></div></li>
-                  <li class="pipe-step"><span class="ps-node" aria-hidden="true"></span><div class="ps-body"><button type="button" class="ps-head" aria-expanded="false"><span class="ps-name mono">DATA</span><span class="ps-label">Decode &amp; tile</span></button><div class="ps-more"><p>The frame is decoded and resized into the grid of values a detector reads.</p></div></div></li>
-                  <li class="pipe-step"><span class="ps-node" aria-hidden="true"></span><div class="ps-body"><button type="button" class="ps-head" aria-expanded="false"><span class="ps-name mono">PROCESSING</span><span class="ps-label">OpenCV</span></button><div class="ps-more"><p>Pre-processing evens out light and noise so shapes and edges stand out.</p></div></div></li>
-                  <li class="pipe-step"><span class="ps-node" aria-hidden="true"></span><div class="ps-body"><button type="button" class="ps-head" aria-expanded="false"><span class="ps-name mono">MODEL</span><span class="ps-label">Detector</span></button><div class="ps-more"><p>A single-pass detector, such as YOLO, reads the whole frame at once.</p></div></div></li>
-                  <li class="pipe-step"><span class="ps-node" aria-hidden="true"></span><div class="ps-body"><button type="button" class="ps-head" aria-expanded="false"><span class="ps-name mono">INFERENCE</span><span class="ps-label">Boxes &amp; confidence</span></button><div class="ps-more"><p>Each object comes back as a box, a class and a confidence score. The threshold decides which ones count.</p></div></div></li>
-                  <li class="pipe-step"><span class="ps-node" aria-hidden="true"></span><div class="ps-body"><button type="button" class="ps-head" aria-expanded="false"><span class="ps-name mono">DECISION</span><span class="ps-label">Rules</span></button><div class="ps-more"><p>Rules turn detections into meaning: a car past the stop line on red, a rider without a helmet.</p></div></div></li>
-                  <li class="pipe-step"><span class="ps-node" aria-hidden="true"></span><div class="ps-body"><button type="button" class="ps-head" aria-expanded="false"><span class="ps-name mono">ACTION</span><span class="ps-label">Alert</span></button><div class="ps-more"><p>Anything that breaks a rule becomes an alert for a person to review.</p><button type="button" class="ps-link" data-case="detectify" data-case-link>See the real models in the Detectify case study <i class="fas fa-arrow-right" aria-hidden="true"></i></button></div></div></li>
-                </ol>
-              </div>
-              <div class="lab-run">
-                <button type="button" class="btn btn-sm btn-primary" id="labRun"><i class="fas fa-play" aria-hidden="true"></i> <span>Run pipeline</span></button>
-                <button type="button" class="lab-step" id="labPrev" aria-label="Previous stage"><i class="fas fa-chevron-left" aria-hidden="true"></i></button>
-                <button type="button" class="lab-step" id="labNext" aria-label="Next stage"><i class="fas fa-chevron-right" aria-hidden="true"></i></button>
-                <span class="lab-pos mono" id="labPos">stage 0 / 7</span>
-              </div>
-            </div>
-          </div>
-
-          <div class="lab-controls">
-            <div class="lab-ctl">
-              <div class="lab-ctl-h"><label for="labThr">Confidence threshold</label> <output class="mono" id="labThrOut" for="labThr">0.50</output></div>
-              <input type="range" id="labThr" min="0.2" max="0.95" step="0.05" value="0.5" aria-describedby="labThrHint" />
-              <p class="lab-hint" id="labThrHint">Detections below the threshold are dropped before any rule sees them.</p>
-            </div>
-            <fieldset class="lab-ctl lab-rules">
-              <legend class="lab-ctl-h">Rules</legend>
-              <label><input type="checkbox" data-rule="red_light" checked /> <span><strong>Red light</strong> a vehicle past the stop line while the signal is red</span></label>
-              <label><input type="checkbox" data-rule="no_helmet" checked /> <span><strong>Helmet</strong> a rider detected without a helmet</span></label>
-            </fieldset>
-            <div class="lab-ctl lab-out">
-              <span class="lab-ctl-h">Event log</span>
-              <ol class="lab-log mono" id="labLog"></ol>
-              <p class="lab-status" id="labStatus" role="status"></p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ════════════════════════════════════
-       PROJECTS
-    ════════════════════════════════════ -->
-    <section id="projects" class="sec" aria-labelledby="projTitle">
-      <div class="container">
-        <header class="sec-head sec-head-split" data-reveal>
-          <div>
-            <span class="sec-kicker mono"><span class="sk-num">05</span><span class="sk-sep" aria-hidden="true">/</span> Projects</span>
-            <h2 class="sec-title" id="projTitle">Selected <em class="serif">work</em></h2>
-          </div>
-          <div class="pf-row" role="group" aria-label="Filter projects">
-            <button type="button" class="pf active" data-f="all" aria-pressed="true">All</button>
-            <button type="button" class="pf" data-f="ai" aria-pressed="false">AI / ML</button>
-            <button type="button" class="pf" data-f="web" aria-pressed="false">Web App</button>
-            <button type="button" class="pf" data-f="fullstack" aria-pressed="false">Full-Stack</button>
-            <button type="button" class="pf" data-f="mobile" aria-pressed="false">Mobile</button>
-            <span class="pf-ind" aria-hidden="true"></span>
-          </div>
-        </header>
-
-        <!-- data-cat is a space-separated list, so a project can sit in two filters. -->
-        <div class="proj-grid" id="projGrid">
-
-          <!-- DETECTIFY — Featured. The visual is the real evaluation data from the
-               repository's notebooks, not a mock-up of a product screen. -->
-          <article class="pj pj-feature" data-cat="ai" data-reveal data-flow="camera frame → Python · OpenCV → YOLOv8 detection → rule → violation alert">
-            <div class="pj-media pj-media-art">
-              <figure class="art-eval" aria-labelledby="evalCap">
-                <figcaption class="ae-h mono" id="evalCap"><span>YOLOv8 · recorded evaluation</span><span>mAP50</span></figcaption>
-                <ul class="ae-rows">
-                  <li style="--v:.989"><span>Helmet violation <em class="mono">validation</em></span><b class="mono">0.989</b><i aria-hidden="true"></i></li>
-                  <li style="--v:.886"><span>Red-light violation <em class="mono">test</em></span><b class="mono">0.886</b><i aria-hidden="true"></i></li>
-                  <li style="--v:.870"><span>Vehicles &amp; traffic lights <em class="mono">validation</em></span><b class="mono">0.870</b><i aria-hidden="true"></i></li>
-                  <li style="--v:.625" class="ae-weak"><span>Helmet violation <em class="mono">held-out test</em></span><b class="mono">0.625</b><i aria-hidden="true"></i></li>
-                </ul>
-                <p class="ae-note mono">From the notebooks in the public repository</p>
-              </figure>
-              <span class="pj-badge mono"><i class="fas fa-star" aria-hidden="true"></i> Case study</span>
-            </div>
-            <div class="pj-body">
-              <span class="pj-cat mono">AI / ML · Computer Vision</span>
-              <h3>Detectify</h3>
-              <p class="pj-tagline">Traffic Signal Detection &amp; Violation Alert System</p>
-              <p class="pj-desc">YOLOv8 models that find vehicles, traffic-signal state, stop-line crossings and riders without
-                helmets: the detection core of a system designed to raise traffic-violation alerts automatically. Trained
-                and evaluated in Google Colab.</p>
-              <ul class="tags"><li>Python</li><li>YOLOv8</li><li>OpenCV</li><li>Computer Vision</li></ul>
-              <div class="pj-links">
-                <button type="button" class="btn btn-sm btn-primary" data-case="detectify" aria-haspopup="dialog"><span>Read the case study</span> <i class="fas fa-arrow-right" aria-hidden="true"></i></button>
-                <a href="https://github.com/pratyushnandi/DETECTIFY" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-ghost"><i class="fab fa-github" aria-hidden="true"></i> Source code</a>
-              </div>
-            </div>
-          </article>
-
-          <!-- ASPEND — Featured. Built at Eltern Segen Technologie; private repository.
-               Only product behaviour and high-level architecture are shown. -->
-          <article class="pj pj-feature pj-flip" data-cat="mobile" data-reveal data-flow="Expo Router screens → Zustand store → repositories → SQLite on device · CSV / XLSX / PDF export">
-            <div class="pj-media pj-media-art art-phone-stage" aria-hidden="true">
-              <span class="art-phone-body">
-                <span class="ap-top mono"><span>This month</span><span>UPI · Cash · Card</span></span>
-                <b>₹ 12,480</b>
-                <span class="ap-row"><i></i><em></em><span></span></span>
-                <span class="ap-row"><i></i><em></em><span></span></span>
-                <span class="ap-row"><i></i><em></em><span></span></span>
-                <span class="ap-card mono"><span>Card · outstanding</span><span>limit − spent + paid</span></span>
-                <span class="ap-fab"></span>
-              </span>
-              <span class="pj-badge mono"><i class="fas fa-star" aria-hidden="true"></i> Case study</span>
-            </div>
-            <div class="pj-body">
-              <span class="pj-cat mono">Mobile App · Android · at Eltern Segen</span>
-              <h3>Aspend</h3>
-              <p class="pj-tagline">Offline-first expense tracker for Android</p>
-              <p class="pj-desc">Quick one-handed entry, credit-card accounting that tracks limits and due dates without counting
-                bill payments twice, CSV, Excel and PDF export, and a fingerprint or PIN lock. Data lives on the device in
-                SQLite, with optional Google Drive backup.</p>
-              <ul class="tags"><li>React Native</li><li>Expo</li><li>TypeScript</li><li>SQLite</li><li>Zustand</li></ul>
-              <div class="pj-links">
-                <button type="button" class="btn btn-sm btn-primary" data-case="aspend" aria-haspopup="dialog"><span>Read the case study</span> <i class="fas fa-arrow-right" aria-hidden="true"></i></button>
-                <span class="pj-private mono"><i class="fas fa-lock" aria-hidden="true"></i> Built at Eltern Segen Technologie · private</span>
-              </div>
-            </div>
-          </article>
-
-          <!-- CAMPUS RECRUITMENT -->
-          <article class="pj pj-card" data-cat="web fullstack" data-reveal data-flow="browser (HTML · JS) → Express REST API · JWT roles → JSON store · resume files · CSV export">
-            <div class="pj-art art-board" aria-hidden="true">
-              <span class="art-kanban">
-                <span><b>applied</b><i></i><i></i><i></i></span>
-                <span><b>shortlisted</b><i></i><i></i></span>
-                <span><b>offer</b><i class="on"></i></span>
-              </span>
-            </div>
-            <div class="pj-body">
-              <span class="pj-cat mono">Web App · Full-Stack</span>
-              <h3>Campus Recruitment System</h3>
-              <p class="pj-tagline">Campus recruitment, from posting to offer</p>
-              <p class="pj-desc">A campus placement portal on Node.js and Express with three roles. Students see their eligibility
-                for each job before applying and follow every application through its stages; recruiters post drives and
-                move candidates along; the placement office approves postings, verifies companies and exports the register.</p>
-              <ul class="tags"><li>Node.js</li><li>Express</li><li>JWT</li><li>JavaScript</li><li>HTML/CSS</li></ul>
-              <div class="pj-links">
-                <button type="button" class="btn btn-sm btn-ghost" data-case="campus-recruitment-system" aria-haspopup="dialog"><span>Case study</span> <i class="fas fa-arrow-right" aria-hidden="true"></i></button>
-              </div>
-            </div>
-          </article>
-
-          <!-- Ambulance Management System (from the CV; no public repo or demo) -->
-          <article class="pj pj-card" data-cat="web fullstack" data-reveal style="--i:1" data-flow="search &amp; book → PHP → MySQL · availability, drivers, requests, trips · live booking status">
-            <div class="pj-art art-ambulance" aria-hidden="true">
-              <span class="art-dispatch">
-                <b>dispatch</b>
-                <span class="ad-row"><i class="on"></i><em>AMB-01</em><span>en route</span></span>
-                <span class="ad-row"><i class="busy"></i><em>AMB-02</em><span>on call</span></span>
-                <span class="ad-row"><i></i><em>AMB-03</em><span>available</span></span>
-              </span>
-            </div>
-            <div class="pj-body">
-              <span class="pj-cat mono">Web App · Full-Stack</span>
-              <h3>Ambulance Management System</h3>
-              <p class="pj-tagline">Emergency booking and dispatch, in one place</p>
-              <p class="pj-desc">Users search and book available ambulances, give patient and pickup details and follow the booking
-                status. Behind it, one interface manages ambulance availability, drivers, emergency requests and trips.</p>
-              <ul class="tags"><li>PHP</li><li>MySQL</li><li>JavaScript</li><li>Bootstrap</li><li>HTML</li><li>CSS</li></ul>
-            </div>
-          </article>
-
-        </div>
-
-        <!-- Small builds: listed, not showcased, so the work above carries the
-             weight. Same data shape as a card (title, .pj-desc, .tags, .pj-link) so
-             the filter, the assistant and the system map read them the same way. -->
-        <section class="proj-more" aria-labelledby="projMoreTitle" data-reveal>
-          <h3 class="col-title mono" id="projMoreTitle"><i class="fas fa-flask" aria-hidden="true"></i> smaller builds &amp; experiments</h3>
-          <ul class="pm-list">
-            <li class="pj-mini" data-cat="fullstack">
-              <h4>Code Editor</h4>
-              <span class="pj-cat mono">Tool</span>
-              <p class="pj-desc">A real-time code editor for HTML, CSS and JS with an instant live preview in the browser.</p>
-              <ul class="tags"><li>HTML</li><li>CSS</li><li>JS</li></ul>
-              <div class="pj-links">
-                <a href="https://pratyushnandi.github.io/Code_EDITOR/" target="_blank" rel="noopener noreferrer" class="pj-link">Live <i class="fas fa-arrow-up-right-from-square" aria-hidden="true"></i></a>
-                <a href="https://github.com/pratyushnandi/Code_EDITOR" target="_blank" rel="noopener noreferrer" class="pj-link">Source <i class="fab fa-github" aria-hidden="true"></i></a>
-              </div>
-            </li>
-            <li class="pj-mini" data-cat="web">
-              <h4>Portfolio Website</h4>
-              <span class="pj-cat mono">Web App</span>
-              <p class="pj-desc">An earlier portfolio in HTML, CSS and JS with animations, AOS effects and an EmailJS contact form.</p>
-              <ul class="tags"><li>HTML</li><li>CSS</li><li>JS</li></ul>
-              <div class="pj-links">
-                <a href="https://portfolio-website-ab1.netlify.app/" target="_blank" rel="noopener noreferrer" class="pj-link">Live <i class="fas fa-arrow-up-right-from-square" aria-hidden="true"></i></a>
-                <a href="https://github.com/pratyushnandi/Portfolio" target="_blank" rel="noopener noreferrer" class="pj-link">Source <i class="fab fa-github" aria-hidden="true"></i></a>
-              </div>
-            </li>
-            <li class="pj-mini" data-cat="fullstack">
-              <h4>Web Calculator</h4>
-              <span class="pj-cat mono">Full-Stack</span>
-              <p class="pj-desc">A calculator on Node and Express, pairing a responsive UI with server-side logic.</p>
-              <ul class="tags"><li>Node.js</li><li>Express</li><li>HTML</li><li>CSS</li></ul>
-              <div class="pj-links"><a href="https://web-calculator-ad.netlify.app/" target="_blank" rel="noopener noreferrer" class="pj-link">Live <i class="fas fa-arrow-up-right-from-square" aria-hidden="true"></i></a></div>
-            </li>
-            <li class="pj-mini" data-cat="fullstack">
-              <h4>Cyber Calendar</h4>
-              <span class="pj-cat mono">Utility</span>
-              <p class="pj-desc">A calendar in JS, HTML and CSS with a futuristic theme, smooth transitions and event management.</p>
-              <ul class="tags"><li>JavaScript</li><li>HTML</li><li>CSS</li></ul>
-              <div class="pj-links"><a href="https://cyber-calender-ab.netlify.app/" target="_blank" rel="noopener noreferrer" class="pj-link">Live <i class="fas fa-arrow-up-right-from-square" aria-hidden="true"></i></a></div>
-            </li>
-            <li class="pj-mini" data-cat="fullstack">
-              <h4>Rock Paper Scissors</h4>
-              <span class="pj-cat mono">Game</span>
-              <p class="pj-desc">A Rock Paper Scissors game in JS, HTML and CSS with smooth animations and a computer opponent.</p>
-              <ul class="tags"><li>JavaScript</li><li>HTML</li><li>CSS</li></ul>
-              <div class="pj-links"><a href="https://playfull-game.netlify.app/" target="_blank" rel="noopener noreferrer" class="pj-link">Play <i class="fas fa-arrow-up-right-from-square" aria-hidden="true"></i></a></div>
-            </li>
-            <li class="pj-mini" data-cat="fullstack">
-              <h4>Background Changer</h4>
-              <span class="pj-cat mono">Utility</span>
-              <p class="pj-desc">A background changer on Node and Express with a dynamic colour palette and smooth transitions.</p>
-              <ul class="tags"><li>Node.js</li><li>Express</li><li>HTML</li><li>CSS</li></ul>
-              <div class="pj-links"><a href="https://background-change12.netlify.app/" target="_blank" rel="noopener noreferrer" class="pj-link">Live <i class="fas fa-arrow-up-right-from-square" aria-hidden="true"></i></a></div>
-            </li>
-          </ul>
-        </section>
-
-        <div class="proj-cta" data-reveal>
-          <a href="https://github.com/pratyushnandi" target="_blank" rel="noopener noreferrer" class="btn btn-ghost magnetic">
-            <i class="fab fa-github" aria-hidden="true"></i> <span>More on GitHub</span> <i class="fas fa-arrow-right" aria-hidden="true"></i>
-          </a>
-        </div>
-      </div>
-    </section>
-
-    <!-- ════════════════════════════════════
-       HOW I BUILD — every stage is evidenced by this
-       portfolio itself, so nothing here is a claim you can't check.
-    ════════════════════════════════════ -->
-    <section id="process" class="sec sec-alt" aria-labelledby="processTitle">
-      <div class="container proc-wrap">
-        <div class="proc-aside">
-          <header class="sec-head" data-reveal>
-            <span class="sec-kicker mono"><span class="sk-num">06</span><span class="sk-sep" aria-hidden="true">/</span> Process</span>
-            <h2 class="sec-title" id="processTitle">Not just interfaces. <em class="serif">Systems.</em></h2>
-            <p class="sec-sub">The loop every project goes through, from idea to optimisation, shown on the one system you
-              can inspect right now: this portfolio.</p>
-          </header>
-          <p class="proc-now mono" aria-hidden="true"><span class="pn-num" id="procNum">01</span><span class="pn-of">/ 08</span><span class="pn-name" id="procName">Idea</span></p>
-        </div>
-
-        <div class="proc-list">
-          <div class="proc-rail" aria-hidden="true"><span class="proc-fill"></span></div>
-          <ol class="proc" id="proc">
-            <li class="proc-step">
-              <span class="pr-n mono" aria-hidden="true">01</span>
-              <div><h3>Idea</h3><p>Start from the problem and the people who have it, then decide what the system must do.</p>
-                <p class="proc-proof"><span class="mono">here</span> A portfolio that reads like an engineering product and is honest about every claim it makes.</p></div>
-            </li>
-            <li class="proc-step">
-              <span class="pr-n mono" aria-hidden="true">02</span>
-              <div><h3>Architecture</h3><p>Choose the simplest structure that holds, and draw the system before writing it.</p>
-                <p class="proc-proof"><span class="mono">here</span> Plain HTML, CSS and JavaScript: no framework, no build step, one design system.</p></div>
-            </li>
-            <li class="proc-step">
-              <span class="pr-n mono" aria-hidden="true">03</span>
-              <div><h3>Development</h3><p>Small, reviewable changes, with one source of truth for anything shared.</p>
-                <p class="proc-proof"><span class="mono">here</span> One knowledge model drives the system map, the command palette and the assistant.</p></div>
-            </li>
-            <li class="proc-step">
-              <span class="pr-n mono" aria-hidden="true">04</span>
-              <div><h3>Integration</h3><p>Connect external services behind clear contracts, and plan for them failing.</p>
-                <p class="proc-proof"><span class="mono">here</span> The contact form posts to Web3Forms; if that fails, a prefilled email link takes over.</p></div>
-            </li>
-            <li class="proc-step">
-              <span class="pr-n mono" aria-hidden="true">05</span>
-              <div><h3>Testing</h3><p>Automate whatever a person would otherwise have to check by hand.</p>
-                <p class="proc-proof"><span class="mono">here</span> Playwright end-to-end tests on desktop and mobile, plus HTML, CSS and JavaScript linting.</p></div>
-            </li>
-            <li class="proc-step">
-              <span class="pr-n mono" aria-hidden="true">06</span>
-              <div><h3>Deployment</h3><p>Every change passes review and an automated gate before it ships.</p>
-                <p class="proc-proof"><span class="mono">here</span> Pull requests run CI; Vercel deploys previews and production, and GitHub Pages mirrors it.</p></div>
-            </li>
-            <li class="proc-step">
-              <span class="pr-n mono" aria-hidden="true">07</span>
-              <div><h3>Monitoring</h3><p>Check what people actually receive, after it ships, not only before.</p>
-                <p class="proc-proof"><span class="mono">here</span> Every deployment triggers a smoke test against the live URL.</p></div>
-            </li>
-            <li class="proc-step">
-              <span class="pr-n mono" aria-hidden="true">08</span>
-              <div><h3>Optimisation</h3><p>Measure first, then improve what the numbers point at.</p>
-                <p class="proc-proof"><span class="mono">here</span> Lighthouse budgets in CI, with accessibility at 100 and zero main-thread blocking.</p></div>
-            </li>
-          </ol>
-          <p class="proc-loop mono"><span aria-hidden="true">Think → Build → Test → Deploy → Improve ↺</span><span class="sr-only">The loop: think, build, test, deploy, improve, then repeat.</span></p>
-        </div>
-      </div>
-    </section>
-
-    <!-- ════════════════════════════════════
-       EDUCATION + CERTS
-    ════════════════════════════════════ -->
     <section id="education" class="sec" aria-labelledby="eduTitle">
       <div class="container">
         <header class="sec-head" data-reveal>
-          <span class="sec-kicker mono"><span class="sk-num">07</span><span class="sk-sep" aria-hidden="true">/</span> Education</span>
+          <span class="sec-kicker mono"><span class="sk-num">05</span><span class="sk-sep" aria-hidden="true">/</span> Education</span>
           <h2 class="sec-title" id="eduTitle">Academic <em class="serif">background</em></h2>
         </header>
 
@@ -1118,7 +1255,7 @@
             <h3 class="col-title mono"><i class="fas fa-graduation-cap" aria-hidden="true"></i> education</h3>
             <ol class="edu-list">
               <li class="edu-item" data-reveal>
-                <span class="edu-badge" style="--c1:#f0a83a;--c2:#e0952a">MCA</span>
+                <span class="edu-badge" style="--c1:#c8f03c;--c2:#b9e22c">MCA</span>
                 <div class="edu-body">
                   <h4>Master of Computer Applications</h4>
                   <p class="edu-inst">Adamas University</p>
@@ -1127,7 +1264,7 @@
                 <a class="doc-btn" href="documents/mca-provisional-certificate.pdf" data-doc-title="MCA PROVISIONAL CERTIFICATE" target="_blank" rel="noopener noreferrer" aria-label="View MCA provisional certificate"><i class="fas fa-eye" aria-hidden="true"></i><span>View</span></a>
               </li>
               <li class="edu-item" data-reveal style="--i:1">
-                <span class="edu-badge" style="--c1:#f6c56f;--c2:#b9822f">BCA</span>
+                <span class="edu-badge" style="--c1:#e2ff7a;--c2:#b9822f">BCA</span>
                 <div class="edu-body">
                   <h4>Bachelor of Computer Application</h4>
                   <p class="edu-inst">Techno India (Hooghly) – MAKAUT</p>
@@ -1210,138 +1347,135 @@
     </section>
 
     <!-- ════════════════════════════════════
-       CURRENT FOCUS — drawn from the stack and focus areas on this page.
+       CHAPTER 06 · CONNECTION — THE PN CONTACT PORTAL
+       Every channel here is real and verified. No availability badges, no
+       counters: just the ways to reach me, and a form that actually sends.
     ════════════════════════════════════ -->
-    <section id="focus" class="sec sec-alt focus-sec" aria-labelledby="focusTitle">
+    <section id="contact" class="sec sec-contact portal" aria-labelledby="contactTitle" data-chapter="06">
       <div class="container">
-        <header class="sec-head sec-head-split" data-reveal>
-          <div>
-            <span class="sec-kicker mono"><span class="sk-num">08</span><span class="sk-sep" aria-hidden="true">/</span> Focus</span>
-            <h2 class="sec-title" id="focusTitle">Building intelligent <em class="serif">software systems</em>.</h2>
+        <div class="chapter" data-reveal>
+          <span class="ch-num mono">06</span>
+          <span class="ch-name">Connection</span>
+          <span class="ch-rule" aria-hidden="true"></span>
+          <p class="ch-lede">Where the system resolves: into a conversation.</p>
+        </div>
+        <div class="portal-grid">
+          <div class="portal-mark" aria-hidden="true" data-reveal>
+            <svg class="pm-lines" viewBox="0 0 400 400">
+              <circle class="pm-ring" cx="200" cy="200" r="150" />
+              <circle class="pm-ring r2" cx="200" cy="200" r="104" />
+              <path data-pa="0" d="M200 200L360 96" /><path data-pa="1" d="M200 200L380 168" />
+              <path data-pa="2" d="M200 200L380 232" /><path data-pa="3" d="M200 200L360 304" />
+              <circle data-pa="0" cx="360" cy="96" r="4" /><circle data-pa="1" cx="380" cy="168" r="4" />
+              <circle data-pa="2" cx="380" cy="232" r="4" /><circle data-pa="3" cx="360" cy="304" r="4" />
+            </svg>
+            <span class="pm-core"><svg viewBox="0 0 48 48"><use href="#pnMark" /></svg></span>
           </div>
-          <p class="sec-sub">Currently a Software Developer at Eltern Segen Technologie Pvt. Ltd. These are the areas
-            getting most of my attention.</p>
-        </header>
-        <ol class="focus-grid">
-          <li data-reveal><span class="fg-n mono">01</span><strong>AI / Computer Vision</strong><span>YOLO, OpenCV and Python on live video.</span></li>
-          <li data-reveal style="--i:1"><span class="fg-n mono">02</span><strong>Full-Stack Architecture</strong><span>React, Next.js, Node.js and Fastify, end to end.</span></li>
-          <li data-reveal style="--i:2"><span class="fg-n mono">03</span><strong>Real-Time Systems</strong><span>Camera streams over RTSP, routed through MediaMTX.</span></li>
-          <li data-reveal style="--i:3"><span class="fg-n mono">04</span><strong>IoT &amp; Edge Computing</strong><span>Inference on Raspberry Pi, next to the camera.</span></li>
-          <li data-reveal style="--i:4"><span class="fg-n mono">05</span><strong>Backend &amp; Data</strong><span>REST APIs over PostgreSQL and Prisma.</span></li>
-        </ol>
-      </div>
-    </section>
 
-    <!-- ════════════════════════════════════
-       CONTACT
-    ════════════════════════════════════ -->
-    <section id="contact" class="sec sec-contact" aria-labelledby="contactTitle">
-      <div class="container">
-        <div class="contact-grid">
-          <div class="contact-intro">
+          <div class="portal-copy">
             <header class="sec-head" data-reveal>
-              <span class="sec-kicker mono"><span class="sk-num">09</span><span class="sk-sep" aria-hidden="true">/</span> Contact</span>
-              <h2 class="sec-title contact-title" id="contactTitle">Let's build <em class="serif">something</em>.</h2>
-              <p class="sec-sub">Have a product, a system or a technical challenge? Let's discuss it. Open to
-                freelance work, full-time roles and collaborations.</p>
+              <span class="sec-kicker mono"><span class="sk-num">06</span><span class="sk-sep" aria-hidden="true">/</span> Contact</span>
+              <h2 class="sec-title contact-title" id="contactTitle">Have a system <em class="serif">worth building?</em></h2>
+              <p class="sec-sub">Let's turn a complex idea into something intelligent, useful, and real.</p>
             </header>
 
-            <div class="mail-card" data-reveal style="--i:1">
-              <span class="card-label mono">primary_channel</span>
-              <a href="mailto:pratyushnandi100@gmail.com" class="mail-link">pratyushnandi100@gmail.com</a>
-              <button type="button" class="copy-btn" id="copyEmail" data-copy="pratyushnandi100@gmail.com">
-                <i class="far fa-copy" aria-hidden="true"></i> <span>Copy email</span>
-              </button>
-            </div>
+            <ul class="portal-actions" data-reveal style="--i:1">
+              <li class="pa-row" data-pa="0">
+                <a class="pa" href="mailto:pratyushnandi100@gmail.com"><span class="pa-k mono">email</span><span class="pa-v">pratyushnandi100@gmail.com</span></a>
+                <button type="button" class="copy-btn" id="copyEmail" data-copy="pratyushnandi100@gmail.com">
+                  <i class="far fa-copy" aria-hidden="true"></i> <span>Copy email</span>
+                </button>
+              </li>
+              <li class="pa-row" data-pa="1"><a class="pa" href="https://github.com/pratyushnandi" target="_blank" rel="noopener noreferrer"><span class="pa-k mono">github</span><span class="pa-v">github.com/pratyushnandi</span><i class="fas fa-arrow-up-right-from-square" aria-hidden="true"></i></a></li>
+              <li class="pa-row" data-pa="2"><a class="pa" href="https://www.linkedin.com/in/pratyushnandi/" target="_blank" rel="noopener noreferrer"><span class="pa-k mono">linkedin</span><span class="pa-v">linkedin.com/in/pratyushnandi</span><i class="fas fa-arrow-up-right-from-square" aria-hidden="true"></i></a></li>
+              <li class="pa-row" data-pa="3"><a class="pa" href="files/PRATYUSH%20NANDI_CV%20(NEW).pdf" download><span class="pa-k mono">resume</span><span class="pa-v">Download the CV (PDF)</span><i class="fas fa-arrow-down" aria-hidden="true"></i></a></li>
+            </ul>
 
             <ul class="contact-list" data-reveal style="--i:2">
               <li><i class="fas fa-phone" aria-hidden="true"></i><span class="cl-k">Phone</span><a href="tel:+917890706472">+91&#8209;7890706472</a></li>
               <li><i class="fas fa-location-dot" aria-hidden="true"></i><span class="cl-k">Location</span><span>Kolkata, West Bengal, India</span></li>
               <li><i class="fas fa-building" aria-hidden="true"></i><span class="cl-k">Company</span><span>Eltern Segen Technologie Pvt. Ltd.</span></li>
             </ul>
-
-            <div class="contact-socials" data-reveal style="--i:3">
-              <a href="https://github.com/pratyushnandi" target="_blank" rel="noopener noreferrer" class="soc-btn"><i class="fab fa-github" aria-hidden="true"></i> GitHub</a>
-              <a href="https://www.linkedin.com/in/pratyushnandi/" target="_blank" rel="noopener noreferrer" class="soc-btn"><i class="fab fa-linkedin-in" aria-hidden="true"></i> LinkedIn</a>
-              <a href="mailto:pratyushnandi100@gmail.com" class="soc-btn"><i class="fas fa-envelope" aria-hidden="true"></i> Email</a>
-            </div>
           </div>
+        </div>
 
-          <!-- Progressive disclosure: with JavaScript the form opens from the
-               prompt below; without it, the form is simply shown. -->
-          <div class="form-shell" id="formShell" data-reveal style="--i:1">
-            <div class="cf-start">
-              <span class="card-label mono">new conversation</span>
-              <p class="cf-start-lead">Tell me what you're building, and where you'd like help.</p>
-              <p class="cf-start-sub">A short message is enough. I reply by email.</p>
-              <button type="button" class="btn btn-primary magnetic" id="cfStart" aria-expanded="false" aria-controls="contactForm">
-                <span>Start a conversation</span> <i class="fas fa-arrow-right" aria-hidden="true"></i>
-              </button>
+        <div class="portal-form">
+          <p class="portal-or mono" data-reveal>or write it down here</p>
+        <!-- Progressive disclosure: with JavaScript the form opens from the
+             prompt below; without it, the form is simply shown. -->
+        <div class="form-shell" id="formShell" data-reveal style="--i:1">
+          <div class="cf-start">
+            <span class="card-label mono">new conversation</span>
+            <p class="cf-start-lead">Tell me what you're building, and where you'd like help.</p>
+            <p class="cf-start-sub">A short message is enough. I reply by email.</p>
+            <button type="button" class="btn btn-primary magnetic" id="cfStart" aria-expanded="false" aria-controls="contactForm">
+              <span>Start a conversation</span> <i class="fas fa-arrow-right" aria-hidden="true"></i>
+            </button>
+          </div>
+          <form id="contactForm" novalidate aria-busy="false">
+            <div class="form-bar">
+              <span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>
+              <span class="mono">new_message</span>
+              <span class="form-bar-end mono" aria-hidden="true">via web3forms</span>
             </div>
-            <form id="contactForm" novalidate aria-busy="false">
-              <div class="form-bar">
-                <span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>
-                <span class="mono">new_message</span>
-                <span class="form-bar-end mono" aria-hidden="true">via web3forms</span>
+            <div class="form-body">
+              <div class="f-row">
+                <div class="f-grp">
+                  <label for="cfName">Name</label>
+                  <input id="cfName" type="text" name="user_name" placeholder="Your name" autocomplete="name" required />
+                </div>
+                <div class="f-grp">
+                  <label for="cfEmail">Email</label>
+                  <input id="cfEmail" type="email" name="user_email" placeholder="you@company.com" autocomplete="email" required />
+                </div>
               </div>
-              <div class="form-body">
-                <div class="f-row">
-                  <div class="f-grp">
-                    <label for="cfName">Name</label>
-                    <input id="cfName" type="text" name="user_name" placeholder="Your name" autocomplete="name" required />
-                  </div>
-                  <div class="f-grp">
-                    <label for="cfEmail">Email</label>
-                    <input id="cfEmail" type="email" name="user_email" placeholder="you@company.com" autocomplete="email" required />
-                  </div>
-                </div>
-                <div class="f-row">
-                  <div class="f-grp">
-                    <label for="cfReason">Reason</label>
-                    <div class="select-wrap">
-                      <select id="cfReason" name="contact_reason" required>
-                        <option value="" disabled selected>Select a reason…</option>
-                        <option value="💼 Freelance / Project">Freelance / Project</option>
-                        <option value="🤝 Collaboration">Collaboration</option>
-                        <option value="💻 Job Opportunity">Job Opportunity</option>
-                        <option value="🧠 Technical Discussion">Technical Discussion</option>
-                        <option value="📩 General Inquiry">General Inquiry</option>
-                      </select>
-                    </div>
-                  </div>
-                  <div class="f-grp">
-                    <label for="cfCompany">Company <span class="opt">optional</span></label>
-                    <input id="cfCompany" type="text" name="company" placeholder="Company / organisation" autocomplete="organization" />
-                  </div>
-                </div>
-                <div class="f-row">
-                  <div class="f-grp">
-                    <label for="cfSubject">Subject</label>
-                    <input id="cfSubject" type="text" name="subject" placeholder="What is this about?" required />
-                  </div>
-                  <div class="f-grp">
-                    <label for="cfLink">Profile link <span class="opt">optional</span></label>
-                    <input id="cfLink" type="url" name="social_link" placeholder="LinkedIn / GitHub / portfolio" autocomplete="url" />
+              <div class="f-row">
+                <div class="f-grp">
+                  <label for="cfReason">Reason</label>
+                  <div class="select-wrap">
+                    <select id="cfReason" name="contact_reason" required>
+                      <option value="" disabled selected>Select a reason…</option>
+                      <option value="💼 Freelance / Project">Freelance / Project</option>
+                      <option value="🤝 Collaboration">Collaboration</option>
+                      <option value="💻 Job Opportunity">Job Opportunity</option>
+                      <option value="🧠 Technical Discussion">Technical Discussion</option>
+                      <option value="📩 General Inquiry">General Inquiry</option>
+                    </select>
                   </div>
                 </div>
                 <div class="f-grp">
-                  <label for="cfMessage">Message</label>
-                  <textarea id="cfMessage" name="message" rows="5" placeholder="Tell me a little about the project or role…" required minlength="10" maxlength="4000"></textarea>
+                  <label for="cfCompany">Company <span class="opt">optional</span></label>
+                  <input id="cfCompany" type="text" name="company" placeholder="Company / organisation" autocomplete="organization" />
                 </div>
-                <!-- Spam trap: hidden from people, filled by bots, checked before sending. -->
-                <input type="checkbox" name="botcheck" class="f-hp" tabindex="-1" hidden />
-
-                <div class="f-foot">
-                  <button type="submit" class="btn btn-primary cf-btn" id="cfBtn">
-                    <span id="cfTxt"><span>Send message</span> <i class="fas fa-paper-plane" aria-hidden="true"></i></span>
-                    <span id="cfLoad" hidden><i class="fas fa-circle-notch fa-spin" aria-hidden="true"></i> Sending…</span>
-                  </button>
-                  <span class="f-hint mono">Replies by email</span>
-                </div>
-                <p id="cfStatus" class="cf-status" aria-live="polite"></p>
               </div>
-            </form>
-          </div>
+              <div class="f-row">
+                <div class="f-grp">
+                  <label for="cfSubject">Subject</label>
+                  <input id="cfSubject" type="text" name="subject" placeholder="What is this about?" required />
+                </div>
+                <div class="f-grp">
+                  <label for="cfLink">Profile link <span class="opt">optional</span></label>
+                  <input id="cfLink" type="url" name="social_link" placeholder="LinkedIn / GitHub / portfolio" autocomplete="url" />
+                </div>
+              </div>
+              <div class="f-grp">
+                <label for="cfMessage">Message</label>
+                <textarea id="cfMessage" name="message" rows="5" placeholder="Tell me a little about the project or role…" required minlength="10" maxlength="4000"></textarea>
+              </div>
+              <!-- Spam trap: hidden from people, filled by bots, checked before sending. -->
+              <input type="checkbox" name="botcheck" class="f-hp" tabindex="-1" hidden />
+
+              <div class="f-foot">
+                <button type="submit" class="btn btn-primary cf-btn" id="cfBtn">
+                  <span id="cfTxt"><span>Send message</span> <i class="fas fa-paper-plane" aria-hidden="true"></i></span>
+                  <span id="cfLoad" hidden><i class="fas fa-circle-notch fa-spin" aria-hidden="true"></i> Sending…</span>
+                </button>
+                <span class="f-hint mono">Replies by email</span>
+              </div>
+              <p id="cfStatus" class="cf-status" aria-live="polite"></p>
+            </div>
+          </form>
+        </div>
         </div>
       </div>
     </section>
@@ -1382,7 +1516,7 @@
       <div class="foot-top">
         <div class="foot-brand">
           <a href="#hero" class="logo" aria-label="PN Pratyush Nandi, back to top">
-            <span class="logo-mark" aria-hidden="true">PN</span>
+            <span class="logo-mark" aria-hidden="true"><svg viewBox="0 0 48 48"><use href="#pnMark" /></svg></span>
             <span class="logo-text" aria-hidden="true">Pratyush Nandi</span>
           </a>
           <p class="foot-role">Software Developer<br /><span class="mono">AI/ML · Full-Stack · Computer Vision</span></p>
@@ -1428,7 +1562,7 @@
         <p class="foot-sys">
           <span>Kolkata · IST <time id="localTime">--:--</time></span>
           <span class="foot-sep" aria-hidden="true">·</span>
-          <span>v11.0.0</span>
+          <span>v12.0.0</span>
         </p>
       </div>
     </div>
@@ -1785,6 +1919,58 @@
     </div>
   </template>
 
+  <template id="case-codeex-space">
+    <div class="cs-head">
+      <span class="pj-cat mono">case study · web app · developer tool</span>
+      <h2 id="caseTitle">CodeEx Space</h2>
+      <p class="cs-tagline">A browser code lab for HTML, CSS and JavaScript</p>
+      <ul class="tags"><li>JavaScript</li><li>Ace editor</li><li>HTML</li><li>CSS</li></ul>
+      <dl class="cs-facts">
+        <div><dt class="mono">role</dt><dd>Sole author</dd></div>
+        <div><dt class="mono">runs</dt><dd>Entirely in the browser</dd></div>
+        <div><dt class="mono">evidence</dt><dd>Public repo · live demo</dd></div>
+      </dl>
+    </div>
+    <section class="cs-sec">
+      <h3 class="mono">problem</h3>
+      <div><p>Learning or teaching front-end work needs a place to write a page against a task and check it, without installing
+        anything or signing in.</p></div>
+    </section>
+    <section class="cs-sec">
+      <h3 class="mono">architecture</h3>
+      <div>
+        <p>Three Ace editors (HTML, CSS, JavaScript) feed one function that assembles a full document. The preview iframe
+          receives it through <code>srcdoc</code>, so every run is a fresh page with no server involved.</p>
+        <ol class="cs-flow">
+          <li style="--i:0"><span class="cf-ico" aria-hidden="true"><i class="fas fa-code"></i></span><strong>Three editors</strong><span class="mono">HTML · CSS · JS</span></li>
+          <li style="--i:1"><span class="cf-ico" aria-hidden="true"><i class="fas fa-layer-group"></i></span><strong>Document builder</strong><span class="mono">+ optional tests</span></li>
+          <li style="--i:2"><span class="cf-ico" aria-hidden="true"><i class="fas fa-desktop"></i></span><strong>Preview iframe</strong><span class="mono">srcdoc</span></li>
+          <li style="--i:3"><span class="cf-ico" aria-hidden="true"><i class="fas fa-file-arrow-down"></i></span><strong>Save</strong><span class="mono">localStorage · JSON</span></li>
+        </ol>
+      </div>
+    </section>
+    <section class="cs-sec">
+      <h3 class="mono">engineering</h3>
+      <ul class="cs-points">
+        <li><strong>Tests as plain code.</strong> <em>Run with tests</em> appends the validation script after the student's code, inside the same try/catch, so a check runs exactly where the code runs.</li>
+        <li><strong>Keyboard first.</strong> <kbd>Ctrl</kbd> + <kbd>Enter</kbd> runs, <kbd>Ctrl</kbd> + <kbd>S</kbd> saves, and arrow keys move between the editor tabs.</li>
+        <li><strong>No accounts.</strong> Work is kept in localStorage and can be exported or loaded as a JSON file.</li>
+        <li><strong>A known trade-off.</strong> The preview iframe allows scripts and same-origin access, which keeps storage and dialogs working in previews. That makes it fine for your own code, but it is not an isolation boundary for running untrusted code.</li>
+      </ul>
+    </section>
+    <section class="cs-sec">
+      <h3 class="mono">result</h3>
+      <div><p>A live, working editor on GitHub Pages. No usage numbers are published.</p></div>
+    </section>
+    <div class="cs-foot">
+      <p class="mono">Everything above comes from the public repository and the live demo.</p>
+      <div class="cs-actions">
+        <a href="https://github.com/pratyushnandi/Code_EDITOR" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-ghost"><i class="fab fa-github" aria-hidden="true"></i> Source code</a>
+        <a href="https://pratyushnandi.github.io/Code_EDITOR/" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-primary"><span>Open the live demo</span> <i class="fas fa-arrow-up-right-from-square" aria-hidden="true"></i></a>
+      </div>
+    </div>
+  </template>
+
   <!-- Grade Card / Certificate Modal -->
   <div id="pcModal" class="pc-modal" role="dialog" aria-modal="true" aria-labelledby="pcModalTitle" hidden>
     <div class="pc-modal-overlay" data-close></div>
@@ -1815,7 +2001,7 @@
     </div>
   </div>
 
-  <script src="script.js?v=11.0.0"></script>
+  <script src="script.js?v=12.0.0"></script>
 </body>
 
 </html>
