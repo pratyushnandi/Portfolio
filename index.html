@@ -240,29 +240,73 @@
           </div>
         </div>
 
-        <!-- ═══ THE SYSTEM BLUEPRINT ═══
-             How the parts of a system relate: interface, frontend, API, data,
-             intelligence and devices. Components are buttons, listed in the order
-             data flows (the no-JS and phone reading); the drawing is decorative SVG.
-             script.js §5 owns the signal, the panel and the explorer links. -->
-        <div class="bp" id="blueprint" data-hero>
-          <div class="bp-stage">
-            <svg class="bp-svg" id="bpSvg" viewBox="0 0 600 600" aria-hidden="true" focusable="false"></svg>
-            <ol class="bp-nodes" aria-label="System blueprint, in the order data flows">
-              <li><button type="button" class="bp-node" data-l="ui" aria-pressed="false" aria-controls="bpPanel"><span class="mono">01</span> <strong>Interface</strong> <em>what people use</em></button></li>
-              <li data-via="renders"><button type="button" class="bp-node" data-l="frontend" aria-pressed="false" aria-controls="bpPanel"><span class="mono">02</span> <strong>Frontend</strong> <em>components · state</em></button></li>
-              <li data-via="HTTP · JSON"><button type="button" class="bp-node" data-l="api" aria-pressed="false" aria-controls="bpPanel"><span class="mono">03</span> <strong>API / Backend</strong> <em>contracts · rules</em></button></li>
-              <li data-via="SQL"><button type="button" class="bp-node" data-l="database" aria-pressed="false" aria-controls="bpPanel"><span class="mono">04</span> <strong>Database</strong> <em>durable state</em></button></li>
-              <li data-via="frames → detections"><button type="button" class="bp-node" data-l="ai" aria-pressed="false" aria-controls="bpPanel"><span class="mono">05</span> <strong>AI / Vision</strong> <em>models that see</em></button></li>
-              <li data-via="events"><button type="button" class="bp-node" data-l="edge" aria-pressed="false" aria-controls="bpPanel"><span class="mono">06</span> <strong>Edge / IoT</strong> <em>devices on site</em></button></li>
-            </ol>
+        <!-- ═══ THE PN DIGITAL UNIVERSE ═══
+             Four engineering domains around the PN mark. Domains are buttons; the
+             field (orbits, links, objects) is drawn in SVG and is decorative.
+             script.js §5 owns selection, pathways, inspection and pointer depth. -->
+        <div class="universe" id="universe" data-hero>
+          <div class="uv-stage">
+            <div class="uv-field" aria-hidden="true">
+              <svg class="uv-plane" viewBox="0 0 600 600">
+                <ellipse class="uv-orbit" cx="300" cy="300" rx="250" ry="250" />
+                <ellipse class="uv-orbit o2" cx="300" cy="300" rx="178" ry="178" />
+                <ellipse class="uv-orbit o3" cx="300" cy="300" rx="96" ry="96" />
+                <path class="uv-axis" d="M300 30V570M30 300H570" />
+                <g class="uv-stars">
+                  <circle cx="92" cy="300" r="1.2" /><circle cx="300" cy="52" r="1.2" /><circle cx="512" cy="300" r="1.2" /><circle cx="300" cy="548" r="1.2" />
+                  <circle cx="174" cy="146" r="1" /><circle cx="428" cy="148" r="1" /><circle cx="430" cy="452" r="1" /><circle cx="170" cy="452" r="1" />
+                  <circle cx="246" cy="128" r=".9" /><circle cx="470" cy="256" r=".9" /><circle cx="356" cy="472" r=".9" /><circle cx="128" cy="352" r=".9" />
+                </g>
+              </svg>
+              <svg class="uv-links" viewBox="0 0 600 600">
+                <g class="uv-spokes">
+                  <path data-l="core-sw" d="M300 300L150 172" /><path data-l="core-ai" d="M300 300L452 150" />
+                  <path data-l="core-cv" d="M300 300L462 440" /><path data-l="core-iot" d="M300 300L146 448" />
+                </g>
+                <g class="uv-ring">
+                  <path data-l="sw-ai" d="M150 172Q300 96 452 150" /><path data-l="ai-cv" d="M452 150Q540 300 462 440" />
+                  <path data-l="cv-iot" d="M462 440Q300 520 146 448" /><path data-l="iot-sw" d="M146 448Q64 300 150 172" />
+                </g>
+                <g class="uv-sats">
+                  <path data-l="sw" d="M150 172L78 122M150 172L232 94M150 172L72 250" />
+                  <path data-l="ai" d="M452 150L378 86M452 150L528 106M452 150L538 224" />
+                  <path data-l="cv" d="M462 440L538 392M462 440L522 514M462 440L392 528" />
+                  <path data-l="iot" d="M146 448L72 392M146 448L84 514M146 448L228 528" />
+                </g>
+                <g class="uv-pulses">
+                  <circle data-l="sw-ai" r="2.6" /><circle data-l="ai-cv" r="2.6" /><circle data-l="cv-iot" r="2.6" /><circle data-l="iot-sw" r="2.6" />
+                </g>
+              </svg>
+              <!-- Technical objects: what each domain is made of. -->
+              <ul class="uv-objects">
+                <li data-d="sw" style="--x:78;--y:122"><span class="uv-glyph">&lt;/&gt;</span><b>React</b><em>interfaces · components</em></li>
+                <li data-d="sw" style="--x:232;--y:94"><span class="uv-glyph">{ }</span><b>Node.js</b><em>REST APIs · Express</em></li>
+                <li data-d="sw" style="--x:72;--y:250"><span class="uv-glyph">sql</span><b>SQL</b><em>MySQL · SQLite · PostgreSQL</em></li>
+                <li data-d="ai" style="--x:378;--y:86"><span class="uv-glyph">py</span><b>Python</b><em>training · evaluation</em></li>
+                <li data-d="ai" style="--x:528;--y:106"><span class="uv-glyph">nn</span><b>Models</b><em>YOLOv8 · Ultralytics</em></li>
+                <li data-d="ai" style="--x:538;--y:224"><span class="uv-glyph">df</span><b>Data</b><em>labelled frames · metrics</em></li>
+                <li data-d="cv" style="--x:538;--y:392"><span class="uv-glyph">[ ]</span><b>Detection</b><em>boxes · classes · scores</em></li>
+                <li data-d="cv" style="--x:522;--y:514"><span class="uv-glyph">cv</span><b>OpenCV</b><em>frames · pre-processing</em></li>
+                <li data-d="cv" style="--x:392;--y:528"><span class="uv-glyph">cam</span><b>Camera</b><em>RTSP streams</em></li>
+                <li data-d="iot" style="--x:72;--y:392"><span class="uv-glyph">pi</span><b>Raspberry Pi</b><em>inference on site</em></li>
+                <li data-d="iot" style="--x:84;--y:514"><span class="uv-glyph">io</span><b>Devices</b><em>sensors · cameras</em></li>
+                <li data-d="iot" style="--x:228;--y:528"><span class="uv-glyph">evt</span><b>Events</b><em>to the same API</em></li>
+              </ul>
+              <span class="uv-core"><img src="images/logo.jpg" alt="" width="96" height="96" decoding="async" /></span>
+            </div>
+
+            <div class="uv-domains" role="group" aria-label="Engineering domains">
+              <button type="button" class="uv-domain" data-d="sw" style="--x:150;--y:172" aria-pressed="false" aria-controls="uvPanel"><span class="mono">01</span> <strong>Software Engineering</strong></button>
+              <button type="button" class="uv-domain" data-d="ai" style="--x:452;--y:150" aria-pressed="false" aria-controls="uvPanel"><span class="mono">02</span> <strong>Artificial Intelligence</strong></button>
+              <button type="button" class="uv-domain" data-d="cv" style="--x:462;--y:440" aria-pressed="false" aria-controls="uvPanel"><span class="mono">03</span> <strong>Computer Vision</strong></button>
+              <button type="button" class="uv-domain" data-d="iot" style="--x:146;--y:448" aria-pressed="false" aria-controls="uvPanel"><span class="mono">04</span> <strong>IoT &amp; Edge Systems</strong></button>
+            </div>
           </div>
-          <div class="bp-panel" id="bpPanel" aria-live="polite">
-            <div class="bpp-idle">
-              <span class="card-label mono">system blueprint</span>
-              <p class="bpp-lead">One system, six parts. Hover, focus or tap a component to see what it is responsible for and the
-                technologies behind it.</p>
-              <a class="bpp-go mono" href="#thinking">Explore the full architecture <i class="fas fa-arrow-down" aria-hidden="true"></i></a>
+
+          <div class="uv-panel" id="uvPanel" aria-live="polite">
+            <div class="uvp-default">
+              <span class="card-label mono">pn · universe</span>
+              <p class="uvp-lead">Four domains, one system. Select one to see what it is made of and where I've built it.</p>
             </div>
           </div>
         </div>

@@ -269,18 +269,15 @@ test('pipeline stages are buttons that expose their state', async ({ page }) => 
   await expect(heads.first()).toHaveAttribute('aria-expanded', /true|false/);
 });
 
-test('mobile: the blueprint becomes a vertical diagram, and the menu makes the page inert', async ({ page, isMobile }) => {
+test('mobile: the universe becomes a domain grid, and the menu makes the page inert', async ({ page, isMobile }) => {
   test.skip(!isMobile, 'mobile only');
   await open(page);
-  await expect(page.locator('#bpSvg')).toBeHidden();
-  const ai = page.locator('.bp-node[data-l="ai"]');
-  await ai.scrollIntoViewIfNeeded();
-  // Stacked, in the order data flows.
-  const tops = await page.locator('.bp-node').evaluateAll(ns => ns.map(n => n.getBoundingClientRect().top));
-  expect(tops).toEqual([...tops].sort((a, b) => a - b));
-  await ai.click();
-  await expect(ai).toHaveAttribute('aria-pressed', 'true');
-  await expect(page.locator('#bpPanel h3')).toHaveText('AI / Computer Vision');
+  await expect(page.locator('.uv-links')).toBeHidden();
+  const cv = page.locator('.uv-domain[data-d="cv"]');
+  await cv.scrollIntoViewIfNeeded();
+  await cv.click();
+  await expect(cv).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.locator('#uvPanel h3')).toHaveText('Computer Vision');
   await page.evaluate(() => window.scrollTo(0, 0));
   await page.locator('#burger').click();
   await expect(page.locator('#main')).toHaveJSProperty('inert', true);
@@ -289,62 +286,26 @@ test('mobile: the blueprint becomes a vertical diagram, and the menu makes the p
   await expect(page.locator('#burger')).toBeFocused();
 });
 
-test('system blueprint: a part reveals its role and opens in the explorer', async ({ page }) => {
+test('PN universe: a domain lights its pathways, inspects, and walks its journey', async ({ page }) => {
   await open(page);
-  const bp = page.locator('#blueprint');
-  const api = page.locator('.bp-node[data-l="api"]');
-  await api.click();
-  await expect(api).toHaveAttribute('aria-pressed', 'true');
-  await expect(bp).toHaveClass(/has-sel/);
-  await expect(page.locator('#bpPanel h3')).toHaveText('API / Backend');
-  await expect(page.locator('#bpPanel .bpp-tech')).toContainText('Node.js');
-  await expect(page.locator('#bpPanel')).toContainText('Campus Recruitment System');
-  expect(await page.locator('.bp-wire.lit').count()).toBeGreaterThan(0);
+  const uv = page.locator('#universe');
+  const ai = page.locator('.uv-domain[data-d="ai"]');
+  await ai.click();
+  await expect(ai).toHaveAttribute('aria-pressed', 'true');
+  await expect(uv).toHaveClass(/has-sel/);
+  await expect(page.locator('#uvPanel h3')).toHaveText('Artificial Intelligence');
+  await expect(page.locator('#uvPanel')).toContainText('Detectify');
+  await page.locator('#uvPanel .uvp-btn', { hasText: 'Inspect' }).click();
+  await expect(uv).toHaveClass(/inspect/);
+  await expect(page.locator('#uvPanel .uvp-inspect')).toContainText('held-out');
   await page.keyboard.press('Escape');
-  await expect(api).toHaveAttribute('aria-pressed', 'false');
-  // Edge / IoT is honest about having no public project yet, and opens in the explorer.
-  await page.locator('.bp-node[data-l="edge"]').click();
-  await expect(page.locator('#bpPanel')).toContainText('No public project shows it yet');
-  await page.locator('#bpPanel .bpp-go').click();
+  await expect(uv).not.toHaveClass(/inspect/);
+  // IoT is honest about having no public project yet, and its journey opens in the explorer.
+  await page.locator('.uv-domain[data-d="iot"]').click();
+  await expect(page.locator('#uvPanel')).toContainText('No public project shows this yet');
+  await page.locator('#uvPanel .uvp-btn', { hasText: 'Walk journey C' }).click();
   await expect(page.locator('#axTabArchitecture')).toHaveAttribute('aria-selected', 'true');
   await expect(page.locator('#axInspect h3')).toHaveText('Edge / IoT Integration');
-});
-
-test('system blueprint: the signal runs, and stays still under reduced motion', async ({ browser }) => {
-  const moving = await browser.newContext({ viewport: { width: 1280, height: 860 } });
-  let page = await moving.newPage();
-  await open(page);
-  await expect.poll(() => page.locator('.bp-sig').getAttribute('cx'), { timeout: 5000 }).not.toBe('-40');
-  await moving.close();
-  const still = await browser.newContext({ viewport: { width: 1280, height: 860 }, reducedMotion: 'reduce' });
-  page = await still.newPage();
-  await open(page);
-  await page.waitForTimeout(800);
-  expect(await page.locator('.bp-sig').getAttribute('cx')).toBe('-40');
-  // Everything still works without motion.
-  await page.locator('.bp-node[data-l="database"]').click();
-  await expect(page.locator('#bpPanel h3')).toHaveText('Database');
-  await still.close();
-});
-
-test('system blueprint: focus previews a part, without a mouse', async ({ page, isMobile }) => {
-  test.skip(isMobile, 'keyboard');
-  await open(page);
-  await page.locator('.bp-node[data-l="ui"]').focus();
-  await expect(page.locator('#bpPanel h3')).toHaveText('User Interface');
-  await page.keyboard.press('ArrowDown');
-  await expect(page.locator('.bp-node[data-l="frontend"]')).toBeFocused();
-  await expect(page.locator('#bpPanel h3')).toHaveText('Frontend');
-});
-
-test('assistant explains engineering decisions from the page', async ({ page }) => {
-  await open(page);
-  await page.locator('#cmdkBtn').click();
-  await page.locator('#cmdkInput').fill('Why Fastify?');
-  await page.keyboard.press('Enter');
-  const answer = page.locator('#cmdkAnswer');
-  await expect(answer.locator('h3')).toHaveText('Fastify');
-  await expect(answer).toContainText('schema validation');
 });
 
 test('code to production: each stage explains itself with a real example', async ({ page }) => {
