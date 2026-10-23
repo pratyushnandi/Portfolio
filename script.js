@@ -17,7 +17,7 @@ const titleOf = p => $('h3, h4', p);
 // The six chapters of the page, and which chapter each section belongs to.
 const CHAPTERS = [['hero', '01', 'Identity'], ['thinking', '02', 'Thinking'], ['projects', '03', 'Building'],
   ['pipeline', '04', 'Intelligence'], ['experience', '05', 'Experience'], ['contact', '06', 'Connection']];
-const CHAPTER_OF = { hero: 'hero', about: 'hero', thinking: 'thinking', process: 'thinking', skills: 'thinking',
+const CHAPTER_OF = { hero: 'hero', about: 'hero', thinking: 'thinking', process: 'thinking', skills: 'thinking', twin: 'thinking',
   projects: 'projects', pipeline: 'pipeline', focus: 'pipeline', experience: 'experience', education: 'experience', contact: 'contact' };
 // Modal <dialog>s already make the page inert; this also stops Tab from
 // escaping to the browser chrome, so focus cycles inside the dialog.
@@ -1286,6 +1286,687 @@ const capName = k => { const b = $(`.cst-tech [data-t="${k}"]`); return b ? b.te
   if ('ResizeObserver' in window) new ResizeObserver(draw).observe(cst);
 })();
 
+/* ══ 18c. DIGITAL TWIN ══
+   An architectural model of how I build. Five zones stand on one site plan:
+   the Core in the middle, the Web, the Intelligence Lab, the Edge Network and
+   the Build Room around it, and a gate to the real world at the front. The
+   sculpture is isometric SVG drawn here and is decorative; every zone,
+   component and scenario is a real button, and the text view carries all of
+   it. Selecting a zone moves the view towards it, lights its pathways and
+   swaps the system that runs through the site; a signal travels that route
+   while the section is on screen (never under reduced motion, on phones or on
+   low-powered devices). "What if" scenarios mark what an event would affect
+   and the responses I would weigh: educational, never a claim about a
+   deployed system. The exploration summary lists only zones and scenarios
+   opened here, in sessionStorage for this tab. */
+const TWIN = {
+  zones: {
+    core: { n: '00', name: 'The Core', trait: 'Systems thinking', flow: 'core',
+      line: 'Where every decision starts: begin with the problem, choose the simplest structure that holds, and say plainly what is built and what is only designed.',
+      techLabel: 'principles', tech: ['Problem first', 'Simplest structure that holds', 'One source of truth', 'Plan for failure', 'Measure, then improve'],
+      facts: [['role', 'Software Developer, Eltern Segen Technologie'], ['degree', 'MCA, Adamas University'], ['base', 'Kolkata, India']],
+      proof: [['portfolio', 'every claim on this page is marked built, partly built or concept']],
+      deeper: ['How I build', '#process'],
+      links: [['web', 'products people use'], ['lab', 'models that see'], ['edge', 'devices on site'], ['build', 'shipping, then checking']] },
+    web: { n: '01', name: 'The Web', status: 'built', trait: 'Full-stack engineering', flow: 'web',
+      line: 'Products people use: interfaces, APIs and data, built end to end on the web and on Android.',
+      techLabel: 'lives here', tech: ['React', 'Next.js', 'React Native', 'TypeScript', 'Node.js', 'Express', 'Fastify', 'PHP', 'PostgreSQL', 'MySQL', 'SQLite', 'Prisma'],
+      proof: [['campus-recruitment-system', 'Express REST API with JWT roles'], ['aspend', 'React Native, SQLite on the device'], ['ambulance-management-system', 'PHP and MySQL'], ['codeex-space', 'a browser code lab, no server']],
+      deeper: ['Walk journey A', 'product'],
+      links: [['lab', 'a model can sit behind the same API'], ['build', 'every product is tested, then shipped'], ['core', 'products start from a problem']] },
+    lab: { n: '02', name: 'The Intelligence Lab', status: 'built', trait: 'Visual AI', flow: 'lab',
+      line: 'Models trained on labelled data, measured on data they never saw, and shown with their mistakes.',
+      techLabel: 'lives here', tech: ['Python', 'YOLOv8', 'Ultralytics', 'OpenCV', 'Google Colab'],
+      proof: [['detectify', 'two YOLOv8 models: helmets, vehicles and signal state']],
+      deeper: ['Open the observatory', '#pipeline'],
+      links: [['edge', 'the same models, run on site'], ['web', 'detections become events the API stores'], ['build', 'evaluated on held-out data before trusted']] },
+    edge: { n: '03', name: 'The Edge Network', status: 'concept', trait: 'Edge systems', flow: 'edge',
+      line: 'Inference next to the camera, so events travel over the network instead of video.',
+      techLabel: 'lives here', tech: ['Raspberry Pi', 'IoT', 'RTSP', 'MediaMTX'],
+      proof: [], none: 'A current focus area. No public project shows it yet, so nothing here is claimed as built.',
+      deeper: ['Walk journey C', 'connected'],
+      links: [['lab', 'runs the lab\'s models on site'], ['web', 'posts events to the same API'], ['build', 'device updates ship like code']] },
+    build: { n: '04', name: 'The Build Room', status: 'built', trait: 'Delivery & testing', flow: 'build',
+      line: 'Where it becomes real: small reviewable changes, automated tests, deployment, then a check of what people actually received.',
+      techLabel: 'lives here', tech: ['Git', 'GitHub Actions', 'Playwright', 'Lighthouse', 'Vercel', 'GitHub Pages'],
+      proof: [['portfolio', 'CI, browser tests on desktop and mobile, Lighthouse budgets'], ['codeex-space', 'a live demo with a run-with-tests mode'], ['detectify', 'models evaluated on held-out test sets']],
+      deeper: ['How I build', '#process'],
+      links: [['web', 'ships the products'], ['lab', 'evaluation before trust'], ['core', 'think, build, test, deploy, improve']] }
+  },
+  // Components of the living system, and the zone each one lives in ('out' is the gate).
+  comps: {
+    ui: { label: 'Interface', z: 'web', role: 'What a person sees and touches: screens, forms and state.', tech: ['React', 'Next.js', 'React Native', 'HTML / CSS'] },
+    api: { label: 'API', z: 'web', role: 'The contract between clients and the system: what can be asked, by whom, and what comes back.', tech: ['Node.js', 'Express', 'Fastify', 'REST', 'JWT'] },
+    db: { label: 'Database', z: 'web', role: 'Durable, queryable state that outlives any request.', tech: ['PostgreSQL', 'MySQL', 'SQLite', 'Prisma', 'MongoDB'] },
+    camera: { label: 'Camera stream', z: 'edge', role: 'IP cameras produce frames, re-served to whoever needs them.', tech: ['RTSP', 'MediaMTX'] },
+    device: { label: 'Edge device', z: 'edge', role: 'A small computer beside the camera that runs the model on site.', tech: ['Raspberry Pi', 'IoT'] },
+    model: { label: 'AI engine', z: 'lab', role: 'A trained detector returns boxes, classes and confidence for each frame.', tech: ['YOLOv8', 'Ultralytics', 'OpenCV', 'Python'] },
+    rules: { label: 'Rules & events', z: 'lab', role: 'Rules turn detections into an event a person should see, such as a red-light violation.', tech: ['Python', 'Node.js'] },
+    git: { label: 'Version control', z: 'build', role: 'Every change is a small, reviewable commit.', tech: ['Git', 'GitHub'] },
+    ci: { label: 'Tests & CI', z: 'build', role: 'Automated gates that run before anything merges.', tech: ['GitHub Actions', 'Playwright', 'ESLint', 'Lighthouse'] },
+    deploy: { label: 'Deployment', z: 'build', role: 'A preview for every change, then production.', tech: ['Vercel', 'GitHub Pages'] },
+    review: { label: 'Human review', z: 'out', role: 'An alert reaches a person, who decides. The system flags; it does not judge.', tech: [] },
+    product: { label: 'Product in use', z: 'out', role: 'Someone gets a task done: applies to a placement drive, books an ambulance, closes a month.', tech: [] },
+    live: { label: 'Live site', z: 'out', role: 'What visitors actually receive, checked by a smoke test after every deployment.', tech: [] },
+    dashboard: { label: 'Dashboard', z: 'out', role: 'Where people see events, act on alerts and spot trends.', tech: ['React', 'Next.js'] }
+  },
+  flows: {
+    core: { label: 'One system, end to end', status: 'concept', path: ['device', 'model', 'api', 'ui', 'review'],
+      note: 'The pieces exist apart: trained models in Detectify, an API and interfaces in Campus Recruitment. Joined end to end, this is the architecture I design for.' },
+    web: { label: 'A product request', status: 'built', path: ['ui', 'api', 'db', 'product'],
+      note: 'Campus Recruitment: the browser calls an Express REST API with JWT roles, backed by a store behind one module.' },
+    lab: { label: 'A frame becomes a decision', status: 'partial', path: ['camera', 'model', 'rules', 'review'],
+      note: 'Detectify trains and evaluates the models; the rules run, simulated, in the observatory; event delivery is designed, not published.' },
+    edge: { label: 'Inference on site', status: 'concept', path: ['camera', 'device', 'model', 'api', 'dashboard'],
+      note: 'A current focus area. No public project shows it yet.' },
+    build: { label: 'A change ships', status: 'built', path: ['git', 'ci', 'deploy', 'live'],
+      note: 'This portfolio: pull requests run linting and Playwright tests, Vercel deploys, and a smoke test checks the live URL.' }
+  },
+  // Educational scenarios. hit: components affected; cut: pathways that fail.
+  whatif: {
+    network: { q: 'the network connection is lost?', flow: 'edge', hit: ['api', 'dashboard'], cut: [['core', 'edge']],
+      what: 'The device can still see; it just cannot tell anyone. The real risk is silence that looks like "nothing happened".',
+      moves: [['Keep processing locally', 'Inference runs on the device, so detection does not depend on the link.'],
+        ['Buffer events, not video', 'Queue small, timestamped events on the device, bounded so storage never fills.'],
+        ['Retry with backoff', 'Reconnect with exponential backoff and jitter, so a fleet does not reconnect all at once.'],
+        ['Deliver idempotently', 'Give each event an id, so a retried upload is never counted twice.'],
+        ['Make silence visible', 'Heartbeats let the server mark a device stale instead of reporting "no events".']],
+      trade: 'Alerts arrive late but are not lost. The cost is device storage, and clocks that have to be trusted.',
+      see: ['Walk journey C', 'connected'] },
+    'edge-ai': { q: 'AI processing moves to the edge?', flow: 'edge', hit: ['device', 'model'], cut: [],
+      what: 'Inference leaves the server and runs beside the camera. Video stays on site; only events travel.',
+      moves: [['Choose a smaller model', 'A lighter detector variant, re-measured on held-out data the way Detectify reports its models.'],
+        ['Sample frames', 'Analyse every nth frame when the scene changes slowly, to fit the device\'s budget.'],
+        ['Ship models like code', 'Version every model and roll updates out to devices gradually, with a way back.'],
+        ['Send events, not frames', 'Bandwidth drops to a few small messages, and raw video never leaves the site.']],
+      trade: 'Lower latency, bandwidth and exposure, paid for with model size and a fleet to keep updated.',
+      see: ['Inference in the observatory', '#pipeline'] },
+    cameras: { q: 'the number of connected cameras increases?', flow: 'edge', hit: ['camera', 'device', 'api'], cut: [],
+      what: 'Every new camera adds a stream to read, frames to analyse and events to store.',
+      moves: [['Open each camera once', 'A relay such as MediaMTX re-serves one camera connection to every reader.'],
+        ['Scale by site', 'Add edge devices per site, so bandwidth grows with events rather than with video.'],
+        ['Measure before adding', 'Know how many streams one device sustains, at what frame rate, before the next camera.'],
+        ['Absorb bursts', 'Accept events in batches, with a queue between ingest and storage.'],
+        ['Index for time', 'Store events by camera and time, so the dashboard stays fast as history grows.']],
+      trade: 'More parts to monitor; in return, capacity grows one site at a time.',
+      see: ['Walk journey B', 'vision'] },
+    backend: { q: 'the backend becomes unavailable?', flow: 'core', hit: ['api', 'ui', 'review'], cut: [['core', 'web'], ['web', 'nw'], ['web', 'sw']],
+      what: 'Clients and devices keep running, but the contract they depend on is gone.',
+      moves: [['Fail visibly', 'Interfaces show a clear degraded state and keep what they already have, instead of spinning forever.'],
+        ['Time out, retry, stop', 'Every call has a timeout and a capped retry, so an outage does not pile up requests.'],
+        ['Buffer at the edges', 'Devices hold events until the API returns, as in the network-loss case.'],
+        ['Check health, restart', 'Health checks and a restart policy recover from crashes without waiting for a person.'],
+        ['Keep a fallback path', 'This site does a small version for real: if the form service fails, a prefilled email link takes over.']],
+      trade: 'Degrading gracefully means deciding, before the outage, what each client can do on its own.',
+      see: ['How I build', '#process'] },
+    service: { q: 'a new service needs to connect to an existing system?', flow: 'web', hit: ['api'], cut: [],
+      what: 'Something new wants data or events. The question is where it plugs in without breaking what already works.',
+      moves: [['Join through the API', 'Connect to the published contract, never straight to another service\'s database.'],
+        ['Validate at the boundary', 'Schemas check what enters and leaves every endpoint; Fastify builds this in.'],
+        ['Change additively', 'Add fields and endpoints; never change the meaning of existing ones in place.'],
+        ['Scope its access', 'The service gets its own credentials, with only the permissions it needs.'],
+        ['Keep storage behind one module', 'Campus Recruitment does this: replacing its store with a real database changes one file.']],
+      trade: 'A contract is slower to change than a shared table, which is exactly what makes it safe.',
+      see: ['Campus Recruitment case study', 'case:campus-recruitment-system'] }
+  }
+};
+
+(function () {
+  const tw = $('#tw');
+  if (!tw) return;
+  const NS = 'http://www.w3.org/2000/svg';
+  const svg = $('#twSvg'), world = $('#twWorld'), panel = $('#twPanel');
+  const flowEl = $('#twFlow'), flowTitle = $('#twFlowTitle'), compEl = $('#twComp');
+  const whatEl = $('#twWhat'), formula = $('#twFormula'), map = $('#twMap'), textEl = $('#twText'), viewBtn = $('#twView');
+  const zoneBtns = $$('.tw-zone', tw), wiBtns = $$('.tw-wi', tw);
+  const idle = panel.innerHTML;
+  const narrow = window.matchMedia('(max-width: 760px)');
+  // Low-powered devices get the same model, still: no camera moves, no signal.
+  const conn = navigator.connection;
+  const LITE = REDUCE_MOTION || !!(conn && conn.saveData) || (navigator.deviceMemory || 8) <= 2 || (navigator.hardwareConcurrency || 8) <= 2;
+  tw.classList.toggle('lite', LITE);
+  const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
+  const make = (tag, attrs, parent) => {
+    const n = document.createElementNS(NS, tag);
+    Object.entries(attrs).forEach(([k, v]) => n.setAttribute(k, v));
+    if (parent) parent.appendChild(n);
+    return n;
+  };
+  const STATUS = { built: 'built', partial: 'partly built', concept: 'concept' };
+  const smooth = () => (REDUCE_MOTION ? 'auto' : 'smooth');
+
+  /* — where buttons lead: projects, sections, DNA journeys, case studies — */
+  function openProject(key, from) {
+    if (key === 'portfolio') { const t = $('#process'); if (t) t.scrollIntoView({ behavior: smooth() }); return; }
+    if ($(`.pj [data-case="${key}"]`)) Case.open(key, from);
+    else { const p = projectEl(key); if (p) p.scrollIntoView({ behavior: smooth(), block: 'center' }); }
+  }
+  function follow(target, from) {
+    if (target.startsWith('#')) { const t = $(target); if (t) t.scrollIntoView({ behavior: smooth(), block: 'start' }); }
+    else if (target.startsWith('case:')) openProject(target.slice(5), from);
+    else window.dispatchEvent(new CustomEvent('pn:dna-open', { detail: { journey: target } }));
+  }
+  const linkBtn = (cls, label, target) => {
+    const b = el('button', cls, label); b.type = 'button';
+    b.addEventListener('click', () => follow(target, b));
+    return b;
+  };
+
+  /* — the site plan, in grid units, projected isometrically — */
+  const U = 46, C30 = Math.cos(Math.PI / 6);
+  const P = (x, y, z = 0) => [500 + (x - y) * C30 * U, 316 + (x + y) * U / 2 - z * U];
+  const pts = a => a.map(p => p[0].toFixed(1) + ',' + p[1].toFixed(1)).join(' ');
+  const NODE = { core: [0, 0], web: [-4.5, 0], lab: [0, -4.5], edge: [4.5, 0], build: [0, 4.5],
+    nw: [-4.5, -4.5], ne: [4.5, -4.5], sw: [-4.5, 4.5], out: [4.5, 4.5] };
+  // Ring first, so neighbours connect around the site and only opposite zones cross the Core.
+  const EDGES = [['web', 'nw'], ['nw', 'lab'], ['lab', 'ne'], ['ne', 'edge'], ['edge', 'out'], ['out', 'build'], ['build', 'sw'], ['sw', 'web'],
+    ['core', 'web'], ['core', 'lab'], ['core', 'edge'], ['core', 'build']];
+  const ek = (a, b) => [a, b].sort().join('|');
+  const ADJ = {};
+  EDGES.forEach(([a, b]) => { (ADJ[a] = ADJ[a] || []).push(b); (ADJ[b] = ADJ[b] || []).push(a); });
+  function route(a, b) {
+    const prev = { [a]: null }, q = [a];
+    while (q.length) { const n = q.shift(); if (n === b) break; ADJ[n].forEach(m => { if (!(m in prev)) { prev[m] = n; q.push(m); } }); }
+    const out = [];
+    for (let n = b; n != null; n = prev[n]) out.unshift(n);
+    return out;
+  }
+
+  /* — drawing helpers: solid boxes (three visible faces) and wire boxes — */
+  function box(g, x, y, z, w, d, h, cls = '') {
+    const x0 = x - w / 2, y0 = y - d / 2, x1 = x + w / 2, y1 = y + d / 2, z1 = z + h;
+    make('polygon', { class: 'fy ' + cls, points: pts([P(x0, y1, z), P(x1, y1, z), P(x1, y1, z1), P(x0, y1, z1)]) }, g);
+    make('polygon', { class: 'fx ' + cls, points: pts([P(x1, y0, z), P(x1, y1, z), P(x1, y1, z1), P(x1, y0, z1)]) }, g);
+    make('polygon', { class: 'ft ' + cls, points: pts([P(x0, y0, z1), P(x1, y0, z1), P(x1, y1, z1), P(x0, y1, z1)]) }, g);
+  }
+  // Edges meeting the hidden back-bottom corner are drawn first and dashed.
+  function wire(g, x, y, z, w, d, h, part) {
+    const c = (i, j, k) => P(i ? x + w / 2 : x - w / 2, j ? y + d / 2 : y - d / 2, k ? z + h : z);
+    const all = [[[0, 0, 0], [1, 0, 0]], [[0, 0, 0], [0, 1, 0]], [[0, 0, 0], [0, 0, 1]], [[1, 0, 0], [1, 1, 0]], [[0, 1, 0], [1, 1, 0]],
+      [[1, 0, 0], [1, 0, 1]], [[0, 1, 0], [0, 1, 1]], [[1, 1, 0], [1, 1, 1]], [[0, 0, 1], [1, 0, 1]], [[0, 0, 1], [0, 1, 1]], [[1, 0, 1], [1, 1, 1]], [[0, 1, 1], [1, 1, 1]]];
+    const back = e => e.some(p => !p[0] && !p[1] && !p[2]);
+    all.filter(e => (part === 'back') === back(e)).forEach(([a, b]) => {
+      const [p, q] = [c(...a), c(...b)];
+      make('line', { class: 'tw-wire' + (part === 'back' ? ' hid' : ''), x1: p[0].toFixed(1), y1: p[1].toFixed(1), x2: q[0].toFixed(1), y2: q[1].toFixed(1) }, g);
+    });
+  }
+  const line = (g, a, b, cls) => make('line', { class: cls, x1: a[0].toFixed(1), y1: a[1].toFixed(1), x2: b[0].toFixed(1), y2: b[1].toFixed(1) }, g);
+  const note = (g, p, text, anchor = 'start') => { const t = make('text', { class: 'tw-note', x: p[0].toFixed(1), y: p[1].toFixed(1), 'text-anchor': anchor }, g); t.textContent = text; return t; };
+
+  // Each zone's sculpture, around its centre (zx, zy), back to front.
+  const BUILD = {
+    core(g, x, y) {
+      box(g, x, y, 0, 3, 3, .12, 'pl');
+      box(g, x, y, .12, 1.8, 1.8, .35);
+      box(g, x, y, .47, .9, .9, 2.5, 'tw-tower');
+      box(g, x, y, 2.97, 1.3, 1.3, .14);
+      const [cx, cy] = P(x, y, 1.75), r = 1.2 * Math.SQRT2;
+      make('ellipse', { class: 'tw-orbit', cx, cy, rx: (r * C30 * U).toFixed(1), ry: (r * U / 2).toFixed(1) }, g);
+      const s = P(x, y, 3.36);
+      make('circle', { class: 'tw-beacon', cx: s[0], cy: s[1], r: 4.5 }, g);
+    },
+    web(g, x, y) {
+      box(g, x, y, 0, 3, 3, .12, 'pl');
+      const slabs = [.3, .95, 1.6], posts = [[-1, -1], [1, -1], [-1, 1], [1, 1]];
+      let from = .12;
+      slabs.forEach((z, i) => {
+        posts.forEach(([a, b]) => line(g, P(x + a, y + b, from), P(x + a, y + b, z), 'tw-post'));
+        box(g, x, y, z, 2.4, 2.4, .22, i === 1 ? 'tw-mid' : '');
+        note(g, P(x + 1.2, y - 1.2, z + .02).map((v, k) => v + (k ? 4 : 10)), ['data', 'api', 'interface'][i]);
+        from = z + .22;
+      });
+    },
+    lab(g, x, y) {
+      box(g, x, y, 0, 3, 3, .12, 'pl');
+      wire(g, x, y, .3, 2.2, 2.2, 2.2, 'back');
+      box(g, x, y, .95, .9, .9, .9, 'tw-cube');
+      wire(g, x, y, .3, 2.2, 2.2, 2.2, 'front');
+      // A lattice on the visible faces: what the model learns from.
+      [-.37, .37].forEach(o => {
+        line(g, P(x + 1.1, y + o, .3), P(x + 1.1, y + o, 2.5), 'tw-wire faint');
+        line(g, P(x + o, y + 1.1, .3), P(x + o, y + 1.1, 2.5), 'tw-wire faint');
+      });
+      [1.03, 1.77].forEach(z => {
+        line(g, P(x + 1.1, y - 1.1, z), P(x + 1.1, y + 1.1, z), 'tw-wire faint');
+        line(g, P(x - 1.1, y + 1.1, z), P(x + 1.1, y + 1.1, z), 'tw-wire faint');
+      });
+      [[-.55, -.55], [.55, -.55], [-.55, .55], [.55, .55]].forEach(([a, b]) => { const p = P(x + a, y + b, 2.5); make('circle', { class: 'tw-dot', cx: p[0], cy: p[1], r: 2.2 }, g); });
+      note(g, P(x + 1.1, y - 1.1, 2.5).map((v, k) => v + (k ? -6 : 10)), 'train · evaluate');
+    },
+    edge(g, x, y) {
+      box(g, x, y, 0, 3, 3, .12, 'pl');
+      const devs = [[-.8, -.7, 1.1], [.7, -.8, .7], [-.7, .6, .6], [.6, .7, 1.55]];
+      devs.forEach(([a, b, h]) => box(g, x + a, y + b, .12, .42, .42, h));
+      const tops = devs.map(([a, b, h]) => P(x + a, y + b, .12 + h));
+      const hub = tops[3];
+      tops.slice(0, 3).forEach(t => {
+        const mx = (t[0] + hub[0]) / 2, my = Math.min(t[1], hub[1]) - 26;
+        make('path', { class: 'tw-arc', d: `M${t[0].toFixed(1)} ${t[1].toFixed(1)}Q${mx.toFixed(1)} ${my.toFixed(1)} ${hub[0].toFixed(1)} ${hub[1].toFixed(1)}` }, g);
+      });
+      tops.forEach(t => make('circle', { class: 'tw-led', cx: t[0].toFixed(1), cy: t[1].toFixed(1), r: 2.6 }, g));
+      note(g, P(x + 1.5, y - 1.5, 0).map((v, k) => v + (k ? 4 : 8)), 'rtsp · events');
+    },
+    build(g, x, y) {
+      box(g, x, y, 0, 3, 3, .12, 'pl');
+      wire(g, x, y, .12, 2.6, 2.2, 1.8, 'back');
+      [[-.8, .45], [0, .9], [.8, 1.35]].forEach(([a, h]) => box(g, x + a, y, .12, .75, 1.4, h));
+      wire(g, x, y, .12, 2.6, 2.2, 1.8, 'front');
+      note(g, P(x - 1.5, y + 1.5, 0).map((v, k) => v + (k ? 16 : -6)), 'commit → test → ship', 'end');
+    },
+    out(g, x, y) {
+      box(g, x, y, 0, 1.7, 1.7, .08, 'pl');
+      box(g, x, y - .65, .08, .28, .28, 1.2);
+      box(g, x, y + .65, .08, .28, .28, 1.2);
+      box(g, x, y, 1.28, .34, 1.66, .16);
+      note(g, P(x - .9, y + .9, .5).map((v, k) => v + (k ? 0 : -12)), 'real world', 'end');
+    }
+  };
+
+  /* — draw the site once — */
+  const layer = cls => make('g', { class: cls }, svg);
+  const ground = layer('tw-ground'), paths = layer('tw-paths'), sigs = layer('tw-sigs'), builds = layer('tw-builds');
+  const S = 5.7;
+  make('polygon', { class: 'tw-site', points: pts([P(-S, -S), P(S, -S), P(S, S), P(-S, S)]) }, ground);
+  for (let v = -S + 1.425; v < S - .1; v += 1.425) {
+    line(ground, P(v, -S), P(v, S), 'tw-grid');
+    line(ground, P(-S, v), P(S, v), 'tw-grid');
+  }
+  const pools = {}, pings = {};
+  Object.keys(BUILD).forEach(z => {
+    const [cx, cy] = P(...NODE[z]);
+    pools[z] = make('ellipse', { class: 'tw-pool', cx, cy, rx: 120, ry: 60 }, ground);
+    pings[z] = make('ellipse', { class: 'tw-ping', cx, cy, rx: 60, ry: 30 }, ground);
+  });
+  const pathEls = {}, cutEls = {};
+  EDGES.forEach(([a, b]) => {
+    const p = P(...NODE[a]), q = P(...NODE[b]);
+    pathEls[ek(a, b)] = line(paths, p, q, 'tw-path');
+    const m = [(p[0] + q[0]) / 2, (p[1] + q[1]) / 2];
+    const x = make('g', { class: 'tw-cut', transform: `translate(${m[0].toFixed(1)} ${m[1].toFixed(1)})` }, paths);
+    make('path', { d: 'M-5 -5L5 5M5 -5L-5 5' }, x);
+    cutEls[ek(a, b)] = x;
+  });
+  const halo = make('circle', { class: 'tw-sig-halo', r: 11, cx: -50, cy: -50 }, sigs);
+  const sig = make('circle', { class: 'tw-sig', r: 4.2, cx: -50, cy: -50 }, sigs);
+  const groups = {};
+  ['lab', 'web', 'core', 'edge', 'build', 'out'].forEach(z => {
+    const g = make('g', { class: 'tw-s', 'data-z': z }, builds);
+    BUILD[z](g, ...NODE[z]);
+    groups[z] = g;
+    if (z !== 'out') g.addEventListener('click', () => select(z));
+  });
+
+  // Zone buttons sit on the plan: back zones above their sculpture, front zones below.
+  const ANCHOR = { core: [1.6, 1.6, 0, 'down'], web: [0, 0, 2.15, 'up'], lab: [0, 0, 2.75, 'up'], edge: [1.6, 1.6, 0, 'down'], build: [1.6, 1.6, 0, 'down'] };
+  zoneBtns.forEach(b => {
+    const z = b.dataset.z, [dx, dy, dz, pos] = ANCHOR[z], [x, y] = NODE[z];
+    const p = P(x + dx, y + dy, dz);
+    b.style.setProperty('--x', (p[0] / 10).toFixed(2) + '%');
+    b.style.setProperty('--y', (p[1] / 6.2).toFixed(2) + '%');
+    b.dataset.pos = pos;
+  });
+
+  /* — state — */
+  const KEY = 'pn-twin';
+  let seen = { zones: [], whatif: [] };
+  try {
+    const s = JSON.parse(sessionStorage.getItem(KEY));
+    if (s && Array.isArray(s.zones) && Array.isArray(s.whatif)) seen = { zones: s.zones.filter(z => TWIN.zones[z]), whatif: s.whatif.filter(w => TWIN.whatif[w]) };
+  } catch (e) {}
+  const save = () => { try { sessionStorage.setItem(KEY, JSON.stringify(seen)); } catch (e) {} };
+  let zone = null, scen = null, comp = null, flowKey = 'core';
+
+  /* — the living system: one route through the site, and a signal along it — */
+  const SPEED = 230, STOP = 560, REST = 900;
+  let plan = null;
+  function planFor(path) {
+    const zs = path.map(c => TWIN.comps[c].z);
+    const nodes = [zs[0]], at = [0];
+    for (let i = 1; i < zs.length; i++) {
+      if (zs[i] !== zs[i - 1]) nodes.push(...route(zs[i - 1], zs[i]).slice(1));
+      at.push(nodes.length - 1);
+    }
+    const xy = nodes.map(n => P(...NODE[n]));
+    const cum = [0];
+    for (let i = 1; i < xy.length; i++) cum.push(cum[i - 1] + Math.hypot(xy[i][0] - xy[i - 1][0], xy[i][1] - xy[i - 1][1]));
+    const items = [];
+    let d0 = 0;
+    at.forEach((ni, ci) => {
+      const d = cum[ni];
+      if (d > d0) items.push({ from: d0, to: d, dur: (d - d0) / SPEED * 1000 });
+      items.push({ stop: d, ci, z: zs[ci], dur: STOP });
+      d0 = d;
+    });
+    const total = items.reduce((s, it) => s + it.dur, 0) + REST;
+    return { nodes, xy, cum, items, total };
+  }
+  function pointAt(d) {
+    const { xy, cum } = plan;
+    let i = 1;
+    while (i < cum.length - 1 && cum[i] < d) i++;
+    const seg = cum[i] - cum[i - 1] || 1, t = Math.max(0, Math.min(1, (d - cum[i - 1]) / seg));
+    return [xy[i - 1][0] + (xy[i][0] - xy[i - 1][0]) * t, xy[i - 1][1] + (xy[i][1] - xy[i - 1][1]) * t];
+  }
+  let raf = 0, t0 = 0, lastItem = -1, onScreen = false;
+  const canRun = () => !LITE && !narrow.matches && onScreen && !document.hidden && !tw.classList.contains('as-text');
+  function tick(now) {
+    raf = 0;
+    if (!canRun() || !plan) return;
+    let t = (now - t0) % plan.total, k = 0;
+    while (k < plan.items.length && t > plan.items[k].dur) { t -= plan.items[k].dur; k++; }
+    const it = plan.items[k];
+    let p;
+    if (!it) { p = pointAt(plan.cum[plan.cum.length - 1]); sig.classList.add('rest'); }
+    else {
+      sig.classList.remove('rest');
+      p = it.stop != null ? pointAt(it.stop) : pointAt(it.from + (it.to - it.from) * (t / it.dur));
+    }
+    [sig, halo].forEach(c => { c.setAttribute('cx', p[0].toFixed(1)); c.setAttribute('cy', p[1].toFixed(1)); });
+    const live = it && it.stop != null ? it.ci : -1;
+    if (k !== lastItem) {
+      lastItem = k;
+      $$('.tw-c', flowEl).forEach((b, i) => b.classList.toggle('live', i === live));
+      if (live >= 0) { const g = pings[it.z]; g.classList.remove('on'); void g.getBBox(); g.classList.add('on'); }
+    }
+    raf = requestAnimationFrame(tick);
+  }
+  function run() { if (!raf && canRun()) { t0 = performance.now(); lastItem = -1; raf = requestAnimationFrame(tick); } }
+  function halt() {
+    cancelAnimationFrame(raf); raf = 0;
+    $$('.tw-c.live', flowEl).forEach(b => b.classList.remove('live'));
+    [sig, halo].forEach(c => { c.setAttribute('cx', -50); c.setAttribute('cy', -50); });
+  }
+  new IntersectionObserver(([e]) => { onScreen = e.isIntersecting; if (onScreen) run(); else halt(); }, { threshold: .2 }).observe(tw);
+  document.addEventListener('visibilitychange', () => { if (document.hidden) halt(); else run(); });
+  narrow.addEventListener('change', () => { halt(); run(); camera(); });
+
+  function paintSite() {
+    const f = TWIN.flows[flowKey], W = scen && TWIN.whatif[scen];
+    plan = planFor(f.path);
+    const lit = new Set();
+    for (let i = 1; i < plan.nodes.length; i++) lit.add(ek(plan.nodes[i - 1], plan.nodes[i]));
+    const cut = new Set((W ? W.cut : []).map(([a, b]) => ek(a, b)));
+    Object.entries(pathEls).forEach(([k, p]) => { p.classList.toggle('lit', lit.has(k) && !cut.has(k)); p.classList.toggle('cut', cut.has(k)); });
+    Object.entries(cutEls).forEach(([k, x]) => x.classList.toggle('on', cut.has(k)));
+    const inFlow = new Set(f.path.map(c => TWIN.comps[c].z));
+    const warn = new Set((W ? W.hit : []).map(c => TWIN.comps[c].z));
+    const compZ = comp && TWIN.comps[comp].z;
+    Object.entries(groups).forEach(([z, g]) => {
+      g.classList.toggle('on', z === zone);
+      g.classList.toggle('flow', inFlow.has(z));
+      g.classList.toggle('warn', warn.has(z));
+      g.classList.toggle('comp', z === compZ);
+    });
+    Object.entries(pools).forEach(([z, e]) => e.classList.toggle('on', z === zone || z === compZ));
+    tw.classList.toggle('has-sel', !!zone);
+    halt(); run();
+  }
+  // The view moves part of the way towards the selected zone and leans in.
+  function camera() {
+    if (!zone || LITE || narrow.matches) { world.style.removeProperty('--tx'); world.style.removeProperty('--ty'); world.style.removeProperty('--tz'); return; }
+    const [sx, sy] = P(...NODE[zone], 1);
+    world.style.setProperty('--tx', ((500 - sx) / 10 * .22).toFixed(2) + '%');
+    world.style.setProperty('--ty', ((300 - sy) / 6.2 * .22).toFixed(2) + '%');
+    world.style.setProperty('--tz', '1.06');
+  }
+
+  function renderFlow() {
+    const f = TWIN.flows[flowKey], W = scen && TWIN.whatif[scen];
+    flowTitle.replaceChildren(el('strong', null, f.label), el('span', `st st-${f.status} mono`, STATUS[f.status]), el('span', 'tw-flow-note', f.note));
+    flowEl.replaceChildren();
+    f.path.forEach(c => {
+      const C = TWIN.comps[c];
+      const li = el('li'), b = el('button', 'tw-c'); b.type = 'button';
+      b.dataset.c = c;
+      b.setAttribute('aria-pressed', c === comp ? 'true' : 'false');
+      b.setAttribute('aria-controls', 'twComp');
+      b.append(el('strong', null, C.label), el('span', 'mono', C.z === 'out' ? 'output' : TWIN.zones[C.z].name.replace('The ', '').toLowerCase()));
+      if (W && W.hit.includes(c)) { b.classList.add('hit'); b.appendChild(el('span', 'sr-only', ', affected in this scenario')); }
+      b.addEventListener('click', () => pick(c === comp ? null : c));
+      li.appendChild(b);
+      flowEl.appendChild(li);
+    });
+    const bs = $$('.tw-c', flowEl);
+    bs.forEach((b, i) => b.addEventListener('keydown', e => {
+      if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+      e.preventDefault();
+      const n = bs[i + (e.key === 'ArrowRight' ? 1 : -1)];
+      if (n) n.focus();
+    }));
+  }
+  function renderComp() {
+    if (!comp) { compEl.replaceChildren(el('p', 'tw-comp-idle', 'Select a component to see its role and the technologies behind it.')); return; }
+    const C = TWIN.comps[comp], W = scen && TWIN.whatif[scen];
+    const w = el('div', 'tw-comp-in');
+    const head = el('div', 'tw-comp-head');
+    head.append(el('h4', null, C.label));
+    if (C.z !== 'out') {
+      const z = el('button', 'tw-zlink mono', `in ${TWIN.zones[C.z].name}`); z.type = 'button';
+      z.addEventListener('click', () => select(C.z, true));
+      head.appendChild(z);
+    } else head.appendChild(el('span', 'tw-zlink mono', 'real-world output'));
+    w.append(head, el('p', null, C.role));
+    if (C.tech.length) { const ul = el('ul', 'tw-chips mono'); C.tech.forEach(t => ul.appendChild(el('li', null, t))); w.appendChild(ul); }
+    if (W && W.hit.includes(comp)) w.appendChild(el('p', 'tw-comp-warn', `Affected if ${W.q.replace(/\?$/, '')}.`));
+    compEl.replaceChildren(w);
+  }
+  function pick(c) {
+    comp = c;
+    $$('.tw-c', flowEl).forEach(b => b.setAttribute('aria-pressed', b.dataset.c === comp ? 'true' : 'false'));
+    renderComp();
+    paintSite();
+  }
+
+  /* — zones — */
+  function renderZone() {
+    if (!zone) { panel.innerHTML = idle; return; }
+    const Z = TWIN.zones[zone];
+    const w = el('div', 'twp-zone');
+    const head = el('div', 'twp-head');
+    head.append(el('span', 'twp-n mono', Z.n), el('h3', null, Z.name));
+    if (Z.status) head.appendChild(el('span', `st st-${Z.status} mono`, STATUS[Z.status]));
+    w.append(head, el('p', 'twp-line', Z.line));
+    if (Z.facts) {
+      const dl = el('dl', 'twp-facts');
+      Z.facts.forEach(([k, v]) => { const r = el('div'); r.append(el('dt', 'mono', k), el('dd', null, v)); dl.appendChild(r); });
+      w.appendChild(dl);
+    }
+    const sec = (label, node) => { const s = el('div', 'twp-sec'); s.append(el('h4', 'mono', label), node); w.appendChild(s); };
+    const chips = el('ul', 'tw-chips mono'); Z.tech.forEach(t => chips.appendChild(el('li', null, t)));
+    sec(Z.techLabel, chips);
+    const proof = el('div', 'twp-proof');
+    if (Z.proof.length) Z.proof.forEach(([k, why]) => {
+      const b = el('button', 'twp-proj'); b.type = 'button';
+      b.append(el('strong', null, PROJ[k]), el('span', null, why));
+      b.addEventListener('click', () => openProject(k, b));
+      proof.appendChild(b);
+    });
+    else proof.appendChild(el('p', 'twp-none', Z.none));
+    sec(Z.proof.length ? 'proven in' : 'status', proof);
+    const links = el('div', 'twp-links');
+    Z.links.forEach(([k, why]) => {
+      const b = el('button', 'twp-link'); b.type = 'button';
+      b.append(el('span', 'mono', TWIN.zones[k].n), el('strong', null, TWIN.zones[k].name), el('em', null, why));
+      b.addEventListener('click', () => select(k, true));
+      links.appendChild(b);
+    });
+    sec('connects to', links);
+    w.appendChild(linkBtn('twp-deeper mono', Z.deeper[0] + ' →', Z.deeper[1]));
+    panel.replaceChildren(w);
+  }
+  function select(z, focus) {
+    zone = zone === z && !focus ? null : z;
+    zoneBtns.forEach(b => b.setAttribute('aria-pressed', b.dataset.z === zone ? 'true' : 'false'));
+    if (zone) {
+      if (scen) clearScenario();
+      flowKey = TWIN.zones[zone].flow;
+      if (!seen.zones.includes(zone)) { seen.zones.push(zone); save(); }
+      inspect('twin', 'zone-' + zone, 'Digital twin · ' + TWIN.zones[zone].name);
+    } else flowKey = 'core';
+    comp = null;
+    renderZone(); renderFlow(); renderComp(); paintSite(); camera(); renderProfile();
+    if (focus && zone) { const b = zoneBtns.find(x => x.dataset.z === zone); if (b) b.focus({ preventScroll: true }); }
+  }
+  zoneBtns.forEach((b, i) => {
+    b.addEventListener('click', () => select(b.dataset.z));
+    b.addEventListener('pointerenter', () => groups[b.dataset.z].classList.add('hov'));
+    b.addEventListener('pointerleave', () => groups[b.dataset.z].classList.remove('hov'));
+    b.addEventListener('keydown', e => {
+      if (!['ArrowRight', 'ArrowDown', 'ArrowLeft', 'ArrowUp', 'Home', 'End'].includes(e.key)) return;
+      e.preventDefault();
+      const n = e.key === 'Home' ? 0 : e.key === 'End' ? zoneBtns.length - 1 : (i + (e.key === 'ArrowRight' || e.key === 'ArrowDown' ? 1 : -1) + zoneBtns.length) % zoneBtns.length;
+      zoneBtns[n].focus();
+    });
+  });
+  Object.entries(groups).forEach(([z, g]) => {
+    if (z === 'out') return;
+    g.addEventListener('pointerenter', () => { const b = zoneBtns.find(x => x.dataset.z === z); if (b) b.classList.add('hov'); });
+    g.addEventListener('pointerleave', () => { const b = zoneBtns.find(x => x.dataset.z === z); if (b) b.classList.remove('hov'); });
+  });
+
+  /* — what if — */
+  function renderScenario() {
+    if (!scen) { whatEl.hidden = true; whatEl.replaceChildren(); return; }
+    const W = TWIN.whatif[scen];
+    const w = el('div', 'tw-what-in');
+    const head = el('div', 'tw-what-head');
+    head.append(el('span', 'tw-what-k mono', 'scenario · educational'), el('h4', null, 'What if ' + W.q));
+    const clear = el('button', 'tw-tool mono', 'Clear scenario'); clear.type = 'button';
+    clear.addEventListener('click', () => { const b = wiBtns.find(x => x.dataset.w === scen); clearScenario(); paintAll(); if (b) b.focus(); });
+    head.appendChild(clear);
+    w.appendChild(head);
+    const grid = el('div', 'tw-what-grid');
+    const left = el('div');
+    left.appendChild(el('p', 'tw-what-lead', W.what));
+    left.appendChild(el('h5', 'mono', 'affected'));
+    const hit = el('ul', 'tw-chips tw-hit mono'); W.hit.forEach(c => hit.appendChild(el('li', null, TWIN.comps[c].label))); left.appendChild(hit);
+    left.appendChild(el('h5', 'mono', 'trade-off'));
+    left.appendChild(el('p', 'tw-what-trade', W.trade));
+    left.appendChild(linkBtn('twp-deeper mono', W.see[0] + ' →', W.see[1]));
+    const right = el('div');
+    right.appendChild(el('h5', 'mono', 'responses I would weigh'));
+    const ol = el('ol', 'tw-moves');
+    W.moves.forEach(([t, d]) => { const li = el('li'); li.append(el('strong', null, t), el('span', null, d)); ol.appendChild(li); });
+    right.appendChild(ol);
+    grid.append(left, right);
+    w.appendChild(grid);
+    whatEl.replaceChildren(w);
+    whatEl.hidden = false;
+  }
+  function clearScenario() {
+    scen = null;
+    wiBtns.forEach(b => b.setAttribute('aria-pressed', 'false'));
+    flowKey = zone ? TWIN.zones[zone].flow : 'core';
+    renderScenario();
+  }
+  function setScenario(w) {
+    if (scen === w) { clearScenario(); paintAll(); return; }
+    scen = w;
+    wiBtns.forEach(b => b.setAttribute('aria-pressed', b.dataset.w === scen ? 'true' : 'false'));
+    flowKey = TWIN.whatif[w].flow;
+    comp = null;
+    if (!seen.whatif.includes(w)) { seen.whatif.push(w); save(); }
+    inspect('twin', 'whatif-' + w, 'What if ' + TWIN.whatif[w].q);
+    renderScenario(); paintAll();
+  }
+  function paintAll() { renderFlow(); renderComp(); paintSite(); renderProfile(); }
+  wiBtns.forEach(b => b.addEventListener('click', () => setScenario(b.dataset.w)));
+
+  /* — what the visitor has explored, as a formula — */
+  const MAP = { core: [32, 20], web: [18, 12], lab: [46, 12], edge: [46, 28], build: [18, 28] };
+  function renderProfile() {
+    const traits = seen.zones.map(z => TWIN.zones[z].trait).concat(seen.whatif.length ? ['Architectural reasoning'] : []);
+    formula.replaceChildren();
+    if (!traits.length) formula.appendChild(el('span', 'tw-f-empty', 'Nothing yet. Open a zone and it is added here.'));
+    traits.forEach((t, i) => {
+      if (i) formula.appendChild(el('span', 'tw-f-plus', '+'));
+      formula.appendChild(el('span', 'tw-f-term', t));
+    });
+    if (traits.length) formula.appendChild(el('span', 'tw-f-count mono',
+      `${seen.zones.length} of 5 zones` + (seen.whatif.length ? ` · ${seen.whatif.length} scenario${seen.whatif.length > 1 ? 's' : ''}` : '')));
+    map.replaceChildren();
+    Object.keys(MAP).filter(z => z !== 'core').forEach(z => make('line', { x1: 32, y1: 20, x2: MAP[z][0], y2: MAP[z][1], class: seen.zones.includes(z) && seen.zones.includes('core') ? 'on' : '' }, map));
+    Object.entries(MAP).forEach(([z, [x, y]]) => make('circle', { cx: x, cy: y, r: z === 'core' ? 4 : 3, class: seen.zones.includes(z) ? 'on' : '' }, map));
+  }
+
+  /* — text view: everything above, as reading — */
+  function renderText() {
+    const w = el('div', 'tw-text-in');
+    w.appendChild(el('h3', 'tw-h mono', 'the digital twin, as text'));
+    Object.values(TWIN.zones).forEach(Z => {
+      const a = el('article', 'twt-zone');
+      const h = el('h4', null, `${Z.n} · ${Z.name}`);
+      if (Z.status) h.appendChild(el('span', `st st-${Z.status} mono`, STATUS[Z.status]));
+      a.append(h, el('p', null, Z.line));
+      const dl = el('dl');
+      const row = (t, node) => { const r = el('div'); r.append(el('dt', 'mono', t), typeof node === 'string' ? el('dd', null, node) : node); dl.appendChild(r); };
+      row(Z.techLabel, Z.tech.join(' · '));
+      const dd = el('dd');
+      if (Z.proof.length) Z.proof.forEach(([p, why], i) => {
+        const b = el('button', 'twt-proj', PROJ[p]); b.type = 'button';
+        b.addEventListener('click', () => openProject(p, b));
+        if (i) dd.appendChild(document.createTextNode(' · '));
+        dd.append(b, document.createTextNode(` (${why})`));
+      });
+      else dd.textContent = Z.none;
+      row(Z.proof.length ? 'proven in' : 'status', dd);
+      const f = TWIN.flows[Z.flow];
+      row('system', `${f.label}: ${f.path.map(c => TWIN.comps[c].label).join(' → ')} (${STATUS[f.status]}). ${f.note}`);
+      row('connects to', Z.links.map(([z, why]) => `${TWIN.zones[z].name}, ${why}`).join('; ') + '.');
+      a.appendChild(dl);
+      w.appendChild(a);
+    });
+    w.appendChild(el('h3', 'tw-h mono', 'what if… · educational scenarios'));
+    Object.values(TWIN.whatif).forEach(W => {
+      const a = el('article', 'twt-what');
+      a.append(el('h4', null, 'What if ' + W.q), el('p', null, W.what));
+      const ul = el('ul');
+      W.moves.forEach(([t, d]) => { const li = el('li'); li.append(el('strong', null, t + '. '), document.createTextNode(d)); ul.appendChild(li); });
+      a.append(ul, el('p', 'twt-trade', 'Trade-off: ' + W.trade));
+      w.appendChild(a);
+    });
+    textEl.replaceChildren(w);
+  }
+  viewBtn.addEventListener('click', () => {
+    const on = !tw.classList.contains('as-text');
+    if (on && !textEl.firstChild) renderText();
+    tw.classList.toggle('as-text', on);
+    textEl.hidden = !on;
+    viewBtn.setAttribute('aria-pressed', on ? 'true' : 'false');
+    viewBtn.lastChild.textContent = on ? ' Interactive view' : ' Text view';
+    if (on) halt(); else run();
+    inspect('twin', 'text', 'Digital twin · text view');
+  });
+
+  /* — reset — */
+  $('#twReset').addEventListener('click', () => {
+    seen = { zones: [], whatif: [] };
+    try { sessionStorage.removeItem(KEY); } catch (e) {}
+    zone = null; comp = null;
+    zoneBtns.forEach(b => b.setAttribute('aria-pressed', 'false'));
+    clearScenario();
+    flowKey = 'core';
+    renderZone(); paintAll(); camera();
+    ack('Exploration reset');
+  });
+
+  tw.addEventListener('keydown', e => {
+    if (e.key !== 'Escape') return;
+    if (scen) { e.stopPropagation(); const b = wiBtns.find(x => x.dataset.w === scen); clearScenario(); paintAll(); if (b) b.focus(); }
+    else if (comp) { e.stopPropagation(); const b = $(`.tw-c[data-c="${comp}"]`, flowEl); pick(null); if (b) b.focus(); }
+    else if (zone) { e.stopPropagation(); const b = zoneBtns.find(x => x.dataset.z === zone); select(zone); if (b) b.focus(); }
+  });
+
+  // Deep link from the palette and the assistant.
+  window.addEventListener('pn:twin-open', e => {
+    const z = e.detail && e.detail.zone;
+    $('#twin').scrollIntoView({ behavior: smooth(), block: 'start' });
+    if (z && TWIN.zones[z] && zone !== z) select(z);
+  });
+
+  renderFlow(); renderComp(); paintSite(); renderProfile();
+})();
+
 /* ══ 19. VISUAL INTELLIGENCE OBSERVATORY ══
    Real output first: a slider compares a frame as it went into Detectify's
    vehicle model with what came out. Then the rule lab below.
@@ -1659,6 +2340,7 @@ const Eng = (function () {
     experience: () => `${count('.gl-item')} roles + current · ${count('.disc-list > li')} disciplines · ${years()}`,
     thinking: () => `${count('.dna-strand')} journeys · ${count('.ds-stages button')} stages · built / partly built / concept`,
     skills: () => `${count('.cst-tech button')} technologies · ${count('.cst-disc button')} disciplines · ${count('.cst-proj button')} projects`,
+    twin: () => `${count('.tw-zone')} zones · ${Object.keys(TWIN.flows).length} system routes · ${count('.tw-wi')} what-if scenarios · isometric SVG`,
     pipeline: () => `${count('.pipe-step')} stages · ${count('.lab-scene')} sample frames · simulated detections, real rules`,
     projects: () => `${count(PROJECTS)} projects · ${count('.pj [data-case]')} case studies · ${$$('#projGrid .pj-link, .pj-mini .pj-link').filter(a => /live|play/i.test(a.textContent)).length} live demos`,
     education: () => `${count('.edu-item')} qualifications · ${count('.cert')} certifications`,
@@ -1670,7 +2352,7 @@ const Eng = (function () {
     ['.hero-title', 'h1 · Geist 650 · sees / thinks / acts'],
     ['.b-intro', 'about/intro.md'], ['.b-photo', 'about/photo.jpg'], ['.b-now', 'about/now'],
     ['.b-stats', 'about/stats'], ['.b-json', 'about/profile.json'],
-    ['.hero-chapters', 'six chapters'], ['.universe', 'pn universe · 4 domains'],
+    ['.hero-chapters', 'six chapters'], ['.universe', 'pn universe · 4 domains'], ['.tw-stage', 'digital twin · site plan'],
     ['.exp-current', 'HEAD → current role'],
     ['.form-shell', 'POST api.web3forms.com'], ['.mail-card', 'mailto:']
   ];
@@ -2058,7 +2740,7 @@ const Assistant = (function () {
   // position, nothing inferred about the visitor.
   const BY_CONTEXT = {
     hero: 'What kind of systems do you build?', thinking: 'How do you approach a system?', about: 'What technologies do you use?',
-    experience: 'What is your experience?', skills: 'What backend technologies are used?',
+    experience: 'What is your experience?', skills: 'What backend technologies are used?', twin: 'What kind of systems do you build?',
     pipeline: 'What AI/ML work do you do?', projects: 'What projects involve computer vision?',
     process: 'How is this portfolio built?', education: 'What certifications do you have?',
     focus: 'What are you focused on right now?', contact: 'How can I contact you?'
@@ -2094,6 +2776,7 @@ const Assistant = (function () {
     ['explore.architecture', 'Engineering DNA', '#thinking', 'fa-diagram-project', 'architecture system journeys thinking map'],
     ['explore.process', 'How I build', '#process', 'fa-gears', 'process engineering deploy testing systems'],
     ['explore.capabilities', 'Capability constellation', '#skills', 'fa-layer-group', 'skills stack technologies tech'],
+    ['explore.twin', 'Digital twin', '#twin', 'fa-cubes', 'twin model zones core web lab edge build what if scenarios system'],
     ['explore.projects', 'Projects', '#projects', 'fa-folder-open', 'work worlds case studies portfolio'],
     ['explore.ai-lab', 'Visual intelligence observatory', '#pipeline', 'fa-eye', 'ai lab pipeline ml computer vision yolo detection threshold'],
     ['explore.focus', 'Current focus', '#focus', 'fa-crosshairs', 'now focus areas'],
@@ -2105,7 +2788,8 @@ const Assistant = (function () {
   // "Suggested here": the commands that fit the section being read.
   const HERE = {
     hero: ['Engineering DNA', 'Turn on Engineering Mode'], about: ['Download resume', 'Experience'],
-    thinking: ['Capability constellation', 'Projects'], skills: ['Engineering DNA', 'Visual intelligence observatory'],
+    thinking: ['Capability constellation', 'Projects'], skills: ['Digital twin', 'Engineering DNA'],
+    twin: ['Projects', 'Visual intelligence observatory'],
     experience: ['Projects', 'Download resume'], process: ['Open GitHub', 'Engineering DNA'],
     pipeline: ['Detectify case study', 'AI / ML projects'], projects: ['Detectify case study', 'Aspend case study'],
     education: ['Download resume', 'Current focus'], focus: ['Contact', 'Download resume'],
@@ -2328,6 +3012,7 @@ const Assistant = (function () {
     ['.uv-domain', 'Domain'],
     ['.ds-stages button, .ds-go', 'Trace'],
     ['.cst-list button', 'Connect'],
+    ['.tw-zone, .tw-s', 'Enter'], ['.tw-c', 'Trace'], ['.tw-wi', 'What if'],
     ['#projGrid .pj, .pj-mini', 'Explore']
   ];
   let x = 0, y = 0, cx = 0, cy = 0, raf = 0;
@@ -2362,8 +3047,8 @@ const Assistant = (function () {
   const MODULES = CHAPTERS.filter(([id]) => document.getElementById(id)).map(([id, n, label]) => ({ id, n, label }));
   const labelOf = id => (MODULES.find(m => m.id === id) || {}).label;
   // Which section a deeper look belongs to on the trace.
-  const HOME = { layer: 'thinking', tech: 'thinking', pipeline: 'pipeline', case: 'projects' };
-  const KIND = { layer: 'layer', tech: 'tech', pipeline: 'ai lab', case: 'project', eng: 'mode', hidden: 'found' };
+  const HOME = { layer: 'thinking', tech: 'thinking', twin: 'thinking', pipeline: 'pipeline', case: 'projects' };
+  const KIND = { layer: 'layer', tech: 'tech', twin: 'twin', pipeline: 'ai lab', case: 'project', eng: 'mode', hidden: 'found' };
 
   /* — store — */
   const KEY = 'pn-session';
@@ -2608,7 +3293,7 @@ const Assistant = (function () {
   host.appendChild(cv);
   const ctx = cv.getContext('2d');
   const N = 28;
-  const STATE_OF = { hero: 'emerge', about: 'emerge', thinking: 'architecture', process: 'architecture', skills: 'network',
+  const STATE_OF = { hero: 'emerge', about: 'emerge', thinking: 'architecture', process: 'architecture', skills: 'network', twin: 'architecture',
     projects: 'architecture', pipeline: 'detection', focus: 'detection', experience: 'network', education: 'network', contact: 'resolve' };
   let W = 0, H = 0, dpr = 1, state = null, from = null, to = null, t0 = 0, raf = 0, pts = [];
 
@@ -2652,15 +3337,16 @@ const Assistant = (function () {
       return { p, e, l: [[0, 'car 0.94'], [4, 'person 0.62'], [8, 'signal: red'], [12, 'plate 0.56']] };
     },
     resolve() {
-      // The PN monogram: its 8 vertices, then the remaining points along its strokes.
-      const V = [[9, 39], [9, 24], [9, 9], [24, 9], [24, 24], [24, 39], [39, 39], [39, 9]];
-      const E = [[0, 1], [1, 2], [2, 3], [3, 4], [4, 5], [4, 1], [3, 6], [6, 7]];
+      // The PN monogram (P and N on one shared trace): its 12 vertices, the P's
+      // bowl as four short chords, then the remaining points along its strokes.
+      const V = [[8, 40], [8, 24], [8, 8], [15, 8], [21, 10.5], [23, 16], [21, 21.5], [15, 24], [28, 40], [28, 8], [40, 40], [40, 8]];
+      const E = [[0, 1], [1, 2], [2, 3], [3, 4], [4, 5], [5, 6], [6, 7], [7, 1], [8, 9], [9, 10], [10, 11], [0, 8]];
       const s = Math.min(.34, .3 * W / H), ox = .93 - s / 2 * H / W, oy = .68 - s / 2;
       const map = ([x, y]) => [ox + (x / 48) * s * H / W, oy + (y / 48) * s];
       const p = V.map(map);
       let k = 0;
       while (p.length < N) { const [a, b] = E[k % E.length], f = (Math.floor(k / E.length) + 1) / 4; p.push(map([V[a][0] + (V[b][0] - V[a][0]) * f, V[a][1] + (V[b][1] - V[a][1]) * f])); k++; }
-      return { p, e: E.map(([a, b]) => [a, b, 'mark']), l: [[7, 'PN']], sig: 7 };
+      return { p, e: E.map(([a, b]) => [a, b, 'mark']), l: [[11, 'PN']], sig: 11 };
     }
   };
 

@@ -528,3 +528,113 @@ test('the living canvas and the monogram are decorative and present', async ({ p
   await expect(page.locator('#pnMark')).toHaveCount(1);
   await expect(page.locator('link[rel="icon"]')).toHaveAttribute('href', /c8f03c/);
 });
+
+test('digital twin: a zone opens with its evidence, lights its system and joins the exploration', async ({ page }) => {
+  await open(page);
+  const tw = page.locator('#tw');
+  await page.locator('#twin').scrollIntoViewIfNeeded();
+  await expect(page.locator('.tw-zone')).toHaveCount(5);
+  // The idle system is the end-to-end one, honestly labelled a concept.
+  await expect(page.locator('#twFlowTitle')).toContainText('concept');
+  await page.locator('.tw-zone[data-z="lab"]').click();
+  await expect(page.locator('.tw-zone[data-z="lab"]')).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.locator('#twPanel h3')).toHaveText('The Intelligence Lab');
+  await expect(page.locator('#twPanel .twp-proj')).toHaveText([/Detectify/]);
+  await expect(page.locator('#twFlow .tw-c strong')).toHaveText(['Camera stream', 'AI engine', 'Rules & events', 'Human review']);
+  await expect(page.locator('#twFlowTitle')).toContainText('partly built');
+  expect(await page.locator('.tw-path.lit').count()).toBeGreaterThan(0);
+  await expect(page.locator('#twFormula')).toContainText('Visual AI');
+  // A component explains its role and technologies.
+  await page.locator('.tw-c[data-c="model"]').click();
+  await expect(page.locator('#twComp')).toContainText('YOLOv8');
+  // The Edge Network claims nothing it has not built.
+  await page.locator('#twPanel .twp-link', { hasText: 'The Edge Network' }).click();
+  await expect(page.locator('#twPanel h3')).toHaveText('The Edge Network');
+  await expect(page.locator('#twPanel .twp-proj')).toHaveCount(0);
+  await expect(page.locator('#twPanel')).toContainText('No public project shows it yet');
+  await expect(page.locator('#twFormula')).toContainText('Edge systems');
+  // Esc steps back out, and focus stays on the zone.
+  await page.keyboard.press('Escape');
+  await expect(page.locator('.tw-zone[aria-pressed="true"]')).toHaveCount(0);
+  await expect(page.locator('.tw-zone[data-z="edge"]')).toBeFocused();
+  await expect(tw).not.toHaveClass(/has-sel/);
+});
+
+test('digital twin: arrow keys walk the zones and Enter opens one', async ({ page, isMobile }) => {
+  test.skip(isMobile, 'keyboard');
+  await open(page);
+  await page.locator('.tw-zone[data-z="core"]').focus();
+  await page.keyboard.press('ArrowRight');
+  await expect(page.locator('.tw-zone[data-z="web"]')).toBeFocused();
+  await page.keyboard.press('Enter');
+  await expect(page.locator('#twPanel h3')).toHaveText('The Web');
+  await expect(page.locator('#twPanel .twp-proj strong')).toContainText(['Campus Recruitment System', 'Aspend']);
+});
+
+test('digital twin: what-if scenarios mark what they affect and are labelled educational', async ({ page }) => {
+  await open(page);
+  await page.locator('#twin').scrollIntoViewIfNeeded();
+  await page.locator('.tw-wi[data-w="network"]').click();
+  const out = page.locator('#twWhat');
+  await expect(out).toBeVisible();
+  await expect(out).toContainText('educational');
+  await expect(out).toContainText('Buffer events, not video');
+  await expect(page.locator('.tw-c.hit strong')).toHaveText(['API', 'Dashboard']);
+  await expect(page.locator('.tw-path.cut')).toHaveCount(1);
+  await expect(page.locator('#twFormula')).toContainText('Architectural reasoning');
+  // The backend scenario cites the real fallback this site has.
+  await page.locator('.tw-wi[data-w="backend"]').click();
+  await expect(page.locator('.tw-wi[data-w="network"]')).toHaveAttribute('aria-pressed', 'false');
+  await expect(out).toContainText('prefilled email link');
+  await page.keyboard.press('Escape');
+  await expect(out).toBeHidden();
+  await expect(page.locator('.tw-c.hit')).toHaveCount(0);
+});
+
+test('digital twin: reset clears the exploration; the text view carries everything', async ({ page }) => {
+  await open(page);
+  await page.locator('#twin').scrollIntoViewIfNeeded();
+  await page.locator('.tw-zone[data-z="build"]').click();
+  await expect(page.locator('#twFormula')).toContainText('Delivery & testing');
+  // Kept for this tab across a reload.
+  await page.reload();
+  await page.locator('#preloader').dispatchEvent('click').catch(() => {});
+  await expect(page.locator('#twFormula')).toContainText('Delivery & testing');
+  await page.locator('#twReset').click();
+  await expect(page.locator('#twFormula')).toContainText('Nothing yet');
+  expect(await page.evaluate(() => sessionStorage.getItem('pn-twin'))).toBeNull();
+  await page.locator('#twView').click();
+  await expect(page.locator('#twView')).toHaveAttribute('aria-pressed', 'true');
+  const text = page.locator('#twText');
+  await expect(text).toBeVisible();
+  await expect(page.locator('.tw-main')).toBeHidden();
+  await expect(text.locator('.twt-zone')).toHaveCount(5);
+  await expect(text.locator('.twt-what')).toHaveCount(5);
+  await expect(text).toContainText('What if the network connection is lost?');
+  await page.locator('#twView').click();
+  await expect(page.locator('.tw-main')).toBeVisible();
+});
+
+test('digital twin: phones get the zones as a plan of buttons, no sculpture', async ({ page, isMobile }) => {
+  test.skip(!isMobile, 'mobile only');
+  await open(page);
+  await page.locator('#twin').scrollIntoViewIfNeeded();
+  await expect(page.locator('#twSvg')).toBeHidden();
+  await page.locator('.tw-zone[data-z="web"]').click();
+  await expect(page.locator('#twPanel h3')).toHaveText('The Web');
+  expect(await page.evaluate(() => document.documentElement.scrollWidth - innerWidth)).toBeLessThanOrEqual(0);
+});
+
+test('digital twin: reduced motion keeps the model still', async ({ browser }) => {
+  const ctx = await browser.newContext({ reducedMotion: 'reduce', viewport: { width: 1280, height: 860 } });
+  const page = await ctx.newPage();
+  await open(page);
+  await expect(page.locator('#tw')).toHaveClass(/lite/);
+  await page.locator('#twin').scrollIntoViewIfNeeded();
+  await page.locator('.tw-zone[data-z="lab"]').click();
+  // No camera move, and the signal never leaves its parking spot.
+  expect(await page.locator('#twWorld').evaluate(w => w.style.getPropertyValue('--tx'))).toBe('');
+  await page.waitForTimeout(400);
+  expect(await page.locator('.tw-sig').getAttribute('cx')).toBe('-50');
+  await ctx.close();
+});
