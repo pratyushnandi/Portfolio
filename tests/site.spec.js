@@ -152,27 +152,48 @@ test('engineering mode switches on, boots its panel and persists', async ({ page
   await expect(html).not.toHaveAttribute('data-mode', 'eng');
 });
 
-test('engineering DNA: a journey opens in detail, with status and evidence per stage', async ({ page }) => {
+test('architecture explorer: three views, honest status, decisions traced to their project', async ({ page }) => {
   await open(page);
-  const dna = page.locator('#dna');
-  await dna.scrollIntoViewIfNeeded();
-  await page.locator('.dna-strand[data-j="vision"] .ds-go').click();
-  await expect(dna).toHaveClass(/detail/);
-  await expect(page.locator('.dna-strand[data-j="vision"] .ds-go')).toHaveAttribute('aria-expanded', 'true');
-  await expect(page.locator('#dnaDetail h3')).toHaveText('Camera Input');
-  await expect(page.locator('#dnaDetail')).toContainText('concept');
-  await expect(page.locator('#dnaDetail')).toContainText('Not in a public project yet');
-  await page.locator('.dna-strand[data-j="vision"] [data-s="inference"]').click();
-  await expect(page.locator('#dnaDetail h3')).toHaveText('AI Inference');
-  await expect(page.locator('#dnaDetail .dd-head')).toContainText('built');
-  await expect(page.locator('#dnaDetail .dd-demo')).toContainText('Detectify');
-  await expect(page.locator('#dnaDetail')).toContainText('trade-offs');
-  // Arrow keys walk the stages; Escape returns to the overview.
-  await page.locator('.dna-strand[data-j="vision"] [data-s="inference"]').press('ArrowRight');
-  await expect(page.locator('#dnaDetail h3')).toHaveText('Detection');
-  await page.keyboard.press('Escape');
-  await expect(dna).not.toHaveClass(/detail/);
-  await expect(page.locator('#dnaBack')).toBeHidden();
+  const ax = page.locator('#ax');
+  await ax.scrollIntoViewIfNeeded();
+  // Overview: the seven layers, top to bottom, each with a status.
+  await expect(page.locator('.ax-row strong')).toHaveText(['User Interface', 'Frontend', 'API / Backend', 'Database', 'Application Logic', 'AI / Computer Vision', 'Edge / IoT Integration']);
+  await expect(page.locator('.ax-row[data-l="edge"]')).toContainText('concept');
+  // Selecting a layer opens it in the architecture view.
+  await page.locator('.ax-row[data-l="api"]').click();
+  await expect(page.locator('#axTabArchitecture')).toHaveAttribute('aria-selected', 'true');
+  await expect(page.locator('#axArchitecture')).toBeVisible();
+  await expect(page.locator('#axOverview')).toBeHidden();
+  await expect(page.locator('#axInspect h3')).toHaveText('API / Backend');
+  await expect(page.locator('#axInspect')).toContainText('Campus Recruitment System');
+  await expect(page.locator('.ax-node[data-l="database"]')).toHaveClass(/rel/);
+  // Connections lead to other layers; the edge layer claims nothing it has not built.
+  await page.locator('.ax-node[data-l="edge"]').click();
+  await expect(page.locator('#axInspect')).toContainText('conceptual example');
+  await expect(page.locator('#axInspect .ax-proj')).toHaveCount(0);
+  // Detail: decisions, each traced to a project or labelled conceptual.
+  await page.locator('#axInspect .ax-deeper').click();
+  await expect(page.locator('#axTabDetail')).toHaveAttribute('aria-selected', 'true');
+  await expect(page.locator('#axDetailBody .ax-src')).toHaveText(['conceptual example', 'conceptual example']);
+  await page.locator('.ax-pick button', { hasText: 'Database' }).click();
+  await expect(page.locator('#axDetailBody h3')).toHaveText('Database');
+  await expect(page.locator('#axDetailBody .ax-src').first()).toHaveText('documented in Aspend →');
+  await expect(page.locator('#axDetailBody')).toContainText('trade-offs');
+});
+
+test('architecture explorer: the views are keyboard tabs', async ({ page, isMobile }) => {
+  test.skip(isMobile, 'keyboard');
+  await open(page);
+  const first = page.locator('#axTabOverview');
+  await first.focus();
+  await page.keyboard.press('ArrowRight');
+  await expect(page.locator('#axTabArchitecture')).toBeFocused();
+  await expect(page.locator('#axTabArchitecture')).toHaveAttribute('aria-selected', 'true');
+  await page.keyboard.press('End');
+  await expect(page.locator('#axTabDetail')).toBeFocused();
+  await expect(page.locator('#axDetail')).toBeVisible();
+  await page.keyboard.press('Home');
+  await expect(first).toHaveAttribute('aria-selected', 'true');
 });
 
 test('case study opens from its project and closes with Escape', async ({ page }) => {
@@ -248,15 +269,18 @@ test('pipeline stages are buttons that expose their state', async ({ page }) => 
   await expect(heads.first()).toHaveAttribute('aria-expanded', /true|false/);
 });
 
-test('mobile: the universe becomes a domain grid, and the menu makes the page inert', async ({ page, isMobile }) => {
+test('mobile: the blueprint becomes a vertical diagram, and the menu makes the page inert', async ({ page, isMobile }) => {
   test.skip(!isMobile, 'mobile only');
   await open(page);
-  await expect(page.locator('.uv-links')).toBeHidden();
-  const cv = page.locator('.uv-domain[data-d="cv"]');
-  await cv.scrollIntoViewIfNeeded();
-  await cv.click();
-  await expect(cv).toHaveAttribute('aria-pressed', 'true');
-  await expect(page.locator('#uvPanel h3')).toHaveText('Computer Vision');
+  await expect(page.locator('#bpSvg')).toBeHidden();
+  const ai = page.locator('.bp-node[data-l="ai"]');
+  await ai.scrollIntoViewIfNeeded();
+  // Stacked, in the order data flows.
+  const tops = await page.locator('.bp-node').evaluateAll(ns => ns.map(n => n.getBoundingClientRect().top));
+  expect(tops).toEqual([...tops].sort((a, b) => a - b));
+  await ai.click();
+  await expect(ai).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.locator('#bpPanel h3')).toHaveText('AI / Computer Vision');
   await page.evaluate(() => window.scrollTo(0, 0));
   await page.locator('#burger').click();
   await expect(page.locator('#main')).toHaveJSProperty('inert', true);
@@ -265,26 +289,52 @@ test('mobile: the universe becomes a domain grid, and the menu makes the page in
   await expect(page.locator('#burger')).toBeFocused();
 });
 
-test('PN universe: a domain lights its pathways, inspects, and walks its journey', async ({ page }) => {
+test('system blueprint: a part reveals its role and opens in the explorer', async ({ page }) => {
   await open(page);
-  const uv = page.locator('#universe');
-  const ai = page.locator('.uv-domain[data-d="ai"]');
-  await ai.click();
-  await expect(ai).toHaveAttribute('aria-pressed', 'true');
-  await expect(uv).toHaveClass(/has-sel/);
-  await expect(page.locator('#uvPanel h3')).toHaveText('Artificial Intelligence');
-  await expect(page.locator('#uvPanel')).toContainText('Detectify');
-  await page.locator('#uvPanel .uvp-btn', { hasText: 'Inspect' }).click();
-  await expect(uv).toHaveClass(/inspect/);
-  await expect(page.locator('#uvPanel .uvp-inspect')).toContainText('held-out');
+  const bp = page.locator('#blueprint');
+  const api = page.locator('.bp-node[data-l="api"]');
+  await api.click();
+  await expect(api).toHaveAttribute('aria-pressed', 'true');
+  await expect(bp).toHaveClass(/has-sel/);
+  await expect(page.locator('#bpPanel h3')).toHaveText('API / Backend');
+  await expect(page.locator('#bpPanel .bpp-tech')).toContainText('Node.js');
+  await expect(page.locator('#bpPanel')).toContainText('Campus Recruitment System');
+  expect(await page.locator('.bp-wire.lit').count()).toBeGreaterThan(0);
   await page.keyboard.press('Escape');
-  await expect(uv).not.toHaveClass(/inspect/);
-  // IoT is honest about having no public project yet.
-  await page.locator('.uv-domain[data-d="iot"]').click();
-  await expect(page.locator('#uvPanel')).toContainText('No public project shows this yet');
-  await page.locator('#uvPanel .uvp-btn', { hasText: 'Walk journey C' }).click();
-  await expect(page.locator('#dna')).toHaveClass(/detail/);
-  await expect(page.locator('#dna')).toHaveAttribute('data-j', 'connected');
+  await expect(api).toHaveAttribute('aria-pressed', 'false');
+  // Edge / IoT is honest about having no public project yet, and opens in the explorer.
+  await page.locator('.bp-node[data-l="edge"]').click();
+  await expect(page.locator('#bpPanel')).toContainText('No public project shows it yet');
+  await page.locator('#bpPanel .bpp-go').click();
+  await expect(page.locator('#axTabArchitecture')).toHaveAttribute('aria-selected', 'true');
+  await expect(page.locator('#axInspect h3')).toHaveText('Edge / IoT Integration');
+});
+
+test('system blueprint: the signal runs, and stays still under reduced motion', async ({ browser }) => {
+  const moving = await browser.newContext({ viewport: { width: 1280, height: 860 } });
+  let page = await moving.newPage();
+  await open(page);
+  await expect.poll(() => page.locator('.bp-sig').getAttribute('cx'), { timeout: 5000 }).not.toBe('-40');
+  await moving.close();
+  const still = await browser.newContext({ viewport: { width: 1280, height: 860 }, reducedMotion: 'reduce' });
+  page = await still.newPage();
+  await open(page);
+  await page.waitForTimeout(800);
+  expect(await page.locator('.bp-sig').getAttribute('cx')).toBe('-40');
+  // Everything still works without motion.
+  await page.locator('.bp-node[data-l="database"]').click();
+  await expect(page.locator('#bpPanel h3')).toHaveText('Database');
+  await still.close();
+});
+
+test('system blueprint: focus previews a part, without a mouse', async ({ page, isMobile }) => {
+  test.skip(isMobile, 'keyboard');
+  await open(page);
+  await page.locator('.bp-node[data-l="ui"]').focus();
+  await expect(page.locator('#bpPanel h3')).toHaveText('User Interface');
+  await page.keyboard.press('ArrowDown');
+  await expect(page.locator('.bp-node[data-l="frontend"]')).toBeFocused();
+  await expect(page.locator('#bpPanel h3')).toHaveText('Frontend');
 });
 
 test('assistant explains engineering decisions from the page', async ({ page }) => {
@@ -297,11 +347,20 @@ test('assistant explains engineering decisions from the page', async ({ page }) 
   await expect(answer).toContainText('schema validation');
 });
 
-test('how-I-build stages light up as they are read', async ({ page }) => {
+test('code to production: each stage explains itself with a real example', async ({ page }) => {
   await open(page);
-  await page.locator('.proc-step').nth(3).scrollIntoViewIfNeeded();
-  await page.evaluate(() => window.scrollBy(0, 200));
-  await expect.poll(() => page.locator('.proc-step.lit').count()).toBeGreaterThan(2);
+  const steps = page.locator('.c2p-step');
+  await expect(steps).toHaveCount(7);
+  await steps.first().scrollIntoViewIfNeeded();
+  await expect(page.locator('#c2pBody h3')).toHaveText('Idea');
+  await page.locator('.c2p-step[data-s="testing"]').click();
+  await expect(page.locator('.c2p-step[data-s="testing"]')).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.locator('.c2p-step.done')).toHaveCount(4);
+  await expect(page.locator('#c2pBody h3')).toHaveText('Testing');
+  await expect(page.locator('#c2pBody .c2p-tools')).toContainText('Playwright');
+  await expect(page.locator('#c2pBody .c2p-ex').first()).toContainText('This portfolio');
+  await page.locator('.c2p-step[data-s="testing"]').press('ArrowRight');
+  await expect(page.locator('#c2pBody h3')).toHaveText('Deployment');
 });
 
 test('command palette suggests commands for the section being read', async ({ page }) => {
@@ -340,13 +399,75 @@ test('session layer records the route, draws it at the end and clears it', async
   expect(await path()).toEqual([]);
 });
 
-test('the hidden command answers with a system message', async ({ page }) => {
+test('the hidden note: discoverable from the footer, three checkable principles', async ({ page }) => {
   await open(page);
+  await expect(page.locator('.foot-egg')).toContainText('ls -a');
   await page.locator('#cmdkBtn').click();
   await page.locator('#cmdkInput').fill('ls -a');
   await page.keyboard.press('Enter');
-  await expect(page.locator('#cmdkAnswer h3')).toContainText('wasn’t in the navigation');
-  await expect(page.locator('#cmdkAnswer')).toContainText('Good engineers look deeper.');
+  const answer = page.locator('#cmdkAnswer');
+  await expect(answer).toContainText('ENGINEERING_NOTES.md');
+  await expect(answer.locator('dt')).toHaveText(['Label what is real.', 'Measure on data the model never saw.', 'Make failure visible, and recoverable.']);
+});
+
+test('projects filter by technology, combined with the category', async ({ page }) => {
+  await open(page);
+  await page.locator('#projects').scrollIntoViewIfNeeded();
+  // Chips come from the projects' own tags.
+  await expect(page.locator('.pt-chip[data-t="YOLOv8"]')).toHaveCount(1);
+  await page.locator('.pt-chip[data-t="SQLite"]').click();
+  await expect(page.locator('#projGrid .pj:not(.is-hidden) h3')).toHaveText(['Aspend']);
+  await expect(page.locator('#projStatus')).toHaveText('1 project using SQLite');
+  await page.locator('.pt-chip[data-t="Node.js"]').click();
+  await expect(page.locator('#projGrid .pj:not(.is-hidden) h3')).toHaveText(['Campus Recruitment System']);
+  await expect(page.locator('.pj-mini:not([hidden]) h4')).toHaveText(['Web Calculator', 'Background Changer']);
+  await page.locator('.pf[data-f="ai"]').click();
+  await expect(page.locator('#projGrid .pj:not(.is-hidden)')).toHaveCount(0);
+  await page.locator('.pt-chip', { hasText: 'Any' }).click();
+  await expect(page.locator('#projGrid .pj:not(.is-hidden) h3')).toHaveText(['Detectify']);
+});
+
+test('the palette filters projects by technology', async ({ page }) => {
+  await open(page);
+  await page.locator('#cmdkBtn').click();
+  await page.locator('#cmdkInput').fill('projects using python');
+  await expect(page.locator('.cmdk-item').first()).toContainText('Projects using Python');
+  await page.keyboard.press('Enter');
+  await expect(page.locator('.pt-chip[data-t="Python"]')).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.locator('#projGrid .pj:not(.is-hidden) h3')).toHaveText(['Detectify']);
+});
+
+test('AI lab: the vision pipeline and stream topology are labelled conceptual', async ({ page }) => {
+  await open(page);
+  const sys = page.locator('#lsys');
+  await sys.scrollIntoViewIfNeeded();
+  await expect(sys).toContainText('conceptual');
+  await expect(page.locator('.ls-stage')).toHaveCount(5);
+  await page.locator('.ls-stage[data-s="preprocess"]').click();
+  await expect(page.locator('#lsPipeRead h4')).toHaveText('Preprocessing');
+  await expect(page.locator('#lsPipeRead .ls-real')).toContainText('designed, not published');
+  await page.locator('#lsTabTopo').click();
+  await expect(page.locator('#lsTopoMap .ls-cross')).toContainText('video');
+  await page.locator('.ls-m[data-m="edge"]').click();
+  await expect(page.locator('#lsTopoMap .ls-cross')).toContainText('events');
+  await expect(page.locator('#lsTopoMap .ls-zone').first()).toContainText('Edge device');
+  await page.locator('.ls-node[data-n="device"]').click();
+  await expect(page.locator('#lsTopoRead h4')).toHaveText('Edge device');
+  // Nothing asks for a camera.
+  expect(await page.evaluate(() => navigator.permissions ? navigator.permissions.query({ name: 'camera' }).then(p => p.state).catch(() => 'n/a') : 'n/a')).not.toBe('granted');
+});
+
+test('case studies give the problem, then the solution', async ({ page }) => {
+  await open(page);
+  for (const key of ['detectify', 'aspend', 'campus-recruitment-system', 'codeex-space']) {
+    const btn = page.locator(`.pj [data-case="${key}"]`);
+    await btn.scrollIntoViewIfNeeded();
+    await btn.click();
+    const heads = await page.locator('#caseBody .cs-sec h3').allTextContents();
+    expect(heads.slice(0, 2).map(h => h.trim().toLowerCase())).toEqual(['problem', 'solution']);
+    await page.keyboard.press('Escape');
+    await expect(page.locator('#caseDlg')).toBeHidden();
+  }
 });
 
 test('contact form validates, then submits (API mocked)', async ({ page }) => {
@@ -525,8 +646,14 @@ test('copying the email confirms it', async ({ page, context, browserName }) => 
 test('the living canvas and the monogram are decorative and present', async ({ page }) => {
   await open(page);
   await expect(page.locator('.bd-canvas')).toHaveAttribute('aria-hidden', 'true');
-  await expect(page.locator('#pnMark')).toHaveCount(1);
-  await expect(page.locator('link[rel="icon"]')).toHaveAttribute('href', /c8f03c/);
+  // The logo is the portrait everywhere: nav, footer, portal, intro, favicon.
+  await expect(page.locator('.logo-mark img, .pm-core img')).toHaveCount(3);
+  for (const src of await page.locator('.logo-mark img, .pm-core img').evaluateAll(is => is.map(i => i.getAttribute('src')))) {
+    expect(src).toBe('images/logo.jpg');
+  }
+  expect(await page.locator('.logo-mark img').first().evaluate(i => i.complete && i.naturalWidth)).toBeGreaterThan(0);
+  await expect(page.locator('link[rel="icon"]')).toHaveAttribute('href', 'favicon.png');
+  await expect(page.locator('link[rel="apple-touch-icon"]')).toHaveAttribute('href', 'apple-touch-icon.png');
 });
 
 test('digital twin: a zone opens with its evidence, lights its system and joins the exploration', async ({ page }) => {

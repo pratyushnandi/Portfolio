@@ -121,8 +121,8 @@ const ack = (function () {
   const meta = $('#themeColor');
   const isLight = () => root.getAttribute('data-theme') === 'light';
   function label() {
-    btn.setAttribute('aria-label', isLight() ? 'Switch to dark theme' : 'Switch to light theme');
-    btn.title = isLight() ? 'Light theme · switch to dark' : 'Dark theme · switch to light';
+    btn.setAttribute('aria-label', isLight() ? 'Switch to dark theme' : 'Switch to light theme (Studio)');
+    btn.title = isLight() ? 'Studio · light theme · switch to dark' : 'Dark theme · switch to Studio, the light theme';
   }
   function apply(theme) {
     if (theme === 'light') root.setAttribute('data-theme', 'light');
@@ -285,167 +285,14 @@ const Scroll = (function () {
   });
 })();
 
-/* ══ 5. HERO · THE PN DIGITAL UNIVERSE ══
-   Four engineering domains around the PN mark. Hover (mouse) previews a
-   domain; click, tap, Enter or Space selects it: its pathways light up, its
-   technical objects come forward and the panel explains it, with the projects
-   that show it. "Inspect" moves the field towards the domain and reveals the
-   detail on every object. Esc steps back out. The field leans gently with
-   the pointer on desktop only, never under reduced motion, and only while
-   the hero is on screen. Phones get a 2 × 2 domain grid instead of the field. */
+/* ══ 5. HERO ══
+   The hero's staggered entrance, and its looping visuals paused off screen.
+   The system blueprint itself is §5b, after the shared knowledge it reads. */
 (function () {
   const hero = $('#hero');
   if (!hero) return;
   $$('[data-hero]', hero).forEach((el, i) => el.style.setProperty('--hi', i));
-  // Looping CSS (pathway pulses) pauses while the hero is off screen.
   new IntersectionObserver(([e]) => hero.classList.toggle('paused', !e.isIntersecting)).observe(hero);
-
-  const uv = $('#universe');
-  if (!uv) return;
-  const stage = $('.uv-stage', uv), field = $('.uv-field', uv), panel = $('#uvPanel');
-  const domains = $$('.uv-domain', uv);
-  const lines = $$('[data-l]', uv), objects = $$('.uv-objects li', uv);
-  const idle = panel.innerHTML;
-  // What each domain is made of. Projects are listed only where a project on
-  // this page shows the domain; IoT & Edge is honest about being a focus area.
-  const DOMAINS = {
-    sw: { label: 'Software Engineering', journey: 'product',
-      line: 'Products people use: interfaces, APIs and data, typed, tested and shipped.',
-      tech: ['React', 'React Native', 'TypeScript', 'Node.js', 'Express', 'MySQL', 'SQLite'],
-      projects: ['campus-recruitment-system', 'aspend', 'ambulance-management-system', 'codeex-space'],
-      inspect: [['interfaces', 'React on the web, React Native on Android'], ['apis', 'REST on Node.js and Express, with JWT roles'], ['data', 'MySQL, SQLite on the device, a JSON store behind one module']] },
-    ai: { label: 'Artificial Intelligence', journey: 'vision',
-      line: 'Models trained on labelled data, and measured on data they never saw.',
-      tech: ['Python', 'YOLOv8', 'Ultralytics', 'Google Colab'],
-      projects: ['detectify'],
-      inspect: [['training', 'YOLOv8 on labelled frames, in Colab'], ['evaluation', 'precision, recall and mAP on held-out sets'], ['candour', 'weak held-out recall (0.52) is reported, not hidden']] },
-    cv: { label: 'Computer Vision', journey: 'vision',
-      line: 'Turning frames into boxes, classes and confidence, and those into decisions.',
-      tech: ['YOLO', 'OpenCV', 'RTSP'],
-      projects: ['detectify'],
-      inspect: [['detection', 'helmets, plates, vehicles, signal state'], ['rules', 'detections become events, such as a red-light violation'], ['streams', 'RTSP from IP cameras: designed, not yet public']] },
-    iot: { label: 'IoT & Edge Systems', journey: 'connected', focus: true,
-      line: 'Inference next to the camera, so events travel over the network instead of video.',
-      tech: ['Raspberry Pi', 'IoT', 'MediaMTX', 'REST APIs'],
-      projects: [],
-      inspect: [['edge', 'models on a Raspberry Pi at the site'], ['transport', 'events posted to the same API as the web app'], ['status', 'a current focus area, not yet in a public project']] }
-  };
-  // Which links light for each domain: its spoke, its two ring neighbours, its satellites.
-  const LIT = { sw: ['core-sw', 'sw-ai', 'iot-sw', 'sw'], ai: ['core-ai', 'sw-ai', 'ai-cv', 'ai'],
-    cv: ['core-cv', 'ai-cv', 'cv-iot', 'cv'], iot: ['core-iot', 'cv-iot', 'iot-sw', 'iot'] };
-
-  const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
-  let pinned = null, shown = null;
-
-  function render(k) {
-    const d = DOMAINS[k];
-    const w = el('div', 'uvp-node');
-    const head = el('div', 'uvp-head');
-    head.append(el('span', 'uvp-n mono', $(`[data-d="${k}"] .mono`, uv).textContent), el('h3', null, d.label));
-    w.append(head, el('p', 'uvp-line', d.line));
-    const tech = el('ul', 'uvp-tech mono');
-    d.tech.forEach(t => tech.appendChild(el('li', null, t)));
-    w.appendChild(tech);
-    if (uv.classList.contains('inspect')) {
-      const dl = el('dl', 'uvp-inspect');
-      d.inspect.forEach(([k2, v]) => { const r = el('div'); r.append(el('dt', 'mono', k2), el('dd', null, v)); dl.appendChild(r); });
-      w.appendChild(dl);
-    }
-    const foot = el('div', 'uvp-foot');
-    const found = d.projects.map(projectEl).filter(Boolean);
-    if (found.length) {
-      foot.appendChild(el('span', 'uvp-k mono', 'seen in'));
-      found.forEach(p => {
-        const key = slug(titleOf(p).textContent);
-        const b = el('button', 'uvp-proj', titleOf(p).textContent);
-        b.type = 'button';
-        b.addEventListener('click', () => {
-          if ($(`.pj [data-case="${key}"]`)) Case.open(key, b);
-          else p.scrollIntoView({ behavior: REDUCE_MOTION ? 'auto' : 'smooth', block: 'center' });
-        });
-        foot.appendChild(b);
-      });
-    } else {
-      foot.appendChild(el('span', 'uvp-k mono', 'focus area'));
-      foot.appendChild(el('span', 'uvp-none', 'No public project shows this yet.'));
-    }
-    w.appendChild(foot);
-    const acts = el('div', 'uvp-acts');
-    const ins = el('button', 'uvp-btn mono', uv.classList.contains('inspect') ? 'Close inspection' : 'Inspect');
-    ins.type = 'button';
-    ins.setAttribute('aria-pressed', uv.classList.contains('inspect') ? 'true' : 'false');
-    ins.addEventListener('click', () => setInspect(!uv.classList.contains('inspect')));
-    const walk = el('button', 'uvp-btn mono', `Walk journey ${{ product: 'A', vision: 'B', connected: 'C' }[d.journey]}`);
-    walk.type = 'button';
-    walk.addEventListener('click', () => window.dispatchEvent(new CustomEvent('pn:dna-open', { detail: { journey: d.journey } })));
-    acts.append(ins, walk);
-    w.appendChild(acts);
-    panel.replaceChildren(w);
-  }
-  function show(k) {
-    if (k === shown) return;
-    shown = k;
-    uv.classList.toggle('has-sel', !!k);
-    uv.dataset.sel = k || '';
-    domains.forEach(b => b.classList.toggle('on', b.dataset.d === k));
-    lines.forEach(l => l.classList.toggle('lit', !!k && LIT[k].includes(l.dataset.l)));
-    objects.forEach(o => o.classList.toggle('on', o.dataset.d === k));
-    if (k) render(k); else panel.innerHTML = idle;
-  }
-  function setInspect(on) {
-    if (on && !pinned) return;
-    uv.classList.toggle('inspect', on);
-    if (on) {
-      const b = domains.find(x => x.dataset.d === pinned);
-      uv.style.setProperty('--fx', b.style.getPropertyValue('--x'));
-      uv.style.setProperty('--fy', b.style.getPropertyValue('--y'));
-      inspect('layer', 'uv-' + pinned + '-inspect', DOMAINS[pinned].label + ', inspected');
-    }
-    shown = undefined; show(pinned);
-    // The panel was rebuilt: keep focus on its inspect toggle, inside the universe.
-    const t = $('.uvp-btn', panel);
-    if (t) t.focus({ preventScroll: true });
-  }
-  function pin(k) {
-    pinned = pinned === k ? null : k;
-    if (!pinned) uv.classList.remove('inspect');
-    domains.forEach(b => b.setAttribute('aria-pressed', b.dataset.d === pinned ? 'true' : 'false'));
-    shown = undefined; show(pinned);
-    if (pinned) inspect('layer', 'uv-' + pinned, DOMAINS[pinned].label);
-  }
-  const narrow = window.matchMedia('(max-width: 760px)');
-  domains.forEach((b, i) => {
-    b.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse' && !narrow.matches) show(b.dataset.d); });
-    b.addEventListener('click', () => pin(b.dataset.d));
-    b.addEventListener('keydown', e => {
-      if (!['ArrowRight', 'ArrowDown', 'ArrowLeft', 'ArrowUp'].includes(e.key)) return;
-      e.preventDefault();
-      domains[(i + (e.key === 'ArrowRight' || e.key === 'ArrowDown' ? 1 : -1) + domains.length) % domains.length].focus();
-    });
-  });
-  stage.addEventListener('pointerleave', e => { if (e.pointerType === 'mouse') show(pinned); });
-  uv.addEventListener('keydown', e => {
-    if (e.key !== 'Escape') return;
-    if (uv.classList.contains('inspect')) { setInspect(false); return; }
-    if (pinned) { const b = domains.find(x => x.dataset.d === pinned); pin(pinned); if (b) b.focus(); }
-  });
-
-  // Depth: the field leans towards the pointer, a few degrees at most.
-  if (FINE_POINTER && !REDUCE_MOTION) {
-    let raf = 0, px = 0, py = 0;
-    stage.addEventListener('pointermove', e => {
-      px = e.clientX; py = e.clientY;
-      if (raf) return;
-      raf = requestAnimationFrame(() => {
-        raf = 0;
-        const r = stage.getBoundingClientRect();
-        const nx = (px - r.left) / r.width - .5, ny = (py - r.top) / r.height - .5;
-        field.style.setProperty('--ry', (nx * 7).toFixed(2) + 'deg');
-        field.style.setProperty('--rx', (-ny * 7).toFixed(2) + 'deg');
-      });
-    }, { passive: true });
-    stage.addEventListener('pointerleave', () => { field.style.setProperty('--ry', '0deg'); field.style.setProperty('--rx', '0deg'); });
-  }
 })();
 
 /* ══ 7. SCROLL REVEAL ══ */
@@ -507,70 +354,95 @@ const Scroll = (function () {
   });
 })();
 
-/* ══ 10. HOW I BUILD ══
-   Stages light up as they cross the reading line, the rail fills with
-   progress, and the pinned counter beside the heading names the current one. */
-(function () {
-  const wrap = $('.proc-list');
-  if (!wrap) return;
-  const fill = $('.proc-fill', wrap);
-  const steps = $$('.proc-step', wrap);
-  const num = $('#procNum'), name = $('#procName');
-  Scroll.add(() => {
-    const r = wrap.getBoundingClientRect();
-    if (r.bottom < -100 || r.top > innerHeight + 100) return;
-    const line = innerHeight * .55;
-    fill.style.setProperty('--fill', Math.min(Math.max((line - r.top) / r.height, 0), 1).toFixed(4));
-    let last = 0;
-    steps.forEach((s, i) => {
-      const lit = s.getBoundingClientRect().top + 24 < line;
-      s.classList.toggle('lit', lit);
-      if (lit) last = i;
-    });
-    num.textContent = String(last + 1).padStart(2, '0');
-    name.textContent = $('h3', steps[last]).textContent;
-  });
-})();
-
-/* ══ 11. PROJECT FILTERS ══ */
-(function () {
+/* ══ 11. PROJECT FILTERS ══
+   Two filters that combine: a category (AI / ML, Web App…) and a technology.
+   The technology chips are built from the projects' own tags, so the list can
+   never offer something no project uses. The result count is announced. */
+const ProjFilter = (function () {
   const btns = $$('.pf');
   const cards = $$('#projGrid .pj');
   const ind = $('.pf-ind');
-  if (!btns.length) return;
+  const chipsEl = $('#techFilter'), status = $('#projStatus');
+  if (!btns.length) return { techs: [], setTech() {} };
+  // Tags written two ways on the page count as one technology.
+  const ALIAS = { js: ['JavaScript'], 'html/css': ['HTML', 'CSS'], html5: ['HTML'], css3: ['CSS'] };
+  const tagsOf = el => new Set($$('.tags li', el).flatMap(li => {
+    const t = li.textContent.trim();
+    return ALIAS[t.toLowerCase()] || [t];
+  }));
+  const all = cards.concat($$('.pj-mini'));
+  const TAGS = new Map(all.map(p => [p, tagsOf(p)]));
+  // Technologies used by at least one featured project, most used first.
+  // Disciplines are tagged too; they are not technologies, so they stay out.
+  const NOT_TECH = new Set(['Computer Vision']);
+  const count = new Map();
+  cards.forEach(c => TAGS.get(c).forEach(t => { if (!NOT_TECH.has(t)) count.set(t, (count.get(t) || 0) + 1); }));
+  const techs = [...count.keys()].sort((a, b) => count.get(b) - count.get(a) || a.localeCompare(b));
+  let cat = 'all', tech = null;
+
   function moveInd(b) {
     if (!ind || !b) return;
     ind.style.setProperty('--fx', b.offsetLeft + 'px');
     ind.style.setProperty('--fw', b.offsetWidth + 'px');
   }
-  btns.forEach(btn => btn.addEventListener('click', () => {
-    btns.forEach(b => { const on = b === btn; b.classList.toggle('active', on); b.setAttribute('aria-pressed', on ? 'true' : 'false'); });
-    moveInd(btn);
-    const f = btn.dataset.f;
+  // data-cat is a space-separated list: a project can belong to two filters.
+  const matches = el => (cat === 'all' || el.dataset.cat.split(' ').includes(cat)) && (!tech || TAGS.get(el).has(tech));
+  function apply() {
     let shown = 0;
-    // data-cat is a space-separated list: a project can belong to two filters.
-    const inFilter = el => f === 'all' || el.dataset.cat.split(' ').includes(f);
     cards.forEach(card => {
-      const show = inFilter(card);
+      const show = matches(card);
       card.classList.toggle('is-hidden', !show);
       card.classList.remove('filter-in');
       if (show && !REDUCE_MOTION) {
         card.classList.add('is-in');
-        card.style.setProperty('--fi', shown++);
+        card.style.setProperty('--fi', shown);
         void card.offsetWidth;
         card.classList.add('filter-in');
       }
+      if (show) shown++;
     });
-    // The experiment rows follow the same filter; their block hides when empty.
+    // The experiment rows follow the same filters; their block hides when empty.
     const minis = $$('.pj-mini');
-    minis.forEach(m => { m.hidden = !inFilter(m); });
+    minis.forEach(m => { m.hidden = !matches(m); });
     const more = $('.proj-more');
     if (more) more.hidden = minis.every(m => m.hidden);
+    const total = shown + minis.filter(m => !m.hidden).length;
+    if (status) status.textContent = cat === 'all' && !tech ? '' :
+      `${total} project${total === 1 ? '' : 's'}` + (tech ? ` using ${tech}` : '') + (cat !== 'all' ? ` · ${btns.find(b => b.dataset.f === cat).textContent.trim()}` : '');
+  }
+  btns.forEach(btn => btn.addEventListener('click', () => {
+    btns.forEach(b => { const on = b === btn; b.classList.toggle('active', on); b.setAttribute('aria-pressed', on ? 'true' : 'false'); });
+    moveInd(btn);
+    cat = btn.dataset.f;
+    apply();
   }));
+
+  const chipBtns = [];
+  if (chipsEl) {
+    ['Any'].concat(techs).forEach(t => {
+      const b = document.createElement('button');
+      b.type = 'button'; b.className = 'pt-chip';
+      b.dataset.t = t === 'Any' ? '' : t;
+      b.textContent = t;
+      b.setAttribute('aria-pressed', t === 'Any' ? 'true' : 'false');
+      b.addEventListener('click', () => setTech(b.dataset.t || null));
+      chipsEl.appendChild(b);
+      chipBtns.push(b);
+    });
+  }
+  // A chip toggles; the palette sets (force), so running a command twice keeps it on.
+  function setTech(t, force) {
+    tech = t && t === tech && !force ? null : t;
+    chipBtns.forEach(b => b.setAttribute('aria-pressed', (b.dataset.t || null) === tech ? 'true' : 'false'));
+    apply();
+    if (tech) inspect('tech', 'filter-' + slug(tech), 'Projects using ' + tech);
+  }
+
   const active = btns.find(b => b.classList.contains('active'));
   moveInd(active);
   window.addEventListener('resize', () => moveInd(btns.find(b => b.classList.contains('active'))), { passive: true });
   if (document.fonts) document.fonts.ready.then(() => moveInd(btns.find(b => b.classList.contains('active'))));
+  return { techs, setTech };
 })();
 
 /* ══ 12. POINTER MICRO-INTERACTIONS (desktop only) ══
@@ -884,7 +756,8 @@ const Scroll = (function () {
 const slug = s => s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 const projectEl = key => $$(PROJECTS).find(p => slug(titleOf(p).textContent) === key);
 
-// Engineering DNA. status: built (a project on this page shows it), partial,
+// Engineering DNA: three journeys through a system, kept as data for the
+// assistant and for links from the twin; the explorer maps them to layers. status: built (a project on this page shows it), partial,
 // or concept (architecture I design for, not yet in a public project).
 const DNA = {
   product: { letter: 'A', label: 'Digital Product Engineering', stages: [
@@ -1022,172 +895,540 @@ const CAP = {
 };
 const capName = k => { const b = $(`.cst-tech [data-t="${k}"]`); return b ? b.textContent.trim() : k; };
 
-/* ══ 18. ENGINEERING DNA ══
-   Overview: three strands, joined by rungs where the journeys touch. Choosing
-   a journey (or any stage) opens detail mode: the strand straightens and
-   takes the space, its pathway fills up to the selected stage, and the detail
-   panel explains the stage. ← → walk stages; Esc or "All journeys" goes back. */
+// Architecture: one example system, from the screen to the device. Shared by
+// the hero blueprint and the architecture explorer. A project is listed only
+// where its own evidence shows the layer; decisions name the project they come
+// from, or are marked 'concept'. Edge / IoT is a focus area, not a public build.
+const ARCH = {
+  order: ['ui', 'frontend', 'api', 'database', 'logic', 'ai', 'edge'],
+  layers: {
+    ui: { n: '01', label: 'User Interface', short: 'what people use', status: 'built',
+      role: 'What a person sees and does: layout, forms, feedback and accessibility.',
+      explain: 'Designed around the task and the device: who uses it, what they need next, and how it works with a keyboard, a screen reader or one thumb.',
+      tech: ['HTML5', 'CSS3', 'React', 'React Native'],
+      projects: [['campus-recruitment-system', 'separate views for three roles'], ['aspend', 'quick one-handed entry on Android'], ['codeex-space', 'editor tabs and a live preview'], ['portfolio', 'an accessibility budget of 100 in CI']],
+      decisions: [['Roles get their own views', 'Campus Recruitment gives students, recruiters and the placement office separate pages, instead of one screen full of conditions.', 'campus-recruitment-system'],
+        ['Accessibility is tested, not assumed', 'This site runs Lighthouse with an accessibility budget of 100 in CI, and browser tests check focus and keyboard paths.', 'portfolio']],
+      trade: ['Native (React Native) reaches device storage and biometrics; the web reaches everyone through one URL.'] },
+    frontend: { n: '02', label: 'Frontend', short: 'components · state', status: 'built',
+      role: 'Client code: components, state, routing, and every call to the API.',
+      explain: 'State lives in one place and screens stay thin, so a change in the data layer does not ripple through every view.',
+      tech: ['React', 'Next.js', 'TypeScript', 'JavaScript', 'React Native', 'Zustand'],
+      projects: [['aspend', 'a Zustand store between screens and data'], ['codeex-space', 'three editors feed one document builder'], ['portfolio', 'plain HTML, CSS and JavaScript, no build step']],
+      decisions: [['Screens never touch storage', 'In Aspend, screens read and write through a Zustand store, and only repositories run SQL.', 'aspend'],
+        ['No server where none is needed', 'CodeEx Space rebuilds its preview through srcdoc, so every run is a fresh page with nothing to host.', 'codeex-space']],
+      trade: ['Server rendering gives a faster first paint; client rendering keeps hosting simple.'] },
+    api: { n: '03', label: 'API / Backend', short: 'contracts · rules', status: 'built',
+      role: 'The contract between clients and the system: who may ask what, and what comes back.',
+      explain: 'Authentication and authorisation happen at the boundary, before any data is read, and input is checked on the way in.',
+      tech: ['Node.js', 'Express', 'Fastify', 'REST', 'JWT', 'PHP'],
+      projects: [['campus-recruitment-system', 'an Express REST API with JWT roles'], ['ambulance-management-system', 'PHP over MySQL']],
+      decisions: [['Check the role before reading data', 'Every Campus Recruitment request carries a JWT naming its role; route guards check it before any data is read.', 'campus-recruitment-system'],
+        ['Guard the boundary', 'Campus Recruitment throttles failed logins per email and IP, and limits user-entered links to http(s).', 'campus-recruitment-system']],
+      trade: ['REST is callable from anything, but chattier than one tailored query for a complex screen.', 'Stateless tokens scale without session storage; revoking them early needs extra work.'] },
+    database: { n: '04', label: 'Database', short: 'durable state', status: 'built',
+      role: 'Durable, queryable state that outlives any request.',
+      explain: 'The schema follows the meaning of the data, so the totals and permissions built on top of it stay correct.',
+      tech: ['PostgreSQL', 'MySQL', 'SQLite', 'Prisma', 'MongoDB'],
+      projects: [['aspend', 'SQLite on the device, indexed for reports'], ['ambulance-management-system', 'MySQL'], ['campus-recruitment-system', 'a JSON store behind one module']],
+      decisions: [['Model the meaning', 'Aspend keeps card bill payments in their own table, so a purchase is never counted twice.', 'aspend'],
+        ['Storage behind one module', 'Campus Recruitment hides its store behind one module, so moving to SQLite or PostgreSQL replaces only that module.', 'campus-recruitment-system']],
+      trade: ['Relational tables bring integrity and joins; documents bring flexible shapes.', 'SQLite on the device works offline; a server database lets people share data.'] },
+    logic: { n: '05', label: 'Application Logic', short: 'rules · state changes', status: 'built',
+      role: 'The rules of the product: eligibility, money, and how things move from one state to the next.',
+      explain: 'Rules live in plain functions and services, apart from screens and storage, so they can be tested on their own.',
+      tech: ['TypeScript', 'JavaScript', 'Python', 'Node.js'],
+      projects: [['campus-recruitment-system', 'eligibility and the application pipeline'], ['aspend', 'the credit-card ledger, unit tested'], ['detectify', 'rules that turn detections into violations (designed)']],
+      decisions: [['A pipeline, not a status field', 'Campus applications move from applied to shortlisted, interview, offered or rejected, and every change is kept on a timeline.', 'campus-recruitment-system'],
+        ['Logic as plain services', 'Aspend\'s money logic, exports and backup are plain services, unit-tested without a device.', 'aspend']],
+      trade: ['Rules on the server are one source of truth; rules in the client answer instantly.'] },
+    ai: { n: '06', label: 'AI / Computer Vision', short: 'models that see', status: 'built',
+      role: 'Trained models that turn a frame into boxes, classes and confidence scores.',
+      explain: 'Detection and decision stay separate: the model finds things, and readable rules decide what they mean.',
+      tech: ['Python', 'YOLOv8', 'Ultralytics', 'OpenCV', 'Google Colab'],
+      projects: [['detectify', 'two YOLOv8 models, evaluated on held-out data']],
+      decisions: [['Two focused models', 'Detectify trains helmet detection and traffic-scene detection separately, so each dataset can grow without retraining the other.', 'detectify'],
+        ['Report the weakness', 'On held-out helmet images recall falls to 0.52. The case study says so, and names more varied data as the next step.', 'detectify']],
+      trade: ['Bigger models are more accurate but slower; edge devices favour small ones.', 'The confidence threshold trades misses for false alarms.'] },
+    edge: { n: '07', label: 'Edge / IoT Integration', short: 'devices on site', status: 'concept',
+      role: 'Cameras and devices on site: streams in, events out.',
+      explain: 'Inference runs beside the camera and only events cross the network, which lowers bandwidth and keeps raw video on site.',
+      tech: ['Raspberry Pi', 'IoT', 'RTSP', 'MediaMTX'],
+      projects: [], none: 'A current focus area. No public project shows it yet, so nothing here is claimed as built.',
+      decisions: [['Events, not video', 'Send small events instead of streaming frames, so bandwidth falls and video never leaves the site.', 'concept'],
+        ['One camera connection, many readers', 'A relay such as MediaMTX re-serves one RTSP stream to a model and a dashboard alike.', 'concept']],
+      trade: ['Lower latency and bandwidth, paid for with smaller models.', 'Cheap devices are easy to deploy and hard to maintain at scale.'] }
+  },
+  // How the layers connect, and what travels between them.
+  links: [['ui', 'frontend', 'renders'], ['frontend', 'api', 'HTTP · JSON'], ['api', 'database', 'SQL'], ['api', 'logic', 'calls the rules'],
+    ['logic', 'ai', 'asks the model'], ['ai', 'edge', 'frames in, detections out'], ['edge', 'api', 'posts events']],
+  // Old deep links (DNA journeys, system nodes) land on the matching layer.
+  fromDNA: { interface: 'ui', logic: 'logic', api: 'api', database: 'database', camera: 'edge', stream: 'edge', video: 'ai', inference: 'ai',
+    detection: 'ai', event: 'logic', device: 'edge', edge: 'edge', comms: 'api', monitoring: 'api', dashboard: 'ui' },
+  fromJourney: { product: 'api', vision: 'ai', connected: 'edge' }
+};
+const linksOf = id => ARCH.links.filter(([a, b]) => a === id || b === id).map(([a, b, via]) => [a === id ? b : a, via]);
+// Open a project the same way everywhere: its case study if it has one, else the card.
+function openProject(key, from) {
+  if (key === 'portfolio') { const t = $('#process'); if (t) t.scrollIntoView({ behavior: REDUCE_MOTION ? 'auto' : 'smooth', block: 'start' }); return; }
+  if ($(`.pj [data-case="${key}"]`)) Case.open(key, from);
+  else { const p = projectEl(key); if (p) p.scrollIntoView({ behavior: REDUCE_MOTION ? 'auto' : 'smooth', block: 'center' }); }
+}
+
+// Code to production: seven stages, each evidenced by a real project where one exists.
+const PROD = [
+  { id: 'idea', label: 'Idea', purpose: 'Start from the problem and the people who have it, then decide what the system must do.',
+    consider: ['Who uses it, and what do they need to get done?', 'What has to be true for it to count as working?', 'What is out of scope, for now?'],
+    tools: [], proof: [['portfolio', 'A portfolio that reads like an engineering product and is honest about every claim it makes.'], ['aspend', 'An honest monthly total for someone who pays with UPI, cash and credit cards.']] },
+  { id: 'design', label: 'Design', purpose: 'Shape what people see and do before building it: flows, states, and the system that styles them.',
+    consider: ['Every state: empty, loading, error and success', 'Keyboard, screen reader and touch from the start', 'Tokens before components, so two themes stay consistent'],
+    tools: ['CSS custom properties', 'Design tokens'], proof: [['portfolio', 'One design system of semantic tokens for colour, space and motion, in two themes.'], ['campus-recruitment-system', 'Separate views for students, recruiters and the placement office.']] },
+  { id: 'architecture', label: 'Architecture', purpose: 'Choose the simplest structure that holds, and draw the system before writing it.',
+    consider: ['Where does each rule live?', 'What has to change together, and what must not?', 'What fails, and what happens then?'],
+    tools: ['System diagrams', 'REST contracts'], proof: [['portfolio', 'Plain HTML, CSS and JavaScript: no framework and no build step.'], ['aspend', 'Screens → store → repositories → SQLite, so only one layer touches SQL.']] },
+  { id: 'development', label: 'Development', purpose: 'Small, reviewable changes, with one source of truth for anything shared.',
+    consider: ['Clear contracts between layers', 'Shared data defined once', 'Readable code over clever code'],
+    tools: ['TypeScript', 'Git', 'GitHub'], proof: [['portfolio', 'One knowledge model drives the blueprint, the explorer, the command palette and the assistant.'], ['codeex-space', 'Three editors feed one document builder.']] },
+  { id: 'testing', label: 'Testing', purpose: 'Automate whatever a person would otherwise check by hand.',
+    consider: ['Unit tests for the rules', 'End-to-end tests for the journeys', 'Models measured on data they never saw'],
+    tools: ['Playwright', 'ESLint', 'Stylelint', 'html-validate'], proof: [['portfolio', 'Playwright end-to-end tests on desktop and mobile, plus HTML, CSS and JavaScript linting.'], ['aspend', 'The money logic is covered by unit tests.'], ['detectify', 'The helmet model is evaluated on a held-out test set.']] },
+  { id: 'deployment', label: 'Deployment', purpose: 'Every change passes review and an automated gate before it ships.',
+    consider: ['A preview for every change', 'The same build in preview and production', 'A way back if something breaks'],
+    tools: ['GitHub Actions', 'Vercel', 'GitHub Pages'], proof: [['portfolio', 'Pull requests run CI; Vercel deploys previews and production, and GitHub Pages mirrors it.'], ['codeex-space', 'A live demo on GitHub Pages.']] },
+  { id: 'monitoring', label: 'Monitoring', purpose: 'Check what people actually receive after it ships, and measure before improving.',
+    consider: ['Smoke-test the live URL', 'Performance and accessibility budgets', 'Failures that are visible and recoverable'],
+    tools: ['Lighthouse', 'Playwright'], proof: [['portfolio', 'Every deployment triggers a smoke test against the live URL, and Lighthouse budgets run in CI.'], ['portfolio', 'If the contact form service fails, a prefilled email link takes over.']] }
+];
+
+/* ══ 5b. SYSTEM BLUEPRINT (hero) ══
+   Six parts of one system on blueprint layer bands. A signal travels the data
+   path (interface → frontend → API → AI → edge, events back to the API, then
+   into the database), and each part lights as the signal reaches it. Hover,
+   focus or tap previews a part's role and technologies; click, Enter or Space
+   pins it; Esc unpins. The panel opens the same layer in the architecture
+   explorer. The signal runs only while the hero is on screen, never under
+   reduced motion; phones get the parts as a vertical diagram instead. */
 (function () {
-  const dna = $('#dna');
-  if (!dna) return;
-  const strands = $$('.dna-strand', dna), wrap = $('#dnaStrands'), detail = $('#dnaDetail'), back = $('#dnaBack'), svg = $('#dnaRungs');
+  const bp = $('#blueprint');
+  if (!bp) return;
   const NS = 'http://www.w3.org/2000/svg';
+  const svg = $('#bpSvg'), panel = $('#bpPanel'), nodes = $$('.bp-node', bp);
+  const idle = panel.innerHTML;
+  const narrow = window.matchMedia('(max-width: 760px)');
   const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
-  const btnOf = (j, s) => $(`.dna-strand[data-j="${j}"] [data-s="${s}"]`, dna);
-  let J = null, S = null;
+  const make = (tag, attrs, parent) => { const n = document.createElementNS(NS, tag); Object.entries(attrs).forEach(([k, v]) => n.setAttribute(k, v)); if (parent) parent.appendChild(n); return n; };
+  const STATUS = { built: 'built', partial: 'partly built', concept: 'concept' };
 
-  // Status lives in the markup too, so it never relies on colour alone.
-  Object.entries(DNA).forEach(([j, jr]) => jr.stages.forEach(st => {
-    const b = btnOf(j, st.id);
-    if (!b) return;
-    b.dataset.status = st.status;
-    b.setAttribute('aria-describedby', 'dnaDetail');
-    b.appendChild(el('span', 'sr-only', `, ${st.status === 'built' ? 'built' : st.status === 'partial' ? 'partly built' : 'concept'}`));
-  }));
+  // The drawing: 600 × 600, one band per layer of the system.
+  const POS = { ui: [300, 70], frontend: [300, 184], api: [300, 302], database: [160, 430], ai: [440, 430], edge: [440, 528] };
+  const BUS = [300, 430];
+  // Each wire: its route, what travels on it, and where that label sits clear of the boxes.
+  const WIRES = {
+    'ui-frontend': { pts: [POS.ui, POS.frontend], via: 'renders', at: [308, 131, 'start'] },
+    'frontend-api': { pts: [POS.frontend, POS.api], via: 'HTTP · JSON', at: [308, 247, 'start'] },
+    'api-bus': { pts: [POS.api, BUS] },
+    'bus-database': { pts: [BUS, POS.database], via: 'SQL', at: [264, 421, 'middle'] },
+    'bus-ai': { pts: [BUS, POS.ai], via: 'inference', at: [340, 421, 'middle'] },
+    'ai-edge': { pts: [POS.ai, POS.edge], via: 'frames', at: [448, 483, 'start'] },
+    'edge-bus': { pts: [POS.edge, [300, 528], BUS], via: 'events', at: [340, 519, 'middle'] }
+  };
+  const LIT = { ui: ['ui-frontend'], frontend: ['ui-frontend', 'frontend-api'], api: ['frontend-api', 'api-bus', 'edge-bus'],
+    database: ['api-bus', 'bus-database'], ai: ['api-bus', 'bus-ai', 'ai-edge'], edge: ['ai-edge', 'edge-bus'] };
+  const BANDS = [[70, 'L1 · presentation'], [184, 'L2 · client'], [302, 'L3 · service'], [430, 'L4 · data'], [528, 'L5 · field']];
 
-  function rungs() {
-    svg.replaceChildren();
-    if (J || innerWidth < 961) return;
-    const box = wrap.getBoundingClientRect();
-    svg.setAttribute('viewBox', `0 0 ${box.width} ${box.height}`);
-    RUNGS.forEach(([a, b, note]) => {
-      const [ja, sa] = a.split('.'), [jb, sb] = b.split('.');
-      const ea = btnOf(ja, sa), eb = btnOf(jb, sb);
-      if (!ea || !eb) return;
-      const ra = ea.getBoundingClientRect(), rb = eb.getBoundingClientRect();
-      const x1 = ra.left + ra.width / 2 - box.left, y1 = (ra.top < rb.top ? ra.bottom : ra.top) - box.top;
-      const x2 = rb.left + rb.width / 2 - box.left, y2 = (ra.top < rb.top ? rb.top : rb.bottom) - box.top;
-      const my = (y1 + y2) / 2;
-      const path = document.createElementNS(NS, 'path');
-      path.setAttribute('d', `M${x1} ${y1} C${x1} ${my} ${x2} ${my} ${x2} ${y2}`);
-      path.dataset.a = a; path.dataset.b = b;
-      const t = document.createElementNS(NS, 'title'); t.textContent = note; path.appendChild(t);
-      svg.appendChild(path);
-    });
-  }
-  // Hovering or focusing a stage in overview lights the rungs it is part of.
-  function touch(key) {
-    $$('path', svg).forEach(p => p.classList.toggle('lit', !!key && (p.dataset.a === key || p.dataset.b === key)));
-  }
+  const d = pts => 'M' + pts.map(p => p.join(' ')).join('L');
+  BANDS.forEach(([y, t]) => {
+    make('path', { class: 'bp-band', d: `M8 ${y}H592` }, svg);
+    make('text', { class: 'bp-band-t', x: 10, y: y - 8 }, svg).textContent = t;
+  });
+  [[8, 8, 1, 1], [592, 8, -1, 1], [8, 592, 1, -1], [592, 592, -1, -1]].forEach(([x, y, sx, sy]) =>
+    make('path', { class: 'bp-crop', d: `M${x} ${y + 18 * sy}V${y}H${x + 18 * sx}` }, svg));
+  const tb = make('g', { class: 'bp-title' }, svg);
+  make('rect', { x: 24, y: 548, width: 262, height: 30, rx: 3 }, tb);
+  make('path', { d: 'M184 548V578' }, tb);
+  [['SYSTEM BLUEPRINT', 32, 560], ['an example architecture', 32, 572], ['pn · rev 13', 192, 560], ['scale 1 : 1', 192, 572]]
+    .forEach(([t, x, y]) => { make('text', { x, y }, tb).textContent = t; });
+  const wires = {};
+  Object.entries(WIRES).forEach(([id, w]) => {
+    wires[id] = make('path', { class: 'bp-wire', d: d(w.pts) }, svg);
+    if (!w.via) return;
+    const [x, y, anchor] = w.at;
+    make('text', { class: 'bp-via', x, y, 'text-anchor': anchor }, svg).textContent = w.via;
+  });
+  make('circle', { class: 'bp-junction', cx: BUS[0], cy: BUS[1], r: 3.5 }, svg);
+  const halo = make('circle', { class: 'bp-sig-halo', r: 10, cx: -40, cy: -40 }, svg);
+  const sig = make('circle', { class: 'bp-sig', r: 4, cx: -40, cy: -40 }, svg);
+  nodes.forEach(b => {
+    const [x, y] = POS[b.dataset.l];
+    b.style.setProperty('--x', (x / 6).toFixed(2) + '%');
+    b.style.setProperty('--y', (y / 6).toFixed(2) + '%');
+  });
 
-  function render() {
-    const jr = DNA[J], i = jr.stages.findIndex(s => s.id === S), st = jr.stages[i];
-    const w = el('div', 'dd-wrap');
-    const head = el('div', 'dd-head');
-    head.append(el('span', 'dd-n mono', `${jr.letter}.${i + 1}`), el('h3', null, st.label),
-      el('span', `st st-${st.status} mono`, st.status === 'partial' ? 'partly built' : st.status));
-    w.appendChild(head);
-    w.appendChild(el('p', 'dd-does', st.does));
-    const grid = el('div', 'dd-grid');
-    const col = (title, node) => { const c = el('div', 'dd-col'); c.append(el('h4', 'mono', title), node); grid.appendChild(c); };
-    const tech = el('ul', 'dd-tech mono'); st.tech.forEach(t => tech.appendChild(el('li', null, t)));
-    col('technologies', tech);
-    const tr = el('ul', 'dd-trade'); st.trade.forEach(t => tr.appendChild(el('li', null, t)));
-    col('trade-offs', tr);
-    const demo = el('div', 'dd-demo');
-    if (st.demo.length) st.demo.forEach(([key, note]) => {
-      const b = el('button', 'dd-proj'); b.type = 'button';
-      b.append(el('strong', null, PROJ[key]), el('span', null, note));
-      b.addEventListener('click', () => {
-        if (key === 'portfolio') { const t = $('#process'); if (t) t.scrollIntoView({ behavior: REDUCE_MOTION ? 'auto' : 'smooth' }); return; }
-        if ($(`.pj [data-case="${key}"]`)) Case.open(key, b);
-        else { const p = projectEl(key); if (p) p.scrollIntoView({ behavior: REDUCE_MOTION ? 'auto' : 'smooth', block: 'center' }); }
+  /* — panel — */
+  let pinned = null, shown = null;
+  function render(k) {
+    const L = ARCH.layers[k];
+    const w = el('div', 'bpp-node');
+    const head = el('div', 'bpp-head');
+    head.append(el('h3', null, L.label), el('span', `st st-${L.status} mono`, STATUS[L.status]));
+    w.append(head, el('p', 'bpp-role', L.role));
+    const tech = el('ul', 'bpp-tech mono');
+    L.tech.forEach(t => tech.appendChild(el('li', null, t)));
+    w.appendChild(tech);
+    const foot = el('div', 'bpp-foot');
+    if (L.projects.length) {
+      foot.appendChild(el('span', 'bpp-k mono', 'seen in'));
+      L.projects.slice(0, 3).forEach(([key]) => {
+        const b = el('button', 'bpp-proj', PROJ[key]); b.type = 'button';
+        b.addEventListener('click', () => openProject(key, b));
+        foot.appendChild(b);
       });
-      demo.appendChild(b);
-    });
-    else demo.appendChild(el('p', 'dd-none', 'Not in a public project yet. This is architecture I design for, and one of my current focus areas.'));
-    col('demonstrated by', demo);
-    w.appendChild(grid);
-    const nav = el('div', 'dd-nav');
-    const step = (d, label) => {
-      const b = el('button', 'dd-step mono', label); b.type = 'button';
-      const k = jr.stages[i + d];
-      b.disabled = !k;
-      if (k) b.addEventListener('click', () => { open(J, k.id); btnOf(J, k.id).focus(); });
-      return b;
-    };
-    nav.append(step(-1, '← previous stage'), step(1, 'next stage →'));
-    w.appendChild(nav);
-    detail.replaceChildren(w);
+    } else foot.append(el('span', 'bpp-k mono', 'focus area'), el('span', 'bpp-none', L.none));
+    w.appendChild(foot);
+    const go = el('button', 'bpp-go mono', 'Inspect it in the architecture explorer →'); go.type = 'button';
+    go.addEventListener('click', () => window.dispatchEvent(new CustomEvent('pn:arch-open', { detail: { layer: k } })));
+    w.appendChild(go);
+    panel.replaceChildren(w);
   }
-
-  function open(j, s) {
-    const first = !J || J !== j;
-    J = j; S = s || DNA[j].stages[0].id;
-    dna.classList.add('detail');
-    dna.dataset.j = J;
-    back.hidden = false;
-    detail.hidden = false;
-    strands.forEach(st => {
-      const on = st.dataset.j === J;
-      st.classList.toggle('on', on);
-      $('.ds-go', st).setAttribute('aria-expanded', on ? 'true' : 'false');
-    });
-    const idx = DNA[J].stages.findIndex(x => x.id === S);
-    $$('.ds-stages button', dna).forEach(b => {
-      const mine = b.closest('.dna-strand').dataset.j === J;
-      const k = DNA[J].stages.findIndex(x => x.id === b.dataset.s);
-      b.setAttribute('aria-pressed', mine && b.dataset.s === S ? 'true' : 'false');
-      b.classList.toggle('passed', mine && k <= idx);
-    });
-    const strand = strands.find(x => x.dataset.j === J);
-    // The pathway fills up to the selected stage; on opening it runs from the start.
-    const target = ((idx + 1) / DNA[J].stages.length).toFixed(3);
-    if (first && !REDUCE_MOTION) { strand.style.setProperty('--p', '0'); void strand.offsetWidth; }
-    strand.style.setProperty('--p', target);
-    svg.replaceChildren();
-    render();
-    inspect('layer', `${J}.${S}`, `${DNA[J].label}: ${DNA[J].stages[idx].label}`);
+  function show(k) {
+    if (k === shown) return;
+    shown = k;
+    bp.classList.toggle('has-sel', !!k);
+    nodes.forEach(b => b.classList.toggle('on', b.dataset.l === k));
+    Object.entries(wires).forEach(([id, p]) => p.classList.toggle('lit', !!k && LIT[k].includes(id)));
+    if (k) render(k); else panel.innerHTML = idle;
   }
-  function close() {
-    if (!J) return;
-    const was = J;
-    J = S = null;
-    dna.classList.remove('detail');
-    delete dna.dataset.j;
-    back.hidden = true; detail.hidden = true;
-    strands.forEach(st => { st.classList.remove('on'); $('.ds-go', st).setAttribute('aria-expanded', 'false'); });
-    $$('.ds-stages button', dna).forEach(b => { b.setAttribute('aria-pressed', 'false'); b.classList.remove('passed'); });
-    requestAnimationFrame(rungs);
-    const g = $(`.dna-strand[data-j="${was}"] .ds-go`, dna);
-    if (g) g.focus();
+  function pin(k) {
+    pinned = pinned === k ? null : k;
+    nodes.forEach(b => b.setAttribute('aria-pressed', b.dataset.l === pinned ? 'true' : 'false'));
+    shown = undefined; show(pinned);
+    if (pinned) inspect('layer', 'bp-' + pinned, 'Blueprint: ' + ARCH.layers[pinned].label);
   }
-
-  strands.forEach(st => {
-    const j = st.dataset.j;
-    $('.ds-go', st).addEventListener('click', () => (J === j ? close() : open(j)));
-    $$('.ds-stages button', st).forEach((b, i, all) => {
-      b.addEventListener('click', () => open(j, b.dataset.s));
-      b.addEventListener('pointerenter', () => { if (!J) touch(`${j}.${b.dataset.s}`); });
-      b.addEventListener('pointerleave', () => touch(null));
-      b.addEventListener('focus', () => { if (!J) touch(`${j}.${b.dataset.s}`); });
-      b.addEventListener('blur', () => touch(null));
-      b.addEventListener('keydown', e => {
-        if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
-        e.preventDefault();
-        const n = all[i + (e.key === 'ArrowRight' ? 1 : -1)];
-        if (n) { n.focus(); if (J === j) open(j, n.dataset.s); }
-      });
+  nodes.forEach((b, i) => {
+    b.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse' && !narrow.matches) show(b.dataset.l); });
+    b.addEventListener('focus', () => show(b.dataset.l));
+    b.addEventListener('click', () => pin(b.dataset.l));
+    b.addEventListener('keydown', e => {
+      if (!['ArrowDown', 'ArrowRight', 'ArrowUp', 'ArrowLeft'].includes(e.key)) return;
+      e.preventDefault();
+      nodes[(i + (e.key === 'ArrowDown' || e.key === 'ArrowRight' ? 1 : -1) + nodes.length) % nodes.length].focus();
     });
   });
-  back.addEventListener('click', close);
-  dna.addEventListener('keydown', e => { if (e.key === 'Escape' && J) { e.stopPropagation(); close(); } });
+  $('.bp-stage', bp).addEventListener('pointerleave', e => { if (e.pointerType === 'mouse') show(pinned); });
+  $('.bp-stage', bp).addEventListener('pointerenter', () => run());
+  bp.addEventListener('focusout', e => { if (!bp.contains(e.relatedTarget)) show(pinned); });
+  bp.addEventListener('keydown', e => {
+    if (e.key !== 'Escape' || !pinned) return;
+    const b = nodes.find(x => x.dataset.l === pinned); pin(pinned); if (b) b.focus();
+  });
 
-  // Rungs follow the layout.
-  if ('ResizeObserver' in window) new ResizeObserver(() => { if (!J) rungs(); }).observe(wrap);
-  if (document.fonts) document.fonts.ready.then(rungs);
-
-  // Deep links from the universe, the palette and the assistant.
-  const SYS = {};
-  Object.entries(DNA).forEach(([j, jr]) => jr.stages.forEach(st => { if (st.sys) SYS[st.sys] = [j, st.id]; }));
-  Object.assign(SYS, { frontend: ['product', 'interface'], browser: ['product', 'interface'] });
-  const go = (j, s) => {
-    open(j, s);
-    dna.scrollIntoView({ behavior: REDUCE_MOTION ? 'auto' : 'smooth', block: 'start' });
-    setTimeout(() => { const b = btnOf(J, S); if (b) b.focus({ preventScroll: true }); }, REDUCE_MOTION ? 0 : 650);
+  /* — the signal: along each wire in turn, pausing on every part — */
+  const ROUTE = [['ui'], ['ui-frontend', 'frontend'], ['frontend-api', 'api'], ['api-bus'], ['bus-ai', 'ai'], ['ai-edge', 'edge'], ['edge-bus'], ['bus-database', 'database']];
+  const SPEED = 150, STOP = 700, REST = 1100;
+  const items = [];
+  ROUTE.forEach(([a, stop]) => {
+    if (WIRES[a]) {
+      const pts = WIRES[a].pts, cum = [0];
+      for (let i = 1; i < pts.length; i++) cum.push(cum[i - 1] + Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]));
+      items.push({ pts, cum, wire: a, dur: cum[cum.length - 1] / SPEED * 1000 });
+      if (stop) items.push({ at: POS[stop], node: stop, dur: STOP });
+    } else items.push({ at: POS[a], node: a, dur: STOP });
+  });
+  const TOTAL = items.reduce((s, it) => s + it.dur, 0) + REST;
+  const along = (it, f) => {
+    const dist = it.cum[it.cum.length - 1] * f;
+    let i = 1;
+    while (i < it.cum.length - 1 && it.cum[i] < dist) i++;
+    const t = (dist - it.cum[i - 1]) / ((it.cum[i] - it.cum[i - 1]) || 1), a = it.pts[i - 1], b = it.pts[i];
+    return [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t];
   };
-  window.addEventListener('pn:dna-open', e => go(e.detail.journey, e.detail.stage));
-  window.addEventListener('pn:select-node', e => { const m = SYS[e.detail && e.detail.node]; if (m) go(m[0], m[1]); });
+  let raf = 0, t0 = 0, last = -1, onScreen = false;
+  const canRun = () => !REDUCE_MOTION && !narrow.matches && onScreen && !document.hidden;
+  function place(p) { [sig, halo].forEach(c => { c.setAttribute('cx', p[0].toFixed(1)); c.setAttribute('cy', p[1].toFixed(1)); }); }
+  // Three runs, then the signal rests; pointing at the drawing or scrolling
+  // back to it starts it again. Nothing loops forever.
+  function tick(now) {
+    raf = 0;
+    if (!canRun()) return;
+    if (now - t0 > TOTAL * 3) { halt(); return; }
+    let t = (now - t0) % TOTAL, k = 0;
+    while (k < items.length && t > items[k].dur) { t -= items[k].dur; k++; }
+    const it = items[k];
+    bp.classList.toggle('sig-rest', !it);
+    if (it) place(it.node ? it.at : along(it, t / it.dur));
+    if (k !== last) {
+      last = k;
+      nodes.forEach(b => b.classList.toggle('live', !!it && it.node === b.dataset.l));
+      Object.entries(wires).forEach(([id, p]) => p.classList.toggle('run', !!it && it.wire === id));
+    }
+    raf = requestAnimationFrame(tick);
+  }
+  function run() { if (!raf && canRun()) { t0 = performance.now(); last = -1; raf = requestAnimationFrame(tick); } }
+  function halt() {
+    cancelAnimationFrame(raf); raf = 0;
+    nodes.forEach(b => b.classList.remove('live'));
+    Object.values(wires).forEach(p => p.classList.remove('run'));
+    place([-40, -40]);
+  }
+  const start = () => new IntersectionObserver(([e]) => { onScreen = e.isIntersecting; if (onScreen) run(); else halt(); }).observe(bp);
+  // The signal waits for the intro, so it starts where the eye lands.
+  if (window.__pnIntroDone) start(); else window.addEventListener('pn:introdone', start, { once: true });
+  document.addEventListener('visibilitychange', () => { if (document.hidden) halt(); else run(); });
+  narrow.addEventListener('change', () => { halt(); run(); });
+})();
+
+/* ══ 18. ARCHITECTURE EXPLORER ══
+   One example system, seven layers, three views. Overview: the whole stack,
+   top to bottom. Architecture: the layers as a graph; selecting one lights
+   its connections and the inspector explains it (responsibility, technology,
+   projects, connections). Detail: the implementation decisions behind the
+   selected layer, each traced to the project it comes from or labelled a
+   conceptual example, with the trade-offs. Views are ARIA tabs (arrow keys,
+   Home, End); the selection carries across views. Old journey and node links
+   from elsewhere on the page land on the matching layer. */
+(function () {
+  const ax = $('#ax');
+  if (!ax) return;
+  const NS = 'http://www.w3.org/2000/svg';
+  const tabs = $$('.ax-tab', ax);
+  const panes = { overview: $('#axOverview'), architecture: $('#axArchitecture'), detail: $('#axDetail') };
+  const graph = $('#axGraph'), gsvg = $('#axLines'), insp = $('#axInspect'), body = $('#axDetailBody'), pick = $('#axPick');
+  const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
+  const make = (tag, attrs, parent) => { const n = document.createElementNS(NS, tag); Object.entries(attrs).forEach(([k, v]) => n.setAttribute(k, v)); if (parent) parent.appendChild(n); return n; };
+  const STATUS = { built: 'built', partial: 'partly built', concept: 'concept' };
+  const L = id => ARCH.layers[id];
+  let view = 'overview', sel = 'api';
+
+  /* — overview: the stack, enhanced with status and evidence — */
+  $$('.ax-row', ax).forEach(b => {
+    const l = L(b.dataset.l);
+    const meta = el('span', 'ax-meta');
+    meta.append(el('span', `st st-${l.status} mono`, STATUS[l.status]),
+      el('span', 'ax-count mono', l.projects.length ? `${l.projects.length} project${l.projects.length > 1 ? 's' : ''}` : 'conceptual'));
+    b.appendChild(meta);
+    b.addEventListener('click', () => { select(b.dataset.l); setView('architecture', true); });
+  });
+
+  /* — architecture: a graph of the layers — */
+  const POS = { ui: [130, 70], frontend: [130, 196], api: [400, 196], logic: [670, 196], database: [400, 330], ai: [670, 330], edge: [670, 456] };
+  const ROUTES = { 'ui-frontend': [POS.ui, POS.frontend], 'frontend-api': [POS.frontend, POS.api], 'api-database': [POS.api, POS.database],
+    'api-logic': [POS.api, POS.logic], 'logic-ai': [POS.logic, POS.ai], 'ai-edge': [POS.ai, POS.edge],
+    'edge-api': [POS.edge, [530, 456], [530, 262], [440, 262], [440, 220]] };
+  // Where each wire's label sits, clear of the boxes: [x, y, anchor].
+  const LABEL = { 'ui-frontend': [139, 137, 'start'], 'frontend-api': [265, 187, 'middle'], 'api-database': [409, 268, 'start'],
+    'api-logic': [544, 187, 'middle'], 'logic-ai': [679, 268, 'start'], 'ai-edge': [679, 398, 'start'], 'edge-api': [522, 400, 'end'] };
+  const gnodes = {}, glines = {};
+  ARCH.links.forEach(([a, b, via]) => {
+    const id = `${a}-${b}`, pts = ROUTES[id];
+    glines[id] = make('path', { class: 'ax-wire', d: 'M' + pts.map(p => p.join(' ')).join('L') }, gsvg);
+    const [x, y, anchor] = LABEL[id];
+    make('text', { class: 'ax-via', x, y, 'text-anchor': anchor }, gsvg).textContent = via;
+  });
+  ARCH.order.forEach(id => {
+    const l = L(id);
+    const b = el('button', 'ax-node'); b.type = 'button';
+    b.dataset.l = id; b.dataset.status = l.status;
+    b.setAttribute('aria-pressed', 'false');
+    b.setAttribute('aria-controls', 'axInspect');
+    b.append(el('span', 'mono', l.n), el('strong', null, l.label), el('em', null, l.short));
+    b.style.setProperty('--x', (POS[id][0] / 8).toFixed(2) + '%');
+    b.style.setProperty('--y', (POS[id][1] / 5.2).toFixed(2) + '%');
+    b.addEventListener('click', () => select(id, true));
+    graph.appendChild(b);
+    gnodes[id] = b;
+  });
+  const gl = Object.values(gnodes);
+  gl.forEach((b, i) => b.addEventListener('keydown', e => {
+    if (!['ArrowDown', 'ArrowRight', 'ArrowUp', 'ArrowLeft'].includes(e.key)) return;
+    e.preventDefault();
+    gl[(i + (e.key === 'ArrowDown' || e.key === 'ArrowRight' ? 1 : -1) + gl.length) % gl.length].focus();
+  }));
+
+  function projButtons(list) {
+    const wrap = el('div', 'ax-projs');
+    list.forEach(([key, note]) => {
+      const b = el('button', 'ax-proj'); b.type = 'button';
+      b.append(el('strong', null, PROJ[key]), el('span', null, note));
+      b.addEventListener('click', () => openProject(key, b));
+      wrap.appendChild(b);
+    });
+    return wrap;
+  }
+  const block = (title, node) => { const s = el('div', 'ax-block'); s.append(el('h4', 'mono', title), node); return s; };
+  function chips(list) { const ul = el('ul', 'ax-chips mono'); list.forEach(t => ul.appendChild(el('li', null, t))); return ul; }
+  function heading(id) {
+    const l = L(id), h = el('div', 'ax-head');
+    h.append(el('span', 'ax-n mono', l.n), el('h3', null, l.label), el('span', `st st-${l.status} mono`, STATUS[l.status]));
+    return h;
+  }
+  function renderInspector() {
+    const l = L(sel), w = el('div', 'ax-insp-in');
+    w.appendChild(heading(sel));
+    if (l.status === 'concept') w.appendChild(el('p', 'ax-concept mono', 'conceptual example · not in a public project'));
+    w.appendChild(block('responsibility', el('p', null, l.role)));
+    w.appendChild(block('in practice', el('p', null, l.explain)));
+    w.appendChild(block('technologies', chips(l.tech)));
+    w.appendChild(block(l.projects.length ? 'related projects' : 'status', l.projects.length ? projButtons(l.projects) : el('p', 'ax-none', l.none)));
+    const con = el('div', 'ax-links');
+    linksOf(sel).forEach(([o, via]) => {
+      const b = el('button', 'ax-link'); b.type = 'button';
+      b.append(el('strong', null, L(o).label), el('span', 'mono', via));
+      b.addEventListener('click', () => { select(o); gnodes[o].focus({ preventScroll: true }); });
+      con.appendChild(b);
+    });
+    w.appendChild(block('connects to', con));
+    const deeper = el('button', 'ax-deeper mono', 'Implementation decisions →'); deeper.type = 'button';
+    deeper.addEventListener('click', () => setView('detail', true));
+    w.appendChild(deeper);
+    insp.replaceChildren(w);
+  }
+
+  /* — detail: decisions, sources and trade-offs — */
+  ARCH.order.forEach(id => {
+    const b = el('button', 'ax-pick', L(id).label); b.type = 'button';
+    b.dataset.l = id;
+    b.setAttribute('aria-pressed', 'false');
+    b.addEventListener('click', () => select(id));
+    pick.appendChild(b);
+  });
+  function renderDetail() {
+    const l = L(sel), w = el('div', 'ax-det-in');
+    w.appendChild(heading(sel));
+    w.appendChild(el('p', 'ax-det-lead', l.role + ' ' + l.explain));
+    const list = el('ol', 'ax-decisions');
+    l.decisions.forEach(([title, text, src]) => {
+      const li = el('li');
+      li.append(el('strong', null, title), el('p', null, text));
+      if (src === 'concept') li.appendChild(el('span', 'ax-src concept mono', 'conceptual example'));
+      else {
+        const b = el('button', 'ax-src mono', `documented in ${PROJ[src]} →`); b.type = 'button';
+        b.addEventListener('click', () => openProject(src, b));
+        li.appendChild(b);
+      }
+      list.appendChild(li);
+    });
+    w.appendChild(block('implementation decisions', list));
+    const tr = el('ul', 'ax-trade');
+    l.trade.forEach(t => tr.appendChild(el('li', null, t)));
+    w.appendChild(block('trade-offs', tr));
+    const i = ARCH.order.indexOf(sel), nav = el('div', 'ax-nav');
+    [[-1, '← previous layer'], [1, 'next layer →']].forEach(([dx, t]) => {
+      const b = el('button', 'ax-step mono', t); b.type = 'button';
+      const k = ARCH.order[i + dx];
+      b.disabled = !k;
+      if (k) b.addEventListener('click', () => select(k));
+      nav.appendChild(b);
+    });
+    w.appendChild(nav);
+    body.replaceChildren(w);
+  }
+
+  function select(id, announce) {
+    sel = id;
+    const rel = new Set(linksOf(id).map(([o]) => o));
+    Object.entries(gnodes).forEach(([k, b]) => {
+      b.classList.toggle('on', k === id); b.classList.toggle('rel', rel.has(k));
+      b.setAttribute('aria-pressed', k === id ? 'true' : 'false');
+    });
+    Object.entries(glines).forEach(([k, p]) => p.classList.toggle('lit', k.split('-').includes(id)));
+    $$('.ax-pick', ax).forEach(b => b.setAttribute('aria-pressed', b.dataset.l === id ? 'true' : 'false'));
+    $$('.ax-row', ax).forEach(b => b.classList.toggle('on', b.dataset.l === id));
+    ax.dataset.sel = id;
+    renderInspector(); renderDetail();
+    if (announce !== false) inspect('layer', 'arch-' + id, 'Architecture: ' + L(id).label);
+  }
+  function setView(v, focusTab) {
+    view = v;
+    tabs.forEach(t => {
+      const on = t.dataset.v === v;
+      t.setAttribute('aria-selected', on ? 'true' : 'false');
+      t.tabIndex = on ? 0 : -1;
+    });
+    Object.entries(panes).forEach(([k, p]) => { p.hidden = k !== v; });
+    ax.dataset.view = v;
+    if (focusTab) { const t = tabs.find(x => x.dataset.v === v); if (t) t.focus({ preventScroll: true }); }
+  }
+  tabs.forEach((t, i) => {
+    t.addEventListener('click', () => setView(t.dataset.v));
+    t.addEventListener('keydown', e => {
+      const n = e.key === 'ArrowRight' ? i + 1 : e.key === 'ArrowLeft' ? i - 1 : e.key === 'Home' ? 0 : e.key === 'End' ? tabs.length - 1 : null;
+      if (n == null) return;
+      e.preventDefault();
+      setView(tabs[(n + tabs.length) % tabs.length].dataset.v, true);
+    });
+  });
+
+  select(sel, false);
+  setView('overview');
+
+  // Deep links: the blueprint, the twin, the palette and the assistant.
+  const go = (layer, v) => {
+    if (layer && ARCH.layers[layer]) select(layer);
+    setView(v || 'architecture');
+    ax.scrollIntoView({ behavior: REDUCE_MOTION ? 'auto' : 'smooth', block: 'start' });
+    setTimeout(() => { const n = gnodes[sel]; if (n && view === 'architecture' && n.offsetParent) n.focus({ preventScroll: true }); }, REDUCE_MOTION ? 0 : 650);
+  };
+  window.addEventListener('pn:arch-open', e => go(e.detail && e.detail.layer, e.detail && e.detail.view));
+  window.addEventListener('pn:dna-open', e => {
+    const dt = e.detail || {};
+    go(ARCH.fromDNA[dt.stage] || ARCH.fromJourney[dt.journey], dt.stage ? 'detail' : 'architecture');
+  });
+  window.addEventListener('pn:select-node', e => {
+    const n = e.detail && e.detail.node;
+    go(ARCH.layers[n] ? n : ARCH.fromDNA[n] || { cv: 'ai', alert: 'logic', browser: 'ui' }[n]);
+  });
+})();
+
+/* ══ 18a. CODE TO PRODUCTION ══
+   Seven stages on one progress line. Selecting a stage fills the line up to
+   it and explains it: purpose, what I weigh, the tools, and where a real
+   project shows it. Arrow keys walk the stages. */
+(function () {
+  const cp = $('#c2p');
+  if (!cp) return;
+  const steps = $$('.c2p-step', cp), out = $('#c2pBody'), track = $('.c2p-track', cp);
+  const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
+  let cur = -1;
+  function render(i, announce) {
+    if (i === cur) return;
+    cur = i;
+    const s = PROD[i];
+    steps.forEach((b, j) => {
+      b.setAttribute('aria-pressed', j === i ? 'true' : 'false');
+      b.classList.toggle('done', j < i);
+    });
+    track.style.setProperty('--p', (i / (PROD.length - 1)).toFixed(3));
+    const w = el('div', 'c2p-in');
+    const head = el('div', 'c2p-head');
+    head.append(el('span', 'c2p-n mono', `${String(i + 1).padStart(2, '0')} / ${String(PROD.length).padStart(2, '0')}`), el('h3', null, s.label));
+    w.append(head, el('p', 'c2p-purpose', s.purpose));
+    const grid = el('div', 'c2p-grid');
+    const col = (t, node) => { const c = el('div', 'c2p-col'); c.append(el('h4', 'mono', t), node); grid.appendChild(c); };
+    const con = el('ul', 'c2p-consider'); s.consider.forEach(c => con.appendChild(el('li', null, c)));
+    col('what I weigh', con);
+    if (s.tools.length) { const t = el('ul', 'c2p-tools mono'); s.tools.forEach(x => t.appendChild(el('li', null, x))); col('tools', t); }
+    const pr = el('div', 'c2p-proof');
+    s.proof.forEach(([key, text]) => {
+      const b = el('button', 'c2p-ex'); b.type = 'button';
+      b.append(el('strong', null, PROJ[key]), el('span', null, text));
+      b.addEventListener('click', () => openProject(key, b));
+      pr.appendChild(b);
+    });
+    col('in a real project', pr);
+    w.appendChild(grid);
+    out.replaceChildren(w);
+    if (announce) inspect('layer', 'c2p-' + s.id, 'Code to production: ' + s.label);
+  }
+  steps.forEach((b, i) => {
+    b.addEventListener('click', () => render(i, true));
+    b.addEventListener('keydown', e => {
+      if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+      e.preventDefault();
+      const n = steps[i + (e.key === 'ArrowRight' ? 1 : -1)];
+      if (n) { n.focus(); render(steps.indexOf(n), true); }
+    });
+  });
+  render(0, false);
 })();
 
 /* ══ 18b. CAPABILITY CONSTELLATION ══
@@ -1312,7 +1553,7 @@ const TWIN = {
       line: 'Products people use: interfaces, APIs and data, built end to end on the web and on Android.',
       techLabel: 'lives here', tech: ['React', 'Next.js', 'React Native', 'TypeScript', 'Node.js', 'Express', 'Fastify', 'PHP', 'PostgreSQL', 'MySQL', 'SQLite', 'Prisma'],
       proof: [['campus-recruitment-system', 'Express REST API with JWT roles'], ['aspend', 'React Native, SQLite on the device'], ['ambulance-management-system', 'PHP and MySQL'], ['codeex-space', 'a browser code lab, no server']],
-      deeper: ['Walk journey A', 'product'],
+      deeper: ['Inspect the API layer', 'product'],
       links: [['lab', 'a model can sit behind the same API'], ['build', 'every product is tested, then shipped'], ['core', 'products start from a problem']] },
     lab: { n: '02', name: 'The Intelligence Lab', status: 'built', trait: 'Visual AI', flow: 'lab',
       line: 'Models trained on labelled data, measured on data they never saw, and shown with their mistakes.',
@@ -1324,7 +1565,7 @@ const TWIN = {
       line: 'Inference next to the camera, so events travel over the network instead of video.',
       techLabel: 'lives here', tech: ['Raspberry Pi', 'IoT', 'RTSP', 'MediaMTX'],
       proof: [], none: 'A current focus area. No public project shows it yet, so nothing here is claimed as built.',
-      deeper: ['Walk journey C', 'connected'],
+      deeper: ['Inspect the edge layer', 'connected'],
       links: [['lab', 'runs the lab\'s models on site'], ['web', 'posts events to the same API'], ['build', 'device updates ship like code']] },
     build: { n: '04', name: 'The Build Room', status: 'built', trait: 'Delivery & testing', flow: 'build',
       line: 'Where it becomes real: small reviewable changes, automated tests, deployment, then a check of what people actually received.',
@@ -1372,7 +1613,7 @@ const TWIN = {
         ['Deliver idempotently', 'Give each event an id, so a retried upload is never counted twice.'],
         ['Make silence visible', 'Heartbeats let the server mark a device stale instead of reporting "no events".']],
       trade: 'Alerts arrive late but are not lost. The cost is device storage, and clocks that have to be trusted.',
-      see: ['Walk journey C', 'connected'] },
+      see: ['Inspect the edge layer', 'connected'] },
     'edge-ai': { q: 'AI processing moves to the edge?', flow: 'edge', hit: ['device', 'model'], cut: [],
       what: 'Inference leaves the server and runs beside the camera. Video stays on site; only events travel.',
       moves: [['Choose a smaller model', 'A lighter detector variant, re-measured on held-out data the way Detectify reports its models.'],
@@ -1389,7 +1630,7 @@ const TWIN = {
         ['Absorb bursts', 'Accept events in batches, with a queue between ingest and storage.'],
         ['Index for time', 'Store events by camera and time, so the dashboard stays fast as history grows.']],
       trade: 'More parts to monitor; in return, capacity grows one site at a time.',
-      see: ['Walk journey B', 'vision'] },
+      see: ['Inspect the AI layer', 'vision'] },
     backend: { q: 'the backend becomes unavailable?', flow: 'core', hit: ['api', 'ui', 'review'], cut: [['core', 'web'], ['web', 'nw'], ['web', 'sw']],
       what: 'Clients and devices keep running, but the contract they depend on is gone.',
       moves: [['Fail visibly', 'Interfaces show a clear degraded state and keep what they already have, instead of spinning forever.'],
@@ -1649,9 +1890,11 @@ const TWIN = {
   }
   let raf = 0, t0 = 0, lastItem = -1, onScreen = false;
   const canRun = () => !LITE && !narrow.matches && onScreen && !document.hidden && !tw.classList.contains('as-text');
+  // Four runs of the route, then rest until the visitor changes something or returns.
   function tick(now) {
     raf = 0;
     if (!canRun() || !plan) return;
+    if (now - t0 > plan.total * 4) { halt(); return; }
     let t = (now - t0) % plan.total, k = 0;
     while (k < plan.items.length && t > plan.items[k].dur) { t -= plan.items[k].dur; k++; }
     const it = plan.items[k];
@@ -2238,6 +2481,137 @@ const TWIN = {
   io.observe(frame);
 })();
 
+/* ══ 19b. HOW A VISION SYSTEM FITS TOGETHER ══
+   Two conceptual views under the rule lab. Pipeline: five stages, each with
+   what it does, the tools, and what is real in Detectify. Stream topology:
+   where the parts run, on a server or at the edge, and what crosses the
+   network in each case (video, or only events). Deterministic copy; no
+   camera, stream or model runs. */
+(function () {
+  const sys = $('#lsys');
+  if (!sys) return;
+  const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
+  const STAGES = {
+    input: { label: 'Visual input', does: 'A frame from a camera or a stored image. Resolution, angle and lighting decide what a model can possibly see.',
+      tools: ['IP cameras', 'RTSP', 'Images'], real: 'Detectify works on stored images and test sets. Live camera input is designed, not published.' },
+    preprocess: { label: 'Preprocessing', does: 'Frames are decoded, resized to the model\'s input size (640 × 640 for Detectify\'s models) and normalised.',
+      tools: ['OpenCV', 'Python'], real: 'Detectify relies on Ultralytics\' built-in preprocessing; a standalone stage is designed, not published.' },
+    inference: { label: 'Model inference', does: 'A trained detector runs once per frame and returns candidate boxes, each with a class and a confidence score.',
+      tools: ['YOLOv8', 'Ultralytics', 'Python'], real: 'Detectify\'s two YOLOv8 models. During validation on Google Colab, inference took about 4–6 ms per image: a model benchmark on a GPU, not a system\'s latency.' },
+    detection: { label: 'Detection / classification', does: 'Boxes below the confidence threshold are dropped; what remains is a class and a location for each object.',
+      tools: ['YOLOv8', 'OpenCV'], real: 'The real output above: the vehicle model finds the motorbike, and reads red lights as yellow.' },
+    event: { label: 'Application event', does: 'Rules turn detections into an event the application can act on: stored, shown, and sent to a person for review.',
+      tools: ['Python', 'Node.js', 'REST'], real: 'The rule lab above runs this step on simulated detections. Event delivery is designed, not published.' }
+  };
+  const NODES = {
+    camera: ['IP camera', 'RTSP', 'Produces the frames, in a format that streams to anything that speaks RTSP.'],
+    relay: ['Stream relay', 'MediaMTX', 'Opens each camera once and re-serves the stream to every reader: the model and a live view alike.'],
+    worker: ['Vision worker', 'Python · OpenCV · YOLO', 'Decodes frames, runs the model and applies the rules, on a server with the compute for it.'],
+    device: ['Edge device', 'Raspberry Pi · OpenCV · YOLO', 'Runs a small model beside the camera, so only events leave the site.'],
+    api: ['API', 'Node.js · Fastify · REST', 'Accepts events, checks them at the boundary and stores them.'],
+    db: ['Database', 'PostgreSQL · Prisma', 'Keeps events, cameras and reviews, queryable by camera and time.'],
+    app: ['Dashboard', 'React · Next.js', 'Where a person sees events and reviews alerts.']
+  };
+  const MODES = {
+    server: { site: ['camera'], cross: 'video · RTSP', server: ['relay', 'worker', 'api', 'db', 'app'],
+      note: 'Every camera streams video to the server. Bandwidth grows with each camera, and the server needs the compute, but the model can be as large as the problem needs.' },
+    edge: { site: ['camera', 'device'], cross: 'events · REST', server: ['api', 'db', 'app'],
+      note: 'Inference runs on site, so only small events cross the network and raw video never leaves. The price: smaller models, and a fleet of devices to keep updated.' }
+  };
+
+  /* — tabs — */
+  const tabs = $$('.lsys-tab', sys), panes = { pipe: $('#lsPipe'), topo: $('#lsTopo') };
+  function setView(v, focus) {
+    tabs.forEach(t => { const on = t.dataset.v === v; t.setAttribute('aria-selected', on ? 'true' : 'false'); t.tabIndex = on ? 0 : -1; if (on && focus) t.focus(); });
+    Object.entries(panes).forEach(([k, p]) => { p.hidden = k !== v; });
+  }
+  tabs.forEach((t, i) => {
+    t.addEventListener('click', () => setView(t.dataset.v));
+    t.addEventListener('keydown', e => {
+      if (!['ArrowRight', 'ArrowLeft', 'Home', 'End'].includes(e.key)) return;
+      e.preventDefault();
+      const n = e.key === 'Home' ? 0 : e.key === 'End' ? tabs.length - 1 : (i + (e.key === 'ArrowRight' ? 1 : -1) + tabs.length) % tabs.length;
+      setView(tabs[n].dataset.v, true);
+    });
+  });
+
+  /* — pipeline — */
+  const stages = $$('.ls-stage', sys), pipeRead = $('#lsPipeRead');
+  function stage(k, announce) {
+    const s = STAGES[k];
+    stages.forEach(b => b.setAttribute('aria-pressed', b.dataset.s === k ? 'true' : 'false'));
+    const w = el('div', 'ls-in');
+    w.append(el('h4', null, s.label), el('p', null, s.does));
+    const tl = el('ul', 'ax-chips mono'); s.tools.forEach(t => tl.appendChild(el('li', null, t)));
+    w.appendChild(tl);
+    const real = el('p', 'ls-real'); real.append(el('span', 'mono', 'in detectify'), document.createTextNode(' ' + s.real));
+    w.appendChild(real);
+    pipeRead.replaceChildren(w);
+    if (announce) inspect('pipeline', 'ls-' + k, 'Vision pipeline: ' + s.label);
+  }
+  stages.forEach((b, i) => {
+    b.addEventListener('click', () => stage(b.dataset.s, true));
+    b.addEventListener('keydown', e => {
+      if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+      e.preventDefault();
+      const n = stages[i + (e.key === 'ArrowRight' ? 1 : -1)];
+      if (n) { n.focus(); stage(n.dataset.s, true); }
+    });
+  });
+
+  /* — topology — */
+  const map = $('#lsTopoMap'), topoRead = $('#lsTopoRead'), modes = $$('.ls-m', sys);
+  let mode = 'server', picked = null;
+  function zone(title, ids) {
+    const z = el('div', 'ls-zone');
+    z.appendChild(el('span', 'ls-zone-t mono', title));
+    const ol = el('ol', 'ls-chain');
+    ids.forEach(id => {
+      const [label, tech] = NODES[id];
+      const li = el('li'), b = el('button', 'ls-node'); b.type = 'button';
+      b.dataset.n = id;
+      b.setAttribute('aria-pressed', id === picked ? 'true' : 'false');
+      b.setAttribute('aria-controls', 'lsTopoRead');
+      b.append(el('strong', null, label), el('span', 'mono', tech));
+      b.addEventListener('click', () => node(id));
+      li.appendChild(b); ol.appendChild(li);
+    });
+    z.appendChild(ol);
+    return z;
+  }
+  function draw() {
+    const M = MODES[mode];
+    const cross = el('div', 'ls-cross');
+    cross.append(el('span', 'mono', 'crosses the network'), el('strong', 'mono', M.cross));
+    map.replaceChildren(zone('on site', M.site), cross, zone('server', M.server));
+    map.dataset.mode = mode;
+  }
+  function node(id) {
+    picked = id;
+    $$('.ls-node', map).forEach(b => b.setAttribute('aria-pressed', b.dataset.n === id ? 'true' : 'false'));
+    const [label, tech, role] = NODES[id], w = el('div', 'ls-in');
+    w.append(el('h4', null, label), el('p', null, role), el('p', 'ls-tech mono', tech));
+    w.appendChild(el('p', 'ls-mode-note', MODES[mode].note));
+    topoRead.replaceChildren(w);
+  }
+  function setMode(m) {
+    mode = m;
+    modes.forEach(b => b.setAttribute('aria-pressed', b.dataset.m === m ? 'true' : 'false'));
+    if (picked && !MODES[m].site.concat(MODES[m].server).includes(picked)) picked = null;
+    draw();
+    if (picked) node(picked);
+    else { const w = el('div', 'ls-in'); w.append(el('h4', null, m === 'edge' ? 'Inference at the edge' : 'Inference on a server'), el('p', null, MODES[m].note), el('p', 'ls-hint', 'Select a part to see its role.')); topoRead.replaceChildren(w); }
+    inspect('pipeline', 'ls-mode-' + m, 'Vision topology: ' + (m === 'edge' ? 'at the edge' : 'on a server'));
+  }
+  modes.forEach(b => b.addEventListener('click', () => setMode(b.dataset.m)));
+
+  stage('input', false);
+  mode = 'server'; draw();
+  const w0 = el('div', 'ls-in');
+  w0.append(el('h4', null, 'Inference on a server'), el('p', null, MODES.server.note), el('p', 'ls-hint', 'Select a part to see its role, or switch to the edge.'));
+  topoRead.replaceChildren(w0);
+})();
+
 /* ══ 20. CASE STUDIES ══
    A native <dialog> drawer (focus trap, Esc and inert background for free).
    Content comes from <template id="case-…">, so it stays in the HTML. */
@@ -2338,13 +2712,13 @@ const Eng = (function () {
   const META = {
     about: () => `section#about · ${count('#about .b-card')} modules`,
     experience: () => `${count('.gl-item')} roles + current · ${count('.disc-list > li')} disciplines · ${years()}`,
-    thinking: () => `${count('.dna-strand')} journeys · ${count('.ds-stages button')} stages · built / partly built / concept`,
+    thinking: () => `${count('.ax-row')} layers · ${ARCH.links.length} connections · 3 views · built / concept`,
     skills: () => `${count('.cst-tech button')} technologies · ${count('.cst-disc button')} disciplines · ${count('.cst-proj button')} projects`,
     twin: () => `${count('.tw-zone')} zones · ${Object.keys(TWIN.flows).length} system routes · ${count('.tw-wi')} what-if scenarios · isometric SVG`,
     pipeline: () => `${count('.pipe-step')} stages · ${count('.lab-scene')} sample frames · simulated detections, real rules`,
     projects: () => `${count(PROJECTS)} projects · ${count('.pj [data-case]')} case studies · ${$$('#projGrid .pj-link, .pj-mini .pj-link').filter(a => /live|play/i.test(a.textContent)).length} live demos`,
     education: () => `${count('.edu-item')} qualifications · ${count('.cert')} certifications`,
-    process: () => `${count('.proc-step')} stages · each evidenced by this site`,
+    process: () => `${count('.c2p-step')} stages · each evidenced by a real project`,
     focus: () => `${count('.focus-grid li')} focus areas`,
     contact: () => 'POST api.web3forms.com · mailto: fallback'
   };
@@ -2352,7 +2726,7 @@ const Eng = (function () {
     ['.hero-title', 'h1 · Geist 650 · sees / thinks / acts'],
     ['.b-intro', 'about/intro.md'], ['.b-photo', 'about/photo.jpg'], ['.b-now', 'about/now'],
     ['.b-stats', 'about/stats'], ['.b-json', 'about/profile.json'],
-    ['.hero-chapters', 'six chapters'], ['.universe', 'pn universe · 4 domains'], ['.tw-stage', 'digital twin · site plan'],
+    ['.hero-chapters', 'six chapters'], ['.bp-stage', 'system blueprint · 6 parts'], ['.tw-stage', 'digital twin · site plan'],
     ['.exp-current', 'HEAD → current role'],
     ['.form-shell', 'POST api.web3forms.com'], ['.mail-card', 'mailto:']
   ];
@@ -2584,7 +2958,7 @@ const Assistant = (function () {
       title: 'My development stack',
       lead: `${allTech.length} technologies across ${KB.stack.length} areas, from the browser to the edge.`,
       rows: KB.stack.map(g => [g.group, g.items.map(i => i.name).join(', ')]),
-      actions: [{ label: 'Explore the capability constellation', run: go('#skills') }, { label: 'Walk the engineering DNA', run: go('#thinking') }]
+      actions: [{ label: 'Explore the capability constellation', run: go('#skills') }, { label: 'Open the architecture explorer', run: go('#thinking') }]
     }),
     ai: () => ({
       title: 'AI / ML work',
@@ -2599,7 +2973,7 @@ const Assistant = (function () {
       lead: 'End to end: interfaces, APIs and databases, plus vision pipelines that run on edge devices.',
       rows: Object.values(DNA).map(j => [j.label, j.stages.map(st => st.label).join(' → ')]),
       items: RUNGS.map(([, , note]) => `Where they meet: ${note}.`),
-      actions: [{ label: 'Walk the engineering DNA', run: go('#thinking') }, { label: 'Open the PN universe', run: go('#universe') }]
+      actions: [{ label: 'Open the architecture explorer', run: go('#thinking') }, { label: 'See the system blueprint', run: go('#blueprint') }]
     }),
     projects: () => ({
       title: 'Projects',
@@ -2668,7 +3042,7 @@ const Assistant = (function () {
         const st = DNA[j].stages.find(x => x.id === id);
         return [[st.label, st.tech.join(', ')]].concat(st.trade.map(x => ['Trade-off', x]));
       }),
-      actions: [{ label: 'Open it in the engineering DNA', run: () => window.dispatchEvent(new CustomEvent('pn:dna-open', { detail: { journey: j, stage: ids[0] } })) }]
+      actions: [{ label: 'Open it in the architecture explorer', run: () => window.dispatchEvent(new CustomEvent('pn:dna-open', { detail: { journey: j, stage: ids[0] } })) }]
     }),
     backend: () => A.stageRows('product', ['api', 'database'], 'Backend & data', 'APIs on Node.js over relational and on-device data, with the trade-offs behind each choice.'),
     frontend: () => A.stageRows('product', ['interface'], 'Frontend', 'Component-driven interfaces on the web and on Android.'),
@@ -2683,7 +3057,7 @@ const Assistant = (function () {
     process: () => ({
       title: 'How I build',
       lead: 'Every project goes through the same loop. Here it is, evidenced by this portfolio itself.',
-      rows: $$('.proc-step').map(s => [txt($('h3', s)), txt($('.proc-proof', s)).replace(/^here\s*/, '')]),
+      rows: PROD.map(s => [s.label, s.proof[0][1]]),
       actions: [{ label: 'See the process', run: go('#process') }]
     }),
     focus: () => ({
@@ -2702,9 +3076,13 @@ const Assistant = (function () {
     }),
     // The one thing on this site that no menu links to. The console hints at it.
     hidden: () => ({
-      label: 'system message',
-      title: 'You found something that wasn’t in the navigation.',
-      lead: 'Good engineers look deeper.'
+      label: 'ENGINEERING_NOTES.md · not in the navigation',
+      title: 'Three notes on building software that holds up',
+      lead: 'Each one is applied somewhere on this page, so you can check it.',
+      rows: [['Label what is real.', 'Every system here says built, partly built or concept. A diagram is not a deployment.'],
+        ['Measure on data the model never saw.', 'Detectify reports its weak held-out recall (0.52), not only its best number.'],
+        ['Make failure visible, and recoverable.', 'If the contact form service fails, a prefilled email link takes over.']],
+      actions: [{ label: 'See them in code to production', run: go('#process') }]
     }),
     fallback: () => ({
       title: 'I can only answer from this portfolio',
@@ -2771,10 +3149,10 @@ const Assistant = (function () {
   // Every command has a dotted id (shown, and searchable: "explore." lists the
   // places, "open." the things that open). ack: what to confirm once it ran.
   const NAV = [
-    ['explore.universe', 'The PN universe', '#universe', 'fa-circle-nodes', 'domains software ai vision iot identity'],
+    ['explore.blueprint', 'System blueprint', '#blueprint', 'fa-circle-nodes', 'hero system frontend backend database ai edge iot signal'],
     ['explore.about', 'About', '#about', 'fa-user', 'who bio'],
-    ['explore.architecture', 'Engineering DNA', '#thinking', 'fa-diagram-project', 'architecture system journeys thinking map'],
-    ['explore.process', 'How I build', '#process', 'fa-gears', 'process engineering deploy testing systems'],
+    ['explore.architecture', 'Architecture explorer', '#thinking', 'fa-diagram-project', 'architecture system layers overview detail decisions thinking map'],
+    ['explore.process', 'Code to production', '#process', 'fa-gears', 'process how i build idea design architecture development testing deployment monitoring'],
     ['explore.capabilities', 'Capability constellation', '#skills', 'fa-layer-group', 'skills stack technologies tech'],
     ['explore.twin', 'Digital twin', '#twin', 'fa-cubes', 'twin model zones core web lab edge build what if scenarios system'],
     ['explore.projects', 'Projects', '#projects', 'fa-folder-open', 'work worlds case studies portfolio'],
@@ -2787,10 +3165,10 @@ const Assistant = (function () {
   ];
   // "Suggested here": the commands that fit the section being read.
   const HERE = {
-    hero: ['Engineering DNA', 'Turn on Engineering Mode'], about: ['Download resume', 'Experience'],
-    thinking: ['Capability constellation', 'Projects'], skills: ['Digital twin', 'Engineering DNA'],
+    hero: ['Architecture explorer', 'Turn on Engineering Mode'], about: ['Download resume', 'Experience'],
+    thinking: ['Capability constellation', 'Projects'], skills: ['Digital twin', 'Architecture explorer'],
     twin: ['Projects', 'Visual intelligence observatory'],
-    experience: ['Projects', 'Download resume'], process: ['Open GitHub', 'Engineering DNA'],
+    experience: ['Projects', 'Download resume'], process: ['Open GitHub', 'Architecture explorer'],
     pipeline: ['Detectify case study', 'AI / ML projects'], projects: ['Detectify case study', 'Aspend case study'],
     education: ['Download resume', 'Current focus'], focus: ['Contact', 'Download resume'],
     contact: ['Copy email address', 'Start a conversation', 'Send an email']
@@ -2801,9 +3179,11 @@ const Assistant = (function () {
     return [].concat(
       NAV.map(([id, label, sel, icon, kw]) => ({ group: 'Navigate', id, label, icon, kw, run: scrollTo(sel) })),
       [{ group: 'Navigate', id: 'filter.ai-projects', label: 'AI / ML projects', icon: 'fa-brain', kw: 'filter detectify', run: () => { const b = $('.pf[data-f="ai"]'); if (b) b.click(); scrollTo('#projects')(); } }],
+      ProjFilter.techs.map(t => ({ group: 'Filter projects', id: 'filter.tech.' + slug(t), label: `Projects using ${t}`, icon: 'fa-filter', kw: 'filter technology tech stack find search ' + t.toLowerCase(),
+        run: () => { ProjFilter.setTech(t, true); scrollTo('#projects')(); }, ack: () => `Showing projects using ${t}` })),
       [
         { group: 'Actions', id: 'mode.engineering', label: eng ? 'Turn off Engineering Mode' : 'Turn on Engineering Mode', icon: 'fa-microchip', kw: 'engineering mode eng system blueprint', run: () => Eng.toggle(), ack: () => (Eng.isOn() ? 'Engineering mode on' : 'Engineering mode off') },
-        { group: 'Actions', id: 'theme.toggle', label: light ? 'Switch to dark theme' : 'Switch to light theme', icon: light ? 'fa-moon' : 'fa-sun', kw: 'toggle theme dark light mode', run: () => $('#themeToggle').click(), ack: () => (root.getAttribute('data-theme') === 'light' ? 'Light theme' : 'Dark theme') },
+        { group: 'Actions', id: 'theme.toggle', label: light ? 'Switch to dark theme' : 'Switch to light theme (Studio)', icon: light ? 'fa-moon' : 'fa-sun', kw: 'toggle theme dark light studio mode', run: () => $('#themeToggle').click(), ack: () => (root.getAttribute('data-theme') === 'light' ? 'Studio · light theme' : 'Dark theme') },
         { group: 'Actions', id: 'contact.copy-email', label: 'Copy email address', icon: 'fa-copy', kw: 'email mail clipboard', run: () => $('#copyEmail').click() },
         { group: 'Actions', id: 'open.resume', label: 'Download resume', icon: 'fa-file-arrow-down', kw: 'cv pdf', run: () => $('.n-resume').click(), ack: () => 'Resume download started' },
         { group: 'Actions', id: 'contact.email', label: 'Send an email', icon: 'fa-envelope', kw: 'mail contact', run: () => { location.href = 'mailto:pratyushnandi100@gmail.com'; }, ack: () => 'Opening your email app' },
@@ -2828,7 +3208,8 @@ const Assistant = (function () {
       const here = picks.map(c => ({ ...c, group: 'Suggested here' }))
         .concat(ask(Assistant.suggestedFor(ctx)[0])).map(c => ({ ...c, group: 'Suggested here' }));
       const asked = here[here.length - 1].label;
-      return here.concat(all.filter(c => !picks.includes(c)), Assistant.suggestedFor(ctx).filter(s => s !== asked).map(ask));
+      // Technology filters appear when searched for, not in the opening list.
+      return here.concat(all.filter(c => !picks.includes(c) && c.group !== 'Filter projects'), Assistant.suggestedFor(ctx).filter(s => s !== asked).map(ask));
     }
     const words = q.split(/\s+/);
     // Rank like a real launcher: label prefix, then a word in the label, then keywords only.
@@ -3009,8 +3390,8 @@ const Assistant = (function () {
   const label = $('.cc-label', cur);
   const CONTEXT = [
     ['a[href^="mailto:"], a[href="#contact"], .pa, .copy-btn', "Let's talk"],
-    ['.uv-domain', 'Domain'],
-    ['.ds-stages button, .ds-go', 'Trace'],
+    ['.bp-node, .ax-node, .ax-row', 'Inspect'],
+    ['.c2p-step', 'Stage'],
     ['.cst-list button', 'Connect'],
     ['.tw-zone, .tw-s', 'Enter'], ['.tw-c', 'Trace'], ['.tw-wi', 'What if'],
     ['#projGrid .pj, .pj-mini', 'Explore']
@@ -3337,16 +3718,16 @@ const Assistant = (function () {
       return { p, e, l: [[0, 'car 0.94'], [4, 'person 0.62'], [8, 'signal: red'], [12, 'plate 0.56']] };
     },
     resolve() {
-      // The PN monogram (P and N on one shared trace): its 12 vertices, the P's
-      // bowl as four short chords, then the remaining points along its strokes.
-      const V = [[8, 40], [8, 24], [8, 8], [15, 8], [21, 10.5], [23, 16], [21, 21.5], [15, 24], [28, 40], [28, 8], [40, 40], [40, 8]];
-      const E = [[0, 1], [1, 2], [2, 3], [3, 4], [4, 5], [5, 6], [6, 7], [7, 1], [8, 9], [9, 10], [10, 11], [0, 8]];
-      const s = Math.min(.34, .3 * W / H), ox = .93 - s / 2 * H / W, oy = .68 - s / 2;
-      const map = ([x, y]) => [ox + (x / 48) * s * H / W, oy + (y / 48) * s];
-      const p = V.map(map);
-      let k = 0;
-      while (p.length < N) { const [a, b] = E[k % E.length], f = (Math.floor(k / E.length) + 1) / 4; p.push(map([V[a][0] + (V[b][0] - V[a][0]) * f, V[a][1] + (V[b][1] - V[a][1]) * f])); k++; }
-      return { p, e: E.map(([a, b]) => [a, b, 'mark']), l: [[11, 'PN']], sig: 11 };
+      // The logo's frame: every point gathers into a ring with the signal node
+      // at its top right, as on the portrait logo (shown in full on the portal).
+      const r = Math.min(.11, .1 * W / H), cx = 1 - r * H / W - .012, cy = .62;
+      const p = [];
+      for (let i = 0; i < N; i++) {
+        const a = -Math.PI / 4 + i / N * Math.PI * 2;
+        p.push([cx + Math.cos(a) * r * H / W, cy + Math.sin(a) * r]);
+      }
+      const e = p.map((_, i) => [i, (i + 1) % N, 'mark']);
+      return { p, e, l: [[0, 'PN']], sig: 0 };
     }
   };
 

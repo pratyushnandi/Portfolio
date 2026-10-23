@@ -47,7 +47,8 @@
   <meta name="twitter:description" content="I build software that sees, thinks and acts: full-stack products, computer vision and edge systems." />
   <meta name="twitter:image" content="https://pratyushnandi.vercel.app/images/profile.jpg" />
   <title>Pratyush Nandi | Software Developer · Full-Stack &amp; Computer Vision</title>
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect width='48' height='48' rx='11' fill='%23090a09'/%3E%3Cg fill='none' stroke='%23ece8dc' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M8 40H28' stroke-width='2' stroke-opacity='.6'/%3E%3Cpath d='M8 40V8h7a8 8 0 0 1 0 16H8M28 40V8l12 32V8' stroke-width='3.4'/%3E%3C/g%3E%3Ccircle cx='40' cy='8' r='4.4' fill='%23c8f03c'/%3E%3C/svg%3E" />
+  <link rel="icon" type="image/png" href="favicon.png" />
+  <link rel="apple-touch-icon" href="apple-touch-icon.png" />
 
   <!-- Fonts are self-hosted (@font-face in style.css). The three faces the
        first screen uses are fetched straight away instead of after the CSS. -->
@@ -57,8 +58,8 @@
 
   <!-- ?v= is bumped with every release so returning visitors never keep a stale stylesheet.
        icons.css is generated (scripts/build-icons.mjs): only the icons this page uses. -->
-  <link rel="stylesheet" href="style.css?v=12.1.0" />
-  <link rel="stylesheet" href="icons.css?v=12.1.0" />
+  <link rel="stylesheet" href="style.css?v=13.0.0" />
+  <link rel="stylesheet" href="icons.css?v=13.0.0" />
 
   <!-- Only JS ever removes the preloader, so without it the overlay would cover
        the page forever. Reveal-on-scroll never runs either, so show everything. -->
@@ -105,10 +106,8 @@
 </head>
 
 <body>
-  <!-- PN//SIGNATURE monogram: a P and an N standing on one shared trace, like two
-       components on a circuit; the N's last corner carries the signal. Reused by
-       the nav, footer, universe and portal; the intro and the favicon copy it. -->
-  <svg class="sprite" width="0" height="0" aria-hidden="true" focusable="false"><symbol id="pnMark" viewBox="0 0 48 48"><path class="pn-t" d="M8 40H28" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" /><g fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path class="pn-s" d="M8 40V8h7a8 8 0 0 1 0 16H8" /><path class="pn-s" d="M28 40V8l12 32V8" /></g><g class="pn-n" fill="var(--pn-node, #090a09)" stroke="currentColor" stroke-width="1.6"><circle cx="8" cy="40" r="2.6" /><circle cx="28" cy="40" r="2.6" /></g><circle class="pn-sig" cx="40" cy="8" r="3.6" fill="var(--pn-accent, #c8f03c)" /></symbol></svg>
+  <!-- PN//SIGNATURE: the logo is the portrait (images/logo.jpg), always in a
+       circle with a thin ring and the chartreuse signal node. -->
   <a class="skip-link" href="#main">Skip to content</a>
 
   <!-- Ambient page backdrop: static grid + two soft light sources. No animation
@@ -125,7 +124,7 @@
   <div id="preloader" aria-busy="true">
     <p class="sr-only" role="status">Loading portfolio…</p>
     <div class="pl-box" aria-hidden="true">
-      <svg class="pl-mark" viewBox="0 0 48 48" fill="none"><path class="pn-t pl-draw" d="M8 40H28" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" /><g fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path class="pn-s pl-draw" d="M8 40V8h7a8 8 0 0 1 0 16H8" /><path class="pn-s pl-draw" d="M28 40V8l12 32V8" /></g><g class="pn-n" fill="var(--pn-node, #090a09)" stroke="currentColor" stroke-width="1.6"><circle cx="8" cy="40" r="2.6" /><circle cx="28" cy="40" r="2.6" /></g><circle class="pn-sig" cx="40" cy="8" r="3.6" fill="var(--pn-accent, #c8f03c)" /></svg>
+      <span class="pl-mark"><img src="images/logo.jpg" alt="" width="96" height="96" decoding="async" /></span>
       <div class="pl-text">
         <span class="pl-name">Pratyush Nandi</span>
         <span class="pl-cmd"><span class="pl-prompt">$</span> <span id="plCmd">boot --session</span></span>
@@ -146,7 +145,7 @@
     <nav class="nav-inner" aria-label="Primary">
       <!-- Named explicitly: on phones the wordmark is hidden and the mark is decorative. -->
       <a href="#hero" class="logo" aria-label="PN//Nandi: Pratyush Nandi, back to top">
-        <span class="logo-mark" aria-hidden="true"><svg viewBox="0 0 48 48"><use href="#pnMark" /></svg></span>
+        <span class="logo-mark" aria-hidden="true"><img src="images/logo.jpg" alt="" width="96" height="96" decoding="async" /></span>
         <span class="logo-text" aria-hidden="true">PN<span class="logo-dot">//</span>Nandi</span>
       </a>
       <span class="nav-chapter mono" id="navChapter" aria-hidden="true"><b>01</b> Identity</span>
@@ -170,7 +169,7 @@
           <span class="eng-led" aria-hidden="true"></span>
           <span class="eng-lbl mono" aria-hidden="true">ENG</span>
         </button>
-        <button type="button" class="theme-toggle" id="themeToggle" aria-label="Switch to light theme">
+        <button type="button" class="theme-toggle" id="themeToggle" aria-label="Switch to light theme (Studio)">
           <span class="tt-track" aria-hidden="true">
             <i class="fas fa-moon tt-moon"></i>
             <i class="fas fa-sun tt-sun"></i>
@@ -214,6 +213,10 @@
             React, Node.js and Python. MCA, Adamas University.
           </p>
 
+          <ul class="hero-roles mono" aria-label="Disciplines">
+            <li>Full-stack engineering</li><li>AI / ML</li><li>Computer vision</li><li>IoT &amp; edge systems</li>
+          </ul>
+
           <div class="hero-actions">
             <a href="#projects" class="btn btn-primary magnetic">
               <span>View selected work</span> <i class="fas fa-arrow-right" aria-hidden="true"></i>
@@ -237,73 +240,29 @@
           </div>
         </div>
 
-        <!-- ═══ THE PN DIGITAL UNIVERSE ═══
-             Four engineering domains around the PN mark. Domains are buttons; the
-             field (orbits, links, objects) is drawn in SVG and is decorative.
-             script.js §5 owns selection, pathways, inspection and pointer depth. -->
-        <div class="universe" id="universe" data-hero>
-          <div class="uv-stage">
-            <div class="uv-field" aria-hidden="true">
-              <svg class="uv-plane" viewBox="0 0 600 600">
-                <ellipse class="uv-orbit" cx="300" cy="300" rx="250" ry="250" />
-                <ellipse class="uv-orbit o2" cx="300" cy="300" rx="178" ry="178" />
-                <ellipse class="uv-orbit o3" cx="300" cy="300" rx="96" ry="96" />
-                <path class="uv-axis" d="M300 30V570M30 300H570" />
-                <g class="uv-stars">
-                  <circle cx="92" cy="300" r="1.2" /><circle cx="300" cy="52" r="1.2" /><circle cx="512" cy="300" r="1.2" /><circle cx="300" cy="548" r="1.2" />
-                  <circle cx="174" cy="146" r="1" /><circle cx="428" cy="148" r="1" /><circle cx="430" cy="452" r="1" /><circle cx="170" cy="452" r="1" />
-                  <circle cx="246" cy="128" r=".9" /><circle cx="470" cy="256" r=".9" /><circle cx="356" cy="472" r=".9" /><circle cx="128" cy="352" r=".9" />
-                </g>
-              </svg>
-              <svg class="uv-links" viewBox="0 0 600 600">
-                <g class="uv-spokes">
-                  <path data-l="core-sw" d="M300 300L150 172" /><path data-l="core-ai" d="M300 300L452 150" />
-                  <path data-l="core-cv" d="M300 300L462 440" /><path data-l="core-iot" d="M300 300L146 448" />
-                </g>
-                <g class="uv-ring">
-                  <path data-l="sw-ai" d="M150 172Q300 96 452 150" /><path data-l="ai-cv" d="M452 150Q540 300 462 440" />
-                  <path data-l="cv-iot" d="M462 440Q300 520 146 448" /><path data-l="iot-sw" d="M146 448Q64 300 150 172" />
-                </g>
-                <g class="uv-sats">
-                  <path data-l="sw" d="M150 172L78 122M150 172L232 94M150 172L72 250" />
-                  <path data-l="ai" d="M452 150L378 86M452 150L528 106M452 150L538 224" />
-                  <path data-l="cv" d="M462 440L538 392M462 440L522 514M462 440L392 528" />
-                  <path data-l="iot" d="M146 448L72 392M146 448L84 514M146 448L228 528" />
-                </g>
-                <g class="uv-pulses">
-                  <circle data-l="sw-ai" r="2.6" /><circle data-l="ai-cv" r="2.6" /><circle data-l="cv-iot" r="2.6" /><circle data-l="iot-sw" r="2.6" />
-                </g>
-              </svg>
-              <!-- Technical objects: what each domain is made of. -->
-              <ul class="uv-objects">
-                <li data-d="sw" style="--x:78;--y:122"><span class="uv-glyph">&lt;/&gt;</span><b>React</b><em>interfaces · components</em></li>
-                <li data-d="sw" style="--x:232;--y:94"><span class="uv-glyph">{ }</span><b>Node.js</b><em>REST APIs · Express</em></li>
-                <li data-d="sw" style="--x:72;--y:250"><span class="uv-glyph">sql</span><b>SQL</b><em>MySQL · SQLite · PostgreSQL</em></li>
-                <li data-d="ai" style="--x:378;--y:86"><span class="uv-glyph">py</span><b>Python</b><em>training · evaluation</em></li>
-                <li data-d="ai" style="--x:528;--y:106"><span class="uv-glyph">nn</span><b>Models</b><em>YOLOv8 · Ultralytics</em></li>
-                <li data-d="ai" style="--x:538;--y:224"><span class="uv-glyph">df</span><b>Data</b><em>labelled frames · metrics</em></li>
-                <li data-d="cv" style="--x:538;--y:392"><span class="uv-glyph">[ ]</span><b>Detection</b><em>boxes · classes · scores</em></li>
-                <li data-d="cv" style="--x:522;--y:514"><span class="uv-glyph">cv</span><b>OpenCV</b><em>frames · pre-processing</em></li>
-                <li data-d="cv" style="--x:392;--y:528"><span class="uv-glyph">cam</span><b>Camera</b><em>RTSP streams</em></li>
-                <li data-d="iot" style="--x:72;--y:392"><span class="uv-glyph">pi</span><b>Raspberry Pi</b><em>inference on site</em></li>
-                <li data-d="iot" style="--x:84;--y:514"><span class="uv-glyph">io</span><b>Devices</b><em>sensors · cameras</em></li>
-                <li data-d="iot" style="--x:228;--y:528"><span class="uv-glyph">evt</span><b>Events</b><em>to the same API</em></li>
-              </ul>
-              <span class="uv-core"><svg viewBox="0 0 48 48"><use href="#pnMark" /></svg></span>
-            </div>
-
-            <div class="uv-domains" role="group" aria-label="Engineering domains">
-              <button type="button" class="uv-domain" data-d="sw" style="--x:150;--y:172" aria-pressed="false" aria-controls="uvPanel"><span class="mono">01</span> <strong>Software Engineering</strong></button>
-              <button type="button" class="uv-domain" data-d="ai" style="--x:452;--y:150" aria-pressed="false" aria-controls="uvPanel"><span class="mono">02</span> <strong>Artificial Intelligence</strong></button>
-              <button type="button" class="uv-domain" data-d="cv" style="--x:462;--y:440" aria-pressed="false" aria-controls="uvPanel"><span class="mono">03</span> <strong>Computer Vision</strong></button>
-              <button type="button" class="uv-domain" data-d="iot" style="--x:146;--y:448" aria-pressed="false" aria-controls="uvPanel"><span class="mono">04</span> <strong>IoT &amp; Edge Systems</strong></button>
-            </div>
+        <!-- ═══ THE SYSTEM BLUEPRINT ═══
+             How the parts of a system relate: interface, frontend, API, data,
+             intelligence and devices. Components are buttons, listed in the order
+             data flows (the no-JS and phone reading); the drawing is decorative SVG.
+             script.js §5 owns the signal, the panel and the explorer links. -->
+        <div class="bp" id="blueprint" data-hero>
+          <div class="bp-stage">
+            <svg class="bp-svg" id="bpSvg" viewBox="0 0 600 600" aria-hidden="true" focusable="false"></svg>
+            <ol class="bp-nodes" aria-label="System blueprint, in the order data flows">
+              <li><button type="button" class="bp-node" data-l="ui" aria-pressed="false" aria-controls="bpPanel"><span class="mono">01</span> <strong>Interface</strong> <em>what people use</em></button></li>
+              <li data-via="renders"><button type="button" class="bp-node" data-l="frontend" aria-pressed="false" aria-controls="bpPanel"><span class="mono">02</span> <strong>Frontend</strong> <em>components · state</em></button></li>
+              <li data-via="HTTP · JSON"><button type="button" class="bp-node" data-l="api" aria-pressed="false" aria-controls="bpPanel"><span class="mono">03</span> <strong>API / Backend</strong> <em>contracts · rules</em></button></li>
+              <li data-via="SQL"><button type="button" class="bp-node" data-l="database" aria-pressed="false" aria-controls="bpPanel"><span class="mono">04</span> <strong>Database</strong> <em>durable state</em></button></li>
+              <li data-via="frames → detections"><button type="button" class="bp-node" data-l="ai" aria-pressed="false" aria-controls="bpPanel"><span class="mono">05</span> <strong>AI / Vision</strong> <em>models that see</em></button></li>
+              <li data-via="events"><button type="button" class="bp-node" data-l="edge" aria-pressed="false" aria-controls="bpPanel"><span class="mono">06</span> <strong>Edge / IoT</strong> <em>devices on site</em></button></li>
+            </ol>
           </div>
-
-          <div class="uv-panel" id="uvPanel" aria-live="polite">
-            <div class="uvp-default">
-              <span class="card-label mono">pn · universe</span>
-              <p class="uvp-lead">Four domains, one system. Select one to see what it is made of and where I've built it.</p>
+          <div class="bp-panel" id="bpPanel" aria-live="polite">
+            <div class="bpp-idle">
+              <span class="card-label mono">system blueprint</span>
+              <p class="bpp-lead">One system, six parts. Hover, focus or tap a component to see what it is responsible for and the
+                technologies behind it.</p>
+              <a class="bpp-go mono" href="#thinking">Explore the full architecture <i class="fas fa-arrow-down" aria-hidden="true"></i></a>
             </div>
           </div>
         </div>
@@ -394,12 +353,12 @@
     </section>
 
     <!-- ════════════════════════════════════
-       CHAPTER 02 · THINKING — ENGINEERING DNA
-       Three journeys through a system. Stage copy lives in script.js (DNA) so
-       the explorer, the palette and the assistant share one source; the lists
-       below are the no-JS reading of the same structure.
+       CHAPTER 02 · THINKING — ARCHITECTURE EXPLORER
+       One example system in seven layers, in three views. Layer copy lives in
+       script.js (ARCH) so the blueprint, the explorer, the palette and the
+       assistant share one source; the stack below is the no-JS reading.
     ════════════════════════════════════ -->
-    <section id="thinking" class="sec sec-alt" aria-labelledby="dnaTitle" data-chapter="02">
+    <section id="thinking" class="sec sec-alt" aria-labelledby="axTitle" data-chapter="02">
       <div class="container">
         <div class="chapter" data-reveal>
           <span class="ch-num mono">02</span>
@@ -409,134 +368,88 @@
         </div>
         <header class="sec-head sec-head-split" data-reveal>
           <div>
-            <span class="sec-kicker mono"><span class="sk-num">02</span><span class="sk-sep" aria-hidden="true">/</span> Engineering DNA</span>
-            <h2 class="sec-title" id="dnaTitle">Three journeys, <em class="serif">one way of thinking</em></h2>
+            <span class="sec-kicker mono"><span class="sk-num">02</span><span class="sk-sep" aria-hidden="true">/</span> Architecture explorer</span>
+            <h2 class="sec-title" id="axTitle">How the parts of a <em class="serif">system</em> connect</h2>
           </div>
-          <p class="sec-sub">Pick a journey to walk its pathway. Every stage says what it does, the tools that fit, the trade-offs,
-            and whether a project on this page actually shows it.</p>
+          <p class="sec-sub">An example architecture, from the screen to the device. Not every project uses every layer: each one
+            says where it is real, in which project, and where it is a conceptual example.</p>
         </header>
 
-        <div class="dna" id="dna" data-reveal>
-          <div class="dna-bar">
+        <div class="ax" id="ax" data-reveal>
+          <div class="ax-bar">
+            <div class="ax-tabs" role="tablist" aria-label="Explorer views">
+              <button type="button" class="ax-tab" role="tab" id="axTabOverview" data-v="overview" aria-selected="true" aria-controls="axOverview"><span class="mono">01</span> Overview</button>
+              <button type="button" class="ax-tab" role="tab" id="axTabArchitecture" data-v="architecture" aria-selected="false" aria-controls="axArchitecture" tabindex="-1"><span class="mono">02</span> Architecture</button>
+              <button type="button" class="ax-tab" role="tab" id="axTabDetail" data-v="detail" aria-selected="false" aria-controls="axDetail" tabindex="-1"><span class="mono">03</span> Detail</button>
+            </div>
             <span class="dna-legend mono">
               <span class="st st-built">built</span> in a project here
-              <span class="st st-partial">partly built</span>
-              <span class="st st-concept">concept</span> architecture I design for, not yet in a public project
+              <span class="st st-concept">concept</span> example, not yet public
             </span>
-            <button type="button" class="dna-back mono" id="dnaBack" hidden><i class="fas fa-arrow-left" aria-hidden="true"></i> All journeys</button>
           </div>
 
-          <div class="dna-strands" id="dnaStrands">
-            <svg class="dna-rungs" id="dnaRungs" aria-hidden="true"></svg>
-
-            <article class="dna-strand" data-j="product">
-              <header class="ds-head">
-                <span class="ds-letter mono">A</span>
-                <div><h3>Digital Product Engineering</h3><p>From what a person sees to how it ships.</p></div>
-                <button type="button" class="ds-go" aria-expanded="false" aria-controls="dnaDetail">Explore journey A</button>
-              </header>
-              <ol class="ds-stages">
-                <li><button type="button" data-s="interface">Interface</button></li>
-                <li><button type="button" data-s="logic">Application Logic</button></li>
-                <li><button type="button" data-s="api">API</button></li>
-                <li><button type="button" data-s="database">Database</button></li>
-                <li><button type="button" data-s="deploy">Deployment</button></li>
-              </ol>
-            </article>
-
-            <article class="dna-strand" data-j="vision">
-              <header class="ds-head">
-                <span class="ds-letter mono">B</span>
-                <div><h3>Visual Intelligence</h3><p>From a camera frame to an event someone acts on.</p></div>
-                <button type="button" class="ds-go" aria-expanded="false" aria-controls="dnaDetail">Explore journey B</button>
-              </header>
-              <ol class="ds-stages">
-                <li><button type="button" data-s="camera">Camera Input</button></li>
-                <li><button type="button" data-s="stream">RTSP Stream</button></li>
-                <li><button type="button" data-s="video">Video Processing</button></li>
-                <li><button type="button" data-s="inference">AI Inference</button></li>
-                <li><button type="button" data-s="detection">Detection</button></li>
-                <li><button type="button" data-s="event">Event</button></li>
-              </ol>
-            </article>
-
-            <article class="dna-strand" data-j="connected">
-              <header class="ds-head">
-                <span class="ds-letter mono">C</span>
-                <div><h3>Connected Intelligence</h3><p>From a device in the field to a dashboard that makes sense of it.</p></div>
-                <button type="button" class="ds-go" aria-expanded="false" aria-controls="dnaDetail">Explore journey C</button>
-              </header>
-              <ol class="ds-stages">
-                <li><button type="button" data-s="device">IoT Device</button></li>
-                <li><button type="button" data-s="edge">Edge Processing</button></li>
-                <li><button type="button" data-s="comms">Communication</button></li>
-                <li><button type="button" data-s="monitoring">Monitoring</button></li>
-                <li><button type="button" data-s="dashboard">Intelligent Dashboard</button></li>
-              </ol>
-            </article>
+          <div class="ax-pane" role="tabpanel" id="axOverview" aria-labelledby="axTabOverview">
+            <p class="ax-pane-lead">The whole system, top to bottom. Select a layer to inspect it.</p>
+            <ol class="ax-stack" id="axStack">
+              <li><button type="button" class="ax-row" data-l="ui"><span class="mono">01</span><strong>User Interface</strong><span class="ax-role">What a person sees and does: layout, forms, feedback and accessibility.</span></button></li>
+              <li><button type="button" class="ax-row" data-l="frontend"><span class="mono">02</span><strong>Frontend</strong><span class="ax-role">Client code: components, state, routing, and every call to the API.</span></button></li>
+              <li><button type="button" class="ax-row" data-l="api"><span class="mono">03</span><strong>API / Backend</strong><span class="ax-role">The contract between clients and the system: who may ask what, and what comes back.</span></button></li>
+              <li><button type="button" class="ax-row" data-l="database"><span class="mono">04</span><strong>Database</strong><span class="ax-role">Durable, queryable state that outlives any request.</span></button></li>
+              <li><button type="button" class="ax-row" data-l="logic"><span class="mono">05</span><strong>Application Logic</strong><span class="ax-role">The rules of the product: eligibility, money, and how things move from one state to the next.</span></button></li>
+              <li><button type="button" class="ax-row" data-l="ai"><span class="mono">06</span><strong>AI / Computer Vision</strong><span class="ax-role">Trained models that turn a frame into boxes, classes and confidence scores.</span></button></li>
+              <li><button type="button" class="ax-row" data-l="edge"><span class="mono">07</span><strong>Edge / IoT Integration</strong><span class="ax-role">Cameras and devices on site: streams in, events out.</span></button></li>
+            </ol>
           </div>
 
-          <div class="dna-detail" id="dnaDetail" aria-live="polite" hidden></div>
+          <div class="ax-pane" role="tabpanel" id="axArchitecture" aria-labelledby="axTabArchitecture" hidden>
+            <div class="ax-arch">
+              <div class="ax-graph" id="axGraph">
+                <svg class="ax-lines" id="axLines" viewBox="0 0 800 520" aria-hidden="true" focusable="false"></svg>
+              </div>
+              <div class="ax-inspect" id="axInspect" aria-live="polite"></div>
+            </div>
+          </div>
+
+          <div class="ax-pane" role="tabpanel" id="axDetail" aria-labelledby="axTabDetail" hidden>
+            <div class="ax-pick" id="axPick" role="group" aria-label="Layer"></div>
+            <div class="ax-detail" id="axDetailBody" aria-live="polite"></div>
+          </div>
         </div>
       </div>
     </section>
 
+    <!-- ════════════════════════════════════
+       CODE TO PRODUCTION
+       Seven stages on one line; stage copy lives in script.js (PROD). Every
+       example is a real project, most often this site itself.
+    ════════════════════════════════════ -->
     <section id="process" class="sec" aria-labelledby="processTitle">
-      <div class="container proc-wrap">
-        <div class="proc-aside">
-          <header class="sec-head" data-reveal>
-            <span class="sec-kicker mono"><span class="sk-num">02</span><span class="sk-sep" aria-hidden="true">/</span> Process</span>
-            <h2 class="sec-title" id="processTitle">Not just interfaces. <em class="serif">Systems.</em></h2>
-            <p class="sec-sub">The loop every project goes through, from idea to optimisation, shown on the one system you
-              can inspect right now: this portfolio.</p>
-          </header>
-          <p class="proc-now mono" aria-hidden="true"><span class="pn-num" id="procNum">01</span><span class="pn-of">/ 08</span><span class="pn-name" id="procName">Idea</span></p>
-        </div>
+      <div class="container">
+        <header class="sec-head sec-head-split" data-reveal>
+          <div>
+            <span class="sec-kicker mono"><span class="sk-num">02</span><span class="sk-sep" aria-hidden="true">/</span> Code to production</span>
+            <h2 class="sec-title" id="processTitle">From an idea to <em class="serif">software in production</em></h2>
+          </div>
+          <p class="sec-sub">Seven stages every project goes through. Select one for its purpose, what I weigh, the tools, and where a
+            real project shows it, most often this portfolio itself.</p>
+        </header>
 
-        <div class="proc-list">
-          <div class="proc-rail" aria-hidden="true"><span class="proc-fill"></span></div>
-          <ol class="proc" id="proc">
-            <li class="proc-step">
-              <span class="pr-n mono" aria-hidden="true">01</span>
-              <div><h3>Idea</h3><p>Start from the problem and the people who have it, then decide what the system must do.</p>
-                <p class="proc-proof"><span class="mono">here</span> A portfolio that reads like an engineering product and is honest about every claim it makes.</p></div>
-            </li>
-            <li class="proc-step">
-              <span class="pr-n mono" aria-hidden="true">02</span>
-              <div><h3>Architecture</h3><p>Choose the simplest structure that holds, and draw the system before writing it.</p>
-                <p class="proc-proof"><span class="mono">here</span> Plain HTML, CSS and JavaScript: no framework, no build step, one design system.</p></div>
-            </li>
-            <li class="proc-step">
-              <span class="pr-n mono" aria-hidden="true">03</span>
-              <div><h3>Development</h3><p>Small, reviewable changes, with one source of truth for anything shared.</p>
-                <p class="proc-proof"><span class="mono">here</span> One knowledge model drives the system map, the command palette and the assistant.</p></div>
-            </li>
-            <li class="proc-step">
-              <span class="pr-n mono" aria-hidden="true">04</span>
-              <div><h3>Integration</h3><p>Connect external services behind clear contracts, and plan for them failing.</p>
-                <p class="proc-proof"><span class="mono">here</span> The contact form posts to Web3Forms; if that fails, a prefilled email link takes over.</p></div>
-            </li>
-            <li class="proc-step">
-              <span class="pr-n mono" aria-hidden="true">05</span>
-              <div><h3>Testing</h3><p>Automate whatever a person would otherwise have to check by hand.</p>
-                <p class="proc-proof"><span class="mono">here</span> Playwright end-to-end tests on desktop and mobile, plus HTML, CSS and JavaScript linting.</p></div>
-            </li>
-            <li class="proc-step">
-              <span class="pr-n mono" aria-hidden="true">06</span>
-              <div><h3>Deployment</h3><p>Every change passes review and an automated gate before it ships.</p>
-                <p class="proc-proof"><span class="mono">here</span> Pull requests run CI; Vercel deploys previews and production, and GitHub Pages mirrors it.</p></div>
-            </li>
-            <li class="proc-step">
-              <span class="pr-n mono" aria-hidden="true">07</span>
-              <div><h3>Monitoring</h3><p>Check what people actually receive, after it ships, not only before.</p>
-                <p class="proc-proof"><span class="mono">here</span> Every deployment triggers a smoke test against the live URL.</p></div>
-            </li>
-            <li class="proc-step">
-              <span class="pr-n mono" aria-hidden="true">08</span>
-              <div><h3>Optimisation</h3><p>Measure first, then improve what the numbers point at.</p>
-                <p class="proc-proof"><span class="mono">here</span> Lighthouse budgets in CI, with accessibility at 100 and zero main-thread blocking.</p></div>
-            </li>
-          </ol>
+        <div class="c2p" id="c2p" data-reveal>
+          <div class="c2p-track">
+            <div class="c2p-line" aria-hidden="true"><span></span></div>
+            <ol class="c2p-steps" aria-label="Stages, from idea to monitoring">
+              <li><button type="button" class="c2p-step" data-s="idea" aria-pressed="true" aria-controls="c2pBody"><span class="mono">01</span> Idea</button></li>
+              <li><button type="button" class="c2p-step" data-s="design" aria-pressed="false" aria-controls="c2pBody"><span class="mono">02</span> Design</button></li>
+              <li><button type="button" class="c2p-step" data-s="architecture" aria-pressed="false" aria-controls="c2pBody"><span class="mono">03</span> Architecture</button></li>
+              <li><button type="button" class="c2p-step" data-s="development" aria-pressed="false" aria-controls="c2pBody"><span class="mono">04</span> Development</button></li>
+              <li><button type="button" class="c2p-step" data-s="testing" aria-pressed="false" aria-controls="c2pBody"><span class="mono">05</span> Testing</button></li>
+              <li><button type="button" class="c2p-step" data-s="deployment" aria-pressed="false" aria-controls="c2pBody"><span class="mono">06</span> Deployment</button></li>
+              <li><button type="button" class="c2p-step" data-s="monitoring" aria-pressed="false" aria-controls="c2pBody"><span class="mono">07</span> Monitoring</button></li>
+            </ol>
+          </div>
+          <div class="c2p-body" id="c2pBody" aria-live="polite">
+            <p class="c2p-purpose">Start from the problem and the people who have it, then decide what the system must do.</p>
+          </div>
           <p class="proc-loop mono"><span aria-hidden="true">Think → Build → Test → Deploy → Improve ↺</span><span class="sr-only">The loop: think, build, test, deploy, improve, then repeat.</span></p>
         </div>
       </div>
@@ -751,6 +664,14 @@
             <span class="pf-ind" aria-hidden="true"></span>
           </div>
         </header>
+
+        <!-- Technologies come from the projects' own tags (script.js §11), so the
+             filter can never list something no project uses. -->
+        <div class="pt-row" data-reveal>
+          <span class="pt-k mono" id="ptLabel">technology</span>
+          <div class="pt-chips" id="techFilter" role="group" aria-labelledby="ptLabel"></div>
+          <p class="pt-status mono" id="projStatus" role="status"></p>
+        </div>
 
         <!-- data-cat is a space-separated list, so a project can sit in two filters. -->
         <div class="proj-grid worlds" id="projGrid">
@@ -1186,6 +1107,41 @@
           </div>
         </div>
 
+        <!-- How a vision system fits together: the pipeline stage by stage, and where
+             the parts run. Conceptual by construction; script.js §19b has the copy and
+             says, stage by stage, what is real in Detectify. -->
+        <div class="lsys" id="lsys" data-reveal>
+          <div class="lsys-head">
+            <h3 class="obs-h"><span class="mono">conceptual</span> How a vision system fits together</h3>
+            <div class="ax-tabs" role="tablist" aria-label="Vision system views">
+              <button type="button" class="ax-tab lsys-tab" role="tab" id="lsTabPipe" data-v="pipe" aria-selected="true" aria-controls="lsPipe"><span class="mono">01</span> Pipeline</button>
+              <button type="button" class="ax-tab lsys-tab" role="tab" id="lsTabTopo" data-v="topo" aria-selected="false" aria-controls="lsTopo" tabindex="-1"><span class="mono">02</span> Stream topology</button>
+            </div>
+          </div>
+
+          <div class="ax-pane" role="tabpanel" id="lsPipe" aria-labelledby="lsTabPipe">
+            <ol class="ls-pipe" aria-label="Pipeline stages">
+              <li><button type="button" class="ls-stage" data-s="input" aria-pressed="true" aria-controls="lsPipeRead"><span class="mono">01</span> Visual input</button></li>
+              <li><button type="button" class="ls-stage" data-s="preprocess" aria-pressed="false" aria-controls="lsPipeRead"><span class="mono">02</span> Preprocessing</button></li>
+              <li><button type="button" class="ls-stage" data-s="inference" aria-pressed="false" aria-controls="lsPipeRead"><span class="mono">03</span> Model inference</button></li>
+              <li><button type="button" class="ls-stage" data-s="detection" aria-pressed="false" aria-controls="lsPipeRead"><span class="mono">04</span> Detection</button></li>
+              <li><button type="button" class="ls-stage" data-s="event" aria-pressed="false" aria-controls="lsPipeRead"><span class="mono">05</span> Application event</button></li>
+            </ol>
+            <div class="ls-read" id="lsPipeRead" aria-live="polite"></div>
+          </div>
+
+          <div class="ax-pane" role="tabpanel" id="lsTopo" aria-labelledby="lsTabTopo" hidden>
+            <div class="ls-mode" role="group" aria-label="Where inference runs">
+              <button type="button" class="ls-m" data-m="server" aria-pressed="true">On a server</button>
+              <button type="button" class="ls-m" data-m="edge" aria-pressed="false">At the edge</button>
+            </div>
+            <div class="ls-topo" id="lsTopoMap"></div>
+            <div class="ls-read" id="lsTopoRead" aria-live="polite"></div>
+          </div>
+          <p class="lab-sim"><span class="lab-sim-k mono">conceptual</span> An example architecture for the system Detectify is
+            designed for. No camera or stream runs here, and nothing is measured live.</p>
+        </div>
+
         <div class="obs-explain" data-reveal>
           <div><span class="mono">inference</span><p>Running a trained model on a new frame to get boxes, classes and confidence scores.
             Training happens once, on labelled data; inference happens on every frame.</p></div>
@@ -1474,7 +1430,7 @@
               <circle data-pa="0" cx="360" cy="96" r="4" /><circle data-pa="1" cx="380" cy="168" r="4" />
               <circle data-pa="2" cx="380" cy="232" r="4" /><circle data-pa="3" cx="360" cy="304" r="4" />
             </svg>
-            <span class="pm-core"><svg viewBox="0 0 48 48"><use href="#pnMark" /></svg></span>
+            <span class="pm-core"><img src="images/logo.jpg" alt="" width="96" height="96" decoding="async" loading="lazy" /></span>
           </div>
 
           <div class="portal-copy">
@@ -1621,11 +1577,11 @@
       <div class="foot-top">
         <div class="foot-brand">
           <a href="#hero" class="logo" aria-label="PN Pratyush Nandi, back to top">
-            <span class="logo-mark" aria-hidden="true"><svg viewBox="0 0 48 48"><use href="#pnMark" /></svg></span>
+            <span class="logo-mark" aria-hidden="true"><img src="images/logo.jpg" alt="" width="96" height="96" decoding="async" loading="lazy" /></span>
             <span class="logo-text" aria-hidden="true">Pratyush Nandi</span>
           </a>
           <p class="foot-role">Software Developer<br /><span class="mono">AI/ML · Full-Stack · Computer Vision</span></p>
-          <p class="foot-motto mono">Building intelligent systems.</p>
+          <p class="foot-motto mono">Engineered by Pratyush. Software with systems thinking.</p>
           <div class="foot-soc">
             <a href="https://github.com/pratyushnandi" target="_blank" rel="noopener noreferrer" class="icon-btn" aria-label="GitHub"><i class="fab fa-github"></i></a>
             <a href="https://www.linkedin.com/in/pratyushnandi/" target="_blank" rel="noopener noreferrer" class="icon-btn" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
@@ -1665,10 +1621,11 @@
 
       <div class="foot-bottom mono">
         <p>&copy; <span id="year">2026</span> Pratyush Nandi. Designed &amp; engineered in Kolkata.</p>
+        <p class="foot-egg">One note isn't in the navigation: <kbd class="cmdk-kbd">Ctrl K</kbd>, then <code>ls -a</code></p>
         <p class="foot-sys">
           <span>Kolkata · IST <time id="localTime">--:--</time></span>
           <span class="foot-sep" aria-hidden="true">·</span>
-          <span>v12.1.0</span>
+          <span>v13.0.0</span>
         </p>
       </div>
     </div>
@@ -1789,6 +1746,12 @@
         violations: the system flags, a person decides.</p></div>
     </section>
     <section class="cs-sec">
+      <h3 class="mono">solution</h3>
+      <div><p>Two YOLOv8 models find what matters in a frame: one for helmets and number plates, one for vehicles,
+        traffic-light state and red-light violations. Separate rules decide whether that adds up to a violation, and the
+        output is meant to be an alert for a person to review.</p></div>
+    </section>
+    <section class="cs-sec">
       <h3 class="mono">my contribution</h3>
       <div><p>Sole contributor to the public repository. I built its two model notebooks: helmet-violation detection, and
         traffic-light, vehicle and red-light-violation detection, each trained and evaluated with Ultralytics YOLOv8 in
@@ -1898,6 +1861,12 @@
         purchase is spending, but paying the card's bill later is not new spending.</p></div>
     </section>
     <section class="cs-sec">
+      <h3 class="mono">solution</h3>
+      <div><p>An Android app that records a payment in a few taps, keeps credit-card bill payments apart from spending,
+        and stores everything on the device in SQLite, with CSV, Excel and PDF exports, a fingerprint or PIN lock, and an
+        optional Google Drive backup.</p></div>
+    </section>
+    <section class="cs-sec">
       <h3 class="mono">my contribution</h3>
       <div><p>Built as part of my role at Eltern Segen Technologie. I designed and developed the app: the data model, the
         credit-card ledger, the screens, exports, the app lock and Google Drive backup.</p></div>
@@ -1972,6 +1941,12 @@
         and placement office has to approve everything and report on outcomes.</p></div>
     </section>
     <section class="cs-sec">
+      <h3 class="mono">solution</h3>
+      <div><p>A placement portal with a view for each role. Students check their eligibility and follow every application;
+        recruiters post drives and move candidates along; the placement office approves postings, verifies companies and
+        exports the register.</p></div>
+    </section>
+    <section class="cs-sec">
       <h3 class="mono">architecture</h3>
       <div>
         <p>A Node.js and Express server hosts plain HTML, CSS and JavaScript pages and a REST API behind them. Every request
@@ -2043,6 +2018,15 @@
         anything or signing in.</p></div>
     </section>
     <section class="cs-sec">
+      <h3 class="mono">solution</h3>
+      <div><p>Three editor tabs and a live preview, rebuilt on every run, plus a <em>run with tests</em> mode that appends
+        validation code after the student's script. Work is saved in the browser or exported as JSON.</p></div>
+    </section>
+    <section class="cs-sec">
+      <h3 class="mono">my contribution</h3>
+      <div><p>Sole author of the public repository and the live demo.</p></div>
+    </section>
+    <section class="cs-sec">
       <h3 class="mono">architecture</h3>
       <div>
         <p>Three Ace editors (HTML, CSS, JavaScript) feed one function that assembles a full document. The preview iframe
@@ -2107,7 +2091,7 @@
     </div>
   </div>
 
-  <script src="script.js?v=12.1.0"></script>
+  <script src="script.js?v=13.0.0"></script>
 </body>
 
 </html>
