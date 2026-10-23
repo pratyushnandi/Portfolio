@@ -7,7 +7,7 @@
   <!-- Kept as a single JS-driven meta rather than two prefers-color-scheme ones:
        the toggle can override the OS, so media-matched metas would disagree with
        the theme actually on screen. -->
-  <meta name="theme-color" id="themeColor" content="#0c0d0f" />
+  <meta name="theme-color" id="themeColor" content="#0a0a14" />
   <script>
     (function () {
       var stored = null;
@@ -19,7 +19,7 @@
       if (light) {
         document.documentElement.setAttribute('data-theme', 'light');
         var m = document.getElementById('themeColor');
-        if (m) m.setAttribute('content', '#f6f3ee');
+        if (m) m.setAttribute('content', '#f6f5fc');
       }
       // Engineering Mode is restored before first paint so a reload never flashes.
       var eng = null;
@@ -58,8 +58,8 @@
 
   <!-- ?v= is bumped with every release so returning visitors never keep a stale stylesheet.
        icons.css is generated (scripts/build-icons.mjs): only the icons this page uses. -->
-  <link rel="stylesheet" href="style.css?v=13.0.0" />
-  <link rel="stylesheet" href="icons.css?v=13.0.0" />
+  <link rel="stylesheet" href="style.css?v=14.0.0" />
+  <link rel="stylesheet" href="icons.css?v=14.0.0" />
 
   <!-- Only JS ever removes the preloader, so without it the overlay would cover
        the page forever. Reveal-on-scroll never runs either, so show everything. -->
@@ -1017,9 +1017,9 @@
                     <feColorMatrix values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 .55 0" />
                   </filter>
                   <linearGradient id="cvScanGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0" stop-color="#e2ff7a" stop-opacity="0" />
-                    <stop offset=".85" stop-color="#e2ff7a" stop-opacity=".2" />
-                    <stop offset="1" stop-color="#e2ff7a" stop-opacity=".65" />
+                    <stop offset="0" stop-color="#22d3ee" stop-opacity="0" />
+                    <stop offset=".85" stop-color="#22d3ee" stop-opacity=".2" />
+                    <stop offset="1" stop-color="#22d3ee" stop-opacity=".65" />
                   </linearGradient>
                   <pattern id="cvPatch" width="40" height="40" patternUnits="userSpaceOnUse">
                     <path d="M40 0H0V40" fill="none" class="cv-patch-line" />
@@ -1360,7 +1360,7 @@
             <h3 class="col-title mono"><i class="fas fa-graduation-cap" aria-hidden="true"></i> education</h3>
             <ol class="edu-list">
               <li class="edu-item" data-reveal>
-                <span class="edu-badge" style="--c1:#c8f03c;--c2:#b9e22c">MCA</span>
+                <span class="edu-badge" style="--c1:#a78bfa;--c2:#7c3aed">MCA</span>
                 <div class="edu-body">
                   <h4>Master of Computer Applications</h4>
                   <p class="edu-inst">Adamas University</p>
@@ -1369,7 +1369,7 @@
                 <a class="doc-btn" href="documents/mca-provisional-certificate.pdf" data-doc-title="MCA PROVISIONAL CERTIFICATE" target="_blank" rel="noopener noreferrer" aria-label="View MCA provisional certificate"><i class="fas fa-eye" aria-hidden="true"></i><span>View</span></a>
               </li>
               <li class="edu-item" data-reveal style="--i:1">
-                <span class="edu-badge" style="--c1:#e2ff7a;--c2:#b9822f">BCA</span>
+                <span class="edu-badge" style="--c1:#22d3ee;--c2:#0e7490">BCA</span>
                 <div class="edu-body">
                   <h4>Bachelor of Computer Application</h4>
                   <p class="edu-inst">Techno India (Hooghly) – MAKAUT</p>
@@ -1669,7 +1669,7 @@
         <p class="foot-sys">
           <span>Kolkata · IST <time id="localTime">--:--</time></span>
           <span class="foot-sep" aria-hidden="true">·</span>
-          <span>v13.0.0</span>
+          <span>v14.0.0</span>
         </p>
       </div>
     </div>
@@ -2135,7 +2135,7 @@
     </div>
   </div>
 
-  <script src="script.js?v=13.0.0"></script>
+  <script src="script.js?v=14.0.0"></script>
 </body>
 
 </html>

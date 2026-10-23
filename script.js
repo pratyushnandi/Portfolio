@@ -127,7 +127,7 @@ const ack = (function () {
   function apply(theme) {
     if (theme === 'light') root.setAttribute('data-theme', 'light');
     else root.removeAttribute('data-theme');
-    if (meta) meta.setAttribute('content', theme === 'light' ? '#f6f3ee' : '#0c0d0f');
+    if (meta) meta.setAttribute('content', theme === 'light' ? '#f6f5fc' : '#0a0a14');
     label();
     window.dispatchEvent(new CustomEvent('pn:themechange', { detail: { theme } }));
   }
@@ -3717,7 +3717,7 @@ const Assistant = (function () {
   const ease = t => (t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
   function colours() {
     const cs = getComputedStyle(root);
-    return { line: cs.getPropertyValue('--silver').trim() || '#b8bcc4', accent: cs.getPropertyValue('--accent').trim() || '#c8f03c', text: cs.getPropertyValue('--text-3').trim() || '#8f8b81' };
+    return { line: cs.getPropertyValue('--silver').trim() || '#b8bcc4', accent: cs.getPropertyValue('--accent').trim() || '#a78bfa', text: cs.getPropertyValue('--text-3').trim() || '#8f8b81' };
   }
   function edges(shape, alpha, c) {
     shape.e.forEach(([i, j, style]) => {
@@ -3803,6 +3803,6 @@ const Assistant = (function () {
 })();
 
 /* ══ CONSOLE ══ */
-console.log('%cPratyush Nandi%c  Software Developer', 'font:700 14px system-ui;color:#c8f03c', 'font:12px system-ui;color:#8a90a2');
-console.log('%cLike what you see? → pratyushnandi100@gmail.com', 'font:12px ui-monospace,monospace;color:#e2ff7a');
+console.log('%cPratyush Nandi%c  Software Developer', 'font:700 14px system-ui;color:#a78bfa', 'font:12px system-ui;color:#8a90a2');
+console.log('%cLike what you see? → pratyushnandi100@gmail.com', 'font:12px ui-monospace,monospace;color:#22d3ee');
 console.log('%cNot everything is in the navigation. Ctrl K, then: ls -a', 'font:12px ui-monospace,monospace;color:#8a90a2');
