@@ -1,11 +1,11 @@
-# ⚡ Pratyush Nandi — Engineered by Pratyush (v13)
+# ⚡ Pratyush Nandi — Engineered by Pratyush (v14)
 
 [![Website Vercel](https://img.shields.io/badge/Vercel-Live_Demo-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://pratyushnandi.vercel.app)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](LICENSE)
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-Pratyush_Nandi-0A66C2?style=for-the-badge&logo=linkedin)](https://www.linkedin.com/in/pratyushnandi/)
 [![GitHub](https://img.shields.io/badge/GitHub-pratyushnandi-181717?style=for-the-badge&logo=github)](https://github.com/pratyushnandi)
 
-A portfolio built around one idea, *I build software that sees, thinks & acts*, and told in six chapters: Identity, Thinking, Building, Intelligence, Experience, Connection. Visual identity: **Engineered by Pratyush: software with systems thinking**. Design system **PN//SIGNATURE**: obsidian and graphite, warm ivory type, electric chartreuse as the one signature accent, silver for structure and amber for signals, with the portrait as the logo: a circle, a thin ring and a chartreuse signal node. Plain HTML, CSS and JavaScript, no build step and no animation library.
+A portfolio built around one idea, *I build software that sees, thinks & acts*, and told in six chapters: Identity, Thinking, Building, Intelligence, Experience, Connection. Visual identity: **Engineered by Pratyush: software with systems thinking**. Design system **PN//SIGNATURE**: indigo-black foundations, cool ivory type, and one signature gradient of electric violet into cyan, with drifting gradient light, a live grid and a perspective floor under the hero; silver for structure and amber for warnings, with the portrait as the logo: a circle, a thin ring and a chartreuse signal node. Plain HTML, CSS and JavaScript, no build step and no animation library.
 
 ---
 
