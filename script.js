@@ -285,14 +285,167 @@ const Scroll = (function () {
   });
 })();
 
-/* ══ 5. HERO ══
-   The hero's staggered entrance, and its looping visuals paused off screen.
-   The system blueprint itself is §5b, after the shared knowledge it reads. */
+/* ══ 5. HERO · THE PN DIGITAL UNIVERSE ══
+   Four engineering domains around the PN mark. Hover (mouse) previews a
+   domain; click, tap, Enter or Space selects it: its pathways light up, its
+   technical objects come forward and the panel explains it, with the projects
+   that show it. "Inspect" moves the field towards the domain and reveals the
+   detail on every object. Esc steps back out. The field leans gently with
+   the pointer on desktop only, never under reduced motion, and only while
+   the hero is on screen. Phones get a 2 × 2 domain grid instead of the field. */
 (function () {
   const hero = $('#hero');
   if (!hero) return;
   $$('[data-hero]', hero).forEach((el, i) => el.style.setProperty('--hi', i));
+  // Looping CSS (pathway pulses) pauses while the hero is off screen.
   new IntersectionObserver(([e]) => hero.classList.toggle('paused', !e.isIntersecting)).observe(hero);
+
+  const uv = $('#universe');
+  if (!uv) return;
+  const stage = $('.uv-stage', uv), field = $('.uv-field', uv), panel = $('#uvPanel');
+  const domains = $$('.uv-domain', uv);
+  const lines = $$('[data-l]', uv), objects = $$('.uv-objects li', uv);
+  const idle = panel.innerHTML;
+  // What each domain is made of. Projects are listed only where a project on
+  // this page shows the domain; IoT & Edge is honest about being a focus area.
+  const DOMAINS = {
+    sw: { label: 'Software Engineering', journey: 'product',
+      line: 'Products people use: interfaces, APIs and data, typed, tested and shipped.',
+      tech: ['React', 'React Native', 'TypeScript', 'Node.js', 'Express', 'MySQL', 'SQLite'],
+      projects: ['campus-recruitment-system', 'aspend', 'ambulance-management-system', 'codeex-space'],
+      inspect: [['interfaces', 'React on the web, React Native on Android'], ['apis', 'REST on Node.js and Express, with JWT roles'], ['data', 'MySQL, SQLite on the device, a JSON store behind one module']] },
+    ai: { label: 'Artificial Intelligence', journey: 'vision',
+      line: 'Models trained on labelled data, and measured on data they never saw.',
+      tech: ['Python', 'YOLOv8', 'Ultralytics', 'Google Colab'],
+      projects: ['detectify'],
+      inspect: [['training', 'YOLOv8 on labelled frames, in Colab'], ['evaluation', 'precision, recall and mAP on held-out sets'], ['candour', 'weak held-out recall (0.52) is reported, not hidden']] },
+    cv: { label: 'Computer Vision', journey: 'vision',
+      line: 'Turning frames into boxes, classes and confidence, and those into decisions.',
+      tech: ['YOLO', 'OpenCV', 'RTSP'],
+      projects: ['detectify'],
+      inspect: [['detection', 'helmets, plates, vehicles, signal state'], ['rules', 'detections become events, such as a red-light violation'], ['streams', 'RTSP from IP cameras: designed, not yet public']] },
+    iot: { label: 'IoT & Edge Systems', journey: 'connected', focus: true,
+      line: 'Inference next to the camera, so events travel over the network instead of video.',
+      tech: ['Raspberry Pi', 'IoT', 'MediaMTX', 'REST APIs'],
+      projects: [],
+      inspect: [['edge', 'models on a Raspberry Pi at the site'], ['transport', 'events posted to the same API as the web app'], ['status', 'a current focus area, not yet in a public project']] }
+  };
+  // Which links light for each domain: its spoke, its two ring neighbours, its satellites.
+  const LIT = { sw: ['core-sw', 'sw-ai', 'iot-sw', 'sw'], ai: ['core-ai', 'sw-ai', 'ai-cv', 'ai'],
+    cv: ['core-cv', 'ai-cv', 'cv-iot', 'cv'], iot: ['core-iot', 'cv-iot', 'iot-sw', 'iot'] };
+
+  const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
+  let pinned = null, shown = null;
+
+  function render(k) {
+    const d = DOMAINS[k];
+    const w = el('div', 'uvp-node');
+    const head = el('div', 'uvp-head');
+    head.append(el('span', 'uvp-n mono', $(`[data-d="${k}"] .mono`, uv).textContent), el('h3', null, d.label));
+    w.append(head, el('p', 'uvp-line', d.line));
+    const tech = el('ul', 'uvp-tech mono');
+    d.tech.forEach(t => tech.appendChild(el('li', null, t)));
+    w.appendChild(tech);
+    if (uv.classList.contains('inspect')) {
+      const dl = el('dl', 'uvp-inspect');
+      d.inspect.forEach(([k2, v]) => { const r = el('div'); r.append(el('dt', 'mono', k2), el('dd', null, v)); dl.appendChild(r); });
+      w.appendChild(dl);
+    }
+    const foot = el('div', 'uvp-foot');
+    const found = d.projects.map(projectEl).filter(Boolean);
+    if (found.length) {
+      foot.appendChild(el('span', 'uvp-k mono', 'seen in'));
+      found.forEach(p => {
+        const key = slug(titleOf(p).textContent);
+        const b = el('button', 'uvp-proj', titleOf(p).textContent);
+        b.type = 'button';
+        b.addEventListener('click', () => {
+          if ($(`.pj [data-case="${key}"]`)) Case.open(key, b);
+          else p.scrollIntoView({ behavior: REDUCE_MOTION ? 'auto' : 'smooth', block: 'center' });
+        });
+        foot.appendChild(b);
+      });
+    } else {
+      foot.appendChild(el('span', 'uvp-k mono', 'focus area'));
+      foot.appendChild(el('span', 'uvp-none', 'No public project shows this yet.'));
+    }
+    w.appendChild(foot);
+    const acts = el('div', 'uvp-acts');
+    const ins = el('button', 'uvp-btn mono', uv.classList.contains('inspect') ? 'Close inspection' : 'Inspect');
+    ins.type = 'button';
+    ins.setAttribute('aria-pressed', uv.classList.contains('inspect') ? 'true' : 'false');
+    ins.addEventListener('click', () => setInspect(!uv.classList.contains('inspect')));
+    const walk = el('button', 'uvp-btn mono', `Walk journey ${{ product: 'A', vision: 'B', connected: 'C' }[d.journey]}`);
+    walk.type = 'button';
+    walk.addEventListener('click', () => window.dispatchEvent(new CustomEvent('pn:dna-open', { detail: { journey: d.journey } })));
+    acts.append(ins, walk);
+    w.appendChild(acts);
+    panel.replaceChildren(w);
+  }
+  function show(k) {
+    if (k === shown) return;
+    shown = k;
+    uv.classList.toggle('has-sel', !!k);
+    uv.dataset.sel = k || '';
+    domains.forEach(b => b.classList.toggle('on', b.dataset.d === k));
+    lines.forEach(l => l.classList.toggle('lit', !!k && LIT[k].includes(l.dataset.l)));
+    objects.forEach(o => o.classList.toggle('on', o.dataset.d === k));
+    if (k) render(k); else panel.innerHTML = idle;
+  }
+  function setInspect(on) {
+    if (on && !pinned) return;
+    uv.classList.toggle('inspect', on);
+    if (on) {
+      const b = domains.find(x => x.dataset.d === pinned);
+      uv.style.setProperty('--fx', b.style.getPropertyValue('--x'));
+      uv.style.setProperty('--fy', b.style.getPropertyValue('--y'));
+      inspect('layer', 'uv-' + pinned + '-inspect', DOMAINS[pinned].label + ', inspected');
+    }
+    shown = undefined; show(pinned);
+    // The panel was rebuilt: keep focus on its inspect toggle, inside the universe.
+    const t = $('.uvp-btn', panel);
+    if (t) t.focus({ preventScroll: true });
+  }
+  function pin(k) {
+    pinned = pinned === k ? null : k;
+    if (!pinned) uv.classList.remove('inspect');
+    domains.forEach(b => b.setAttribute('aria-pressed', b.dataset.d === pinned ? 'true' : 'false'));
+    shown = undefined; show(pinned);
+    if (pinned) inspect('layer', 'uv-' + pinned, DOMAINS[pinned].label);
+  }
+  const narrow = window.matchMedia('(max-width: 760px)');
+  domains.forEach((b, i) => {
+    b.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse' && !narrow.matches) show(b.dataset.d); });
+    b.addEventListener('click', () => pin(b.dataset.d));
+    b.addEventListener('keydown', e => {
+      if (!['ArrowRight', 'ArrowDown', 'ArrowLeft', 'ArrowUp'].includes(e.key)) return;
+      e.preventDefault();
+      domains[(i + (e.key === 'ArrowRight' || e.key === 'ArrowDown' ? 1 : -1) + domains.length) % domains.length].focus();
+    });
+  });
+  stage.addEventListener('pointerleave', e => { if (e.pointerType === 'mouse') show(pinned); });
+  uv.addEventListener('keydown', e => {
+    if (e.key !== 'Escape') return;
+    if (uv.classList.contains('inspect')) { setInspect(false); return; }
+    if (pinned) { const b = domains.find(x => x.dataset.d === pinned); pin(pinned); if (b) b.focus(); }
+  });
+
+  // Depth: the field leans towards the pointer, a few degrees at most.
+  if (FINE_POINTER && !REDUCE_MOTION) {
+    let raf = 0, px = 0, py = 0;
+    stage.addEventListener('pointermove', e => {
+      px = e.clientX; py = e.clientY;
+      if (raf) return;
+      raf = requestAnimationFrame(() => {
+        raf = 0;
+        const r = stage.getBoundingClientRect();
+        const nx = (px - r.left) / r.width - .5, ny = (py - r.top) / r.height - .5;
+        field.style.setProperty('--ry', (nx * 7).toFixed(2) + 'deg');
+        field.style.setProperty('--rx', (-ny * 7).toFixed(2) + 'deg');
+      });
+    }, { passive: true });
+    stage.addEventListener('pointerleave', () => { field.style.setProperty('--ry', '0deg'); field.style.setProperty('--rx', '0deg'); });
+  }
 })();
 
 /* ══ 7. SCROLL REVEAL ══ */
@@ -999,183 +1152,6 @@ const PROD = [
     consider: ['Smoke-test the live URL', 'Performance and accessibility budgets', 'Failures that are visible and recoverable'],
     tools: ['Lighthouse', 'Playwright'], proof: [['portfolio', 'Every deployment triggers a smoke test against the live URL, and Lighthouse budgets run in CI.'], ['portfolio', 'If the contact form service fails, a prefilled email link takes over.']] }
 ];
-
-/* ══ 5b. SYSTEM BLUEPRINT (hero) ══
-   Six parts of one system on blueprint layer bands. A signal travels the data
-   path (interface → frontend → API → AI → edge, events back to the API, then
-   into the database), and each part lights as the signal reaches it. Hover,
-   focus or tap previews a part's role and technologies; click, Enter or Space
-   pins it; Esc unpins. The panel opens the same layer in the architecture
-   explorer. The signal runs only while the hero is on screen, never under
-   reduced motion; phones get the parts as a vertical diagram instead. */
-(function () {
-  const bp = $('#blueprint');
-  if (!bp) return;
-  const NS = 'http://www.w3.org/2000/svg';
-  const svg = $('#bpSvg'), panel = $('#bpPanel'), nodes = $$('.bp-node', bp);
-  const idle = panel.innerHTML;
-  const narrow = window.matchMedia('(max-width: 760px)');
-  const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
-  const make = (tag, attrs, parent) => { const n = document.createElementNS(NS, tag); Object.entries(attrs).forEach(([k, v]) => n.setAttribute(k, v)); if (parent) parent.appendChild(n); return n; };
-  const STATUS = { built: 'built', partial: 'partly built', concept: 'concept' };
-
-  // The drawing: 600 × 600, one band per layer of the system.
-  const POS = { ui: [300, 70], frontend: [300, 184], api: [300, 302], database: [160, 430], ai: [440, 430], edge: [440, 528] };
-  const BUS = [300, 430];
-  // Each wire: its route, what travels on it, and where that label sits clear of the boxes.
-  const WIRES = {
-    'ui-frontend': { pts: [POS.ui, POS.frontend], via: 'renders', at: [308, 131, 'start'] },
-    'frontend-api': { pts: [POS.frontend, POS.api], via: 'HTTP · JSON', at: [308, 247, 'start'] },
-    'api-bus': { pts: [POS.api, BUS] },
-    'bus-database': { pts: [BUS, POS.database], via: 'SQL', at: [264, 421, 'middle'] },
-    'bus-ai': { pts: [BUS, POS.ai], via: 'inference', at: [340, 421, 'middle'] },
-    'ai-edge': { pts: [POS.ai, POS.edge], via: 'frames', at: [448, 483, 'start'] },
-    'edge-bus': { pts: [POS.edge, [300, 528], BUS], via: 'events', at: [340, 519, 'middle'] }
-  };
-  const LIT = { ui: ['ui-frontend'], frontend: ['ui-frontend', 'frontend-api'], api: ['frontend-api', 'api-bus', 'edge-bus'],
-    database: ['api-bus', 'bus-database'], ai: ['api-bus', 'bus-ai', 'ai-edge'], edge: ['ai-edge', 'edge-bus'] };
-  const BANDS = [[70, 'L1 · presentation'], [184, 'L2 · client'], [302, 'L3 · service'], [430, 'L4 · data'], [528, 'L5 · field']];
-
-  const d = pts => 'M' + pts.map(p => p.join(' ')).join('L');
-  BANDS.forEach(([y, t]) => {
-    make('path', { class: 'bp-band', d: `M8 ${y}H592` }, svg);
-    make('text', { class: 'bp-band-t', x: 10, y: y - 8 }, svg).textContent = t;
-  });
-  [[8, 8, 1, 1], [592, 8, -1, 1], [8, 592, 1, -1], [592, 592, -1, -1]].forEach(([x, y, sx, sy]) =>
-    make('path', { class: 'bp-crop', d: `M${x} ${y + 18 * sy}V${y}H${x + 18 * sx}` }, svg));
-  const tb = make('g', { class: 'bp-title' }, svg);
-  make('rect', { x: 24, y: 548, width: 262, height: 30, rx: 3 }, tb);
-  make('path', { d: 'M184 548V578' }, tb);
-  [['SYSTEM BLUEPRINT', 32, 560], ['an example architecture', 32, 572], ['pn · rev 13', 192, 560], ['scale 1 : 1', 192, 572]]
-    .forEach(([t, x, y]) => { make('text', { x, y }, tb).textContent = t; });
-  const wires = {};
-  Object.entries(WIRES).forEach(([id, w]) => {
-    wires[id] = make('path', { class: 'bp-wire', d: d(w.pts) }, svg);
-    if (!w.via) return;
-    const [x, y, anchor] = w.at;
-    make('text', { class: 'bp-via', x, y, 'text-anchor': anchor }, svg).textContent = w.via;
-  });
-  make('circle', { class: 'bp-junction', cx: BUS[0], cy: BUS[1], r: 3.5 }, svg);
-  const halo = make('circle', { class: 'bp-sig-halo', r: 10, cx: -40, cy: -40 }, svg);
-  const sig = make('circle', { class: 'bp-sig', r: 4, cx: -40, cy: -40 }, svg);
-  nodes.forEach(b => {
-    const [x, y] = POS[b.dataset.l];
-    b.style.setProperty('--x', (x / 6).toFixed(2) + '%');
-    b.style.setProperty('--y', (y / 6).toFixed(2) + '%');
-  });
-
-  /* — panel — */
-  let pinned = null, shown = null;
-  function render(k) {
-    const L = ARCH.layers[k];
-    const w = el('div', 'bpp-node');
-    const head = el('div', 'bpp-head');
-    head.append(el('h3', null, L.label), el('span', `st st-${L.status} mono`, STATUS[L.status]));
-    w.append(head, el('p', 'bpp-role', L.role));
-    const tech = el('ul', 'bpp-tech mono');
-    L.tech.forEach(t => tech.appendChild(el('li', null, t)));
-    w.appendChild(tech);
-    const foot = el('div', 'bpp-foot');
-    if (L.projects.length) {
-      foot.appendChild(el('span', 'bpp-k mono', 'seen in'));
-      L.projects.slice(0, 3).forEach(([key]) => {
-        const b = el('button', 'bpp-proj', PROJ[key]); b.type = 'button';
-        b.addEventListener('click', () => openProject(key, b));
-        foot.appendChild(b);
-      });
-    } else foot.append(el('span', 'bpp-k mono', 'focus area'), el('span', 'bpp-none', L.none));
-    w.appendChild(foot);
-    const go = el('button', 'bpp-go mono', 'Inspect it in the architecture explorer →'); go.type = 'button';
-    go.addEventListener('click', () => window.dispatchEvent(new CustomEvent('pn:arch-open', { detail: { layer: k } })));
-    w.appendChild(go);
-    panel.replaceChildren(w);
-  }
-  function show(k) {
-    if (k === shown) return;
-    shown = k;
-    bp.classList.toggle('has-sel', !!k);
-    nodes.forEach(b => b.classList.toggle('on', b.dataset.l === k));
-    Object.entries(wires).forEach(([id, p]) => p.classList.toggle('lit', !!k && LIT[k].includes(id)));
-    if (k) render(k); else panel.innerHTML = idle;
-  }
-  function pin(k) {
-    pinned = pinned === k ? null : k;
-    nodes.forEach(b => b.setAttribute('aria-pressed', b.dataset.l === pinned ? 'true' : 'false'));
-    shown = undefined; show(pinned);
-    if (pinned) inspect('layer', 'bp-' + pinned, 'Blueprint: ' + ARCH.layers[pinned].label);
-  }
-  nodes.forEach((b, i) => {
-    b.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse' && !narrow.matches) show(b.dataset.l); });
-    b.addEventListener('focus', () => show(b.dataset.l));
-    b.addEventListener('click', () => pin(b.dataset.l));
-    b.addEventListener('keydown', e => {
-      if (!['ArrowDown', 'ArrowRight', 'ArrowUp', 'ArrowLeft'].includes(e.key)) return;
-      e.preventDefault();
-      nodes[(i + (e.key === 'ArrowDown' || e.key === 'ArrowRight' ? 1 : -1) + nodes.length) % nodes.length].focus();
-    });
-  });
-  $('.bp-stage', bp).addEventListener('pointerleave', e => { if (e.pointerType === 'mouse') show(pinned); });
-  $('.bp-stage', bp).addEventListener('pointerenter', () => run());
-  bp.addEventListener('focusout', e => { if (!bp.contains(e.relatedTarget)) show(pinned); });
-  bp.addEventListener('keydown', e => {
-    if (e.key !== 'Escape' || !pinned) return;
-    const b = nodes.find(x => x.dataset.l === pinned); pin(pinned); if (b) b.focus();
-  });
-
-  /* — the signal: along each wire in turn, pausing on every part — */
-  const ROUTE = [['ui'], ['ui-frontend', 'frontend'], ['frontend-api', 'api'], ['api-bus'], ['bus-ai', 'ai'], ['ai-edge', 'edge'], ['edge-bus'], ['bus-database', 'database']];
-  const SPEED = 150, STOP = 700, REST = 1100;
-  const items = [];
-  ROUTE.forEach(([a, stop]) => {
-    if (WIRES[a]) {
-      const pts = WIRES[a].pts, cum = [0];
-      for (let i = 1; i < pts.length; i++) cum.push(cum[i - 1] + Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]));
-      items.push({ pts, cum, wire: a, dur: cum[cum.length - 1] / SPEED * 1000 });
-      if (stop) items.push({ at: POS[stop], node: stop, dur: STOP });
-    } else items.push({ at: POS[a], node: a, dur: STOP });
-  });
-  const TOTAL = items.reduce((s, it) => s + it.dur, 0) + REST;
-  const along = (it, f) => {
-    const dist = it.cum[it.cum.length - 1] * f;
-    let i = 1;
-    while (i < it.cum.length - 1 && it.cum[i] < dist) i++;
-    const t = (dist - it.cum[i - 1]) / ((it.cum[i] - it.cum[i - 1]) || 1), a = it.pts[i - 1], b = it.pts[i];
-    return [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t];
-  };
-  let raf = 0, t0 = 0, last = -1, onScreen = false;
-  const canRun = () => !REDUCE_MOTION && !narrow.matches && onScreen && !document.hidden;
-  function place(p) { [sig, halo].forEach(c => { c.setAttribute('cx', p[0].toFixed(1)); c.setAttribute('cy', p[1].toFixed(1)); }); }
-  // Three runs, then the signal rests; pointing at the drawing or scrolling
-  // back to it starts it again. Nothing loops forever.
-  function tick(now) {
-    raf = 0;
-    if (!canRun()) return;
-    if (now - t0 > TOTAL * 3) { halt(); return; }
-    let t = (now - t0) % TOTAL, k = 0;
-    while (k < items.length && t > items[k].dur) { t -= items[k].dur; k++; }
-    const it = items[k];
-    bp.classList.toggle('sig-rest', !it);
-    if (it) place(it.node ? it.at : along(it, t / it.dur));
-    if (k !== last) {
-      last = k;
-      nodes.forEach(b => b.classList.toggle('live', !!it && it.node === b.dataset.l));
-      Object.entries(wires).forEach(([id, p]) => p.classList.toggle('run', !!it && it.wire === id));
-    }
-    raf = requestAnimationFrame(tick);
-  }
-  function run() { if (!raf && canRun()) { t0 = performance.now(); last = -1; raf = requestAnimationFrame(tick); } }
-  function halt() {
-    cancelAnimationFrame(raf); raf = 0;
-    nodes.forEach(b => b.classList.remove('live'));
-    Object.values(wires).forEach(p => p.classList.remove('run'));
-    place([-40, -40]);
-  }
-  const start = () => new IntersectionObserver(([e]) => { onScreen = e.isIntersecting; if (onScreen) run(); else halt(); }).observe(bp);
-  // The signal waits for the intro, so it starts where the eye lands.
-  if (window.__pnIntroDone) start(); else window.addEventListener('pn:introdone', start, { once: true });
-  document.addEventListener('visibilitychange', () => { if (document.hidden) halt(); else run(); });
-  narrow.addEventListener('change', () => { halt(); run(); });
-})();
 
 /* ══ 18. ARCHITECTURE EXPLORER ══
    One example system, seven layers, three views. Overview: the whole stack,
@@ -2726,7 +2702,7 @@ const Eng = (function () {
     ['.hero-title', 'h1 · Geist 650 · sees / thinks / acts'],
     ['.b-intro', 'about/intro.md'], ['.b-photo', 'about/photo.jpg'], ['.b-now', 'about/now'],
     ['.b-stats', 'about/stats'], ['.b-json', 'about/profile.json'],
-    ['.hero-chapters', 'six chapters'], ['.bp-stage', 'system blueprint · 6 parts'], ['.tw-stage', 'digital twin · site plan'],
+    ['.hero-chapters', 'six chapters'], ['.universe', 'pn universe · 4 domains'], ['.tw-stage', 'digital twin · site plan'],
     ['.exp-current', 'HEAD → current role'],
     ['.form-shell', 'POST api.web3forms.com'], ['.mail-card', 'mailto:']
   ];
@@ -2973,7 +2949,7 @@ const Assistant = (function () {
       lead: 'End to end: interfaces, APIs and databases, plus vision pipelines that run on edge devices.',
       rows: Object.values(DNA).map(j => [j.label, j.stages.map(st => st.label).join(' → ')]),
       items: RUNGS.map(([, , note]) => `Where they meet: ${note}.`),
-      actions: [{ label: 'Open the architecture explorer', run: go('#thinking') }, { label: 'See the system blueprint', run: go('#blueprint') }]
+      actions: [{ label: 'Open the architecture explorer', run: go('#thinking') }, { label: 'Open the PN universe', run: go('#universe') }]
     }),
     projects: () => ({
       title: 'Projects',
@@ -3149,7 +3125,7 @@ const Assistant = (function () {
   // Every command has a dotted id (shown, and searchable: "explore." lists the
   // places, "open." the things that open). ack: what to confirm once it ran.
   const NAV = [
-    ['explore.blueprint', 'System blueprint', '#blueprint', 'fa-circle-nodes', 'hero system frontend backend database ai edge iot signal'],
+    ['explore.universe', 'The PN universe', '#universe', 'fa-circle-nodes', 'domains software ai vision iot identity hero'],
     ['explore.about', 'About', '#about', 'fa-user', 'who bio'],
     ['explore.architecture', 'Architecture explorer', '#thinking', 'fa-diagram-project', 'architecture system layers overview detail decisions thinking map'],
     ['explore.process', 'Code to production', '#process', 'fa-gears', 'process how i build idea design architecture development testing deployment monitoring'],
@@ -3390,7 +3366,8 @@ const Assistant = (function () {
   const label = $('.cc-label', cur);
   const CONTEXT = [
     ['a[href^="mailto:"], a[href="#contact"], .pa, .copy-btn', "Let's talk"],
-    ['.bp-node, .ax-node, .ax-row', 'Inspect'],
+    ['.uv-domain', 'Domain'],
+    ['.ax-node, .ax-row', 'Inspect'],
     ['.c2p-step', 'Stage'],
     ['.cst-list button', 'Connect'],
     ['.tw-zone, .tw-s', 'Enter'], ['.tw-c', 'Trace'], ['.tw-wi', 'What if'],
