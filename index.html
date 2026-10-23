@@ -47,7 +47,7 @@
   <meta name="twitter:description" content="I build software that sees, thinks and acts: full-stack products, computer vision and edge systems." />
   <meta name="twitter:image" content="https://pratyushnandi.vercel.app/images/profile.jpg" />
   <title>Pratyush Nandi | Software Developer · Full-Stack &amp; Computer Vision</title>
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect width='48' height='48' rx='11' fill='%23090a09'/%3E%3Cg fill='none' stroke='%23ece8dc' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M10 38V10H24V38M24 24H10M24 10L38 38V10'/%3E%3C/g%3E%3Ccircle cx='38' cy='10' r='4.2' fill='%23c8f03c'/%3E%3C/svg%3E" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect width='48' height='48' rx='11' fill='%23090a09'/%3E%3Cg fill='none' stroke='%23ece8dc' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M8 40H28' stroke-width='2' stroke-opacity='.6'/%3E%3Cpath d='M8 40V8h7a8 8 0 0 1 0 16H8M28 40V8l12 32V8' stroke-width='3.4'/%3E%3C/g%3E%3Ccircle cx='40' cy='8' r='4.4' fill='%23c8f03c'/%3E%3C/svg%3E" />
 
   <!-- Fonts are self-hosted (@font-face in style.css). The three faces the
        first screen uses are fetched straight away instead of after the CSS. -->
@@ -57,8 +57,8 @@
 
   <!-- ?v= is bumped with every release so returning visitors never keep a stale stylesheet.
        icons.css is generated (scripts/build-icons.mjs): only the icons this page uses. -->
-  <link rel="stylesheet" href="style.css?v=12.0.1" />
-  <link rel="stylesheet" href="icons.css?v=12.0.1" />
+  <link rel="stylesheet" href="style.css?v=12.1.0" />
+  <link rel="stylesheet" href="icons.css?v=12.1.0" />
 
   <!-- Only JS ever removes the preloader, so without it the overlay would cover
        the page forever. Reveal-on-scroll never runs either, so show everything. -->
@@ -105,9 +105,10 @@
 </head>
 
 <body>
-  <!-- PN//SIGNATURE monogram: a P and an N sharing one stem, every vertex a node,
-       one node carrying the signal. Reused by the nav, intro, universe and portal. -->
-  <svg class="sprite" width="0" height="0" aria-hidden="true" focusable="false"><symbol id="pnMark" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path class="pn-s" d="M9 39V9H24V39" /><path class="pn-s" d="M24 24H9" /><path class="pn-s" d="M24 9L39 39V9" /></g><g class="pn-n" fill="var(--pn-node, #090a09)" stroke="currentColor" stroke-width="1.6"><circle cx="9" cy="39" r="2.4" /><circle cx="9" cy="9" r="2.4" /><circle cx="9" cy="24" r="2.4" /><circle cx="24" cy="9" r="2.4" /><circle cx="24" cy="39" r="2.4" /><circle cx="39" cy="39" r="2.4" /></g><circle class="pn-core" cx="24" cy="24" r="1.9" fill="currentColor" /><circle class="pn-sig" cx="39" cy="9" r="3.2" fill="var(--pn-accent, #c8f03c)" /></symbol></svg>
+  <!-- PN//SIGNATURE monogram: a P and an N standing on one shared trace, like two
+       components on a circuit; the N's last corner carries the signal. Reused by
+       the nav, footer, universe and portal; the intro and the favicon copy it. -->
+  <svg class="sprite" width="0" height="0" aria-hidden="true" focusable="false"><symbol id="pnMark" viewBox="0 0 48 48"><path class="pn-t" d="M8 40H28" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" /><g fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path class="pn-s" d="M8 40V8h7a8 8 0 0 1 0 16H8" /><path class="pn-s" d="M28 40V8l12 32V8" /></g><g class="pn-n" fill="var(--pn-node, #090a09)" stroke="currentColor" stroke-width="1.6"><circle cx="8" cy="40" r="2.6" /><circle cx="28" cy="40" r="2.6" /></g><circle class="pn-sig" cx="40" cy="8" r="3.6" fill="var(--pn-accent, #c8f03c)" /></symbol></svg>
   <a class="skip-link" href="#main">Skip to content</a>
 
   <!-- Ambient page backdrop: static grid + two soft light sources. No animation
@@ -124,7 +125,7 @@
   <div id="preloader" aria-busy="true">
     <p class="sr-only" role="status">Loading portfolio…</p>
     <div class="pl-box" aria-hidden="true">
-      <svg class="pl-mark" viewBox="0 0 48 48" fill="none"><g fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path class="pn-s pl-draw" d="M9 39V9H24V39" /><path class="pn-s pl-draw" d="M24 24H9" /><path class="pn-s pl-draw" d="M24 9L39 39V9" /></g><g class="pn-n" fill="var(--pn-node, #090a09)" stroke="currentColor" stroke-width="1.6"><circle cx="9" cy="39" r="2.4" /><circle cx="9" cy="9" r="2.4" /><circle cx="9" cy="24" r="2.4" /><circle cx="24" cy="9" r="2.4" /><circle cx="24" cy="39" r="2.4" /><circle cx="39" cy="39" r="2.4" /></g><circle class="pn-core" cx="24" cy="24" r="1.9" fill="currentColor" /><circle class="pn-sig" cx="39" cy="9" r="3.2" fill="var(--pn-accent, #c8f03c)" /></svg>
+      <svg class="pl-mark" viewBox="0 0 48 48" fill="none"><path class="pn-t pl-draw" d="M8 40H28" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" /><g fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path class="pn-s pl-draw" d="M8 40V8h7a8 8 0 0 1 0 16H8" /><path class="pn-s pl-draw" d="M28 40V8l12 32V8" /></g><g class="pn-n" fill="var(--pn-node, #090a09)" stroke="currentColor" stroke-width="1.6"><circle cx="8" cy="40" r="2.6" /><circle cx="28" cy="40" r="2.6" /></g><circle class="pn-sig" cx="40" cy="8" r="3.6" fill="var(--pn-accent, #c8f03c)" /></svg>
       <div class="pl-text">
         <span class="pl-name">Pratyush Nandi</span>
         <span class="pl-cmd"><span class="pl-prompt">$</span> <span id="plCmd">boot --session</span></span>
@@ -153,6 +154,7 @@
         <li><a href="#about">About</a></li>
         <li><a href="#thinking">Thinking</a></li>
         <li><a href="#skills">Stack</a></li>
+        <li><a href="#twin">Twin</a></li>
         <li><a href="#projects">Projects</a></li>
         <li><a href="#pipeline">AI Lab</a></li>
         <li><a href="#experience">Experience</a></li>
@@ -615,6 +617,109 @@
             <span class="card-label mono">readout</span>
             <p>Select anything to trace its connections.</p>
           </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════
+       DIGITAL TWIN
+       An architectural model of how I build: five zones on one site plan, the
+       system that runs through them, and "what if" scenarios. Zone, component
+       and scenario copy lives in script.js (TWIN); the buttons below are the
+       no-JS reading. The sculpture is decorative SVG; every interaction is a
+       real button, and the text view carries all of it.
+    ════════════════════════════════════ -->
+    <section id="twin" class="sec twin-sec" aria-labelledby="twinTitle">
+      <div class="container">
+        <header class="sec-head sec-head-split" data-reveal>
+          <div>
+            <span class="sec-kicker mono"><span class="sk-num">02</span><span class="sk-sep" aria-hidden="true">/</span> Digital twin</span>
+            <h2 class="sec-title" id="twinTitle">A working model of <em class="serif">how I build</em></h2>
+          </div>
+          <p class="sec-sub">Five zones of one engineering practice. Open a zone to see what lives there and where it is proven,
+            follow the system that runs through it, then ask <em>what if</em>.</p>
+        </header>
+
+        <div class="tw" id="tw" data-reveal>
+          <div class="tw-bar">
+            <span class="dna-legend mono">
+              <span class="st st-built">built</span> in a project here
+              <span class="st st-partial">partly built</span>
+              <span class="st st-concept">concept</span> designed for, not yet public
+            </span>
+            <div class="tw-tools">
+              <button type="button" class="tw-tool mono" id="twView" aria-pressed="false" aria-controls="twText"><i class="fas fa-list" aria-hidden="true"></i> Text view</button>
+              <button type="button" class="tw-tool mono" id="twReset"><i class="fas fa-rotate-left" aria-hidden="true"></i> Reset</button>
+              <a class="tw-tool mono" href="#projects">Skip to projects <i class="fas fa-arrow-down" aria-hidden="true"></i></a>
+            </div>
+          </div>
+
+          <div class="tw-main">
+            <div class="tw-stage" id="twStage">
+              <div class="tw-world" id="twWorld">
+                <svg class="tw-svg" id="twSvg" viewBox="0 0 1000 620" aria-hidden="true" focusable="false"></svg>
+                <div class="tw-zones" role="group" aria-label="Zones of the digital twin">
+                  <button type="button" class="tw-zone" data-z="core" aria-pressed="false" aria-controls="twPanel"><span class="mono">00</span> <strong>The Core</strong> <span class="tw-zs">identity · approach</span></button>
+                  <button type="button" class="tw-zone" data-z="web" aria-pressed="false" aria-controls="twPanel"><span class="mono">01</span> <strong>The Web</strong> <span class="tw-zs">frontend · backend · data</span></button>
+                  <button type="button" class="tw-zone" data-z="lab" aria-pressed="false" aria-controls="twPanel"><span class="mono">02</span> <strong>The Intelligence Lab</strong> <span class="tw-zs">AI · vision · inference</span></button>
+                  <button type="button" class="tw-zone" data-z="edge" aria-pressed="false" aria-controls="twPanel"><span class="mono">03</span> <strong>The Edge Network</strong> <span class="tw-zs">devices · camera streams</span></button>
+                  <button type="button" class="tw-zone" data-z="build" aria-pressed="false" aria-controls="twPanel"><span class="mono">04</span> <strong>The Build Room</strong> <span class="tw-zs">projects · tests · deploy</span></button>
+                </div>
+              </div>
+              <p class="tw-cap mono" aria-hidden="true">pn // digital twin · site plan</p>
+            </div>
+
+            <div class="tw-panel" id="twPanel" aria-live="polite">
+              <div class="twp-idle">
+                <span class="card-label mono">pn · digital twin</span>
+                <p class="twp-lead">One practice, five zones. Select a zone, on the model or with the arrow keys, to see what it holds,
+                  which projects prove it, and where it connects.</p>
+                <dl class="twp-key">
+                  <div><dt><i class="twk twk-sig" aria-hidden="true"></i></dt><dd>The signal follows the system currently shown below the model.</dd></div>
+                  <div><dt><i class="twk twk-lit" aria-hidden="true"></i></dt><dd>Lit pathways carry that system from zone to zone.</dd></div>
+                  <div><dt><i class="twk twk-cut" aria-hidden="true"></i></dt><dd>Amber marks what a <em>what if</em> scenario affects.</dd></div>
+                  <div><dt><i class="twk twk-gate" aria-hidden="true"></i></dt><dd>The gate at the front is the real world: where a system's output lands.</dd></div>
+                </dl>
+                <p class="twp-keys mono"><kbd>←</kbd> <kbd>→</kbd> move between zones · <kbd>Enter</kbd> open · <kbd>Esc</kbd> step back</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="tw-system">
+            <div class="tw-sys-head">
+              <h3 class="tw-h mono">living system</h3>
+              <p class="tw-flow-title" id="twFlowTitle"></p>
+            </div>
+            <ol class="tw-flow" id="twFlow" aria-label="Components of the system, in order"></ol>
+            <div class="tw-comp" id="twComp" aria-live="polite"></div>
+          </div>
+
+          <div class="tw-whatif">
+            <div class="tw-wi-head">
+              <h3 class="tw-wi-title"><em class="serif">What if</em>…?</h3>
+              <p>Architectural scenarios: what an event would affect, and the responses I would weigh. Educational, not a description
+                of a system already running.</p>
+            </div>
+            <div class="tw-wi-list" role="group" aria-label="What-if scenarios">
+              <button type="button" class="tw-wi" data-w="network" aria-pressed="false" aria-controls="twWhat"><span class="mono">what if</span> the network connection is lost?</button>
+              <button type="button" class="tw-wi" data-w="edge-ai" aria-pressed="false" aria-controls="twWhat"><span class="mono">what if</span> AI processing moves to the edge?</button>
+              <button type="button" class="tw-wi" data-w="cameras" aria-pressed="false" aria-controls="twWhat"><span class="mono">what if</span> the number of connected cameras increases?</button>
+              <button type="button" class="tw-wi" data-w="backend" aria-pressed="false" aria-controls="twWhat"><span class="mono">what if</span> the backend becomes unavailable?</button>
+              <button type="button" class="tw-wi" data-w="service" aria-pressed="false" aria-controls="twWhat"><span class="mono">what if</span> a new service needs to connect to an existing system?</button>
+            </div>
+            <div class="tw-what" id="twWhat" aria-live="polite" hidden></div>
+          </div>
+
+          <div class="tw-profile" id="twProfile">
+            <svg class="tw-pmap" id="twMap" viewBox="0 0 64 40" aria-hidden="true" focusable="false"></svg>
+            <div class="tw-pbody">
+              <h3 class="tw-h mono">your exploration</h3>
+              <p class="tw-formula" id="twFormula" aria-live="polite"></p>
+              <p class="tw-pnote">Built only from the zones and scenarios you open here, kept for this tab. Nothing about you is measured or sent anywhere.</p>
+            </div>
+          </div>
+
+          <div class="tw-text" id="twText" hidden></div>
         </div>
       </div>
     </section>
@@ -1533,6 +1638,7 @@
             <ul>
               <li><a href="#projects">Projects</a></li>
               <li><a href="#skills">Technology</a></li>
+              <li><a href="#twin">Digital twin</a></li>
               <li><a href="#process">Process</a></li>
             </ul>
           </div>
@@ -1562,7 +1668,7 @@
         <p class="foot-sys">
           <span>Kolkata · IST <time id="localTime">--:--</time></span>
           <span class="foot-sep" aria-hidden="true">·</span>
-          <span>v12.0.1</span>
+          <span>v12.1.0</span>
         </p>
       </div>
     </div>
@@ -2001,7 +2107,7 @@
     </div>
   </div>
 
-  <script src="script.js?v=12.0.1"></script>
+  <script src="script.js?v=12.1.0"></script>
 </body>
 
 </html>
