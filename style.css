@@ -4349,3 +4349,6 @@ button.ax-src { text-decoration: underline; text-underline-offset: 3px; }
   .bd-l1, .bd-l2, .backdrop::before, .bd-grid { animation: none; }
   .hero::before { height: 34%; }
 }
+
+/* ─── Code constellation (script.js §26b): the whole page's living field ─── */
+.bd-field { position: absolute; inset: 0; width: 100%; height: 100%; }
