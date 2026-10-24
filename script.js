@@ -3777,6 +3777,222 @@ const Assistant = (function () {
   window.addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => { size(); go(state, true); }, 150); }, { passive: true });
 })();
 
+/* ══ 26b. CODE CONSTELLATION ══
+   The whole page sits on a slowly moving field of nodes and code glyphs
+   ({ }, </>, =>…). Nodes close to each other link up, data packets travel
+   those links, and on desktop the pointer joins in: it wires itself to the
+   nodes around it under a soft light. The field scrolls at its own depth.
+   One canvas behind everything, kept faint so text always wins. It pauses
+   when the tab is hidden, thins out on phones (no pointer effects), and
+   under reduced motion draws a single still frame. Decorative: aria-hidden. */
+(function () {
+  const host = $('.backdrop');
+  if (!host || !document.createElement('canvas').getContext) return;
+  const cv = document.createElement('canvas');
+  cv.className = 'bd-field';
+  cv.setAttribute('aria-hidden', 'true');
+  host.insertBefore(cv, host.querySelector('.bd-noise'));
+  const ctx = cv.getContext('2d');
+  const GLYPHS = ['{ }', '</>', '=>', 'fn()', '01', '[ ]', '&&', 'git', 'API', '::', '#', '<T>', '//', 'λ', 'SQL', '0x1F'];
+  const LINK = 150, POINTER = 190;
+  const touchOnly = !FINE_POINTER;
+  // Fewer cores, fewer nodes; and never more than 30 frames a second.
+  const LOW = (navigator.hardwareConcurrency || 8) <= 4 || !!(navigator.connection && navigator.connection.saveData);
+  const FRAME = 1000 / 30;
+  const sprites = new Map();
+  let W = 0, H = 0, dpr = 1, nodes = [], packets = [], raf = 0, last = 0, nextPacket = 0;
+  let px = -9999, py = -9999, pointerOn = false, colors = null;
+
+  function readColors() {
+    const cs = getComputedStyle(root);
+    const light = root.getAttribute('data-theme') === 'light';
+    colors = {
+      a: cs.getPropertyValue('--accent').trim() || '#a78bfa',
+      b: cs.getPropertyValue('--accent-2').trim() || '#22d3ee',
+      text: cs.getPropertyValue('--text-3').trim() || '#908da6',
+      k: light ? .55 : 1 // the light theme takes the same field, quieter
+    };
+  }
+  function size() {
+    // The field is faint and soft, so one pixel per CSS pixel is plenty.
+    dpr = 1;
+    W = innerWidth; H = innerHeight;
+    cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
+    cv.style.width = W + 'px'; cv.style.height = H + 'px';
+    // Density follows the screen: fewer, calmer nodes on small ones.
+    const want = Math.round(Math.max(18, Math.min(touchOnly || LOW ? 32 : 72, W * H / 21000)));
+    while (nodes.length < want) nodes.push(spawn());
+    nodes.length = want;
+  }
+  function spawn() {
+    const glyph = Math.random() < .32;
+    const speed = .012 + Math.random() * .03;
+    const dir = Math.random() * Math.PI * 2;
+    return {
+      x: Math.random() * W, y: Math.random() * H * 1.4,
+      vx: Math.cos(dir) * speed, vy: Math.sin(dir) * speed,
+      r: glyph ? 0 : 1 + Math.random() * 1.6,
+      g: glyph ? GLYPHS[(Math.random() * GLYPHS.length) | 0] : null,
+      fs: 10 + Math.random() * 5,
+      cyan: Math.random() < .38,
+      depth: .08 + Math.random() * .22, // how far the field moves when the page scrolls
+      tw: Math.random() * Math.PI * 2 // twinkle phase
+    };
+  }
+  // Where a node is on screen: its own drift plus its scroll depth, wrapped.
+  const span = () => H * 1.4;
+  function screenY(n) {
+    const y = (n.y - scrollY * n.depth) % span();
+    return (y < 0 ? y + span() : y) - H * .2;
+  }
+
+  function draw(now, dt) {
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, W, H);
+    const k = colors.k;
+    const pts = nodes.map(n => {
+      n.x += n.vx * dt; n.y += n.vy * dt;
+      if (n.x < -40) n.x = W + 40; else if (n.x > W + 40) n.x = -40;
+      if (n.y < 0) n.y += span(); else if (n.y > span()) n.y -= span();
+      let x = n.x, y = screenY(n);
+      // The pointer pulls the nearest nodes in a little, like iron filings.
+      if (pointerOn) {
+        const dx = px - x, dy = py - y, d = Math.hypot(dx, dy);
+        if (d < POINTER && d > 1) { const f = (1 - d / POINTER) * 14; x += dx / d * f; y += dy / d * f; }
+      }
+      return [x, y];
+    });
+
+    // The pointer's light.
+    if (pointerOn) {
+      const g = ctx.createRadialGradient(px, py, 0, px, py, 260);
+      g.addColorStop(0, hexA(colors.a, .14 * k)); g.addColorStop(1, hexA(colors.a, 0));
+      ctx.fillStyle = g; ctx.fillRect(px - 260, py - 260, 520, 520);
+    }
+
+    // Links between near neighbours, batched into a few paths by colour and
+    // strength (one stroke each, not one per link); remembered for packets.
+    const links = [], BANDS = 4, batch = [[], []].map(() => Array.from({ length: BANDS }, () => []));
+    ctx.lineWidth = 1;
+    for (let i = 0; i < pts.length; i++) {
+      for (let j = i + 1; j < pts.length; j++) {
+        const dx = pts[i][0] - pts[j][0], dy = pts[i][1] - pts[j][1];
+        if (Math.abs(dx) > LINK || Math.abs(dy) > LINK) continue;
+        const d = Math.hypot(dx, dy);
+        if (d > LINK) continue;
+        const band = Math.min(BANDS - 1, Math.floor((1 - d / LINK) * BANDS));
+        batch[nodes[i].cyan && nodes[j].cyan ? 1 : 0][band].push(i, j);
+        links.push([i, j]);
+      }
+    }
+    batch.forEach((bands, cyan) => bands.forEach((ids, band) => {
+      if (!ids.length) return;
+      ctx.strokeStyle = hexA(cyan ? colors.b : colors.a, (band + .5) / BANDS * .32 * k);
+      ctx.beginPath();
+      for (let q = 0; q < ids.length; q += 2) { ctx.moveTo(pts[ids[q]][0], pts[ids[q]][1]); ctx.lineTo(pts[ids[q + 1]][0], pts[ids[q + 1]][1]); }
+      ctx.stroke();
+    }));
+    if (pointerOn) {
+      pts.forEach(([x, y]) => {
+        const d = Math.hypot(px - x, py - y);
+        if (d > POINTER) return;
+        ctx.strokeStyle = hexA(colors.b, (1 - d / POINTER) * .45 * k);
+        ctx.beginPath(); ctx.moveTo(px, py); ctx.lineTo(x, y); ctx.stroke();
+      });
+    }
+
+    // Nodes and glyphs, each with a slow twinkle.
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    nodes.forEach((n, i) => {
+      const [x, y] = pts[i];
+      if (x < -40 || x > W + 40 || y < -40 || y > H + 40) return;
+      const tw = .65 + .35 * Math.sin(now / 1400 + n.tw);
+      const c = n.cyan ? colors.b : colors.a;
+      if (n.g) {
+        const s = sprite(n.g, n.fs | 0, c);
+        ctx.globalAlpha = .42 * tw * k;
+        ctx.drawImage(s, x - s.width / 2, y - s.height / 2);
+        ctx.globalAlpha = 1;
+      } else {
+        ctx.fillStyle = hexA(c, .7 * tw * k);
+        ctx.beginPath(); ctx.arc(x, y, n.r, 0, Math.PI * 2); ctx.fill();
+      }
+    });
+
+    // Data packets: a bright point travelling a live link, then gone.
+    if (now > nextPacket && links.length && packets.length < (touchOnly ? 3 : 7)) {
+      const [i, j] = links[(Math.random() * links.length) | 0];
+      packets.push({ i, j, t0: now, dur: 900 + Math.random() * 900 });
+      nextPacket = now + 260 + Math.random() * 700;
+    }
+    packets = packets.filter(p => {
+      const t = (now - p.t0) / p.dur;
+      if (t >= 1 || !pts[p.i] || !pts[p.j]) return false;
+      const [x1, y1] = pts[p.i], [x2, y2] = pts[p.j];
+      const x = x1 + (x2 - x1) * t, y = y1 + (y2 - y1) * t;
+      const fade = Math.sin(t * Math.PI);
+      ctx.fillStyle = hexA(colors.b, .22 * fade * k);
+      ctx.beginPath(); ctx.arc(x, y, 7, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = hexA(colors.b, .95 * fade * k);
+      ctx.beginPath(); ctx.arc(x, y, 1.8, 0, Math.PI * 2); ctx.fill();
+      return true;
+    });
+  }
+  // Each glyph is drawn to its own small canvas once, then stamped every frame.
+  function sprite(text, fs, color) {
+    const key = text + '|' + fs + '|' + color;
+    let s = sprites.get(key);
+    if (s) return s;
+    s = document.createElement('canvas');
+    const c2 = s.getContext('2d'), font = `500 ${fs}px "JetBrains Mono", ui-monospace, monospace`;
+    c2.font = font;
+    s.width = Math.ceil(c2.measureText(text).width) + 4; s.height = fs + 6;
+    c2.font = font; c2.fillStyle = color; c2.textBaseline = 'middle';
+    c2.fillText(text, 2, s.height / 2);
+    sprites.set(key, s);
+    return s;
+  }
+  // #rrggbb (or #rgb) with an alpha, for canvas.
+  function hexA(hex, a) {
+    let h = hex.replace('#', '');
+    if (h.length === 3) h = h.split('').map(c => c + c).join('');
+    const n = parseInt(h, 16);
+    return `rgba(${(n >> 16) & 255}, ${(n >> 8) & 255}, ${n & 255}, ${Math.max(0, Math.min(1, a)).toFixed(3)})`;
+  }
+
+  function frame(now) {
+    raf = 0;
+    if (document.hidden) return;
+    if (last && now - last < FRAME - 2) { raf = requestAnimationFrame(frame); return; }
+    const dt = Math.min(64, now - (last || now));
+    last = now;
+    draw(now, dt);
+    raf = requestAnimationFrame(frame);
+  }
+  const start = () => { if (!raf && !REDUCE_MOTION && !document.hidden) { last = 0; raf = requestAnimationFrame(frame); } };
+  const still = () => draw(performance.now(), 0);
+
+  readColors(); size();
+  cv.dataset.state = REDUCE_MOTION ? 'still' : 'live';
+  // Never compete with the first paint: begin after the intro, once the browser is idle.
+  const begin = () => (window.requestIdleCallback ? requestIdleCallback(() => (REDUCE_MOTION ? still() : start()), { timeout: 1500 }) : setTimeout(() => (REDUCE_MOTION ? still() : start()), 300));
+  if (window.__pnIntroDone) begin(); else window.addEventListener('pn:introdone', begin, { once: true });
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) start(); });
+  window.addEventListener('pn:themechange', () => { readColors(); sprites.clear(); if (REDUCE_MOTION) still(); });
+  let rt = 0;
+  window.addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => { size(); if (REDUCE_MOTION) still(); }, 150); }, { passive: true });
+  if (REDUCE_MOTION) window.addEventListener('scroll', () => requestAnimationFrame(still), { passive: true });
+  if (!touchOnly && !REDUCE_MOTION) {
+    document.addEventListener('pointermove', e => {
+      if (e.pointerType !== 'mouse') return;
+      px = e.clientX; py = e.clientY;
+      // Over a dialog, the field stays out of the way.
+      pointerOn = !document.querySelector('dialog[open]');
+    }, { passive: true });
+    document.documentElement.addEventListener('pointerleave', () => { pointerOn = false; });
+  }
+})();
+
 /* ══ 27. SMALL RESPONSES ══
    The contact portal's lines light towards the channel being pointed at or
    focused; project imagery shifts a few pixels with the pointer (desktop). */

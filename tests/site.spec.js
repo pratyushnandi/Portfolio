@@ -604,6 +604,23 @@ test('copying the email confirms it', async ({ page, context, browserName }) => 
   await expect(page.locator('.ack')).toContainText('Email copied');
 });
 
+test('code constellation: decorative, alive, and still under reduced motion', async ({ browser }) => {
+  const live = await browser.newContext({ viewport: { width: 1280, height: 860 } });
+  let page = await live.newPage();
+  await open(page);
+  const field = page.locator('.bd-field');
+  await expect(field).toHaveAttribute('aria-hidden', 'true');
+  await expect(field).toHaveAttribute('data-state', 'live');
+  // It sits behind the page and never takes a click.
+  expect(await field.evaluate(c => getComputedStyle(c.parentElement).pointerEvents)).toBe('none');
+  await live.close();
+  const calm = await browser.newContext({ viewport: { width: 1280, height: 860 }, reducedMotion: 'reduce' });
+  page = await calm.newPage();
+  await open(page);
+  await expect(page.locator('.bd-field')).toHaveAttribute('data-state', 'still');
+  await calm.close();
+});
+
 test('the living canvas and the monogram are decorative and present', async ({ page }) => {
   await open(page);
   await expect(page.locator('.bd-canvas')).toHaveAttribute('aria-hidden', 'true');
