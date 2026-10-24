@@ -3105,7 +3105,7 @@ const Assistant = (function () {
         ['Make failure visible, and recoverable.', 'If the contact form service fails, a prefilled email link takes over.']],
       actions: [{ label: 'See them in code to production', run: go('#process') }]
     }),
-    // `fallback` marks an answer the page could not ground: the chatbot hands those to the AI.
+    // `fallback` marks an answer the page could not ground.
     fallback: () => ({
       fallback: true,
       title: 'I can only answer from this portfolio',
@@ -3404,13 +3404,11 @@ const Assistant = (function () {
 })();
 
 /* ══ 23b. CHATBOT ══
-   A floating chat about the work, in two tiers. Every question first goes to
-   the on-page assistant (§22): instant, free, and grounded in this page. Only
-   questions it cannot match go to /api/chat, where Claude answers from the
-   page's own text (api/chat.mjs). If the AI is unavailable (no key yet, rate
-   limited, or a static mirror with no server), the bot says so and stays
-   useful locally. The conversation is kept for this tab only. Answers render
-   as text, never HTML. Esc closes; focus returns to the button. */
+   A floating chat about the work, answered by the on-page assistant (§22):
+   instant, private (nothing leaves the browser) and grounded in this page.
+   A question it cannot match gets an honest answer and suggestions, never a
+   guess. The conversation is kept for this tab only. Answers render as text,
+   never HTML. Esc closes; focus returns to the button. */
 (function () {
   const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
   const KEY = 'pn-chat';
@@ -3435,7 +3433,7 @@ const Assistant = (function () {
       <span class="chat-av"><img src="images/logo.jpg" alt="" width="40" height="40" decoding="async" loading="lazy" /></span>
       <div class="chat-id">
         <h2 id="chatTitle">Ask about Pratyush's work</h2>
-        <p class="mono">instant answers from this page · AI for the rest</p>
+        <p class="mono">instant answers from this page</p>
       </div>
       <button type="button" class="chat-ic" data-chat="clear" aria-label="Clear the conversation"><i class="fas fa-rotate-left" aria-hidden="true"></i></button>
       <button type="button" class="chat-ic" data-chat="close" aria-label="Close the chat"><i class="fas fa-xmark" aria-hidden="true"></i></button>
@@ -3447,12 +3445,12 @@ const Assistant = (function () {
       <input id="chatInput" type="text" maxlength="${MAX}" autocomplete="off" placeholder="Ask about projects, stack, experience…" />
       <button type="submit" class="chat-send" aria-label="Send"><i class="fas fa-paper-plane" aria-hidden="true"></i></button>
     </form>
-    <p class="chat-note">Questions this page can't answer are sent to Claude (Anthropic) and answered from this page's content. Please don't share personal information.</p>`;
+    <p class="chat-note">Answers come from this page, in your browser. Nothing you type is sent anywhere.</p>`;
   document.body.append(fab, panel);
   const log = $('#chatLog', panel), sugg = $('#chatSugg', panel), form = $('#chatForm', panel), input = $('#chatInput', panel);
 
   /* — the conversation, kept for this tab — */
-  // Each turn: { role: 'user' | 'bot', text, source: 'local' | 'ai' | 'offline', q? }
+  // Each turn: { role: 'user' | 'bot', text, q? }
   let turns = [];
   try { const s = JSON.parse(sessionStorage.getItem(KEY)); if (Array.isArray(s)) turns = s.slice(-30); } catch (e) {}
   const save = () => { try { sessionStorage.setItem(KEY, JSON.stringify(turns.slice(-30))); } catch (e) {} };
@@ -3485,8 +3483,8 @@ const Assistant = (function () {
     }
     return w;
   }
-  // AI text: paragraphs and simple "- " lists, as text.
-  function aiCard(text) {
+  // Plain text: paragraphs and simple "- " lists.
+  function textCard(text) {
     const w = el('div', 'chat-card');
     let list = null;
     text.split(/\n+/).forEach(line => {
@@ -3496,26 +3494,21 @@ const Assistant = (function () {
     });
     return w;
   }
-  const BADGE = { local: 'from this page', ai: 'AI · Claude, from this page', offline: 'from this page' };
   function renderTurn(t) {
     const li = el('li', `chat-msg ${t.role}`);
     if (t.role === 'user') li.appendChild(el('p', null, t.text));
     else {
-      li.appendChild(el('span', `chat-badge mono ${t.source}`, BADGE[t.source] || ''));
-      if (t.source === 'ai') li.appendChild(aiCard(t.text));
-      else {
-        // Local answers are rebuilt from the question, so their buttons work after a reload.
-        const a = t.q ? Assistant.answer(t.q) : null;
-        li.appendChild(a && !a.fallback ? localCard(a) : aiCard(t.text));
-      }
-      if (t.note) li.appendChild(el('p', 'chat-note-in', t.note));
+      li.appendChild(el('span', 'chat-badge mono', 'from this page'));
+      // Answers are rebuilt from the question, so their buttons work after a reload.
+      const a = t.q ? Assistant.answer(t.q) : null;
+      li.appendChild(a ? localCard(a) : textCard(t.text));
     }
     log.appendChild(li);
     li.scrollIntoView({ block: 'end', behavior: REDUCE_MOTION ? 'auto' : 'smooth' });
   }
   function renderAll() {
     log.replaceChildren();
-    if (!turns.length) renderTurn({ role: 'bot', source: 'local', text: "Hi! I'm the portfolio assistant. Ask me about Pratyush's projects, stack, AI work, experience or how to get in touch." });
+    if (!turns.length) renderTurn({ role: 'bot', text: "Hi! I'm the portfolio assistant. Ask me about Pratyush's projects, stack, AI work, experience or how to get in touch." });
     turns.forEach(renderTurn);
   }
   function suggestions() {
@@ -3540,8 +3533,6 @@ const Assistant = (function () {
     log.appendChild(li);
     li.scrollIntoView({ block: 'end' });
   }
-  // The recent conversation as plain text, for the AI.
-  const history = () => turns.slice(-8).map(t => ({ role: t.role === 'user' ? 'user' : 'assistant', content: t.text }));
   function summarise(a) { return [a.title, a.lead].concat((a.rows || []).slice(0, 6).map(([k, v]) => `${k}: ${v}`)).filter(Boolean).join('\n'); }
 
   async function ask(q) {
@@ -3553,40 +3544,13 @@ const Assistant = (function () {
     turns.push(user); renderTurn(user); save();
     typing(true);
     const local = Assistant.answer(q);
-    let bot;
-    if (!local.fallback) {
-      await wait(280);
-      bot = { role: 'bot', source: 'local', text: summarise(local), q };
-    } else {
-      bot = await askAI(local, q);
-    }
+    await wait(280);
+    const bot = { role: 'bot', text: summarise(local), q };
     typing(false);
     turns.push(bot); renderTurn(bot); save();
     busy = false;
     inspect('chat', 'q-' + turns.length, 'Asked: ' + q.slice(0, 60));
   }
-  async function askAI(local, q) {
-    const ctrl = new AbortController();
-    const timer = setTimeout(() => ctrl.abort(), 25000);
-    let note;
-    try {
-      const r = await fetch('api/chat', {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ messages: history() }), signal: ctrl.signal
-      });
-      if (r.ok) {
-        const data = await r.json();
-        if (data && typeof data.reply === 'string' && data.reply.trim()) return { role: 'bot', source: 'ai', text: data.reply.trim() };
-      }
-      note = r.status === 429 ? 'Lots of questions right now: the AI is resting for a few minutes. Here is what this page can tell you.'
-        : r.status === 503 ? 'AI answers are not switched on yet. Here is what this page can tell you.'
-        : "The AI couldn't answer just now. Here is what this page can tell you.";
-    } catch (e) {
-      note = 'AI answers are not available on this copy of the site. Here is what this page can tell you.';
-    } finally { clearTimeout(timer); }
-    return { role: 'bot', source: 'offline', text: summarise(local), q, note };
-  }
-
   /* — open, close, clear — */
   let lastFocus = null;
   function open() {
