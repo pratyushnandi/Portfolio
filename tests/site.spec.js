@@ -604,6 +604,59 @@ test('copying the email confirms it', async ({ page, context, browserName }) => 
   await expect(page.locator('.ack')).toContainText('Email copied');
 });
 
+test('chatbot: page answers are instant and local, and never call the AI', async ({ page }) => {
+  let aiCalls = 0;
+  await page.route('**/api/chat', route => { aiCalls++; return route.fulfill({ status: 200, json: { reply: 'x', source: 'ai' } }); });
+  await open(page);
+  const fab = page.locator('.chat-fab');
+  await fab.click();
+  await expect(fab).toHaveAttribute('aria-expanded', 'true');
+  await expect(page.locator('#chatPanel')).toBeVisible();
+  await expect(page.locator('#chatInput')).toBeFocused();
+  await page.locator('#chatInput').fill('What technologies do you use?');
+  await page.keyboard.press('Enter');
+  const reply = page.locator('#chatLog .chat-msg.bot').last();
+  await expect(reply.locator('.chat-t')).toHaveText('My development stack');
+  await expect(reply.locator('.chat-badge')).toHaveText('from this page');
+  expect(aiCalls).toBe(0);
+  // Esc closes and returns focus to the button.
+  await page.keyboard.press('Escape');
+  await expect(page.locator('#chatPanel')).toBeHidden();
+  await expect(fab).toBeFocused();
+});
+
+test('chatbot: questions the page cannot answer go to the AI, with the conversation', async ({ page }) => {
+  let sent = null;
+  await page.route('**/api/chat', route => {
+    sent = route.request().postDataJSON();
+    return route.fulfill({ status: 200, json: { reply: "The portfolio doesn't mention Docker.\n- Ask about his stack instead", source: 'ai' } });
+  });
+  await open(page);
+  await page.locator('.chat-fab').click();
+  await page.locator('#chatInput').fill('Have you used Docker?');
+  await page.keyboard.press('Enter');
+  const reply = page.locator('#chatLog .chat-msg.bot').last();
+  await expect(reply.locator('.chat-badge')).toHaveText('AI · Claude, from this page');
+  await expect(reply).toContainText("doesn't mention Docker");
+  await expect(reply.locator('.chat-items li')).toHaveText(['Ask about his stack instead']);
+  expect(sent.messages.at(-1)).toEqual({ role: 'user', content: 'Have you used Docker?' });
+});
+
+test('chatbot: without the AI it says so and stays useful; the hero opens it', async ({ page }) => {
+  await page.route('**/api/chat', route => route.fulfill({ status: 503, json: { error: 'not_configured' } }));
+  await open(page);
+  await page.locator('[data-ask]').first().click();
+  await expect(page.locator('#chatPanel')).toBeVisible();
+  await page.locator('#chatInput').fill('Have you used Docker?');
+  await page.keyboard.press('Enter');
+  const reply = page.locator('#chatLog .chat-msg.bot').last();
+  await expect(reply.locator('.chat-note-in')).toContainText('not switched on yet');
+  await expect(reply).toContainText('I can only answer from this portfolio');
+  // Suggested questions work with one tap.
+  await page.locator('.chat-sg').first().click();
+  await expect(page.locator('#chatLog .chat-msg.user')).toHaveCount(2);
+});
+
 test('spotlight cards: light and edge follow the pointer, small cards tilt and settle back', async ({ page, isMobile }) => {
   test.skip(isMobile, 'pointer effect, desktop only');
   await open(page);

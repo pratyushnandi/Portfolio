@@ -24,7 +24,7 @@ export default [
     }
   },
   {
-    files: ['tests/**/*.js', 'scripts/**/*.mjs', 'playwright.config.js', '*.config.mjs'],
+    files: ['tests/**/*.js', 'scripts/**/*.mjs', 'api/**/*.mjs', 'playwright.config.js', '*.config.mjs'],
     languageOptions: { ecmaVersion: 2022, sourceType: 'module', globals: { ...globals.node, ...globals.browser } }
   },
   {
