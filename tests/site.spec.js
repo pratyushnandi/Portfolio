@@ -604,6 +604,23 @@ test('copying the email confirms it', async ({ page, context, browserName }) => 
   await expect(page.locator('.ack')).toContainText('Email copied');
 });
 
+test('spotlight cards: light and edge follow the pointer, small cards tilt and settle back', async ({ page, isMobile }) => {
+  test.skip(isMobile, 'pointer effect, desktop only');
+  await open(page);
+  const card = page.locator('.b-now');
+  await card.scrollIntoViewIfNeeded();
+  await expect(card).toHaveClass(/spot-tilt/);
+  await expect(card.locator('.spot-edge')).toHaveAttribute('aria-hidden', 'true');
+  // Project worlds are large: light only, no tilt.
+  await expect(page.locator('#projGrid .pj').first()).not.toHaveClass(/spot-tilt/);
+  const box = await card.boundingBox();
+  await page.mouse.move(box.x + box.width * .2, box.y + box.height * .25, { steps: 5 });
+  await expect.poll(() => card.evaluate(c => c.style.rotate)).toMatch(/deg$/);
+  expect(await card.evaluate(c => c.style.getPropertyValue('--mx'))).toMatch(/px$/);
+  await page.mouse.move(2, 2, { steps: 4 });
+  await expect.poll(() => card.evaluate(c => c.style.rotate)).toBe('');
+});
+
 test('code constellation: decorative, alive, and still under reduced motion', async ({ browser }) => {
   const live = await browser.newContext({ viewport: { width: 1280, height: 860 } });
   let page = await live.newPage();

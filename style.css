@@ -443,14 +443,30 @@ html.theme-fade, html.theme-fade *, html.theme-fade *::before, html.theme-fade *
 }
 .tech-chip i { font-size: 1.05rem; }
 
-/* Mouse-follow spotlight shared by cards; --mx/--my come from script.js. */
+/* Spotlight cards (script.js §12): a violet light with a cyan core follows the
+   pointer across the card, and the card's edge lights up nearest the pointer. */
 .spot { position: relative; isolation: isolate; }
 .spot::after {
   content: ''; position: absolute; inset: 0; border-radius: inherit; z-index: -1; pointer-events: none;
-  background: radial-gradient(420px circle at var(--mx, 50%) var(--my, -40%), var(--spot), transparent 60%);
+  background:
+    radial-gradient(180px circle at var(--mx, 50%) var(--my, -40%), color-mix(in srgb, var(--accent-2) 14%, transparent), transparent 70%),
+    radial-gradient(460px circle at var(--mx, 50%) var(--my, -40%), color-mix(in srgb, var(--accent) 18%, transparent), transparent 65%);
   opacity: 0; transition: opacity .35s;
 }
 .spot:hover::after { opacity: 1; }
+.spot-edge {
+  position: absolute; inset: 0; border-radius: inherit; padding: 1px; pointer-events: none; z-index: 2;
+  background: radial-gradient(240px circle at var(--mx, 50%) var(--my, -40%), var(--accent-2), color-mix(in srgb, var(--accent) 80%, transparent) 35%, transparent 70%);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+  opacity: 0; transition: opacity .35s;
+}
+.spot:hover > .spot-edge { opacity: 1; }
+:root[data-theme="light"] .spot::after { opacity: 0; }
+:root[data-theme="light"] .spot:hover::after { opacity: .8; }
+/* Tilting cards lift a little, so the tilt reads as depth, not as a wobble. */
+.spot-tilt:hover { box-shadow: var(--shadow-lg), 0 30px 60px -34px color-mix(in srgb, var(--accent) 70%, transparent); }
+@media (prefers-reduced-motion: reduce) { .spot-tilt { rotate: none !important; } }
 
 /* ─── REVEAL SYSTEM ─── */
 .js [data-reveal] {
