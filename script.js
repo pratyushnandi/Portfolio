@@ -3105,7 +3105,9 @@ const Assistant = (function () {
         ['Make failure visible, and recoverable.', 'If the contact form service fails, a prefilled email link takes over.']],
       actions: [{ label: 'See them in code to production', run: go('#process') }]
     }),
+    // `fallback` marks an answer the page could not ground: the chatbot hands those to the AI.
     fallback: () => ({
+      fallback: true,
       title: 'I can only answer from this portfolio',
       lead: "I couldn't match that to anything on this page. I'm a deterministic assistant, not an AI model, so I won't guess. Try one of these:"
     })
@@ -3397,7 +3399,226 @@ const Assistant = (function () {
   });
   $('#cmdkBtn').addEventListener('click', () => open());
   $('#cmdkClose').addEventListener('click', close);
-  $$('[data-ask]').forEach(b => b.addEventListener('click', () => open({ ask: true })));
+  // "Ask about my work" opens the chatbot (§23b); the palette keeps its own ask mode.
+  window.addEventListener('pn:palette-ask', () => open({ ask: true }));
+})();
+
+/* ══ 23b. CHATBOT ══
+   A floating chat about the work, in two tiers. Every question first goes to
+   the on-page assistant (§22): instant, free, and grounded in this page. Only
+   questions it cannot match go to /api/chat, where Claude answers from the
+   page's own text (api/chat.mjs). If the AI is unavailable (no key yet, rate
+   limited, or a static mirror with no server), the bot says so and stays
+   useful locally. The conversation is kept for this tab only. Answers render
+   as text, never HTML. Esc closes; focus returns to the button. */
+(function () {
+  const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
+  const KEY = 'pn-chat';
+  const MAX = 500;
+
+  /* — the button and the panel — */
+  const fab = el('button', 'chat-fab');
+  fab.type = 'button';
+  fab.setAttribute('aria-expanded', 'false');
+  fab.setAttribute('aria-controls', 'chatPanel');
+  fab.setAttribute('aria-label', 'Ask about my work: open the chat');
+  fab.innerHTML = '<i class="fas fa-message" aria-hidden="true"></i><span class="chat-fab-l" aria-hidden="true">Ask</span>';
+
+  const panel = el('section', 'chat');
+  panel.id = 'chatPanel';
+  panel.hidden = true;
+  panel.setAttribute('role', 'dialog');
+  panel.setAttribute('aria-modal', 'false');
+  panel.setAttribute('aria-labelledby', 'chatTitle');
+  panel.innerHTML = `
+    <header class="chat-head">
+      <span class="chat-av"><img src="images/logo.jpg" alt="" width="40" height="40" decoding="async" loading="lazy" /></span>
+      <div class="chat-id">
+        <h2 id="chatTitle">Ask about Pratyush's work</h2>
+        <p class="mono">instant answers from this page · AI for the rest</p>
+      </div>
+      <button type="button" class="chat-ic" data-chat="clear" aria-label="Clear the conversation"><i class="fas fa-rotate-left" aria-hidden="true"></i></button>
+      <button type="button" class="chat-ic" data-chat="close" aria-label="Close the chat"><i class="fas fa-xmark" aria-hidden="true"></i></button>
+    </header>
+    <ol class="chat-log" id="chatLog" role="log" aria-live="polite" aria-label="Conversation"></ol>
+    <div class="chat-sugg" id="chatSugg" role="group" aria-label="Suggested questions"></div>
+    <form class="chat-form" id="chatForm">
+      <label class="sr-only" for="chatInput">Your question</label>
+      <input id="chatInput" type="text" maxlength="${MAX}" autocomplete="off" placeholder="Ask about projects, stack, experience…" />
+      <button type="submit" class="chat-send" aria-label="Send"><i class="fas fa-paper-plane" aria-hidden="true"></i></button>
+    </form>
+    <p class="chat-note">Questions this page can't answer are sent to Claude (Anthropic) and answered from this page's content. Please don't share personal information.</p>`;
+  document.body.append(fab, panel);
+  const log = $('#chatLog', panel), sugg = $('#chatSugg', panel), form = $('#chatForm', panel), input = $('#chatInput', panel);
+
+  /* — the conversation, kept for this tab — */
+  // Each turn: { role: 'user' | 'bot', text, source: 'local' | 'ai' | 'offline', q? }
+  let turns = [];
+  try { const s = JSON.parse(sessionStorage.getItem(KEY)); if (Array.isArray(s)) turns = s.slice(-30); } catch (e) {}
+  const save = () => { try { sessionStorage.setItem(KEY, JSON.stringify(turns.slice(-30))); } catch (e) {} };
+
+  // A local answer object → a compact card, built from text nodes only.
+  function localCard(a) {
+    const w = el('div', 'chat-card');
+    if (a.title) w.appendChild(el('strong', 'chat-t', a.title));
+    if (a.lead) w.appendChild(el('p', null, a.lead));
+    if (a.rows && a.rows.length) {
+      const dl = el('dl', 'chat-rows');
+      a.rows.slice(0, 6).forEach(([k, v]) => { const d = el('div'); d.append(el('dt', null, k), el('dd', null, v)); dl.appendChild(d); });
+      w.appendChild(dl);
+      if (a.rows.length > 6) w.appendChild(el('p', 'chat-more mono', `+ ${a.rows.length - 6} more`));
+    }
+    if (a.items && a.items.length) {
+      const ul = el('ul', 'chat-items');
+      a.items.slice(0, 4).forEach(t => ul.appendChild(el('li', null, t)));
+      w.appendChild(ul);
+    }
+    if (a.chips && a.chips.length) w.appendChild(el('p', 'chat-chips mono', a.chips.map(c => c.name).join(' · ')));
+    if (a.actions && a.actions.length) {
+      const acts = el('div', 'chat-acts');
+      a.actions.slice(0, 3).forEach(x => {
+        const b = el('button', 'chat-act', x.label); b.type = 'button';
+        b.addEventListener('click', () => { if (innerWidth < 640) close(false); x.run(); });
+        acts.appendChild(b);
+      });
+      w.appendChild(acts);
+    }
+    return w;
+  }
+  // AI text: paragraphs and simple "- " lists, as text.
+  function aiCard(text) {
+    const w = el('div', 'chat-card');
+    let list = null;
+    text.split(/\n+/).forEach(line => {
+      const m = line.match(/^\s*[-*•]\s+(.*)/);
+      if (m) { if (!list) { list = el('ul', 'chat-items'); w.appendChild(list); } list.appendChild(el('li', null, m[1])); }
+      else { list = null; if (line.trim()) w.appendChild(el('p', null, line.trim())); }
+    });
+    return w;
+  }
+  const BADGE = { local: 'from this page', ai: 'AI · Claude, from this page', offline: 'from this page' };
+  function renderTurn(t) {
+    const li = el('li', `chat-msg ${t.role}`);
+    if (t.role === 'user') li.appendChild(el('p', null, t.text));
+    else {
+      li.appendChild(el('span', `chat-badge mono ${t.source}`, BADGE[t.source] || ''));
+      if (t.source === 'ai') li.appendChild(aiCard(t.text));
+      else {
+        // Local answers are rebuilt from the question, so their buttons work after a reload.
+        const a = t.q ? Assistant.answer(t.q) : null;
+        li.appendChild(a && !a.fallback ? localCard(a) : aiCard(t.text));
+      }
+      if (t.note) li.appendChild(el('p', 'chat-note-in', t.note));
+    }
+    log.appendChild(li);
+    li.scrollIntoView({ block: 'end', behavior: REDUCE_MOTION ? 'auto' : 'smooth' });
+  }
+  function renderAll() {
+    log.replaceChildren();
+    if (!turns.length) renderTurn({ role: 'bot', source: 'local', text: "Hi! I'm the portfolio assistant. Ask me about Pratyush's projects, stack, AI work, experience or how to get in touch." });
+    turns.forEach(renderTurn);
+  }
+  function suggestions() {
+    sugg.replaceChildren();
+    Assistant.suggestedFor(root.dataset.context).slice(0, 4).forEach(q => {
+      const b = el('button', 'chat-sg', q); b.type = 'button';
+      b.addEventListener('click', () => ask(q));
+      sugg.appendChild(b);
+    });
+  }
+
+  /* — asking — */
+  let busy = false;
+  const wait = ms => new Promise(r => setTimeout(r, REDUCE_MOTION ? 0 : ms));
+  function typing(on) {
+    const t = $('.chat-typing', log);
+    if (!on) { if (t) t.remove(); return; }
+    if (t) return;
+    const li = el('li', 'chat-msg bot chat-typing');
+    li.setAttribute('aria-label', 'Assistant is typing');
+    li.innerHTML = '<span></span><span></span><span></span>';
+    log.appendChild(li);
+    li.scrollIntoView({ block: 'end' });
+  }
+  // The recent conversation as plain text, for the AI.
+  const history = () => turns.slice(-8).map(t => ({ role: t.role === 'user' ? 'user' : 'assistant', content: t.text }));
+  function summarise(a) { return [a.title, a.lead].concat((a.rows || []).slice(0, 6).map(([k, v]) => `${k}: ${v}`)).filter(Boolean).join('\n'); }
+
+  async function ask(q) {
+    q = String(q || '').trim().slice(0, MAX);
+    if (!q || busy) return;
+    busy = true;
+    input.value = '';
+    const user = { role: 'user', text: q };
+    turns.push(user); renderTurn(user); save();
+    typing(true);
+    const local = Assistant.answer(q);
+    let bot;
+    if (!local.fallback) {
+      await wait(280);
+      bot = { role: 'bot', source: 'local', text: summarise(local), q };
+    } else {
+      bot = await askAI(local, q);
+    }
+    typing(false);
+    turns.push(bot); renderTurn(bot); save();
+    busy = false;
+    inspect('chat', 'q-' + turns.length, 'Asked: ' + q.slice(0, 60));
+  }
+  async function askAI(local, q) {
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), 25000);
+    let note;
+    try {
+      const r = await fetch('api/chat', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ messages: history() }), signal: ctrl.signal
+      });
+      if (r.ok) {
+        const data = await r.json();
+        if (data && typeof data.reply === 'string' && data.reply.trim()) return { role: 'bot', source: 'ai', text: data.reply.trim() };
+      }
+      note = r.status === 429 ? 'Lots of questions right now: the AI is resting for a few minutes. Here is what this page can tell you.'
+        : r.status === 503 ? 'AI answers are not switched on yet. Here is what this page can tell you.'
+        : "The AI couldn't answer just now. Here is what this page can tell you.";
+    } catch (e) {
+      note = 'AI answers are not available on this copy of the site. Here is what this page can tell you.';
+    } finally { clearTimeout(timer); }
+    return { role: 'bot', source: 'offline', text: summarise(local), q, note };
+  }
+
+  /* — open, close, clear — */
+  let lastFocus = null;
+  function open() {
+    if (!panel.hidden) return;
+    lastFocus = document.activeElement;
+    renderAll(); suggestions();
+    panel.hidden = false;
+    fab.setAttribute('aria-expanded', 'true');
+    root.classList.add('chat-open');
+    requestAnimationFrame(() => panel.classList.add('on'));
+    setTimeout(() => input.focus({ preventScroll: true }), REDUCE_MOTION ? 0 : 120);
+    inspect('chat', 'open', 'Opened the chat');
+  }
+  function close(restore = true) {
+    if (panel.hidden) return;
+    panel.classList.remove('on');
+    fab.setAttribute('aria-expanded', 'false');
+    root.classList.remove('chat-open');
+    setTimeout(() => { panel.hidden = true; }, REDUCE_MOTION ? 0 : 220);
+    if (restore) (lastFocus && lastFocus.isConnected ? lastFocus : fab).focus({ preventScroll: true });
+  }
+  fab.addEventListener('click', () => (panel.hidden ? open() : close()));
+  $('[data-chat="close"]', panel).addEventListener('click', () => close());
+  $('[data-chat="clear"]', panel).addEventListener('click', () => {
+    turns = []; save(); renderAll(); suggestions(); input.focus();
+    ack('Conversation cleared');
+  });
+  form.addEventListener('submit', e => { e.preventDefault(); ask(input.value); });
+  panel.addEventListener('keydown', e => { if (e.key === 'Escape') { e.stopPropagation(); close(); } });
+  // "Ask about my work" in the hero opens the chat.
+  $$('[data-ask]').forEach(b => b.addEventListener('click', () => open()));
+  window.addEventListener('pn:chat-open', open);
 })();
 
 /* ══ 24. PN CURSOR ══
@@ -3451,7 +3672,7 @@ const Assistant = (function () {
   const labelOf = id => (MODULES.find(m => m.id === id) || {}).label;
   // Which section a deeper look belongs to on the trace.
   const HOME = { layer: 'thinking', tech: 'thinking', twin: 'thinking', pipeline: 'pipeline', case: 'projects' };
-  const KIND = { layer: 'layer', tech: 'tech', twin: 'twin', pipeline: 'ai lab', case: 'project', eng: 'mode', hidden: 'found' };
+  const KIND = { layer: 'layer', tech: 'tech', twin: 'twin', pipeline: 'ai lab', case: 'project', eng: 'mode', hidden: 'found', chat: 'chat' };
 
   /* — store — */
   const KEY = 'pn-session';
