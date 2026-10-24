@@ -4499,8 +4499,6 @@ button.ax-src { text-decoration: underline; text-underline-offset: 3px; }
 .chat-act { min-height: 30px; padding: 0 11px; border-radius: 999px; font-size: .76rem; font-weight: 600; color: var(--accent-ink); border: 1px solid color-mix(in srgb, var(--color-accent) 45%, transparent); background: var(--color-accent-soft); }
 .chat-act:hover { border-color: var(--color-accent); }
 .chat-badge { display: block; margin: 0 0 4px 2px; font-size: .56rem; letter-spacing: .1em; text-transform: uppercase; color: var(--color-muted); }
-.chat-badge.ai { color: var(--accent-2); }
-.chat-note-in { margin: 6px 2px 0; font-size: .72rem; color: var(--amber); }
 .chat-typing { display: inline-flex; gap: 5px; padding: 12px 14px; border-radius: 4px 16px 16px 16px; background: var(--color-surface); border: 1px solid var(--color-border-strong); }
 .chat-typing span { width: 7px; height: 7px; border-radius: 50%; background: var(--color-accent); animation: chat-dot 1s ease-in-out infinite; }
 .chat-typing span:nth-child(2) { animation-delay: .15s; background: color-mix(in srgb, var(--color-accent) 50%, var(--accent-2)); }

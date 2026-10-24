@@ -1,10 +1,4 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "cleanUrls": true,
-  "functions": {
-    "api/chat.mjs": {
-      "includeFiles": "index.html",
-      "maxDuration": 30
-    }
-  }
+  "cleanUrls": true
 }
