@@ -599,17 +599,62 @@ const ProjFilter = (function () {
 })();
 
 /* ══ 12. POINTER MICRO-INTERACTIONS (desktop only) ══
-   Spotlight on cards, magnetic buttons, gentle tilt on the about photo. */
+   Spotlight cards: a violet-cyan light follows the pointer across each card,
+   its edge lights up where the pointer is nearest, and smaller cards tilt a
+   few degrees towards it. The tilt uses the separate rotate property, eased
+   in a short rAF loop, so it never fights the scroll-reveal transform.
+   Also: magnetic buttons, and the gentle tilt on the about photo. */
 (function () {
   if (!FINE_POINTER) return;
-  $$('.b-card, .gl-card, .exp-current, .stack-group, .pj, .edu-item, .cert, .mail-card').forEach(c => c.classList.add('spot'));
+  const CARDS = '.b-card, .gl-card, .exp-current, .stack-group, .pj, .pj-mini, .edu-item, .cert, .mail-card, .focus-grid li';
+  // Big cards (project worlds, the about photo) get the light only; the rest also tilt.
+  const NO_TILT = '.pj, .tilt, .exp-current';
+  $$(CARDS).forEach(c => {
+    c.classList.add('spot');
+    const edge = document.createElement('span');
+    edge.className = 'spot-edge';
+    edge.setAttribute('aria-hidden', 'true');
+    c.appendChild(edge);
+    if (!c.matches(NO_TILT)) c.classList.add('spot-tilt');
+  });
+  const tilt = new Map(); // card → { ax, ay, cur, tgt }
+  let raf = 0;
+  function ease() {
+    raf = 0;
+    let moving = false;
+    tilt.forEach((s, c) => {
+      s.cur += (s.tgt - s.cur) * .16;
+      if (Math.abs(s.tgt - s.cur) < .01) s.cur = s.tgt;
+      else moving = true;
+      c.style.rotate = s.cur ? `${s.ax.toFixed(3)} ${s.ay.toFixed(3)} 0 ${s.cur.toFixed(2)}deg` : '';
+      if (!s.cur && !s.tgt) tilt.delete(c);
+    });
+    if (moving) raf = requestAnimationFrame(ease);
+  }
+  let hot = null;
   document.addEventListener('pointermove', e => {
+    if (e.pointerType !== 'mouse') return;
     const c = e.target.closest && e.target.closest('.spot');
+    if (hot && hot !== c && tilt.has(hot)) { tilt.get(hot).tgt = 0; if (!raf) raf = requestAnimationFrame(ease); }
+    hot = c;
     if (!c) return;
     const r = c.getBoundingClientRect();
     c.style.setProperty('--mx', (e.clientX - r.left) + 'px');
     c.style.setProperty('--my', (e.clientY - r.top) + 'px');
+    if (REDUCE_MOTION || !c.classList.contains('spot-tilt')) return;
+    // Tilt towards the pointer: rotate around the axis perpendicular to it, at most ~3.5°.
+    const nx = (e.clientX - r.left) / r.width - .5, ny = (e.clientY - r.top) / r.height - .5;
+    const len = Math.hypot(nx, ny) || 1;
+    const s = tilt.get(c) || { ax: 0, ay: 0, cur: 0, tgt: 0 };
+    s.ax = -ny / len; s.ay = nx / len; s.tgt = Math.min(1, len * 1.6) * 3.5;
+    tilt.set(c, s);
+    if (!raf) raf = requestAnimationFrame(ease);
   }, { passive: true });
+  document.documentElement.addEventListener('pointerleave', () => {
+    tilt.forEach(s => { s.tgt = 0; });
+    hot = null;
+    if (!raf) raf = requestAnimationFrame(ease);
+  });
 
   if (REDUCE_MOTION) return;
   $$('.magnetic').forEach(btn => {
