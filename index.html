@@ -58,8 +58,8 @@
 
   <!-- ?v= is bumped with every release so returning visitors never keep a stale stylesheet.
        icons.css is generated (scripts/build-icons.mjs): only the icons this page uses. -->
-  <link rel="stylesheet" href="style.css?v=14.1.0" />
-  <link rel="stylesheet" href="icons.css?v=14.1.0" />
+  <link rel="stylesheet" href="style.css?v=14.2.0" />
+  <link rel="stylesheet" href="icons.css?v=14.2.0" />
 
   <!-- Only JS ever removes the preloader, so without it the overlay would cover
        the page forever. Reveal-on-scroll never runs either, so show everything. -->
@@ -182,8 +182,9 @@
         <button type="button" class="n-burger" id="burger" aria-label="Open navigation menu" aria-controls="nLinks"
           aria-expanded="false"><span></span><span></span></button>
       </div>
+      <!-- Reading progress, along the bar's own bottom edge. -->
+      <div class="nav-prog" id="navProg" aria-hidden="true"></div>
     </nav>
-    <div class="nav-prog" id="navProg" aria-hidden="true"></div>
   </header>
 
   <main id="main">
@@ -1669,7 +1670,7 @@
         <p class="foot-sys">
           <span>Kolkata · IST <time id="localTime">--:--</time></span>
           <span class="foot-sep" aria-hidden="true">·</span>
-          <span>v14.1.0</span>
+          <span>v14.2.0</span>
         </p>
       </div>
     </div>
@@ -2135,7 +2136,7 @@
     </div>
   </div>
 
-  <script src="script.js?v=14.1.0"></script>
+  <script src="script.js?v=14.2.0"></script>
 </body>
 
 </html>
