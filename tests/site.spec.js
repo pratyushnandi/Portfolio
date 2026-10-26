@@ -466,6 +466,10 @@ test('contact form validates, then submits (API mocked)', async ({ page }) => {
   await page.locator('#cfBtn').click();
   await expect(status).toContainText('Message sent successfully');
   expect(posts).toBe(1);
+  // After a send the form is empty and calm: no leftover error messages or red borders.
+  await expect(page.locator('#cfName')).toHaveValue('');
+  await expect(page.locator('#contactForm .f-err:visible')).toHaveCount(0);
+  await expect(page.locator('#contactForm .cf-invalid')).toHaveCount(0);
 });
 
 test('visual AI playground: labelled simulated, and the threshold really changes the alerts', async ({ page }) => {

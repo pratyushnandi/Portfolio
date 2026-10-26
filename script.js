@@ -768,6 +768,12 @@ const ProjFilter = (function () {
     el.addEventListener('change', () => { if (el.dataset.touched) mark(el); });
   });
 
+  // After a send the form is empty again: clear every error instead of re-checking empty required fields.
+  const clearMarks = () => fields.forEach(el => {
+    delete el.dataset.touched;
+    el.classList.remove('cf-invalid'); el.removeAttribute('aria-invalid');
+    const err = errOf(el); err.textContent = ''; err.hidden = true;
+  });
   const setStatus = (kind, text) => { status.className = 'cf-status' + (kind ? ' ' + kind : ''); status.textContent = text; };
   const busy = on => { txt.hidden = on; load.hidden = !on; btn.disabled = on; form.setAttribute('aria-busy', on ? 'true' : 'false'); };
 
@@ -800,7 +806,7 @@ const ProjFilter = (function () {
     };
 
     // Bots fill every field, including the one people never see.
-    if (form.querySelector('[name="botcheck"]').checked) { setStatus('ok', '✓ Message sent successfully.'); form.reset(); return; }
+    if (form.querySelector('[name="botcheck"]').checked) { setStatus('ok', '✓ Message sent successfully.'); form.reset(); clearMarks(); return; }
     if (navigator.onLine === false) { fallback("You're offline, so it couldn't be sent."); return; }
 
     busy(true);
@@ -825,7 +831,7 @@ const ProjFilter = (function () {
       if (!res.ok || !data.success) throw new Error(res.ok ? 'rejected' : 'http ' + res.status);
       setStatus('ok', `✓ Message sent successfully. I'll reply to ${email}.`);
       form.reset();
-      fields.forEach(el => { delete el.dataset.touched; mark(el); });
+      clearMarks();
     } catch (err) {
       // The reason only, never the message: nothing the visitor typed is logged.
       console.warn('Contact form: send failed (' + (err.name === 'AbortError' ? 'timeout' : err.message) + ')');
