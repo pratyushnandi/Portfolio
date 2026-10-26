@@ -3567,6 +3567,59 @@ const Assistant = (function () {
       <svg class="cf-close" viewBox="0 0 24 24" width="24" height="24"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/></svg>
       <span class="cf-spark"></span>
     </span><span class="chat-fab-l" aria-hidden="true">Ask</span>`;
+  // The assistant: a 3D-style cartoon (gradients for the volume) that sits on the
+  // button, points at a chat bubble, blinks and bobs. Decorative: the button is the control.
+  const mascot = el('div', 'chat-mascot');
+  mascot.setAttribute('aria-hidden', 'true');
+  mascot.innerHTML = `<svg viewBox="0 0 120 130" width="120" height="130" focusable="false">
+    <defs>
+      <radialGradient id="cm-skin" cx=".35" cy=".3" r=".85"><stop offset="0" stop-color="#ffe3c8"/><stop offset=".55" stop-color="#f6b98f"/><stop offset="1" stop-color="#d98a60"/></radialGradient>
+      <linearGradient id="cm-hair" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3a3a5c"/><stop offset=".5" stop-color="#15152a"/><stop offset="1" stop-color="#0a0a16"/></linearGradient>
+      <radialGradient id="cm-hood" cx=".3" cy=".1" r="1"><stop offset="0" stop-color="#3f58a8"/><stop offset=".55" stop-color="#22336f"/><stop offset="1" stop-color="#121c45"/></radialGradient>
+      <linearGradient id="cm-bub" x1="0" y1="0" x2="1" y2="1"><stop offset="0" style="stop-color:var(--accent-2)"/><stop offset="1" style="stop-color:var(--color-accent)"/></linearGradient>
+    </defs>
+    <g class="cm-float">
+      <ellipse cx="57" cy="128" rx="38" ry="5" fill="#000" opacity=".25"/>
+      <path class="cm-arm-l" d="M24 104 Q15 114 19 128" fill="none" stroke="url(#cm-hood)" stroke-width="16" stroke-linecap="round"/>
+      <path d="M14 130 C14 100 30 86 57 86 C84 86 100 100 100 130 Z" fill="url(#cm-hood)"/>
+      <path d="M22 108 C26 96 38 90 50 89" fill="none" stroke="#fff" stroke-opacity=".2" stroke-width="2.5" stroke-linecap="round"/>
+      <path d="M35 88 Q57 102 79 88 L79 83 Q57 95 35 83 Z" fill="#0f1738"/>
+      <path d="M51 95 L50 103 M64 95 L65 103" stroke="#dfe6ff" stroke-width="1.6" stroke-linecap="round"/>
+      <path d="M46 99 l-6 6 6 6 M68 99 l6 6 -6 6 M60 97 l-6 16" fill="none" stroke="#22d3ee" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+      <g class="cm-arm-r">
+        <path d="M91 102 Q101 92 103 76" fill="none" stroke="url(#cm-hood)" stroke-width="16" stroke-linecap="round"/>
+        <path d="M95 96 Q101 90 102 80" fill="none" stroke="#fff" stroke-opacity=".18" stroke-width="2" stroke-linecap="round"/>
+        <circle cx="103" cy="70" r="8" fill="url(#cm-skin)"/>
+        <path d="M104 65 L108 50" stroke="#f1ad82" stroke-width="5.4" stroke-linecap="round"/>
+        <circle cx="96" cy="72" r="3.2" fill="#f1ad82"/>
+      </g>
+      <g class="cm-head">
+        <path d="M49 76 h16 v12 q-8 5 -16 0 Z" fill="#d98a60"/>
+        <ellipse cx="29" cy="56" rx="4.2" ry="6.2" fill="#eaa57b"/><ellipse cx="85" cy="56" rx="4.2" ry="6.2" fill="#eaa57b"/>
+        <ellipse cx="57" cy="54" rx="28" ry="27" fill="url(#cm-skin)"/>
+        <path d="M27 50 C22 28 38 14 58 14 C80 14 93 28 87 50 C85 42 81 36 75 33 C66 38 52 36 44 30 C38 36 32 42 27 50 Z" fill="url(#cm-hair)"/>
+        <path d="M37 24 C39 8 64 1 82 12 C71 12 60 16 54 24 Z" fill="url(#cm-hair)"/>
+        <path d="M44 15 C52 8 64 7 74 11" fill="none" stroke="#8c92c8" stroke-opacity=".5" stroke-width="2" stroke-linecap="round"/>
+        <path d="M37 42 Q45 38 52 42 M62 42 Q69 38 77 42" fill="none" stroke="#15152a" stroke-width="2.4" stroke-linecap="round"/>
+        <g class="cm-eyes"><ellipse cx="45" cy="54" rx="3.4" ry="4.2" fill="#1d1630"/><ellipse cx="69" cy="54" rx="3.4" ry="4.2" fill="#1d1630"/>
+          <circle cx="46.2" cy="52.4" r="1.2" fill="#fff"/><circle cx="70.2" cy="52.4" r="1.2" fill="#fff"/></g>
+        <circle cx="45" cy="54" r="10" fill="#fff" fill-opacity=".1" stroke="#15152a" stroke-width="2.6"/>
+        <circle cx="69" cy="54" r="10" fill="#fff" fill-opacity=".1" stroke="#15152a" stroke-width="2.6"/>
+        <path d="M55 52 Q57 49.5 59 52" fill="none" stroke="#15152a" stroke-width="2.4" stroke-linecap="round"/>
+        <path d="M38 47 q4 -3 8 -2" fill="none" stroke="#fff" stroke-opacity=".6" stroke-width="1.6" stroke-linecap="round"/>
+        <ellipse cx="38" cy="67" rx="4.6" ry="3" fill="#ff7a8a" fill-opacity=".35"/><ellipse cx="76" cy="67" rx="4.6" ry="3" fill="#ff7a8a" fill-opacity=".35"/>
+        <path d="M55.5 62 Q57 64 58.5 62" fill="none" stroke="#c97a52" stroke-width="1.6" stroke-linecap="round"/>
+        <path class="cm-mouth" d="M46 68 Q57 80 68 68 Z" fill="#7a2a3a"/>
+        <path d="M48.5 68.4 Q57 73.5 65.5 68.4 Z" fill="#fff"/>
+      </g>
+      <g class="cm-bubble">
+        <path d="M80 2 h30 a9 9 0 0 1 9 9 v8 a9 9 0 0 1 -9 9 h-18 l-9 8 v-8 h-3 a9 9 0 0 1 -9 -9 v-8 a9 9 0 0 1 9 -9 Z" fill="url(#cm-bub)"/>
+        <path d="M84 6 h24" stroke="#fff" stroke-opacity=".4" stroke-width="2" stroke-linecap="round"/>
+        <circle class="cm-d" cx="88" cy="15" r="2.6" fill="#fff"/><circle class="cm-d" cx="95" cy="15" r="2.6" fill="#fff"/><circle class="cm-d" cx="102" cy="15" r="2.6" fill="#fff"/>
+      </g>
+    </g>
+  </svg>`;
+  mascot.addEventListener('click', () => open());
   // Decorative: the button already says what it does.
   const nudge = el('div', 'chat-nudge', 'Got a question? Ask me');
   nudge.setAttribute('aria-hidden', 'true');
@@ -3596,7 +3649,8 @@ const Assistant = (function () {
       <button type="submit" class="chat-send" aria-label="Send"><i class="fas fa-paper-plane" aria-hidden="true"></i></button>
     </form>
     <p class="chat-note">Answers come from this page, in your browser. Nothing you type is sent anywhere. ↑ recalls your last question.</p>`;
-  document.body.append(fab, nudge, panel);
+  // The character goes right after the button, so the button's hover can reach it.
+  document.body.append(fab, mascot, nudge, panel);
   const log = $('#chatLog', panel), sugg = $('#chatSugg', panel), form = $('#chatForm', panel), input = $('#chatInput', panel);
 
   /* — the conversation, kept for this tab — */
