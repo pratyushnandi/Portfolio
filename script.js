@@ -3557,7 +3557,16 @@ const Assistant = (function () {
   fab.setAttribute('aria-expanded', 'false');
   fab.setAttribute('aria-controls', 'chatPanel');
   fab.setAttribute('aria-label', 'Ask about my work: open the chat');
-  fab.innerHTML = '<i class="fas fa-message" aria-hidden="true"></i><span class="chat-fab-l" aria-hidden="true">Ask</span>';
+  // A drawn icon, so it can move: the bubble's dots wave now and then, a spark
+  // twinkles, and while the chat is open it turns into a close cross.
+  fab.innerHTML = `<span class="cf-ic" aria-hidden="true">
+      <svg class="cf-open" viewBox="0 0 24 24" width="24" height="24">
+        <path class="cf-bubble" d="M4 6.5A3.5 3.5 0 0 1 7.5 3h9A3.5 3.5 0 0 1 20 6.5v6a3.5 3.5 0 0 1-3.5 3.5H11l-4.4 3.7c-.6.5-1.6.1-1.6-.7V15.8A3.5 3.5 0 0 1 4 12.5z"/>
+        <circle class="cf-dot" cx="8.5" cy="9.6" r="1.3"/><circle class="cf-dot" cx="12" cy="9.6" r="1.3"/><circle class="cf-dot" cx="15.5" cy="9.6" r="1.3"/>
+      </svg>
+      <svg class="cf-close" viewBox="0 0 24 24" width="24" height="24"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/></svg>
+      <span class="cf-spark"></span>
+    </span><span class="chat-fab-l" aria-hidden="true">Ask</span>`;
   // Decorative: the button already says what it does.
   const nudge = el('div', 'chat-nudge', 'Got a question? Ask me');
   nudge.setAttribute('aria-hidden', 'true');
@@ -3771,12 +3780,15 @@ const Assistant = (function () {
   /* — open, close, clear, size — */
   let lastFocus = null;
   function open() {
-    if (!panel.hidden) return;
+    // Open, unless it already is (a panel still folding away can reopen).
+    if (!panel.hidden && panel.classList.contains('on')) return;
     lastFocus = document.activeElement;
     nudge.classList.remove('on');
     renderAll(); suggestions();
     panel.hidden = false;
     fab.setAttribute('aria-expanded', 'true');
+    fab.setAttribute('aria-label', 'Close the chat');
+    $('.chat-fab-l', fab).textContent = 'Close';
     root.classList.add('chat-open');
     requestAnimationFrame(() => panel.classList.add('on'));
     setTimeout(() => input.focus({ preventScroll: true }), REDUCE_MOTION ? 0 : 120);
@@ -3786,11 +3798,14 @@ const Assistant = (function () {
     if (panel.hidden) return;
     panel.classList.remove('on');
     fab.setAttribute('aria-expanded', 'false');
+    fab.setAttribute('aria-label', 'Ask about my work: open the chat');
+    $('.chat-fab-l', fab).textContent = 'Ask';
     root.classList.remove('chat-open');
-    setTimeout(() => { panel.hidden = true; }, REDUCE_MOTION ? 0 : 220);
+    // Long enough for the circle to fold back into the button.
+    setTimeout(() => { if (!panel.classList.contains('on')) panel.hidden = true; }, REDUCE_MOTION ? 0 : 380);
     if (restore) (lastFocus && lastFocus.isConnected ? lastFocus : fab).focus({ preventScroll: true });
   }
-  fab.addEventListener('click', () => (panel.hidden ? open() : close()));
+  fab.addEventListener('click', () => (panel.classList.contains('on') ? close() : open()));
   $('[data-chat="close"]', panel).addEventListener('click', () => close());
   $('[data-chat="clear"]', panel).addEventListener('click', () => {
     turns = []; save(); input.value = ''; renderAll(); suggestions(); input.focus();
@@ -3803,7 +3818,13 @@ const Assistant = (function () {
     size.setAttribute('aria-label', wide ? 'Make the chat smaller' : 'Enlarge the chat');
     size.innerHTML = `<i class="fas ${wide ? 'fa-compress' : 'fa-expand'}" aria-hidden="true"></i>`;
   });
-  form.addEventListener('submit', e => { e.preventDefault(); ask(input.value); });
+  const send = $('.chat-send', panel);
+  form.addEventListener('submit', e => {
+    e.preventDefault();
+    // The paper plane takes off, and a new one lands.
+    if (input.value.trim() && !REDUCE_MOTION) { send.classList.remove('sent'); void send.offsetWidth; send.classList.add('sent'); }
+    ask(input.value);
+  });
   panel.addEventListener('keydown', e => { if (e.key === 'Escape') { e.stopPropagation(); close(); } });
   // "Ask about my work" in the hero opens the chat.
   $$('[data-ask]').forEach(b => b.addEventListener('click', () => open()));
