@@ -2972,6 +2972,47 @@ const Assistant = (function () {
   }
   const findProject = q => KB.projects.find(p => (PROJECT_ALIAS[p.key] || [p.title.toLowerCase()]).some(a => has(q, a)));
 
+  /* — typo tolerance: an unknown word one edit away (two for long words) from
+     a word the assistant knows is read as that word. Known words never change,
+     and a tie between two candidates changes nothing. — */
+  const STOP = new Set(('the and for with from are was were been does did done can could would should will have has had you your yours ' +
+    'they them their there these those this that what which whom whose when why how into over under more most much many some any ' +
+    'all also just only very really please tell give need want like know make made work works working used using see hi hey hello ' +
+    'thanks thank great years year other others about where who').split(' '));
+  const VOCAB = new Set([].concat(...Object.values(INTENTS), ...Object.values(ALIAS), ...Object.values(PROJECT_ALIAS), allTech.map(t => t.name.toLowerCase()))
+    .flatMap(w => w.split(/[\s.·]+/)));
+  const TARGETS = [...VOCAB].filter(w => w.length >= 5 && /^[a-z]+$/.test(w));
+  // Edit distance where swapping two neighbours counts as one edit ("pyhton").
+  function dist(a, b) {
+    const d = Array.from({ length: a.length + 1 }, (_, i) => [i].concat(Array(b.length).fill(0)));
+    for (let j = 1; j <= b.length; j++) d[0][j] = j;
+    for (let i = 1; i <= a.length; i++) {
+      for (let j = 1; j <= b.length; j++) {
+        d[i][j] = Math.min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));
+        if (i > 1 && j > 1 && a[i - 1] === b[j - 2] && a[i - 2] === b[j - 1]) d[i][j] = Math.min(d[i][j], d[i - 2][j - 2] + 1);
+      }
+    }
+    return d[a.length][b.length];
+  }
+  function correct(q) {
+    const fixed = [];
+    const out = q.replace(/[A-Za-z]{5,}/g, w => {
+      const l = w.toLowerCase();
+      if (VOCAB.has(l) || STOP.has(l)) return w;
+      const max = l.length >= 8 ? 2 : 1;
+      let best = null, bd = max + 1, tie = false;
+      TARGETS.forEach(t => {
+        if (Math.abs(t.length - l.length) > max) return;
+        const n = dist(l, t);
+        if (n < bd) { bd = n; best = t; tie = false; } else if (n === bd) tie = true;
+      });
+      if (!best || tie) return w;
+      fixed.push(best);
+      return best;
+    });
+    return { q: out, fixed };
+  }
+
   /* — answer builders: { title, lead, rows:[[k,v]], chips:[{name,icon}], items:[...], actions:[{label,run}] } — */
   const go = sel => () => { const t = $(sel); if (t) t.scrollIntoView({ behavior: REDUCE_MOTION ? 'auto' : 'smooth', block: 'start' }); };
   const A = {
@@ -3105,6 +3146,32 @@ const Assistant = (function () {
         ['Make failure visible, and recoverable.', 'If the contact form service fails, a prefilled email link takes over.']],
       actions: [{ label: 'See them in code to production', run: go('#process') }]
     }),
+    // Small talk: short, friendly, and always pointing back to the work.
+    greet: () => ({
+      title: 'Hello!',
+      lead: "I answer questions about Pratyush's work, straight from this page: projects, stack, AI work, experience, education and how to get in touch. What would you like to know?"
+    }),
+    thanks: () => ({
+      title: "You're welcome",
+      lead: 'Ask anything else, or reach Pratyush directly. The contact form goes straight to his inbox.',
+      actions: [{ label: 'Open the contact form', run: () => window.dispatchEvent(new Event('pn:open-form')) }]
+    }),
+    bye: () => ({
+      title: 'Thanks for visiting',
+      lead: "If you'd like to talk about a role or a project, Pratyush replies to every message.",
+      actions: [{ label: 'Open the contact form', run: () => window.dispatchEvent(new Event('pn:open-form')) }, { label: 'Copy email', run: () => $('#copyEmail').click() }]
+    }),
+    bot: () => ({
+      title: "I'm a portfolio assistant, not an AI",
+      lead: "I match your question to what's on this page and answer from it. I don't generate text and I don't guess, and nothing you type leaves your browser."
+    }),
+    help: () => ({
+      title: 'What you can ask',
+      lead: 'Plain questions work best. A few examples:',
+      rows: [['Projects', '"Tell me about Detectify", "Which projects use React?"'], ['Stack', '"Do you use PostgreSQL?", "What is your development stack?"'],
+        ['AI / ML', '"What AI/ML work do you do?", "What projects involve computer vision?"'], ['Career', '"What is your experience?", "What certifications do you have?"'],
+        ['Contact', '"How can I contact you?", "Can I see your resume?"'], ['Follow-ups', '"Tell me more", "Which projects use it?"']]
+    }),
     // `fallback` marks an answer the page could not ground.
     fallback: () => ({
       fallback: true,
@@ -3113,25 +3180,87 @@ const Assistant = (function () {
     })
   };
 
+  // What to ask next, by kind of answer.
+  const NEXT = {
+    stack: ['Which projects use React?', 'What backend technologies are used?', 'What AI/ML work do you do?'],
+    ai: ['Tell me about Detectify', 'What projects involve computer vision?', 'What kind of systems do you build?'],
+    systems: ['How do you approach a system?', 'What AI/ML work do you do?', 'How is this portfolio built?'],
+    projects: ['Tell me about Detectify', 'Tell me about Aspend', 'What projects involve computer vision?'],
+    experience: ['What technologies do you use?', 'What is your education?', 'Can I see your resume?'],
+    education: ['What certifications do you have?', 'What is your experience?'],
+    certs: ['What is your education?', 'What technologies do you use?'],
+    contact: ['Where are you based?', 'Can I see your resume?', 'What are you focused on right now?'],
+    location: ['How can I contact you?'],
+    about: ['What is your experience?', 'What technologies do you use?', 'Show me your projects.'],
+    resume: ['What is your experience?', 'How can I contact you?'],
+    backend: ['Which projects use PostgreSQL?', 'What frontend technologies are used?'],
+    frontend: ['Which projects use React?', 'What backend technologies are used?'],
+    process: ['What kind of systems do you build?', 'Show me your projects.'],
+    focus: ['What AI/ML work do you do?', 'How can I contact you?'],
+    greet: ['Show me your projects.', 'What technologies do you use?', 'What can you answer?'],
+    thanks: ['Show me your projects.', 'How can I contact you?'],
+    bye: ['How can I contact you?'],
+    bot: ['What can you answer?', 'Show me your projects.'],
+    help: ['Tell me about Detectify', 'Do you use PostgreSQL?', 'What is your experience?'],
+    project: ['Show me your projects.', 'What technologies do you use?', 'How can I contact you?']
+  };
+  const SMALL = [
+    ['greet', /^(hi+|hey+|hello+|hola|namaste|yo|good (morning|afternoon|evening))( there| pratyush)?[\s!.,]*$/],
+    ['thanks', /^(thanks?( you)?|thank u|thx|ty|cheers|great|awesome|nice|cool|ok(ay)?|got it|perfect)( so much| a lot| very much)?[\s!.,]*$/],
+    ['bye', /^(bye+|goodbye|good bye|see (you|ya)|cya)\b/],
+    ['bot', /\b(are|r) (you|u) (a |an )?(bot|robot|human|real|ai|person|chatgpt|gpt)\b/],
+    ['help', /^(help|\?+|what can (you|i) (do|ask|answer)|what (should|can|could) i ask|what can you answer|how does this work)\b/]
+  ];
+
   function answer(q) {
+    const c = correct(q);
+    const a = core(c.q);
+    if (c.fixed.length && !a.fallback) a.fixed = c.fixed;
+    if (a.fallback) a.next = closest(q);
+    return a;
+  }
+  function core(q) {
     if (/^\s*ls\s+-(a|la|al)\s*$/i.test(q)) { inspect('hidden', 'ls-a', 'A hidden file'); return A.hidden(); }
+    const plain = q.toLowerCase().replace(/[^a-z0-9?! ]+/g, ' ').replace(/\s+/g, ' ').trim();
+    const small = SMALL.find(([, re]) => re.test(plain));
+    if (small) return { ...A[small[0]](), next: NEXT[small[0]] };
     const toks = tokens(q);
     if (!toks.length) return A.fallback();
+    const a = route(q, toks);
+    return a.next || a.fallback ? a : { ...a, next: NEXT[a.kind] || [] };
+  }
+  function route(q, toks) {
     const project = findProject(q);
-    if (project) return A.project(project);
+    if (project) return { ...A.project(project), kind: 'project' };
     const score = Object.fromEntries(Object.entries(INTENTS).map(([k, words]) => [k, toks.filter(t => words.includes(t)).length]));
     if (has(q, 'computer vision') || has(q, 'machine learning')) score.ai += 2;
     if (has(q, 'kind of system') || has(q, 'kind of systems')) score.systems += 2;
     if (has(q, 'this portfolio') || has(q, 'this site') || has(q, 'this website')) score.process += 3;
     if (has(q, 'right now') || has(q, 'working on')) score.focus += 2;
+    // "Frontend technologies" is about the frontend, not the whole stack.
+    ['backend', 'frontend'].forEach(k => { if (score[k]) score[k] += 1; });
     // "Which projects use X?" — answered by project tags, not by the intent.
     const wantsProjects = toks.some(t => t.startsWith('project'));
     if (wantsProjects && (has(q, 'computer vision') || toks.includes('vision') || toks.includes('cv'))) return A.projectsWith(['computer vision', 'opencv'], 'Computer-vision projects');
     const tech = findTech(q).filter(t => !['AI / ML', 'Visual AI'].includes(t.name) || !score.ai);
-    if (wantsProjects && tech.length) return A.projectsWith([tech[0].name.toLowerCase().split(/[ .]/)[0]], `Projects using ${tech[0].name}`);
+    if (wantsProjects && tech.length) return { ...A.projectsWith([tech[0].name.toLowerCase().split(/[ .]/)[0]], `Projects using ${tech[0].name}`), next: [`Do you use ${tech[0].name}?`, 'Show me your projects.'] };
     const [best, n] = Object.entries(score).sort((a, b) => b[1] - a[1])[0];
-    if (tech.length && !(best === 'ai' && n >= 2) && !(['stack', 'systems'].includes(best) && n >= 2)) return A.tech(tech);
-    return n > 0 ? A[best]() : A.fallback();
+    if (tech.length && !(best === 'ai' && n >= 2) && !(['stack', 'systems'].includes(best) && n >= 2)) return { ...A.tech(tech), next: [`Which projects use ${tech[0].name}?`, 'What is your development stack?'] };
+    return n > 0 ? { ...A[best](), kind: best } : A.fallback();
+  }
+  // The project or technology a question is about, for follow-ups like "which projects use it?".
+  function subject(q) {
+    q = correct(q).q;
+    const p = findProject(q);
+    if (p) return { name: p.title };
+    const t = findTech(q).filter(x => !['AI / ML', 'Visual AI'].includes(x.name));
+    return t.length ? { name: t[0].name } : null;
+  }
+  // "Did you mean": known questions that share the most words with an unmatched one.
+  function closest(q) {
+    const words = tokens(q).filter(w => w.length >= 3 && !STOP.has(w));
+    const scored = BANK.map(s => ({ s, n: words.filter(w => s.toLowerCase().includes(w)).length })).filter(x => x.n).sort((a, b) => b.n - a.n);
+    return scored.length ? scored.slice(0, 3).map(x => x.s) : SUGGESTED.slice(0, 3);
   }
   const SUGGESTED = [
     'What technologies do you use?', 'What AI/ML work do you do?', 'Show me your projects.',
@@ -3150,7 +3279,10 @@ const Assistant = (function () {
     const first = BY_CONTEXT[ctx];
     return first ? [first].concat(SUGGESTED.filter(s => s !== first)).slice(0, 5) : SUGGESTED;
   };
-  return { answer, SUGGESTED, suggestedFor };
+  // Every question the assistant is known to answer well: suggestions as you type.
+  const BANK = [...new Set(SUGGESTED.concat(Object.values(BY_CONTEXT), Object.values(NEXT).flat(),
+    KB.projects.map(p => `Tell me about ${p.title}`), ['Do you use Python?', 'Do you use TypeScript?', 'Where are you based?']))];
+  return { answer, subject, SUGGESTED, BANK, suggestedFor };
 })();
 
 /* ══ 23. COMMAND PALETTE ══
@@ -3406,21 +3538,29 @@ const Assistant = (function () {
 /* ══ 23b. CHATBOT ══
    A floating chat about the work, answered by the on-page assistant (§22):
    instant, private (nothing leaves the browser) and grounded in this page.
-   A question it cannot match gets an honest answer and suggestions, never a
-   guess. The conversation is kept for this tab only. Answers render as text,
-   never HTML. Esc closes; focus returns to the button. */
+   It reads past small typos, remembers what the last answer was about (so
+   "which projects use it?" and "tell me more" work), suggests what to ask
+   next and completes questions as you type. A question it cannot match gets
+   an honest answer and the closest known questions, never a guess. The
+   conversation is kept for this tab only. Answers render as text, never
+   HTML. Esc closes; focus returns to the button. */
 (function () {
   const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
   const KEY = 'pn-chat';
+  const NUDGED = 'pn-chat-nudged';
   const MAX = 500;
+  const ROWS = 6, ITEMS = 4;
 
-  /* — the button and the panel — */
+  /* — the button, the nudge and the panel — */
   const fab = el('button', 'chat-fab');
   fab.type = 'button';
   fab.setAttribute('aria-expanded', 'false');
   fab.setAttribute('aria-controls', 'chatPanel');
   fab.setAttribute('aria-label', 'Ask about my work: open the chat');
   fab.innerHTML = '<i class="fas fa-message" aria-hidden="true"></i><span class="chat-fab-l" aria-hidden="true">Ask</span>';
+  // Decorative: the button already says what it does.
+  const nudge = el('div', 'chat-nudge', 'Got a question? Ask me');
+  nudge.setAttribute('aria-hidden', 'true');
 
   const panel = el('section', 'chat');
   panel.id = 'chatPanel';
@@ -3435,6 +3575,7 @@ const Assistant = (function () {
         <h2 id="chatTitle">Ask about Pratyush's work</h2>
         <p class="mono">instant answers from this page</p>
       </div>
+      <button type="button" class="chat-ic chat-size" data-chat="size" aria-pressed="false" aria-label="Enlarge the chat"><i class="fas fa-expand" aria-hidden="true"></i></button>
       <button type="button" class="chat-ic" data-chat="clear" aria-label="Clear the conversation"><i class="fas fa-rotate-left" aria-hidden="true"></i></button>
       <button type="button" class="chat-ic" data-chat="close" aria-label="Close the chat"><i class="fas fa-xmark" aria-hidden="true"></i></button>
     </header>
@@ -3445,31 +3586,51 @@ const Assistant = (function () {
       <input id="chatInput" type="text" maxlength="${MAX}" autocomplete="off" placeholder="Ask about projects, stack, experience…" />
       <button type="submit" class="chat-send" aria-label="Send"><i class="fas fa-paper-plane" aria-hidden="true"></i></button>
     </form>
-    <p class="chat-note">Answers come from this page, in your browser. Nothing you type is sent anywhere.</p>`;
-  document.body.append(fab, panel);
+    <p class="chat-note">Answers come from this page, in your browser. Nothing you type is sent anywhere. ↑ recalls your last question.</p>`;
+  document.body.append(fab, nudge, panel);
   const log = $('#chatLog', panel), sugg = $('#chatSugg', panel), form = $('#chatForm', panel), input = $('#chatInput', panel);
 
   /* — the conversation, kept for this tab — */
-  // Each turn: { role: 'user' | 'bot', text, q? }
+  // Each turn: { role: 'user', text } or { role: 'bot', text, q, full?, how? }.
+  // `q` is the question as resolved (follow-ups filled in), so answers rebuild after a reload.
   let turns = [];
   try { const s = JSON.parse(sessionStorage.getItem(KEY)); if (Array.isArray(s)) turns = s.slice(-30); } catch (e) {}
   const save = () => { try { sessionStorage.setItem(KEY, JSON.stringify(turns.slice(-30))); } catch (e) {} };
+  let nextQs = [];
+
+  function summarise(a) {
+    return [a.title, a.lead].concat((a.rows || []).map(([k, v]) => `${k}: ${v}`), (a.items || []).map(t => '- ' + t)).filter(Boolean).join('\n');
+  }
 
   // A local answer object → a compact card, built from text nodes only.
-  function localCard(a) {
+  function localCard(a, t) {
     const w = el('div', 'chat-card');
     if (a.title) w.appendChild(el('strong', 'chat-t', a.title));
     if (a.lead) w.appendChild(el('p', null, a.lead));
-    if (a.rows && a.rows.length) {
+    const rows = a.rows || [], items = a.items || [];
+    const cut = !t.full && (rows.length > ROWS || items.length > ITEMS);
+    if (rows.length) {
       const dl = el('dl', 'chat-rows');
-      a.rows.slice(0, 6).forEach(([k, v]) => { const d = el('div'); d.append(el('dt', null, k), el('dd', null, v)); dl.appendChild(d); });
+      (t.full ? rows : rows.slice(0, ROWS)).forEach(([k, v]) => { const d = el('div'); d.append(el('dt', null, k), el('dd', null, v)); dl.appendChild(d); });
       w.appendChild(dl);
-      if (a.rows.length > 6) w.appendChild(el('p', 'chat-more mono', `+ ${a.rows.length - 6} more`));
     }
-    if (a.items && a.items.length) {
+    if (items.length) {
       const ul = el('ul', 'chat-items');
-      a.items.slice(0, 4).forEach(t => ul.appendChild(el('li', null, t)));
+      (t.full ? items : items.slice(0, ITEMS)).forEach(x => ul.appendChild(el('li', null, x)));
       w.appendChild(ul);
+    }
+    if (cut) {
+      const hidden = Math.max(0, rows.length - ROWS) + Math.max(0, items.length - ITEMS);
+      const more = el('button', 'chat-more mono', `Show all · ${hidden} more`);
+      more.type = 'button';
+      more.addEventListener('click', () => {
+        t.full = true; save();
+        const card = localCard(a, t);
+        w.replaceWith(card);
+        const first = $('.chat-rows, .chat-items', card);
+        if (first) { first.setAttribute('tabindex', '-1'); first.focus({ preventScroll: true }); }
+      });
+      w.appendChild(more);
     }
     if (a.chips && a.chips.length) w.appendChild(el('p', 'chat-chips mono', a.chips.map(c => c.name).join(' · ')));
     if (a.actions && a.actions.length) {
@@ -3483,37 +3644,57 @@ const Assistant = (function () {
     }
     return w;
   }
-  // Plain text: paragraphs and simple "- " lists.
-  function textCard(text) {
-    const w = el('div', 'chat-card');
-    let list = null;
-    text.split(/\n+/).forEach(line => {
-      const m = line.match(/^\s*[-*•]\s+(.*)/);
-      if (m) { if (!list) { list = el('ul', 'chat-items'); w.appendChild(list); } list.appendChild(el('li', null, m[1])); }
-      else { list = null; if (line.trim()) w.appendChild(el('p', null, line.trim())); }
-    });
-    return w;
-  }
-  function renderTurn(t) {
+  function renderTurn(t, fresh) {
     const li = el('li', `chat-msg ${t.role}`);
     if (t.role === 'user') li.appendChild(el('p', null, t.text));
     else {
-      li.appendChild(el('span', 'chat-badge mono', 'from this page'));
       // Answers are rebuilt from the question, so their buttons work after a reload.
       const a = t.q ? Assistant.answer(t.q) : null;
-      li.appendChild(a ? localCard(a) : textCard(t.text));
+      const top = el('div', 'chat-top');
+      top.appendChild(el('span', 'chat-badge mono', 'from this page'));
+      if (a) {
+        const copy = el('button', 'chat-copy');
+        copy.type = 'button';
+        copy.setAttribute('aria-label', 'Copy this answer');
+        copy.innerHTML = '<i class="fas fa-copy" aria-hidden="true"></i>';
+        copy.addEventListener('click', () => {
+          const done = () => { copy.classList.add('done'); copy.innerHTML = '<i class="fas fa-check" aria-hidden="true"></i>'; ack('Answer copied'); setTimeout(() => { copy.classList.remove('done'); copy.innerHTML = '<i class="fas fa-copy" aria-hidden="true"></i>'; }, 1600); };
+          try { navigator.clipboard.writeText(summarise(a)).then(done, () => ack('Copy is not available here')); } catch (e) { ack('Copy is not available here'); }
+        });
+        top.appendChild(copy);
+      }
+      li.appendChild(top);
+      // Say how the question was read, when it was not read word for word.
+      const how = t.how ? `↳ ${t.how}` : a && a.fixed ? `↳ read as “${a.fixed.join(', ')}”` : '';
+      if (how) li.appendChild(el('p', 'chat-how mono', how));
+      const card = a ? localCard(a, t) : localCard({ lead: t.text }, t);
+      if (fresh) card.classList.add('reveal');
+      li.appendChild(card);
+      nextQs = a && a.next ? a.next : [];
     }
     log.appendChild(li);
     li.scrollIntoView({ block: 'end', behavior: REDUCE_MOTION ? 'auto' : 'smooth' });
   }
   function renderAll() {
     log.replaceChildren();
-    if (!turns.length) renderTurn({ role: 'bot', text: "Hi! I'm the portfolio assistant. Ask me about Pratyush's projects, stack, AI work, experience or how to get in touch." });
-    turns.forEach(renderTurn);
+    nextQs = [];
+    if (!turns.length) renderTurn({ role: 'bot', text: "Hi! I'm the portfolio assistant. Ask me about Pratyush's projects, stack, AI work, experience or how to get in touch. Typos are fine." });
+    turns.forEach(t => renderTurn(t));
   }
+  // Under the conversation: questions that complete what is being typed, or
+  // else what to ask next after the last answer, then ones for this section.
   function suggestions() {
+    const typed = input.value.trim().toLowerCase();
+    let list = [], matching = false;
+    if (typed.length >= 2) {
+      const words = typed.split(/\s+/);
+      list = Assistant.BANK.filter(s => words.every(w => s.toLowerCase().includes(w))).slice(0, 4);
+      matching = list.length > 0;
+    }
+    if (!matching) list = [...new Set(nextQs.concat(Assistant.suggestedFor(root.dataset.context)))].slice(0, 4);
+    sugg.dataset.mode = matching ? 'typing' : 'next';
     sugg.replaceChildren();
-    Assistant.suggestedFor(root.dataset.context).slice(0, 4).forEach(q => {
+    list.forEach(q => {
       const b = el('button', 'chat-sg', q); b.type = 'button';
       b.addEventListener('click', () => ask(q));
       sugg.appendChild(b);
@@ -3533,29 +3714,66 @@ const Assistant = (function () {
     log.appendChild(li);
     li.scrollIntoView({ block: 'end' });
   }
-  function summarise(a) { return [a.title, a.lead].concat((a.rows || []).slice(0, 6).map(([k, v]) => `${k}: ${v}`)).filter(Boolean).join('\n'); }
+  // Follow-ups lean on the last answer: "tell me more" expands it, and "it" /
+  // "they" mean what it was about.
+  const MORE = /^(tell me |show me |give me )?(more|everything|all|the rest|more details|details)( please)?[\s.!?]*$|^(go on|continue|elaborate|expand|keep going)\b/i;
+  const PRONOUN = /\b(it|its|them|they)\b/i;
+  function resolve(q) {
+    const last = [...turns].reverse().find(t => t.role === 'bot' && t.q);
+    if (!last || Assistant.subject(q)) return { q };
+    if (MORE.test(q)) return { q: last.q, full: true, how: `the full answer on ${Assistant.answer(last.q).title}` };
+    const s = PRONOUN.test(q) && Assistant.subject(last.q);
+    return s ? { q: q + ' ' + s.name, how: `about ${s.name}` } : { q };
+  }
 
   async function ask(q) {
     q = String(q || '').trim().slice(0, MAX);
     if (!q || busy) return;
     busy = true;
     input.value = '';
+    hist = -1;
     const user = { role: 'user', text: q };
     turns.push(user); renderTurn(user); save();
     typing(true);
-    const local = Assistant.answer(q);
-    await wait(280);
-    const bot = { role: 'bot', text: summarise(local), q };
+    const r = resolve(q);
+    const a = Assistant.answer(r.q);
+    // A beat that scales a little with the answer, so a long one doesn't feel canned.
+    await wait(Math.min(260 + ((a.rows || []).length + (a.items || []).length) * 30, 520));
+    const bot = { role: 'bot', text: summarise(a), q: r.q };
+    if (r.full) bot.full = true;
+    if (r.how) bot.how = r.how;
     typing(false);
-    turns.push(bot); renderTurn(bot); save();
+    turns.push(bot); renderTurn(bot, true); save();
+    suggestions();
     busy = false;
     inspect('chat', 'q-' + turns.length, 'Asked: ' + q.slice(0, 60));
   }
-  /* — open, close, clear — */
+
+  /* — ↑ / ↓ walk back through your own questions, like a terminal — */
+  let hist = -1;
+  function recall(step) {
+    const asked = turns.filter(t => t.role === 'user').map(t => t.text).reverse();
+    if (!asked.length) return false;
+    const n = Math.max(-1, Math.min(asked.length - 1, hist + step));
+    if (n === hist) return true;
+    hist = n;
+    input.value = n < 0 ? '' : asked[n];
+    requestAnimationFrame(() => input.setSelectionRange(input.value.length, input.value.length));
+    suggestions();
+    return true;
+  }
+  input.addEventListener('keydown', e => {
+    if (e.key === 'ArrowUp' && (!input.value || hist >= 0) && recall(1)) e.preventDefault();
+    else if (e.key === 'ArrowDown' && hist >= 0 && recall(-1)) e.preventDefault();
+  });
+  input.addEventListener('input', () => { hist = -1; suggestions(); });
+
+  /* — open, close, clear, size — */
   let lastFocus = null;
   function open() {
     if (!panel.hidden) return;
     lastFocus = document.activeElement;
+    nudge.classList.remove('on');
     renderAll(); suggestions();
     panel.hidden = false;
     fab.setAttribute('aria-expanded', 'true');
@@ -3575,14 +3793,35 @@ const Assistant = (function () {
   fab.addEventListener('click', () => (panel.hidden ? open() : close()));
   $('[data-chat="close"]', panel).addEventListener('click', () => close());
   $('[data-chat="clear"]', panel).addEventListener('click', () => {
-    turns = []; save(); renderAll(); suggestions(); input.focus();
+    turns = []; save(); input.value = ''; renderAll(); suggestions(); input.focus();
     ack('Conversation cleared');
+  });
+  const size = $('[data-chat="size"]', panel);
+  size.addEventListener('click', () => {
+    const wide = panel.classList.toggle('wide');
+    size.setAttribute('aria-pressed', String(wide));
+    size.setAttribute('aria-label', wide ? 'Make the chat smaller' : 'Enlarge the chat');
+    size.innerHTML = `<i class="fas ${wide ? 'fa-compress' : 'fa-expand'}" aria-hidden="true"></i>`;
   });
   form.addEventListener('submit', e => { e.preventDefault(); ask(input.value); });
   panel.addEventListener('keydown', e => { if (e.key === 'Escape') { e.stopPropagation(); close(); } });
   // "Ask about my work" in the hero opens the chat.
   $$('[data-ask]').forEach(b => b.addEventListener('click', () => open()));
   window.addEventListener('pn:chat-open', open);
+
+  /* — one gentle nudge per tab, a while after the intro, if the chat was never used — */
+  function scheduleNudge() {
+    let seen = false;
+    try { seen = !!sessionStorage.getItem(NUDGED); } catch (e) {}
+    if (seen || turns.length) return;
+    setTimeout(() => {
+      if (!panel.hidden || turns.length) return;
+      try { sessionStorage.setItem(NUDGED, '1'); } catch (e) {}
+      nudge.classList.add('on');
+      setTimeout(() => nudge.classList.remove('on'), 7000);
+    }, 15000);
+  }
+  if (window.__pnIntroDone) scheduleNudge(); else window.addEventListener('pn:introdone', scheduleNudge, { once: true });
 })();
 
 /* ══ 24. PN CURSOR ══

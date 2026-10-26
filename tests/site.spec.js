@@ -647,6 +647,41 @@ test('chatbot: an unmatched question gets an honest answer; the hero opens it; s
   await expect(page.locator('#chatLog .chat-msg.user')).toHaveCount(0);
 });
 
+test('chatbot: reads past typos, follows up on "it" and "tell me more", and completes as you type', async ({ page }) => {
+  await open(page);
+  await page.locator('.chat-fab').click();
+  const input = page.locator('#chatInput');
+  const reply = () => page.locator('#chatLog .chat-msg.bot').last();
+  const say = async q => { await input.fill(q); await page.keyboard.press('Enter'); };
+  // Small talk gets a friendly answer, not "I can only answer…".
+  await say('hi');
+  await expect(reply().locator('.chat-t')).toHaveText('Hello!');
+  // A typo is read as the nearest known word, and the answer says so.
+  await say('do you know pyhton?');
+  await expect(reply().locator('.chat-t')).toHaveText('Python');
+  await expect(reply().locator('.chat-how')).toContainText('read as “python”');
+  // "it" means what the last answer was about.
+  await say('Which projects use it?');
+  await expect(reply().locator('.chat-t')).toHaveText('Projects using Python');
+  await expect(reply().locator('.chat-how')).toContainText('about Python');
+  // "tell me more" shows the whole of a long answer.
+  await say('Show me your projects.');
+  const shown = await reply().locator('.chat-rows > div').count();
+  await expect(reply().locator('.chat-more')).toBeVisible();
+  await say('tell me more');
+  await expect(reply().locator('.chat-how')).toContainText('the full answer');
+  expect(await reply().locator('.chat-rows > div').count()).toBeGreaterThan(shown);
+  // Suggestions follow the last answer, and complete what is being typed.
+  await expect(page.locator('#chatSugg')).toHaveAttribute('data-mode', 'next');
+  await input.fill('detec');
+  await expect(page.locator('#chatSugg')).toHaveAttribute('data-mode', 'typing');
+  await expect(page.locator('.chat-sg').first()).toHaveText('Tell me about Detectify');
+  // ↑ recalls the last question.
+  await input.fill('');
+  await input.press('ArrowUp');
+  await expect(input).toHaveValue('tell me more');
+});
+
 test('spotlight cards: light and edge follow the pointer, small cards tilt and settle back', async ({ page, isMobile }) => {
   test.skip(isMobile, 'pointer effect, desktop only');
   await open(page);
