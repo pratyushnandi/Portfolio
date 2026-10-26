@@ -23,40 +23,40 @@
   /* ELECTRIC VIOLET + CYAN. Indigo-black foundations, cool ivory type, and
      one signature gradient: violet into cyan. Silver draws structure; amber
      is reserved for warnings. Accent fills always carry dark ink. */
-  --bg: #0a0a14;
-  --bg-alt: #0e0e1b;
-  --surface: #13131f;
-  --surface-2: #1a1a29;
-  --glass: rgba(19, 19, 31, .74);
-  --line: rgba(232, 230, 245, .08);
-  --line-2: rgba(232, 230, 245, .14);
-  --line-strong: rgba(232, 230, 245, .24);
+  --bg: #07061a;
+  --bg-alt: #0b0a24;
+  --surface: #131130;
+  --surface-2: #1c1a40;
+  --glass: rgba(19, 17, 48, .74);
+  --line: rgba(167, 139, 250, .16);
+  --line-2: rgba(167, 139, 250, .28);
+  --line-strong: rgba(196, 181, 253, .42);
 
-  --text: #ecebf5;
-  --text-2: #b6b3c9;
-  --text-3: #908da6;
+  --text: #f6f5ff;
+  --text-2: #cac6e6;
+  --text-3: #a5a1c8;
   --silver: #aab1cc;
   --amber: #f0a83a;
 
-  --accent: #a78bfa;
-  --accent-2: #22d3ee;
-  --accent-ink: #c4b5fd;
+  --accent: #b58cff;
+  --accent-2: #19e3ff;
+  --accent-ink: #d8c8ff;
   --ok: #34d399;
   --warn: #fb923c;
   --err: #fb7185;
-  --on-accent: #0a0a14;
+  --on-accent: #07061a;
 
   /* One gradient, two weights: violet marks what is selected, live or
      actionable; cyan is where the gradient lands, used for data in motion. */
-  --grad: linear-gradient(115deg, #ddd6fe 0%, #a78bfa 42%, #22d3ee 100%);
-  --grad-btn: linear-gradient(120deg, #b39dfb 0%, #a78bfa 35%, #38d9f0 100%);
-  --accent-soft: rgba(167, 139, 250, .13);
-  --accent-2-soft: rgba(34, 211, 238, .09);
+  --grad: linear-gradient(115deg, #f5b8ff 0%, #b58cff 40%, #19e3ff 100%);
+  --grad-btn: linear-gradient(120deg, #d9a6ff 0%, #b58cff 35%, #2ee6ff 100%);
+  --accent-soft: rgba(181, 140, 255, .2);
+  --accent-2-soft: rgba(25, 227, 255, .14);
 
   --shadow-sm: 0 1px 0 rgba(255, 255, 255, .04) inset, 0 1px 2px rgba(0, 0, 0, .45);
   --shadow-md: 0 1px 0 rgba(255, 255, 255, .05) inset, 0 12px 32px -12px rgba(0, 0, 0, .75);
   --shadow-lg: 0 1px 0 rgba(255, 255, 255, .06) inset, 0 30px 80px -24px rgba(0, 0, 0, .9);
-  --shadow-accent: 0 1px 0 rgba(255, 255, 255, .25) inset, 0 10px 28px -12px rgba(139, 92, 246, .75);
+  --shadow-accent: 0 1px 0 rgba(255, 255, 255, .25) inset, 0 10px 28px -12px rgba(168, 85, 247, .85);
   --glow: 0 0 0 1px rgba(167, 139, 250, .35), 0 14px 40px -16px rgba(139, 92, 246, .6);
 
   /* Code / terminal palette */
@@ -4656,3 +4656,7 @@ button.ax-src { text-decoration: underline; text-underline-offset: 3px; }
   .chat, .chat-nudge, .cf-ic svg { transition: none; }
   .chat { clip-path: none; }
 }
+
+/* Dark theme: a livelier backdrop and cards that glow on hover. */
+:root:not([data-theme="light"]) body { background: radial-gradient(900px circle at 8% -6%, rgba(168, 85, 247, .22), transparent 60%), radial-gradient(800px circle at 96% 4%, rgba(25, 227, 255, .14), transparent 60%), var(--bg); background-attachment: fixed; }
+:root:not([data-theme="light"]) :is(.b-card, .gl-card, .stack-group, .pj, .edu-item, .cert, .mail-card):hover { border-color: rgba(181, 140, 255, .55); box-shadow: var(--shadow-md), 0 0 36px -10px rgba(168, 85, 247, .55); }
