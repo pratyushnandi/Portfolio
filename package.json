@@ -26,14 +26,14 @@
   "license": "MIT",
   "devDependencies": {
     "@eslint/js": "^10.0.1",
-    "@fortawesome/fontawesome-free": "6.5.0",
-    "@playwright/test": "^1.63.0",
-    "devicon": "2.15.1",
-    "eslint": "^10.12.0",
-    "globals": "^17.13.0",
-    "html-validate": "^11.16.2",
+    "@fortawesome/fontawesome-free": "7.3.1",
+    "@playwright/test": "^1.65.0",
+    "devicon": "2.18.0",
+    "eslint": "^10.14.0",
+    "globals": "^17.14.0",
+    "html-validate": "^11.19.0",
     "live-server": "^1.2.2",
-    "serve": "^14.2.6",
-    "stylelint": "^17.16.0"
+    "serve": "^14.2.7",
+    "stylelint": "^18.0.0"
   }
 }
